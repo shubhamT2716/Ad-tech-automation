@@ -1,0 +1,24 @@
+package net.media.emma.web;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+public class Welcome {
+
+    @Autowired private net.media.emma.service.BrowserRemote browserRemote;
+
+    @GetMapping("/welcome")
+    public String openUrl() {
+        return "welcome";
+    }
+
+    @PostMapping("/welcome")
+    public void openUrlPost(@RequestParam String url) {
+        browserRemote.openUrl(url);
+    }
+    
+}

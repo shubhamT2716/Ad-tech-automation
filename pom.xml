@@ -17,6 +17,12 @@
 		<java.version>17</java.version>
 	</properties>
 		<dependencies>
+<dependency>
+      <groupId>com.microsoft.playwright</groupId>
+      <artifactId>playwright</artifactId>
+      <version>1.33.0</version>
+    </dependency>
+
 			<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>

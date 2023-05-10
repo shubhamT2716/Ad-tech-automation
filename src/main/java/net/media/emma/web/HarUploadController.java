@@ -23,8 +23,6 @@ public class HarUploadController {
         modelAndView.addObject("message", "Emma - COP Test Automation Tool");
         return modelAndView;    
 
-
-
 		// return "index.html";
 	}
 
