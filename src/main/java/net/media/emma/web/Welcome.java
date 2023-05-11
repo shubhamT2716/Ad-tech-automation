@@ -18,6 +18,8 @@ public class Welcome {
 
     @PostMapping("/welcome")
     public void openUrlPost(@RequestParam String url) {
+
+        // browserRemote.injectDom(url, url, null);
         browserRemote.openUrl(url);
     }
     
