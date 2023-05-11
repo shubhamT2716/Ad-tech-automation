@@ -12,6 +12,6 @@ public interface BrowserRemote {
     public void mockResponse();
 
     public void injectScript(String script);
-    public void injectDom(String xPath, Boolean append);
+    public void injectDom(String xPath, String htmlElement, Boolean append);
 
 }

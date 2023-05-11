@@ -43,7 +43,7 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
     }
 
     @Override
-    public void injectDom(String xPath, Boolean append) {
+    public void injectDom(String xPath, String htmlElement, Boolean append) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'injectDom'");
     }
