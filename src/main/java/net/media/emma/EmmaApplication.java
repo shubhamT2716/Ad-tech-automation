@@ -10,4 +10,10 @@ public class EmmaApplication {
 		SpringApplication.run(EmmaApplication.class, args);
 	}
 
+	//EJB --enterprise java bean
+	// bean container --> application server --> examples: jboss, weblogic, websphere
+	// hibernate..., strut 12.33 JSF -java server faces, serv
+	// Java Spring -> IOC -> inversin of control  -- "services" (Service Provider Interface)
+	// Java Boot --> 
+
 }

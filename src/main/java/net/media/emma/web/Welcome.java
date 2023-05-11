@@ -22,5 +22,18 @@ public class Welcome {
         // browserRemote.injectDom(url, url, null);
         browserRemote.openUrl(url);
     }
-    
+
+    @GetMapping("/welcome2")
+    public String domINject() {
+
+        return "welcome2";
+      
+    }
+
+    @PostMapping("/welcome2")
+    public void openAndDOMINject(@RequestParam String url, @RequestParam String xPath, @RequestParam String htmlElement, @RequestParam Boolean append) {
+
+        browserRemote.injectDom(url, url, null);
+        browserRemote.openUrl(url);
+    }
 }
