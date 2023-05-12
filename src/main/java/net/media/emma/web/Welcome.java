@@ -31,9 +31,10 @@ public class Welcome {
     }
 
     @PostMapping("/welcome2")
-    public void openAndDOMINject(@RequestParam String url, @RequestParam String xPath, @RequestParam String htmlElement, @RequestParam Boolean append) {
+    public void openAndDOMINject(@RequestParam String url,
+                                    @RequestParam String xPath,
+                                    @RequestParam String htmlElement) {
 
-        browserRemote.injectDom(url, url, null);
-        browserRemote.openUrl(url);
+        browserRemote.injectDom(url, xPath, htmlElement, false);
     }
 }
