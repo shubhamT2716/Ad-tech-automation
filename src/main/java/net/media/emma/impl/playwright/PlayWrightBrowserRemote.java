@@ -1,6 +1,8 @@
 package net.media.emma.impl.playwright;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.slf4j.Logger;
@@ -46,59 +48,30 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
         throw new UnsupportedOperationException("Unimplemented method 'injectScript'");
     }
 
+
+
+    // My code
+
+// ---------------------------------------------------------------------------------------------
+// Working only on https://www.engadget.com/?headerbidding=1
+
     @Override
     public void injectDom(String url, String xPath, String htmlElement, Boolean append) {
 
-        // logger.info("sadf");
 
         Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
 
-        // page.onResponse(
-        //    response -> {
 
-        //         System.out.println(response.allHeaders().toString());
-              
-        //     }
-        // );
+        page.route(url,  route -> {
 
-        page.route("https://www.engadget.com/?headerbidding=1",  route -> {
+            logger.info(url);
+            logger.info(xPath);
 
-          
-            // APIResponse apiResponse = route.fetch();
-            // String responseBody = new String(apiResponse.body(), StandardCharsets.UTF_8);
+            String filePath = "src/main/resources/templates/domInject.html";
 
-            // System.out.println(responseBody);
+            Path path = Paths.get(filePath);
 
-            route.fulfill(new Route.FulfillOptions().setBody("""
-
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Bid Reuse</title>
-<script type="text/javascript" src="https://hb.yahoo.net/bidexchange.js?cid=8YHBL12EX&version=9.1&dn=www.engadget.com&ysec=index"></script>
- 
-
-  </head>
-  <body>
-    <div class="heading">
-      <h1>Bid Reuse Test Page</h1>
-    </div>
-    <hr>
-    <h2 class="th">RATS TEST</h2>
-    <div class="bidReuse" id="LB-MULTI_ATF" >
-            <!-- /45361917/rats-test-bidreuse -->
-             <script>
-                  googletag.cmd.push(function() { googletag.display('LB-MULTI_ATF'); });
-             </script>
-</div>
-    </div>
-  </body>
-</html>
-
-            """));
+            route.fulfill(new Route.FulfillOptions().setPath(path));
             
         });
 
@@ -107,4 +80,6 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
      
     }
     
+
+    // ------------------------------------------------My code end ------------------------------------------------------------------------
 }
