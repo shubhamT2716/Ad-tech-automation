@@ -62,7 +62,7 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
         Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
 
 
-        page.route(url,  route -> {
+        page.route(url + "/**",  route -> {
 
             logger.info(url);
             logger.info(xPath);
