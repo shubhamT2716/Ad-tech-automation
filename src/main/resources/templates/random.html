@@ -1,0 +1,98 @@
+ 
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+ </head>
+ <body>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+      background: #f1f1f1;
+    }
+
+    /* Header/Blog Title */
+    .header {
+      padding: 30px;
+      font-size: 40px;
+      text-align: center;
+      background: white;
+    }
+
+    /* Create two unequal columns that floats next to each other */
+    /* Left column */
+    .leftcolumn {
+      float: left;
+      width: 100%;
+    }
+
+    /* Right column */
+    .rightcolumn {
+      float: left;
+      width: 25%;
+      padding-left: 20px;
+    }
+
+    /* Fake image */
+    .fakeimg {
+      background-color: #aaa;
+      width: 300px;
+      height: 250px;
+      padding: 20px;
+    }
+
+    /* Add a card effect for articles */
+    .card {
+      background-color: white;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    /* TP */
+    /* .wp{
+background-color: aqua;
+} */
+    /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+    @media screen and (max-width: 800px) {
+
+      .leftcolumn,
+      .rightcolumn {
+        width: 100%;
+        padding: 0;
+      }
+    }
+  </style>
+    <div class="header">
+      <h2>YHB Test Page</h2>
+    </div>
+    <div class="row">
+      <div class="leftcolumn">
+        <!-- Test Creative no 2 render -->
+        <div class="card">
+          <h2>Adslot 1</h2>
+          <h5>YHB test creative</h5>
+          <div class="fakeimg" id='bidreuse' style='min-width: 300px; min-height: 600px;'>
+            <!-- /45361917/YHB_test_adunit -->
+            <div id='bidreuse' style='min-width: 300px; min-height: 250px;'>
+              <script>
+                googletag.cmd.push(function() {
+                  googletag.display('bidreuse');
+                });
+              </script>
+            </div>
+          </div>
+        </div>
+
+ </body>
+ </html>

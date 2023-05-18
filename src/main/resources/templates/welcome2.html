@@ -1,13 +1,21 @@
 <html>
     <body>
         <form method="post">
+            <p>HTML Element is hard coded for now,enter random letter in text area. Enter rest fields correctly</p>
+
             Enter your URL:
+
             <input type="text" name="url" /><br />
 
             Enter your XPath:
             <input type="text" name="xPath" /> <br />
 
-            <textarea name="htmlElement" rows="5" cols="40"></textarea><br />
+            <textarea name="htmlElement" rows="5" cols="30" placeholder="Enter anything"></textarea><br />
+
+            Select True to append, False to override:
+            <br />
+            <input type="radio" name="append" value="true" />True <br />
+            <input type="radio" name="append" value="false" />False <br />
 
             Submit
             <input type="submit" value="Submit" />

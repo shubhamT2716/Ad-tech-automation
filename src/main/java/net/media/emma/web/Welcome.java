@@ -33,8 +33,11 @@ public class Welcome {
     @PostMapping("/welcome2")
     public void openAndDOMINject(@RequestParam String url,
                                     @RequestParam String xPath,
-                                    @RequestParam String htmlElement) {
-
-        browserRemote.injectDom(url, xPath, htmlElement, false);
+                                    @RequestParam String htmlElement,
+                                    @RequestParam Boolean append) {
+        String forceHtmlElement = "src/main/resources/templates/random.html";
+        System.out.println("Calling Dom Inject");
+        browserRemote.injectDom(url, xPath, forceHtmlElement, append);
+        
     }
 }
