@@ -21,7 +21,8 @@ public class FileOperations {
         try {
             Files.write(Paths.get(yamlFilePath), fileContent.getBytes());
         } catch (IOException e) {
-            loggers.standardLogger().error(e.getMessage());
+
+            loggers.standardLogger().error("YAML Write Failed" , e);
         }
     }
 }
