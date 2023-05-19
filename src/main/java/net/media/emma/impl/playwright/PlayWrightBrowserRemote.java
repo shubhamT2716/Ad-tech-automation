@@ -1,7 +1,6 @@
 package net.media.emma.impl.playwright;
 
 import java.nio.file.Paths;
-
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
@@ -10,6 +9,18 @@ import com.microsoft.playwright.Playwright;
 import net.media.emma.service.BrowserRemote;
 
 public class PlayWrightBrowserRemote implements BrowserRemote {
+
+    public void openMultiBrowser(String url1, String url2) {
+
+        Browser browser = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page1 = browser.newPage();
+        page1.navigate(url1);
+
+        Browser browser2 = Playwright.create().firefox() .launch(new BrowserType.LaunchOptions().setHeadless(false));
+        Page page2 = browser2.newPage();
+        page2.navigate(url2);
+       
+    }
 
     public void openUrl(String url){
 

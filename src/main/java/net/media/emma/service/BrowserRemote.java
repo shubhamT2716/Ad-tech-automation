@@ -1,6 +1,7 @@
 package net.media.emma.service;
 
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,5 +14,8 @@ public interface BrowserRemote {
 
     public void injectScript(String script);
     public void injectDom(String xPath, String htmlElement, Boolean append);
+
+    @Async("browserPool")
+    public void openMultiBrowser(String url1, String url2);
 
 }
