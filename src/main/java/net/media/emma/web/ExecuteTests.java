@@ -1,5 +1,7 @@
 package net.media.emma.web;
 
+import net.media.emma.utils.FileOperations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,25 +15,20 @@ import java.nio.file.Paths;
 @Controller
 public class ExecuteTests {
 
-    @PostMapping("/fileContent")
-    @ResponseBody
-    public String getFileContent(@RequestBody String fileName) throws IOException {
-        if (fileName != null && !fileName.isEmpty()) {
-            System.out.println(System.getProperty("user.dir"));
-            String filePath = "C:\\Users\\mohib.s\\Desktop\\springFramework\\src\\main\\resources\\yaml\\" + fileName; // Replace with the actual path to your files directory
-            byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
-            return new String(fileBytes);
-        } else {
-            return "";
-        }
+    private final FileOperations fileOperations;
+
+    @Autowired
+    public ExecuteTests(FileOperations fileOperations) {
+        this.fileOperations = fileOperations;
     }
 
-    @GetMapping("/TestDataInput")
+    @GetMapping("/testDataInput")
     public void printDemo2() {
     }
 
-    @PostMapping("/TestDataInput")
-    public String printDemoPos2t() {
+    @PostMapping("/testDataInput")
+    public String printDemoPos2t(String yaml) {
+        fileOperations.saveYamlFile(yaml);
         return "report";
     }
 }

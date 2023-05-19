@@ -18,5 +18,5 @@ public class Loggers {
     public BrowserRemote browserRemote() {
         return new net.media.emma.impl.playwright.PlayWrightBrowserRemote();
     }
-    
+
 }
