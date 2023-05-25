@@ -1,6 +1,8 @@
 package net.media.emma.service;
 
 
+import java.util.List;
+
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +19,7 @@ public interface BrowserRemote {
 
     @Async("browserPool")
     public void openMultiBrowser(String url1, String url2);
+
+    public List<String> getURLAnalyticsFor(String url, String[] urlPatterns);
 
 }
