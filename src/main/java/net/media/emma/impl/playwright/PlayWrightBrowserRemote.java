@@ -94,13 +94,24 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
 
         page.onRequest(request -> {
 
-            if ( request.url().startsWith("https://lg1.hb.yahoo.net/"))
+            if (isUrlPatternMatched( request.url(), urlPatterns)){
                 urlFromNetworkTab.add(request.url());
-       
+            }
         });
 
         page.navigate(url);
         // log.info(urlFromNetworkTab.toString());
         return urlFromNetworkTab;
+    }
+
+    private Boolean isUrlPatternMatched(String url, String[] urlPatterns){
+
+        for(String urlPattern : urlPatterns){
+
+            if(url.startsWith(urlPattern))
+                return true;
+        }
+
+        return false;
     }
 }

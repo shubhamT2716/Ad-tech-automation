@@ -3,7 +3,9 @@ package net.media.emma.utils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,6 +17,7 @@ public class URLDataProcessing {
         StringBuilder sb = new StringBuilder("URL Data: \n");
 
         int sizeOfURLs = 0;
+        Set<String> uniqueKeys = new HashSet<String>();
 
         for(String urlPattern : urlPatterns){
 
@@ -24,6 +27,8 @@ public class URLDataProcessing {
                 URL url = new URL(urlPattern);
 
                 HashMap<String, String> queryStringMap = queryStringToMap(url.getQuery());
+
+                uniqueKeys.addAll(queryStringMap.keySet());
 
                 sb.append(
                         queryStringMap.get("evtid") + "-" + queryStringMap.get("logid") + 
@@ -37,7 +42,9 @@ public class URLDataProcessing {
             }
         }
 
-        sb.insert(0, "Total Size of URLs: " + sizeOfURLs + "\n");
+        sb.insert(0, "Total Size of URLs: " + sizeOfURLs + "\n" +
+                "Total Unique Keys: " + uniqueKeys.toString() + "\n");
+
 
         return sb.toString();
     }

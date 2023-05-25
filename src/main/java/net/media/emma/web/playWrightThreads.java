@@ -40,13 +40,13 @@ public class playWrightThreads {
     }
 
     @PostMapping("/urlAnalytics")
-    public ModelAndView postUrl(@RequestParam String url) {
+    public ModelAndView postUrl(@RequestParam String url, @RequestParam String urlPatterns) {
 
         ModelAndView modelAndView = new ModelAndView();
 
         modelAndView.setViewName("inputUrl");
 
-        String urlData = urlUtil.printURLDetails(browserRemote.getURLAnalyticsFor(url, new String[] {"https://lg1.hb.yahoo.net/log?logid=aplog&itype=YHB"}));
+        String urlData = urlUtil.printURLDetails(browserRemote.getURLAnalyticsFor(url, new String[] {urlPatterns}));
 
         modelAndView.addObject("message", urlData);
         return modelAndView;  
