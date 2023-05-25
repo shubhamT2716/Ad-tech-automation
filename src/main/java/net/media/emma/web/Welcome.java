@@ -40,4 +40,17 @@ public class Welcome {
         browserRemote.injectDom(url, xPath, forceHtmlElement, append);
         
     }
+
+    @GetMapping("/welcome3")
+        public String response() {
+            return "welcome3";
+        }
+    
+
+    @PostMapping("/welcome3")
+    public void scrapeContent(String url){
+        System.out.println("Inside welcome 3");
+        browserRemote.scrapeContent(url);
+    }
+    
 }

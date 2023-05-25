@@ -20,11 +20,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.JSHandle;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.PlaywrightException;
+import com.microsoft.playwright.Response;
 import com.microsoft.playwright.Route;
 
 import ch.qos.logback.core.joran.conditional.ElseAction;
+import jakarta.mail.Message;
 import net.media.emma.service.BrowserRemote;
 
 public class PlayWrightBrowserRemote implements BrowserRemote {
@@ -136,6 +140,39 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
      
     }
 
+
+    //Scraping pbjs 
+
+
+    @Override
+    public void scrapeContent(String url){
+
+        logger.info("inside func");
+        try {
+            Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
+            // page.onConsoleMessage(message -> System.out.println("console: " + message.text()));
+            page.setDefaultTimeout(1000000);
+
+            page.onConsoleMessage(consoleMessage -> {
+                System.out.println("Console message: " + consoleMessage.text());
+            });
+            page.navigate(url);
+
+            String myJs = """
+                for(var b in pbjs) {    if(pbjs.hasOwnProperty(b)) console.log(b+" = "+pbjs[b]);  }
+                    """;
+
+                 
+            page.evaluateHandle(myJs);
+
+            Thread.sleep(1000);
+        } catch (PlaywrightException | InterruptedException  e) {
+                e.printStackTrace();
+            // TODO: handle exception
+        }
+
+        
+    }
     
     
 }
