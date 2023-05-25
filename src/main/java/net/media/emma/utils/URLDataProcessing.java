@@ -14,14 +14,22 @@ public class URLDataProcessing {
 
         StringBuilder sb = new StringBuilder("URL Data: \n");
 
+        int sizeOfURLs = 0;
+
         for(String urlPattern : urlPatterns){
+
+            sizeOfURLs+=urlPattern.length();
 
             try{
                 URL url = new URL(urlPattern);
 
                 HashMap<String, String> queryStringMap = queryStringToMap(url.getQuery());
 
-                sb.append(queryStringMap.get("evtid") + "-" + queryStringMap.get("logid") + "\n" + queryStringMap.toString() + "\n\n");
+                sb.append(
+                        queryStringMap.get("evtid") + "-" + queryStringMap.get("logid") + 
+                        ".\nCount of key-val pairs:" + queryStringMap.size() +
+                        ".\nSize of the URL: " + urlPattern.length() +
+                        ".\n" + queryStringMap.toString() + "\n\n");
             }
             catch(MalformedURLException e){
                 log.error("URL malformed exception");
@@ -29,27 +37,24 @@ public class URLDataProcessing {
             }
         }
 
+        sb.insert(0, "Total Size of URLs: " + sizeOfURLs + "\n");
+
         return sb.toString();
     }
 
     private HashMap<String, String> queryStringToMap(String queryString){
 
-        log.info("\n" + queryString);
-
         HashMap<String, String> queryStringMap = new HashMap<String, String>();
 
         String[] queryStringParts = queryString.split("\\&");
-
-        log.info(queryStringParts.toString());
 
         for(String queryStringPart : queryStringParts){
 
             String[] queryStringPartParts = queryStringPart.split("\\=");
 
-            log.info(queryStringPartParts.toString());
-
-            if(queryStringPartParts.length == 2)
-            queryStringMap.put(queryStringPartParts[0], queryStringPartParts[1]);
+            if(queryStringPartParts.length == 2){
+                queryStringMap.put(queryStringPartParts[0], queryStringPartParts[1]);
+            }
         }
 
         return queryStringMap;
