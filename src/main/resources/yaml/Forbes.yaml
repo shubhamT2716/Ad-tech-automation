@@ -1,6 +1,6 @@
 testData:
   cookies: {visitor-id : "3249269632710602062V10" ,  data-o : "f88043f8-7631-0195-18cf-d9b1ff3a7344~~1"}
-  urls: ["https://www.forbes.com?mnet_test=1&force_hbtest=all"]
+  urls: "https://www.forbes.com?mnet_test=1&force_hbtest=all"
   mnetNetworkCalls: {aplogs: "https://hblg.media.net/log?logid=aplog",
                      prlogs: "https://hblg.media.net/log?logid=prlog",
                      awlogs: "https://hblg.media.net/log?logid=awlog",
@@ -12,7 +12,28 @@ testData:
     aplogs: {pvid: ["99"]}}
   environment: "ssp-stage-hb.media.net"
   #Sample hostnames [ssp-stage-hb.media.net | vedant-a.hbistage.srv.media.net | hb.ad.tech | hb.yahoo.net | etc]
-  userAgent: ["chrome.desktop"]
+  userAgent: "chrome.desktop"
+  #[chrome.desktop | chrome.mobile | firefox.desktop | edge.desktop | edge.mobile]
+  # corresponding user agent will be picked from "networkCallsData.properties" file
+  responseSimulate: {urlPattern: "**//hb-pb.media.net/**",
+                     jsonPath: "$.ext.csUrl[1].url",
+                     updateValue: "MYSESSINID"}
+  # Dummy Data used for response simulation
+testData2:
+  cookies: {visitor-id : "3249269632710602062V10" ,  data-o : "f88043f8-7631-0195-18cf-d9b1ff3a7344~~1"}
+  urls: "https://www.forbes.com?mnet_test=1&force_hbtest=all"
+  mnetNetworkCalls: {aplogs: "https://hblg.media.net/log?logid=aplog",
+                     prlogs: "https://hblg.media.net/log?logid=prlog",
+                     awlogs: "https://hblg.media.net/log?logid=awlog",
+                     checksync: "https://hbx.media.net/checksync.php?",
+                     bidexchange: "https://hbx.media.net/bidexchange.js?"}
+  mnetNetworkCallsNegative: {nerrPing: "https://l3.aaxads.com/nerrping.php?"}
+  keysToVerify: {
+    prlogs: {pvid: ["326","2222"],cid: ["8CU66J63J"]},
+    aplogs: {pvid: ["99"]}}
+  environment: "ssp-stage-hb.media.net"
+  #Sample hostnames [ssp-stage-hb.media.net | vedant-a.hbistage.srv.media.net | hb.ad.tech | hb.yahoo.net | etc]
+  userAgent: "chrome.desktop"
   #[chrome.desktop | chrome.mobile | firefox.desktop | edge.desktop | edge.mobile]
   # corresponding user agent will be picked from "networkCallsData.properties" file
   responseSimulate: {urlPattern: "**//hb-pb.media.net/**",
