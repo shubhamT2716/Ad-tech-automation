@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class Welcome {
@@ -41,16 +42,25 @@ public class Welcome {
         
     }
 
-    @GetMapping("/welcome3")
+    @GetMapping("/contentScrape")
         public String response() {
-            return "welcome3";
+            return "contentScrape";
         }
     
 
-    @PostMapping("/welcome3")
-    public void scrapeContent(String url){
-        System.out.println("Inside welcome 3");
-        browserRemote.scrapeContent(url);
+    @PostMapping("/contentScrape")
+    public ModelAndView scrapeContent(@RequestParam String url){
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.setViewName("contentScrape");
+
+        modelAndView.addObject("message", browserRemote.scrapeContent(url));
+        return modelAndView;  
+
+
+    
+
     }
     
 }

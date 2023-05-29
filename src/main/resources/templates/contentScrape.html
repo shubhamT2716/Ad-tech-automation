@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Input URL</title>
+    <link rel="stylesheet"
+    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/railscasts.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<link rel="stylesheet" href="/path/to/styles/default.min.css">
+<script src="/path/to/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+    </head>
+<body>
+    <form method="post">
+        <input type="text" name="url" placeholder="Enter URL"><br />
+        <input type="submit" value="Submit">
+    </form>
+
+    <div id="app">
+        <div class="oneMore">
+            <pre><code th:text="${message}" /></pre>
+        </div>
+        
+    </div>
+    
+</body>
+</html>

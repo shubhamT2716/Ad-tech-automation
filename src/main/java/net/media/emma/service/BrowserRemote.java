@@ -19,6 +19,6 @@ public interface BrowserRemote {
 
     public void injectScript(String script);
     public void injectDom(String url, String xPath, String htmlElement, Boolean append);
-    public void scrapeContent(String url);
+    public String scrapeContent(String url);
 
 }

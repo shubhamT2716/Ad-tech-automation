@@ -1,41 +1,28 @@
 package net.media.emma.impl.playwright;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.management.RuntimeErrorException;
-
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.microsoft.playwright.APIResponse;
-import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.JSHandle;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.PlaywrightException;
-import com.microsoft.playwright.Response;
 import com.microsoft.playwright.Route;
-
-import ch.qos.logback.core.joran.conditional.ElseAction;
-import jakarta.mail.Message;
+import lombok.extern.slf4j.Slf4j;
 import net.media.emma.service.BrowserRemote;
 
+
+@Slf4j
 public class PlayWrightBrowserRemote implements BrowserRemote {
 
     // Browser browser = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
   
-    @Autowired Logger logger;
+    // @Autowired Logger logger;
+    String jsExtraction = "";
 
     public void openUrl(String url){
         Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
@@ -74,26 +61,26 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
     @Override
     public void injectDom(String url, String xPath, String forceHtmlElement, Boolean append) {
 
-        logger.info("Inside Dom Inject");
+        log.info("Inside Dom Inject");
         Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
-        logger.info(" FInished Launching Browser");
+        log.info(" FInished Launching Browser");
 
         page.route(url,  route -> {
             String fileContent = null;
 
-            logger.info("Starting route");
+            log.info("Starting route");
 
             APIResponse apiResponse = route.fetch();
 
             String pageContent = new String (apiResponse.body());
 
-            logger.info("old response body is "+ pageContent);
-            logger.info("Ended old response body");
+            log.info("old response body is "+ pageContent);
+            log.info("Ended old response body");
 
             try {
                 fileContent = new String(Files.readAllBytes(Paths.get(forceHtmlElement)));
 
-                logger.info("filecontent to append/overirde is "+ fileContent);
+                log.info("filecontent to append/overirde is "+ fileContent);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -101,7 +88,7 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
 
             Document document = Jsoup.parse(pageContent);
             if (append==false){
-                logger.info("Inside If case");
+                log.info("Inside If case");
                 document.select(xPath).html(fileContent);
             }
             else{
@@ -110,11 +97,11 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
             }
             String modifiedPageContent = document.html();
 
-            logger.info("Modified Page Content is " + modifiedPageContent);
+            log.info("Modified Page Content is " + modifiedPageContent);
 
             route.fulfill(new Route.FulfillOptions().setBody(modifiedPageContent));
 
-            logger.info("Finished Dom Injection");
+            log.info("Finished Dom Injection");
 
 
 
@@ -145,32 +132,40 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
 
 
     @Override
-    public void scrapeContent(String url){
+    public String scrapeContent(String url){
 
-        logger.info("inside func");
+        log.info("inside func");
         try {
+            
+
             Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
-            // page.onConsoleMessage(message -> System.out.println("console: " + message.text()));
-            page.setDefaultTimeout(1000000);
+
+
+            // page.setDefaultTimeout(1000000);
 
             page.onConsoleMessage(consoleMessage -> {
-                System.out.println("Console message: " + consoleMessage.text());
+                log.info("Console message: " + consoleMessage.text());
+                jsExtraction = consoleMessage.text();
             });
             page.navigate(url);
 
-            String myJs = """
-                for(var b in pbjs) {    if(pbjs.hasOwnProperty(b)) console.log(b+" = "+pbjs[b]);  }
+            
+
+            String scrapeJsContent = """
+                console.log(JSON.stringify(_apPbJs, null, 4));
                     """;
+            page.waitForTimeout(2000);
+            JSHandle content= page.evaluateHandle(scrapeJsContent);
+           log.info(content.toString());
 
-                 
-            page.evaluateHandle(myJs);
+            return jsExtraction;
 
-            Thread.sleep(1000);
-        } catch (PlaywrightException | InterruptedException  e) {
+        } catch (PlaywrightException  e) {
                 e.printStackTrace();
             // TODO: handle exception
         }
 
+        return "Error";
         
     }
     
