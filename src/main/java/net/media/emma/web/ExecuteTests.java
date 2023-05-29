@@ -1,16 +1,13 @@
 package net.media.emma.web;
 
+import net.media.emma.coptests.TestRunner;
 import net.media.emma.utils.FileOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Controller
 public class ExecuteTests {
@@ -22,13 +19,17 @@ public class ExecuteTests {
         this.fileOperations = fileOperations;
     }
 
+    @Autowired
+    private TestRunner testRunner;
+
     @GetMapping("/testDataInput")
-    public void printDemo2() {
+    public void executeTest() {
     }
 
     @PostMapping("/testDataInput")
-    public String printDemoPos2t(String yaml) {
+    public String executeTest(String yaml) throws IOException {
         fileOperations.saveYamlFile(yaml);
+        testRunner.runTests();
         return "report";
     }
 }
