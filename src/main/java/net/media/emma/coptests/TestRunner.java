@@ -1,5 +1,6 @@
 package net.media.emma.coptests;
 
+import net.media.emma.reporting.ExtentReportListener;
 import net.media.emma.utils.TestDataFromYaml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,12 +31,21 @@ public class TestRunner {
         XmlTest xmlTest = new XmlTest(xmlSuite);
         xmlTest.setName("Cop Test");
         List<XmlClass> classes = new ArrayList<>();
-        classes.add(new XmlClass(NetworkCalls.class));
-      //  classes.add(new XmlClass(NC.class)); // Add the new class here
+        classes.add(new XmlClass(ConfigureBrowser.class));
+        classes.add(new XmlClass(MockRequest.class));
+        classes.add(new XmlClass(MockResponse.class));
+        classes.add(new XmlClass(NetworkCallsPositive.class));
+        classes.add(new XmlClass(NetworkCallsNegative.class));
+        classes.add(new XmlClass(ConsoleError.class));
+        classes.add(new XmlClass(OpenUrl.class));
+        classes.add(new XmlClass(AssertNetworkCalls.class));
+        classes.add(new XmlClass(LogKeyParams.class));
+        classes.add(new XmlClass(AssertConsoleError.class));
         xmlTest.setClasses(classes);
 
         TestNG testNG = new TestNG();
         testNG.setXmlSuites(Collections.singletonList(xmlSuite));
+        testNG.addListener(new ExtentReportListener());
         testNG.run();
 
     }

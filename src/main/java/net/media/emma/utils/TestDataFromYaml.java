@@ -2,8 +2,10 @@ package net.media.emma.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import net.media.emma.config.Loggers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.DataProvider;
 import org.yaml.snakeyaml.Yaml;
@@ -15,7 +17,8 @@ import java.io.IOException;
 import java.util.*;
 
 @Component
-public class TestDataFromYaml extends AbstractTestNGSpringContextTests {
+@ContextConfiguration(classes = Loggers.class)
+public class TestDataFromYaml {
 
     private static String yamlFilePath;
 
