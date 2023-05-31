@@ -9,6 +9,7 @@ import java.util.List;
 import org.testng.internal.junit.ArrayAsserts;
 
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
@@ -86,8 +87,23 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
     @Override
     public List<String> getURLAnalyticsFor(String url, String[] urlPatterns) {
 
-        Browser browser = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
-        Page page = browser.newPage();
+        Browser browser = Playwright.create().chromium().launch(
+                    new BrowserType.LaunchOptions()
+                    .setHeadless(false)
+                    );
+
+        //Hash Map of useragent to useragent-string
+        HashMap<String, String> ua = new HashMap<>(){{
+            put("catchpoint", "Mozilla/5.0 (X11; Linux x86_64; Catchpoint) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36");
+            put("google-bot", "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
+            put("iPhone", "Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 EdgiOS/46.3.30 Mobile/15E148 Safari/605.1.15");
+            put("iPad", "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148");
+            put("rubbish", "Googlebot/2.1 (+http://www.google.com/bot.html)");
+        }};
+
+        BrowserContext newBC = browser.newContext(new Browser.NewContextOptions().setUserAgent(ua.get("rubbish")));
+        Page page = newBC.newPage();
+        //set user agent
 
         //list of arrays initialization
         List<String> urlFromNetworkTab = new ArrayList<>();
