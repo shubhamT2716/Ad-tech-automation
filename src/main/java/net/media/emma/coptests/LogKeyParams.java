@@ -36,7 +36,7 @@ public class LogKeyParams extends AbstractTestNGSpringContextTests {
                     for (Map.Entry<String, List<String>> keyVal : keyValPair.entrySet()) {
                         List<String> values = ExtractKeyValueFromLogs.getMulValOfSameKeyFromDiffUrls(reqUrlsData.getValue(), keyVal.getKey());
                         for (int i = 0; i < keyVal.getValue().size(); i++) {
-                            softAssertion.softAssert.assertTrue(values.contains(keyVal.getValue().get(i)), "Value " + keyVal.getValue().get(i) + " not found for key " + keyVal.getKey() + " <br> ");
+                            softAssertion.softAssert().assertTrue(values.contains(keyVal.getValue().get(i)), "Value " + keyVal.getValue().get(i) + " not found for key " + keyVal.getKey() + " <br> ");
                         }
                     }
                 }
@@ -44,7 +44,7 @@ public class LogKeyParams extends AbstractTestNGSpringContextTests {
         }catch (Exception e){
             loggers.standardLogger().error("Error in assertion of key  params -- ",e);
         }finally {
-            softAssertion.softAssert.assertAll();
+            softAssertion.softAssert().assertAll();
         }
 
     }

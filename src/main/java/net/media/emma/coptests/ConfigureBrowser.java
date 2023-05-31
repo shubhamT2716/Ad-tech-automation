@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class ConfigureBrowser extends AbstractTestNGSpringContextTests {
     @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml .class)
     public void configureBrowser(Object object) {
         try {
+            softAssertion.softAssert();
             Map<String, Object> testData = (Map<String, Object>) object;
             browserRemote.createPlaywrightInstance();
             browserRemote.initializeBrowser(testData.get("userAgent").toString());
@@ -46,10 +48,10 @@ public class ConfigureBrowser extends AbstractTestNGSpringContextTests {
             browserRemote.setBrowserContext(testData.get("userAgent").toString(), cookieList);
             browserRemote.initiatePage();
         } catch (Exception e) {
-            softAssertion.softAssert.fail("Unable to Configure Browser");
+            softAssertion.getSoftAssert().fail("Unable to Configure Browser");
             loggers.standardLogger().error("Unable to Configure Browser", e);
         }finally {
-            softAssertion.softAssert.assertAll();
+            softAssertion.getSoftAssert().assertAll();
         }
     }
 }

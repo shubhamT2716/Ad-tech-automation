@@ -25,10 +25,10 @@ public class ConsoleError extends AbstractTestNGSpringContextTests {
         try {
             hasError = browserRemote.verifyConsoleError("bidexchange");
         }catch (Exception e) {
-            softAssertion.softAssert.fail("Unable to read console error");
+            softAssertion.softAssert().fail("Unable to read console error");
             loggers.standardLogger().error("Unable to read console error", e);
         }finally {
-            softAssertion.softAssert.assertAll();
+            softAssertion.softAssert().assertAll();
         }
     }
 }

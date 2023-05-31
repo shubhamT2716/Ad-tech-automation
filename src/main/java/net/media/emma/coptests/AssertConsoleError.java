@@ -18,12 +18,13 @@ public class AssertConsoleError extends AbstractTestNGSpringContextTests {
     @Test
     public void assertConsoleError() {
         try {
-            softAssertion.softAssert.assertTrue(ConsoleError.hasError.size() == 0);
-            softAssertion.softAssert.assertAll();
+            softAssertion.softAssert();
+            softAssertion.getSoftAssert().assertTrue(ConsoleError.hasError.size() == 0,"Console Error Found");
         }catch (Exception e){
+            softAssertion.getSoftAssert().assertAll();
             loggers.standardLogger().error("Console error fetching issue", e);
         }finally {
-            softAssertion.softAssert.assertAll();
+            softAssertion.getSoftAssert().assertAll();
         }
     }
 }

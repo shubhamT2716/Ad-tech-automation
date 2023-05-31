@@ -28,6 +28,7 @@ public class MockRequest extends AbstractTestNGSpringContextTests {
     @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml.class)
     public void mockRequestt(Object object) {
         try {
+            softAssertion.softAssert();
             Map<String, Object> testData = (Map<String, Object>) object;
             if (!testData.get("environment").toString().isEmpty()) {
                 for (String combinedUrl : combineTwoSets()) { //pass single url in mock request method if url replaced will break the for loop
@@ -36,10 +37,10 @@ public class MockRequest extends AbstractTestNGSpringContextTests {
                 }
             }
         }catch (Exception e) {
-            softAssertion.softAssert.fail("Unable to Mock Request");
+            softAssertion.getSoftAssert().fail("Unable to Mock Request");
             loggers.standardLogger().error("Unable to Mock Request", e);
         }finally {
-            softAssertion.softAssert.assertAll();
+            softAssertion.getSoftAssert().assertAll();
         }
     }
 
