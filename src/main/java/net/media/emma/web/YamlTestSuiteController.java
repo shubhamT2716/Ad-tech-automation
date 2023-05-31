@@ -45,6 +45,8 @@ public class YamlTestSuiteController {
             mav.addObject("message", e.getMessage());
         }
 
+        
+
        return mav;
     }
 
@@ -57,10 +59,8 @@ public class YamlTestSuiteController {
 
         if(fileName.length() > 0){
 
-            byte[] fileBytes;
             try {
-                fileBytes = Files.readAllBytes(Paths.get("src/main/resources/yamlTestCriteriaFiles/" + fileName));
-                return new String(fileBytes);
+                return new String( Files.readAllBytes(Paths.get("src/main/resources/yamlTestCriteriaFiles/" + fileName)));
             } catch (IOException e) {
                 log.error("File Read Error", e);
                 return e.getMessage();
