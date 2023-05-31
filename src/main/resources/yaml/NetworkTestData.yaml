@@ -1,6 +1,6 @@
 testData:
   cookies: {visitor-id : "3249269632710602062V10" ,  data-o : "f88043f8-7631-0195-18cf-d9b1ff3a7344~~1"}
-  urls: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
+  url: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
   mnetNetworkCalls: {aplogs: "https://hblg.media.net/log?logid=aplog",
                      prlogs: "https://hblg.media.net/log?logid=prlog",
                      awlogs: "https://hblg.media.net/log?logid=awlog",
