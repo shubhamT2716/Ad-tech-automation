@@ -1,9 +1,16 @@
 package net.media.emma.web;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,16 +20,16 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.config.YamlTestCriteria;
 
-@Controller @Slf4j
+@Controller @Slf4j @RequestMapping("/yamlTestSuite/")
 public class YamlTestSuiteController {
 
-    @GetMapping("/yamlTestSuite")
+    @GetMapping
     public String yamlTestSuite() {
 
         return "yamlTestSuite";
     }
 
-    @PostMapping("/yamlTestSuite")
+    @PostMapping
     public ModelAndView yamlTestSuite(@RequestParam String yaml) {
 
         ModelAndView mav = new ModelAndView("yamlTestSuite");
@@ -39,5 +46,26 @@ public class YamlTestSuiteController {
         }
 
        return mav;
+    }
+
+    // @Value("${yamlFolderPath}")
+    // private String yamlFolderPath;
+
+    @PostMapping("fileContent")
+    @ResponseBody
+    public String getFileContent(@RequestBody String fileName){
+
+        if(fileName.length() > 0){
+
+            byte[] fileBytes;
+            try {
+                fileBytes = Files.readAllBytes(Paths.get("src/main/resources/yamlTestCriteriaFiles/" + fileName));
+                return new String(fileBytes);
+            } catch (IOException e) {
+                log.error("File Read Error", e);
+                return e.getMessage();
+            }
+        }
+        return "Input File Name Empty";
     }
 }

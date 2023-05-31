@@ -93,7 +93,7 @@
                 var selectedFile = $(this).val();
                 if (selectedFile !== '') {
                     $.ajax({
-                        url: '/fileContent', // URL mapped by the Spring Boot controller
+                        url: './fileContent', // URL mapped by the Spring Boot controller
                         method: 'POST',
                         contentType: 'text/plain',
                         data: selectedFile,
@@ -118,9 +118,9 @@
     <label for="file-dropdown">Select Yaml File</label>
     <select id="file-dropdown">
         <option value="">-- Select --</option>
-        <option value="NetworkTestData.yaml">Webmd.yaml</option>
-        <option value="Forbes.yaml">Forbes.yaml</option>
-        <option value="Nutritonix.yaml">Nutritionix.yaml</option>
+        <option value="forbes.yaml">webmd.yaml</option>
+        <option value="nutritionix.yaml">forbes.yaml</option>
+        <option value="webmd.yaml">nutritionix.yaml</option>
         <!-- Add more options as needed -->
     </select>
     <br><br>
