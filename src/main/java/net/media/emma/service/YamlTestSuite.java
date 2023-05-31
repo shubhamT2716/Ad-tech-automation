@@ -1,25 +1,24 @@
 package net.media.emma.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Route;
 
-import lombok.extern.slf4j.Slf4j;
 import net.media.emma.components.BrowserFactory;
 import net.media.emma.config.YamlTestCriteria;
 import net.media.emma.config.YamlTestCriteria.DomInjectParams;
 import net.media.emma.config.YamlTestCriteria.ResponseSimulateParams;
 import net.media.emma.utils.DomJsonUtils;
 
-@Service @Slf4j
+@Service
 public class YamlTestSuite {
 
     @Autowired BrowserFactory browserFactory;
@@ -104,5 +103,22 @@ public class YamlTestSuite {
             });
 
         return page;
+    }
+
+    public List<String> getURLAnalyticsFor(Page page, YamlTestCriteria testData){
+
+        //list of arrays initialization
+        List<String> urlFromNetworkTab = new ArrayList<>();
+
+        page.onRequest(request -> { 
+
+                urlFromNetworkTab.add(request.url());           
+        });
+
+        page.navigate(testData.getPublisherUrl());
+        // log.info(urlFromNetworkTab.toString());
+        // return urlFromNetworkTab;
+
+        return urlFromNetworkTab;
     }
 }

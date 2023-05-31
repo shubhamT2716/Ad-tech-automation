@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Browser.NewContextOptions;
@@ -19,7 +20,11 @@ public class BrowserFactory {
     private Map<String, String> browserContexts = new HashMap<String, String>() {{
         put("Chrome.Mobile.iPhone", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/114.0.5735.50 Mobile/15E148 Safari/604.1");
         put("Chrome.Desktop.Mac", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36");
-    }};
+        put("Chrome.Desktop.Catchpoint", "Mozilla/5.0 (X11; Linux x86_64; Catchpoint) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36");
+        put("Safari.Mobile.google-bot", "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
+        put("Webkit.Tablet.iPad", "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148");
+        put("rubbish", "Googlebot/2.1 (+http://www.google.com/bot.html)");
+        }};
 
     private static NewContextOptions getCommonBrowserContext(String userAgent, Boolean isMobile) {
 
@@ -70,10 +75,19 @@ public class BrowserFactory {
     // @Scope("prototype")
     public Page getPageWithNewContext(String browserType, List<Map<String, String>> cookies) {
 
-        return getBrowserByType(browserType)
-            .newContext(getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile")))
+        BrowserContext newBc =  getBrowserByType(browserType).newContext(
+                                        getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile")));
+        newBc.setDefaultNavigationTimeout(120000);
             // .addCookies(cookies)
-            .newPage();
-        
+        return newBc.newPage();
+    }
+
+    public BrowserContext getNewBrowserContext(String browserType, List<Map<String, String>> cookies) {
+
+        BrowserContext newBc =  getBrowserByType(browserType).newContext(
+                                        getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile")));
+        newBc.setDefaultNavigationTimeout(120000);
+            // .addCookies(cookies)
+        return newBc;
     }
 }
