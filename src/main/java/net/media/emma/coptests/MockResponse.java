@@ -22,6 +22,7 @@ public class MockResponse extends AbstractTestNGSpringContextTests {
     @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml.class)
     public void mockResponse(Object object){
         try {
+            softAssertion.softAssert();
             Map<String, Object> testData = (Map<String, Object>) object;
             HashMap<String, String> responseSimulate = new HashMap<>();
             if (testData.get("responseSimulate") != null) {
@@ -31,10 +32,10 @@ public class MockResponse extends AbstractTestNGSpringContextTests {
                 this.browserRemote.mockResponse(responseSimulate.get("urlPattern"), responseSimulate.get("jsonPath"), responseSimulate.get("updatedValue"));
             }
         }catch (Exception e){
-            softAssertion.softAssert.fail("Unable to Mock Response");
+            softAssertion.getSoftAssert().fail("Unable to Mock Response");
             loggers.standardLogger().error("Unable to Mock Response", e);
         }finally {
-            softAssertion.softAssert.assertAll();
+            softAssertion.getSoftAssert().assertAll();
         }
     }
 }

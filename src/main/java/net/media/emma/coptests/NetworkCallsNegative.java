@@ -28,6 +28,7 @@ public class NetworkCallsNegative extends AbstractTestNGSpringContextTests {
     public void networkCallsNeg(Object object) {
 
         try {
+            softAssertion.softAssert();
             Map<String, Object> testData = (Map<String, Object>) object;
             HashMap<String, String> mnetNetworkCallsNegative = (HashMap<String, String>) testData.get("mnetNetworkCallsNegative");
             for (Map.Entry<String, String> networkCall : mnetNetworkCallsNegative.entrySet()) {
@@ -36,10 +37,10 @@ public class NetworkCallsNegative extends AbstractTestNGSpringContextTests {
                 assertNetworkCalls.logsUrlsNotPresent.put(networkCall.getKey(), urls);
             }
         }catch (Exception e) {
-            softAssertion.softAssert.fail("Error in getting network calls negative");
+            softAssertion.getSoftAssert().fail("Error in getting network calls negative");
             loggers.standardLogger().error("Error in getting network calls negative", e);
         }finally {
-            softAssertion.softAssert.assertAll();
+            softAssertion.getSoftAssert().assertAll();
         }
     }
 }
