@@ -1,5 +1,6 @@
 package net.media.emma.components;
 
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import com.microsoft.playwright.options.HarMode;
 
 public class BrowserFactory {
 
-    private Playwright playwright;
+    private Playwright playwright = Playwright.create();
     
     //Map of Browser Type with Device and User Agents
     private Map<String, String> browserContexts = new HashMap<String, String>() {{
@@ -30,7 +31,7 @@ public class BrowserFactory {
 
         NewContextOptions newContextOptions = new NewContextOptions()
             .setUserAgent(userAgent)
-            // .setRecordHarPath(Paths.get(GCPConfig.getHARFilePath()))
+            .setRecordHarPath(Paths.get("src/main/resources/test-reports/record.har"))
             .setRecordHarMode(HarMode.FULL)
             .setIgnoreHTTPSErrors(true);
 

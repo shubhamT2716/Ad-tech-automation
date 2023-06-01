@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,9 +20,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.config.YamlTestCriteria;
+import net.media.emma.service.GenericTestSuite;
 
 @Controller @Slf4j @RequestMapping("/yamlTestSuite/")
 public class YamlTestSuiteController {
+
+    @Autowired GenericTestSuite yamlTestSuite;
 
     @GetMapping
     public String yamlTestSuite() {
@@ -32,20 +36,19 @@ public class YamlTestSuiteController {
     @PostMapping
     public ModelAndView yamlTestSuite(@RequestParam String yaml) {
 
-        ModelAndView mav = new ModelAndView("yamlTestSuite");
+        ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
 
         try{
 
             ObjectMapper mapper = new YAMLMapper();
             YamlTestCriteria yamlTc = mapper.readValue(yaml, YamlTestCriteria.class);
-            mav.addObject("message", yamlTc.getEnvironment());
+            // mav.addObject("message", yamlTc.getEnvironment());
+            mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
     
         }catch( JsonProcessingException  e){
             log.error("YAML Processing Error", e);;
             mav.addObject("message", e.getMessage());
         }
-
-        
 
        return mav;
     }

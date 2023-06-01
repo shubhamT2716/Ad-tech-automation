@@ -113,8 +113,7 @@
 </head>
 <body>
 <h1>Execute HB Test Cases</h1>
-<p th:text="${message}"></p>
-<form id="testForm" method="POST">
+<form id="testForm" method="POST" target="_blank">
     <label for="file-dropdown">Select Yaml File</label>
     <select id="file-dropdown">
         <option value="">-- Select --</option>
@@ -131,5 +130,6 @@
     <p class="error">Invalid YAML format</p>
     <input id="submitButton" type="submit" value="Execute Tests" disabled>
 </form>
+<pre th:text="${message}"></pre>
 </body>
 </html>

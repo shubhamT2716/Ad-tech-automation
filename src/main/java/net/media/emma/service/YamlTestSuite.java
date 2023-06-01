@@ -19,16 +19,17 @@ import net.media.emma.config.YamlTestCriteria.ResponseSimulateParams;
 import net.media.emma.utils.DomJsonUtils;
 
 @Service
-public class YamlTestSuite {
+public class YamlTestSuite implements GenericTestSuite {
 
     @Autowired BrowserFactory browserFactory;
     @Autowired Configuration jsonModelMapper;
-    @Autowired DomJsonUtils domJsonUtils;
+    @Autowired DomJsonUtils domUtils;
     
     //List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
     List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
 
+    @Override
     public String getTestResults(YamlTestCriteria testData){
 
         Page page = browserFactory.getPageWithNewContext(testData.getUserAgent(), testData.getCookies());
@@ -37,8 +38,19 @@ public class YamlTestSuite {
         page = attachResponseMocking(page, testData);
         page = injectDOM(page, testData);
 
-        return "success";
+        //list of arrays initialization
+        List<String> urlFromNetworkTab = new ArrayList<>();
 
+        page.onRequest(request -> { 
+
+                urlFromNetworkTab.add(request.url());           
+        });
+
+        page.navigate(testData.getPublisherUrl());
+        // log.info(urlFromNetworkTab.toString());
+        // return urlFromNetworkTab;
+
+        return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
     }
 
     private Page replaceBidExUrl(Page page, YamlTestCriteria testData){
@@ -74,7 +86,7 @@ public class YamlTestSuite {
                 // String originalURl = route.request().url();
     
                 String responseBody = new String(route.fetch().body(), StandardCharsets.UTF_8);
-                String newResponseBody = domJsonUtils.replaceInJson(responseBody, responseSim.getJsonPath(), responseSim.getOverrideValue());
+                String newResponseBody = domUtils.replaceInJson(responseBody, responseSim.getJsonPath(), responseSim.getOverrideValue());
 
                 if(newResponseBody == responseBody){
                     route.resume();
@@ -95,7 +107,7 @@ public class YamlTestSuite {
     
                 for (DomInjectParams domInject : testData.getDomInject()) {
 
-                    pageContent = domJsonUtils.domManipulate(pageContent, domInject);
+                    pageContent = domUtils.domManipulate(pageContent, domInject);
                 }
 
                 route.fulfill(new Route.FulfillOptions().setBody(pageContent));
@@ -105,20 +117,20 @@ public class YamlTestSuite {
         return page;
     }
 
-    public List<String> getURLAnalyticsFor(Page page, YamlTestCriteria testData){
+    // public List<String> getURLAnalyticsFor(Page page, YamlTestCriteria testData){
 
-        //list of arrays initialization
-        List<String> urlFromNetworkTab = new ArrayList<>();
+    //     //list of arrays initialization
+    //     List<String> urlFromNetworkTab = new ArrayList<>();
 
-        page.onRequest(request -> { 
+    //     page.onRequest(request -> { 
 
-                urlFromNetworkTab.add(request.url());           
-        });
+    //             urlFromNetworkTab.add(request.url());           
+    //     });
 
-        page.navigate(testData.getPublisherUrl());
-        // log.info(urlFromNetworkTab.toString());
-        // return urlFromNetworkTab;
+    //     page.navigate(testData.getPublisherUrl());
+    //     // log.info(urlFromNetworkTab.toString());
+    //     // return urlFromNetworkTab;
 
-        return urlFromNetworkTab;
-    }
+    //     return urlFromNetworkTab;
+    // }
 }

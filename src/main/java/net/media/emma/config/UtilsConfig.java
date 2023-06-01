@@ -9,7 +9,7 @@ import net.media.emma.utils.DomJsonUtils;
 public class UtilsConfig {
     
     @Bean
-    public DomJsonUtils domJsonUtils() {
+    public DomJsonUtils domUtils() {
         return new DomJsonUtils();
     }
 }
