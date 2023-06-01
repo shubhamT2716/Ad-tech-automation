@@ -3,7 +3,7 @@ package net.media.emma.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import net.media.emma.components.BrowserFactory;
+import net.media.emma.cop.components.BrowserFactory;
 
 @Configuration
 public class BrowserRemoteConfig {

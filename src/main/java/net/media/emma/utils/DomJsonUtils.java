@@ -18,7 +18,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
-import net.media.emma.config.YamlTestCriteria.DomInjectParams;
+import net.media.emma.cop.testsuites.yaml.YamlTestCriteria.DomInjectParams;
 
 @Component @Slf4j
 public class DomJsonUtils {

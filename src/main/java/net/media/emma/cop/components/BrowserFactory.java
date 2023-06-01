@@ -1,4 +1,4 @@
-package net.media.emma.components;
+package net.media.emma.cop.components;
 
 import java.nio.file.Paths;
 import java.util.HashMap;

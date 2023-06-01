@@ -1,4 +1,4 @@
-package net.media.emma.service;
+package net.media.emma.cop.testsuites.yaml;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -12,10 +12,10 @@ import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Route;
 
-import net.media.emma.components.BrowserFactory;
-import net.media.emma.config.YamlTestCriteria;
-import net.media.emma.config.YamlTestCriteria.DomInjectParams;
-import net.media.emma.config.YamlTestCriteria.ResponseSimulateParams;
+import net.media.emma.cop.components.BrowserFactory;
+import net.media.emma.cop.testsuites.yaml.YamlTestCriteria.DomInjectParams;
+import net.media.emma.cop.testsuites.yaml.YamlTestCriteria.ResponseSimulateParams;
+import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.DomJsonUtils;
 
 @Service

@@ -1,4 +1,4 @@
-package net.media.emma.web;
+package net.media.emma.cop.testsuites.yaml;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import net.media.emma.config.YamlTestCriteria;
 import net.media.emma.service.GenericTestSuite;
 
 @Controller @Slf4j @RequestMapping("/yamlTestSuite/")

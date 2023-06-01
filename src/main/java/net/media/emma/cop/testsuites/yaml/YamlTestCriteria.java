@@ -1,4 +1,4 @@
-package net.media.emma.config;
+package net.media.emma.cop.testsuites.yaml;
 
 import java.util.List;
 import java.util.Map;
