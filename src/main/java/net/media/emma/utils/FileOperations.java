@@ -12,7 +12,8 @@ import java.nio.file.Paths;
 @Service
 public class FileOperations {
 
-    @Autowired private net.media.emma.config.Loggers loggers;
+    @Autowired
+    private net.media.emma.config.Loggers loggers;
 
     @Value("${yamlFilePath}")
     private String yamlFilePath;
@@ -21,8 +22,7 @@ public class FileOperations {
         try {
             Files.write(Paths.get(yamlFilePath), fileContent.getBytes());
         } catch (IOException e) {
-
-            loggers.standardLogger().error("YAML Write Failed" , e);
+            loggers.standardLogger().error("YAML Write Failed", e);
         }
     }
 }

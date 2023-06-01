@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.testng.annotations.Test;
 
 @Controller
 public class Welcome {
@@ -20,5 +21,4 @@ public class Welcome {
     public void openUrlPost(@RequestParam String url) {
         browserRemote.openUrl(url);
     }
-    
 }
