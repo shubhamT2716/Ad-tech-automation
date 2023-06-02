@@ -115,12 +115,13 @@
 <h1>Execute HB Test Cases</h1>
 <form id="testForm" method="POST" target="_blank">
     <label for="file-dropdown">Select Yaml File</label>
+
     <select id="file-dropdown">
         <option value="">-- Select --</option>
-        <option value="forbes.yaml">forbes.yaml</option>
+        <!-- <option value="forbes.yaml">forbes.yaml</option>
         <option value="nutritionix.yaml">nutritionix.yaml</option>
-        <option value="webmd.yaml">webmd.yaml</option>
-        <!-- Add more options as needed -->
+        <option value="webmd.yaml">webmd.yaml</option> -->
+        <option th:each="fileName : ${files}" th:value="${fileName}" th:text="${fileName}"></option>
     </select>
     <br><br>
     <div id="or"> OR</div>

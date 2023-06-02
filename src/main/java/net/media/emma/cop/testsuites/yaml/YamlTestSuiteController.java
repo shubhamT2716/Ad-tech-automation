@@ -3,6 +3,7 @@ package net.media.emma.cop.testsuites.yaml;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,16 +21,21 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.service.GenericTestSuite;
+import net.media.emma.utils.FileOperations;
 
 @Controller @Slf4j @RequestMapping("/yamlTestSuite/")
 public class YamlTestSuiteController {
 
     @Autowired GenericTestSuite yamlTestSuite;
+    @Autowired FileOperations fileOperations;
 
     @GetMapping
-    public String yamlTestSuite() {
+    public ModelAndView yamlTestSuite() {
 
-        return "yamlTestSuite";
+        ModelAndView mav = new ModelAndView("yamlTestSuite");
+        mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/yamlTestCriteriaFiles/"));//  Arrays.asList(null, "testCriteria.yaml", "testCriteria2.yaml"));
+
+        return mav;
     }
 
     @PostMapping
