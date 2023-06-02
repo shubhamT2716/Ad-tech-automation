@@ -1,21 +1,58 @@
 testData:
-  cookies: {visitor-id : "3249269632710602062V10" ,  data-o : "f88043f8-7631-0195-18cf-d9b1ff3a7344~~1"}
-  url: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
-  mnetNetworkCalls: {aplogs: "https://hblg.media.net/log?logid=aplog",
-                     prlogs: "https://hblg.media.net/log?logid=prlog",
-                     awlogs: "https://hblg.media.net/log?logid=awlog",
-                     checksync: "https://hbx.media.net/checksync.php?",
-                     bidexchange: "https://hbx.media.net/bidexchange.js?"}
-  mnetNetworkCallsNegative: {nerrPing: "https://l3.aaxads.com/nerrping.php?"}
-  keysToVerify: {
-    prlogs: {pvid: ["326","2222"],cid: ["8CU66J63J"]},
-    aplogs: {pvid: ["99"]}}
-  environment: "ssp-stage-hb.media.net"
-  #Sample hostnames [ssp-stage-hb.media.net | vedant-a.hbistage.srv.media.net | hb.ad.tech | hb.yahoo.net | etc]
-  userAgent: "chrome.desktop"
-  #[chrome.desktop | chrome.mobile | firefox.desktop | edge.desktop | edge.mobile]
-  # corresponding user agent will be picked from "networkCallsData.properties" file
-  responseSimulate: {urlPattern: "**//hb-pb.media.net/**",
-                     jsonPath: "$.ext.csUrl[1].url",
-                     updateValue: "MYSESSINID"}
-  # Dummy Data used for response simulation
+cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+userAgent: webkit.desktop
+urls: ["https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"]
+
+mnetNetworkCalls: [
+      bidExchange: "https://hbx.media.net/bidexchange.js?cid=8CULM0U5B",
+      PRLog: "https://hblg.media.net/log?logid=prlog",
+      APLog: "https://hblg.media.net/log?logid=aplog",
+      AWLog: "https://hblg.media.net/log?logid=awlog",
+      RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+      # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  ]
+
+mnetNetworkCallsNegative: [
+nerrPing: "https://hblg.media.net/nerrping.php?",
+Flog: "https://hblg.media.net/log?logid=flog",
+]
+
+
+keysToVerify: [
+
+PRLog: [ 
+pvid: ["X"],
+cid: ["8CULM0U5B"],
+svr: ["053111_327_053111_262_ssp"],
+ugd: ["4"],
+#usp_ldf: ["0","1"],
+],
+
+APLog: [
+svr: ["053111_327_053111_262_ssp"],
+ugd: ["4"],
+#usp_ldf: ["0","1"],
+],
+
+]
+
+#to_check_negative_keys
+keysNotToVerify: [
+prlog: [ snm : ["removed","error",], nbr : ["13"], usp_ldf : [""]],
+aplog: [ nbr: ["13"]],
+awlog: [ ogbdp : ["0","-1","-2"]],
+
+]
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: [
+prlog: [ nbr : [ "45","3","69","0","1","99" ]],
+aplog: [ nbr : [ "45","3","69","0","1","99" ]],
+]
+
+environment: "akshda-k.hbistage.srv.media.net"
+
+
+# ------------------------------ignore the lines below--rats---------------------
+responseSimulate: []
+dominject: []

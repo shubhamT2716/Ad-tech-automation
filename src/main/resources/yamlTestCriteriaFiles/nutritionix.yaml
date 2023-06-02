@@ -15,8 +15,8 @@ networkCallsNegative: [
  ]
 
 keysToVerifyPositive: [
- prlogs: {pvid: ["326","2222"],cid: ["8CU66J63J"]},
- aplogs: {pvid: ["99"]}
+ prlogs: [pvid: ["326","2222"],cid: ["8CU66J63J"],
+ aplogs: [pvid: ["99"]]
  ]
 
 keysToVerifyNegative: []
