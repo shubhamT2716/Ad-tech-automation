@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class YamlTestCriteria {
+public class TestCriteriaBo {
 
     List<Map<String, String>> cookies;
     String userAgent;

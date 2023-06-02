@@ -13,24 +13,25 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Route;
 
 import net.media.emma.cop.components.BrowserFactory;
-import net.media.emma.cop.testsuites.yaml.YamlTestCriteria.DomInjectParams;
-import net.media.emma.cop.testsuites.yaml.YamlTestCriteria.ResponseSimulateParams;
+import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
+import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.DomJsonUtils;
 
 @Service
-public class YamlTestSuite implements GenericTestSuite {
+public class TestSuite implements GenericTestSuite {
 
     @Autowired BrowserFactory browserFactory;
     @Autowired Configuration jsonModelMapper;
     @Autowired DomJsonUtils domUtils;
+    @Autowired TestReportBo testReportBuilder;
     
     //List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
     List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
 
     @Override
-    public String getTestResults(YamlTestCriteria testData){
+    public String getTestResults(TestCriteriaBo testData){
 
         Page page = browserFactory.getPageWithNewContext(testData.getUserAgent(), testData.getCookies());
 
@@ -53,7 +54,7 @@ public class YamlTestSuite implements GenericTestSuite {
         return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
     }
 
-    private Page replaceBidExUrl(Page page, YamlTestCriteria testData){
+    private Page replaceBidExUrl(Page page, TestCriteriaBo testData){
 
         for(String currentHost : bidExHosts){
             for(String currentController : bidExControlers){
@@ -77,7 +78,7 @@ public class YamlTestSuite implements GenericTestSuite {
         return page;
     }
 
-    private Page attachResponseMocking(Page page, YamlTestCriteria testData){
+    private Page attachResponseMocking(Page page, TestCriteriaBo testData){
 
         for (ResponseSimulateParams responseSim : testData.getResponseSimulate()){
 
@@ -99,7 +100,7 @@ public class YamlTestSuite implements GenericTestSuite {
         return page;
     }
 
-    private Page injectDOM(Page page, YamlTestCriteria testData){
+    private Page injectDOM(Page page, TestCriteriaBo testData){
 
             page.route(testData.getPublisherUrl() + "**", route ->  {
 

@@ -24,7 +24,7 @@ import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
 
 @Controller @Slf4j @RequestMapping("/yamlTestSuite/")
-public class YamlTestSuiteController {
+public class WebController {
 
     @Autowired GenericTestSuite yamlTestSuite;
     @Autowired FileOperations fileOperations;
@@ -46,7 +46,7 @@ public class YamlTestSuiteController {
         try{
 
             ObjectMapper mapper = new YAMLMapper();
-            YamlTestCriteria yamlTc = mapper.readValue(yaml, YamlTestCriteria.class);
+            TestCriteriaBo yamlTc = mapper.readValue(yaml, TestCriteriaBo.class);
             // mav.addObject("message", yamlTc.getEnvironment());
             mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
     
