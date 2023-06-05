@@ -24,7 +24,7 @@ public class TestSuite implements GenericTestSuite {
     @Autowired BrowserFactory browserFactory;
     @Autowired Configuration jsonModelMapper;
     @Autowired DomJsonUtils domUtils;
-    @Autowired TestReportBo testReportBuilder;
+    // @Autowired TestReportBo testReportBuilder;
     
     //List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
