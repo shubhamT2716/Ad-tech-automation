@@ -19,8 +19,6 @@ import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.DomJsonUtils;
 
-import static net.media.emma.impl.playwright.PlayWrightBrowserRemote.browser;
-import static net.media.emma.impl.playwright.PlayWrightBrowserRemote.playwright;
 
 @Service
 public class TestSuite implements GenericTestSuite {
