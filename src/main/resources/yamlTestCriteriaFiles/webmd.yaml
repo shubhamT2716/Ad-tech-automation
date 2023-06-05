@@ -1,0 +1,52 @@
+cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+userAgent: webkit.desktop
+environment: "akshda-k.hbistage.srv.media.net"
+publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
+
+networkCallsPositive: [
+      bidExchange: "https://hbx.media.net/bidexchange.js?cid=8CULM0U5B",
+      PRLog: "https://hblg.media.net/log?logid=prlog",
+      APLog: "https://hblg.media.net/log?logid=aplog",
+      AWLog: "https://hblg.media.net/log?logid=awlog",
+      RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+      # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+ ]
+
+networkCallsNegative: [
+  nerrPing: "https://hblg.media.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=flog",
+ ]
+
+keysToVerifyPositive: [
+
+  PRLog: {
+    pvid: ["X"],
+    cid: ["8CULM0U5B"],
+    svr: ["053111_327_053111_262_ssp"],
+    ugd: ["4"],
+  #usp_ldf: ["0","1"],
+   },
+
+  APLog: {
+    svr: ["053111_327_053111_262_ssp"],
+    ugd: ["4"],
+  #usp_ldf: ["0","1"],
+   },
+]
+
+#to_check_negative_keys
+keysToVerifyNegative: [
+  prlog: { snm : ["removed","error",], nbr : ["13"], usp_ldf : [""]},
+  aplog: { nbr: ["13"]},
+  awlog: { ogbdp : ["0","-1","-2"]},
+ ]
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: [
+  prlog: { nbr : [ "45","3","69","0","1","99" ]},
+  aplog: { nbr : [ "45","3","69","0","1","99" ]},
+ ]
+
+# ------------------------------ignore the lines below--rats---------------------
+responseSimulate: []
+domInject: []

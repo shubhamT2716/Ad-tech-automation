@@ -1,0 +1,76 @@
+package net.media.emma.cop.testsuites.yaml;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter @Builder
+public class TestReportBo {
+
+    TestData testMetaData;
+    BidExController bidExController;
+    List<UrlChecks> urlChecks;
+    NetworkAnalytics networkAnalytics;
+
+    @Getter @Setter @Builder
+    public static class TestData{
+        String publisherUrl;
+        String environment;
+        String userAgent;
+        Date testTime;
+        TestStatus testStatus;
+    }
+
+    @Getter @Setter @Builder
+    public static class BidExController{
+        TestStatus testStatus;
+        UrlData urlData;
+    }
+
+    @Getter @Setter @Builder
+    public static class UrlChecks{
+
+        String urlLabel;
+        CheckType urlCheckType;
+        UrlData urlData;
+        List<Map<String, List<String>>> keysToVerifyPositive;
+        List<Map<String, List<String>>> keysToVerifyNegative;
+        List<Map<String, List<String>>> keysToVerifyAnyOneOf;
+    }
+
+    @Getter @Setter @Builder
+    public static class NetworkAnalytics{
+        // Logging Calls - Analytics:
+        // Total Logging pixels fired (for the host):
+        // Total Size of the Logging calls:
+        // Duplicate Data (%) :
+        
+        String urlPattern;
+        String size;
+        String timeTakenToLoad;
+    }
+
+    enum TestStatus {
+        PASS,
+        FAIL,
+        OTHER
+    }
+
+    enum CheckType {
+        POSSITIVE,
+        NEGERIVE,
+        OPTIONAL
+    }
+
+    @Getter @Setter @Builder
+    public static class UrlData{
+        String urlPattern;
+        List<String> matchingUrls;
+        String size;
+        String timeTakenToLoad;
+    }
+}
