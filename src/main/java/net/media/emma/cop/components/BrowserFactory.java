@@ -31,7 +31,7 @@ public class BrowserFactory {
 
         NewContextOptions newContextOptions = new NewContextOptions()
             .setUserAgent(userAgent)
-            .setRecordHarPath(Paths.get("src/main/resources/test-reports/record.har"))
+            .setRecordHarPath(Paths.get("HarFile/GeneratedHarFile.har"))
             .setRecordHarMode(HarMode.FULL)
             .setIgnoreHTTPSErrors(true);
 
@@ -81,6 +81,14 @@ public class BrowserFactory {
         newBc.setDefaultNavigationTimeout(120000);
             // .addCookies(cookies)
         return newBc.newPage();
+    }
+    public BrowserContext getBc(String browserType, List<Map<String, String>> cookies) {
+
+        BrowserContext newBc =  getBrowserByType(browserType).newContext(
+                                        getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile")));
+        newBc.setDefaultNavigationTimeout(120000);
+            // .addCookies(cookies)
+        return newBc;
     }
 
     public BrowserContext getNewBrowserContext(String browserType, List<Map<String, String>> cookies) {

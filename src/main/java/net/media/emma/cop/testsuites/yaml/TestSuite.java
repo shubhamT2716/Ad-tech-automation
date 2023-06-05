@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.microsoft.playwright.BrowserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.DomJsonUtils;
+
+import static net.media.emma.impl.playwright.PlayWrightBrowserRemote.browser;
+import static net.media.emma.impl.playwright.PlayWrightBrowserRemote.playwright;
 
 @Service
 public class TestSuite implements GenericTestSuite {
@@ -54,6 +58,31 @@ public class TestSuite implements GenericTestSuite {
         return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
     }
 
+    @Override
+    public String getTestResults_trishul(TestCriteriaBo testData){
+
+        BrowserContext browserContext = browserFactory.getBc(testData.getUserAgent(), testData.getCookies());
+
+        browserContext = replaceBidExUrl(browserContext, testData);
+        browserContext = attachResponseMocking(browserContext, testData);
+        browserContext = injectDOM(browserContext, testData);
+
+        //list of arrays initialization
+        List<String> urlFromNetworkTab = new ArrayList<>();
+
+        browserContext.onRequest(request -> {
+
+            urlFromNetworkTab.add(request.url());
+        });
+
+        browserContext.newPage().navigate(testData.getPublisherUrl());
+        // log.info(urlFromNetworkTab.toString());
+        // return urlFromNetworkTab;
+        browserContext.close();
+
+        return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
+    }
+
     private Page replaceBidExUrl(Page page, TestCriteriaBo testData){
 
         for(String currentHost : bidExHosts){
@@ -77,6 +106,29 @@ public class TestSuite implements GenericTestSuite {
 
         return page;
     }
+    private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteriaBo testData){
+
+        for(String currentHost : bidExHosts){
+            for(String currentController : bidExControlers){
+
+                browserContext.route("**/" + currentHost + "/" + currentController + "*", route -> {
+
+                    String replacedURL = "";
+                    String originalURl = route.request().url();
+
+                    for (String currentHostInner : bidExHosts) {
+                        if (originalURl.contains(currentHostInner)) {
+                            replacedURL = originalURl.replace(currentHost, testData.getEnvironment());
+                            break;
+                        }
+                    }
+                    route.resume(new Route.ResumeOptions().setUrl(replacedURL));
+                });
+            }
+        }
+
+        return browserContext;
+    }
 
     private Page attachResponseMocking(Page page, TestCriteriaBo testData){
 
@@ -99,6 +151,27 @@ public class TestSuite implements GenericTestSuite {
 
         return page;
     }
+    private BrowserContext attachResponseMocking(BrowserContext browserContext, TestCriteriaBo testData){
+
+        for (ResponseSimulateParams responseSim : testData.getResponseSimulate()){
+
+                browserContext.route(responseSim.getUrlPattern(), route -> {
+
+                // String originalURl = route.request().url();
+
+                String responseBody = new String(route.fetch().body(), StandardCharsets.UTF_8);
+                String newResponseBody = domUtils.replaceInJson(responseBody, responseSim.getJsonPath(), responseSim.getOverrideValue());
+
+                if(newResponseBody == responseBody){
+                    route.resume();
+                } else{
+                    route.fulfill(new Route.FulfillOptions().setBody(newResponseBody));
+                }
+            });
+        }
+
+        return browserContext;
+    }
 
     private Page injectDOM(Page page, TestCriteriaBo testData){
 
@@ -116,6 +189,23 @@ public class TestSuite implements GenericTestSuite {
             });
 
         return page;
+    }
+    private BrowserContext injectDOM(BrowserContext browserContext, TestCriteriaBo testData){
+
+            browserContext.route(testData.getPublisherUrl() + "**", route ->  {
+
+                String pageContent = new String(route.fetch().body());
+
+                for (DomInjectParams domInject : testData.getDomInject()) {
+
+                    pageContent = domUtils.domManipulate(pageContent, domInject);
+                }
+
+                route.fulfill(new Route.FulfillOptions().setBody(pageContent));
+
+            });
+
+        return browserContext;
     }
 
     // public List<String> getURLAnalyticsFor(Page page, YamlTestCriteria testData){
