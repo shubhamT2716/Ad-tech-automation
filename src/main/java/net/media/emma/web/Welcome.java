@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class Welcome {
@@ -20,7 +19,7 @@ public class Welcome {
         {
             put("YAML Config Based Tests (Simple)", "/yamlTestSuite/");
             put("YAML Config Based Tests (TestNG)", "/testDataInput");
-            put("Page Level Checks - Test Suite", "testSuite2");
+            put("Page Level Checks - Test Suite", "/contentScrape");
             put("Logging Pixel Data Validation Tests", "testSuite3");
             put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "testSuite4");
         }};
@@ -44,7 +43,6 @@ public class Welcome {
         mav.addObject("testSuites", listOfTestSuites);
         return mav;
     }
-}
 
     @GetMapping("/welcome2")
     public String domINject() {

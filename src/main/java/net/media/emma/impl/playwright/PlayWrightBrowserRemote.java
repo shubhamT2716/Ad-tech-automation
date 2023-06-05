@@ -88,34 +88,35 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
     @Override
     public void injectDom(String url, String xPath, String forceHtmlElement, Boolean append) {
 
-        log.info("Inside Dom Inject");
+        // log.info("Inside Dom Inject");
         Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
-        log.info(" FInished Launching Browser");
+        // log.info(" FInished Launching Browser");
 
         page.route(url,  route -> {
             String fileContent = null;
 
-            log.info("Starting route");
+            // log.info("Starting route");
 
             APIResponse apiResponse = route.fetch();
 
             String pageContent = new String (apiResponse.body());
 
-            log.info("old response body is "+ pageContent);
-            log.info("Ended old response body");
+            // log.info("old response body is "+ pageContent);
+            // log.info("Ended old response body");
 
             try {
                 fileContent = new String(Files.readAllBytes(Paths.get(forceHtmlElement)));
 
                 log.info("filecontent to append/overirde is "+ fileContent);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                // throw new RuntimeException(e);
+                log.error("Dom inject error", e);
             }
             
 
             Document document = Jsoup.parse(pageContent);
             if (append==false){
-                log.info("Inside If case");
+                // log.info("Inside If case");
                 document.select(xPath).html(fileContent);
             }
             else{
@@ -124,11 +125,11 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
             }
             String modifiedPageContent = document.html();
 
-            log.info("Modified Page Content is " + modifiedPageContent);
+            // log.info("Modified Page Content is " + modifiedPageContent);
 
             route.fulfill(new Route.FulfillOptions().setBody(modifiedPageContent));
 
-            log.info("Finished Dom Injection");
+            // log.info("Finished Dom Injection");
 
 
 
@@ -161,7 +162,7 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
     @Override
     public String scrapeContent(String url){
 
-        log.info("inside func");
+        // log.info("inside func");
         try {
             
 
@@ -171,7 +172,7 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
             // page.setDefaultTimeout(1000000);
 
             page.onConsoleMessage(consoleMessage -> {
-                log.info("Console message: " + consoleMessage.text());
+                // log.info("Console message: " + consoleMessage.text());
                 jsExtraction = consoleMessage.text();
             });
             page.navigate(url);
@@ -189,7 +190,6 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
 
         } catch (PlaywrightException  e) {
                 e.printStackTrace();
-            // TODO: handle exception
         }
 
         return "Error";
