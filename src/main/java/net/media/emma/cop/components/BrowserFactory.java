@@ -28,12 +28,17 @@ public class BrowserFactory {
         put("rubbish", "Googlebot/2.1 (+http://www.google.com/bot.html)");
         }};
 
-    private static NewContextOptions getCommonBrowserContext(String userAgent, Boolean isMobile) {
+    private static String getFileNameForHar(){
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(new java.util.Date());
+        String random = String.valueOf((int)(Math.random() * 10000));
+        return "test-output/har-files/generated-har-file-" + timeStamp + "-" + random + ".har";
+    }
+
+    private static NewContextOptions getCommonBrowserContext(String userAgent, Boolean isMobile) {
 
         NewContextOptions newContextOptions = new NewContextOptions()
             .setUserAgent(userAgent)
-            .setRecordHarPath(Paths.get("HarFile/GeneratedHarFile-"+timeStamp+"-.har"))
+            .setRecordHarPath(Paths.get(getFileNameForHar()))
             .setRecordHarMode(HarMode.FULL)
             .setIgnoreHTTPSErrors(true);
 
