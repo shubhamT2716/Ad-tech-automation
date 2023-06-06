@@ -1,6 +1,7 @@
 package net.media.emma.cop.components;
 
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +29,11 @@ public class BrowserFactory {
         }};
 
     private static NewContextOptions getCommonBrowserContext(String userAgent, Boolean isMobile) {
+        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(new java.util.Date());
 
         NewContextOptions newContextOptions = new NewContextOptions()
             .setUserAgent(userAgent)
-            .setRecordHarPath(Paths.get("HarFile/GeneratedHarFile.har"))
+            .setRecordHarPath(Paths.get("HarFile/GeneratedHarFile-"+timeStamp+"-.har"))
             .setRecordHarMode(HarMode.FULL)
             .setIgnoreHTTPSErrors(true);
 
