@@ -7,8 +7,9 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter @Setter @Builder
+@Getter @Setter @Builder @ToString
 public class TestReportBo {
 
     TestData testMetaData;
@@ -29,12 +30,13 @@ public class TestReportBo {
     public static class BidExController{
         TestStatus testStatus;
         UrlData urlData;
+        String jsErrors;
     }
 
     @Getter @Setter @Builder
     public static class UrlChecks{
 
-        String urlLabel;
+        String urlLabel; //APLOng, pr
         CheckType urlCheckType;
         UrlData urlData;
         List<Map<String, List<String>>> keysToVerifyPositive;

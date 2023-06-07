@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
 
-@Controller @Slf4j @RequestMapping("/yamlTestSuite/")
+@Controller("yamlTestSuiteController") @Slf4j @RequestMapping("/yamlTestSuite/")
 public class WebController {
 
     @Autowired GenericTestSuite yamlTestSuite;

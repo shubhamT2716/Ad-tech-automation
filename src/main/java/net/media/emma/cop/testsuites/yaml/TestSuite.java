@@ -222,4 +222,23 @@ public class TestSuite implements GenericTestSuite {
 
     //     return urlFromNetworkTab;
     // }
+
+    private void buildTestReport(List<String> networkCalls, TestCriteriaBo testData){
+
+        TestReportBo tbo = TestReportBo.builder().build();
+
+        tbo.setTestMetaData(TestReportBo.TestData.builder()
+            .environment(testData.getEnvironment())
+            .publisherUrl(testData.getPublisherUrl())
+            .userAgent(testData.getUserAgent()).build()
+                );
+
+
+                for(String networkcall: networkCalls){
+
+                    
+                }
+
+        tbo.toString();
+    }
 }

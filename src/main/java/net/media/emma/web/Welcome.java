@@ -44,43 +44,6 @@ public class Welcome {
         return mav;
     }
 
-    @GetMapping("/welcome2")
-    public String domINject() {
 
-        return "welcome2";
-      
-    }
-
-    @PostMapping("/welcome2")
-    public void openAndDOMINject(@RequestParam String url,
-                                    @RequestParam String xPath,
-                                    @RequestParam String htmlElement,
-                                    @RequestParam Boolean append) {
-        String forceHtmlElement = "src/main/resources/templates/random.html";
-        System.out.println("Calling Dom Inject");
-        browserRemote.injectDom(url, xPath, forceHtmlElement, append);
-        
-    }
-
-    @GetMapping("/contentScrape")
-        public String response() {
-            return "contentScrape";
-        }
-    
-
-    @PostMapping("/contentScrape")
-    public ModelAndView scrapeContent(@RequestParam String url){
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("contentScrape");
-
-        modelAndView.addObject("message", browserRemote.scrapeContent(url));
-        return modelAndView;  
-
-
-    
-
-    }
     
 }
