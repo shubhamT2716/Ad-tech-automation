@@ -14,28 +14,63 @@ import net.media.emma.cop.components.BrowserFactory;
 public class PageLevelTests {
 
     @Autowired BrowserFactory browserFactory;
-    static String jsExtraction = "";
+     
+    String jsExtraction = "";
 
+    private String pbjsVarExtrationLogic(){
+        return """
+            debugger;
+            if(window._pbjsGlobals){
+            var pbjsVar = window._pbjsGlobals[0];
+            console.log(JSON.stringify(window[pbjsVar], null , 4));
+            }
+                """;
+    }
+
+     // Scraping ad unit detials
+// Scraping only adunit path for now, can be modified as per requirements
+
+private String adUnitExtractionLogic(){
+    return """
+        let adSlotArray=[];
+        
+        var adSlots = googletag.pubads().getSlots();
+
+        if(adSlots.length > 0){
+      
+          for (i=0;i<adSlots.length;i++) {
+          
+          var res = 'slotPath : '+ adSlots[i].getAdUnitPath();
+              
+          adSlotArray.push(res);
+        }
+
+    }
+        console.log(adSlotArray.join(", "));
+        
+            """;
+}
     public String scrapeContent(String url){
 
         try {
             
             Page page = browserFactory.getPageWithNewContext("Chrome.Desktop.Mac", null);
 
-            // page.setDefaultTimeout(1000000);
 
             page.onConsoleMessage(consoleMessage -> {
-                // log.info("Console message: " + consoleMessage.text());
+                 log.info("Console message: " + consoleMessage.text());
                 jsExtraction = consoleMessage.text();
             });
             page.navigate(url);
-
-            String scrapeJsContent = """
-                console.log(JSON.stringify(_apPbJs, null, 4));
-                    """;
             page.waitForTimeout(2000);
-            JSHandle content= page.evaluateHandle(scrapeJsContent);
-           log.info(content.toString());
+            JSHandle testPbjs = page.evaluateHandle(pbjsVarExtrationLogic());
+
+            // log.info(testPbjs.toString());
+
+            JSHandle adUnits= page.evaluateHandle(adUnitExtractionLogic());
+            
+
+            // log.info(adUnits.toString() + "this is ad units");
 
             return jsExtraction;
 

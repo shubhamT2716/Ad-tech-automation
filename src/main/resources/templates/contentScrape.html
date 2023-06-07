@@ -6,10 +6,29 @@
     href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/railscasts.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 <link rel="stylesheet" href="/path/to/styles/default.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
 <script src="/path/to/highlight.min.js"></script>
 <script>hljs.highlightAll();</script>
     </head>
 <body>
+    <div class="container my-5">
+        <h1>Emma - COP Test Automation Tool</h1>
+        <div class="col-lg-8 px-0">
+          <p class="fs-5">You've successfully loaded up the Bootstrap starter example. It includes <a href="https://getbootstrap.com/">Bootstrap 5</a> via the <a href="https://www.jsdelivr.com/package/npm/bootstrap">jsDelivr CDN</a> and includes an additional CSS and JS file for your own code.</p>
+          <p>Feel free to download or copy-and-paste any parts of this example.</p>
+  
+          <h2>List of Test Suites</h2>
+          <ul>
+              <li th:each="testSuite : ${testSuites}"><a target="_blank" th:href="${testSuite.value}" th:text="${testSuite.key}" /></li>
+          </ul>
+  
+          <hr class="col-1 my-4">
+  
+          <a href="https://www.google.com/search?q=emma" class="btn btn-primary">Emma on Web</a>
+          <a href="http://tree.mn/mnet-ssp/emma" class="btn btn-secondary">Emma on Tree.mn</a>
+        </div>
+      </div>
     <form method="post">
         <input type="text" name="url" placeholder="Enter URL"><br />
         <input type="submit" value="Submit">
@@ -21,6 +40,7 @@
         </div>
         
     </div>
-    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
 </body>
 </html>
