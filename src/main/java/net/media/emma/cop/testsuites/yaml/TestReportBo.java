@@ -14,10 +14,11 @@ public class TestReportBo {
 
     TestData testMetaData;
     BidExController bidExController;
-    List<UrlChecks> urlChecks;
+    @Builder.Default
+    List<UrlChecks> urlChecks = new java.util.ArrayList<UrlChecks>();
     NetworkAnalytics networkAnalytics;
 
-    @Getter @Setter @Builder
+    @Getter @Setter @Builder @ToString
     public static class TestData{
         String publisherUrl;
         String environment;
@@ -26,25 +27,26 @@ public class TestReportBo {
         TestStatus testStatus;
     }
 
-    @Getter @Setter @Builder
+    @Getter @Setter @Builder @ToString
     public static class BidExController{
         TestStatus testStatus;
         UrlData urlData;
         String jsErrors;
     }
 
-    @Getter @Setter @Builder
+    @Getter @Setter @Builder @ToString
     public static class UrlChecks{
 
         String urlLabel; //APLOng, pr
         CheckType urlCheckType;
+        TestStatus testStatus;
         UrlData urlData;
         List<Map<String, List<String>>> keysToVerifyPositive;
         List<Map<String, List<String>>> keysToVerifyNegative;
         List<Map<String, List<String>>> keysToVerifyAnyOneOf;
     }
 
-    @Getter @Setter @Builder
+    @Getter @Setter @Builder @ToString
     public static class NetworkAnalytics{
         // Logging Calls - Analytics:
         // Total Logging pixels fired (for the host):
@@ -56,23 +58,24 @@ public class TestReportBo {
         String timeTakenToLoad;
     }
 
-    enum TestStatus {
+    public static enum TestStatus {
         PASS,
         FAIL,
         OTHER
     }
 
-    enum CheckType {
+    public static enum CheckType {
         POSSITIVE,
         NEGERIVE,
         OPTIONAL
     }
 
-    @Getter @Setter @Builder
+    @Getter @Setter @Builder @ToString
     public static class UrlData{
         String urlPattern;
         List<String> matchingUrls;
         String size;
         String timeTakenToLoad;
+        String statusCode;
     }
 }
