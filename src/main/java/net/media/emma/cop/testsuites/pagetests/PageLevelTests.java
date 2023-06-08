@@ -32,23 +32,11 @@ public class PageLevelTests {
 
 private String adUnitExtractionLogic(){
     return """
-        let adSlotArray=[];
-        
-        var adSlots = googletag.pubads().getSlots();
-
-        if(adSlots.length > 0){
-      
-          for (i=0;i<adSlots.length;i++) {
-          
-          var res = 'slotPath : '+ adSlots[i].getAdUnitPath();
-              
-          adSlotArray.push(res);
-        }
-
-    }
-        console.log(adSlotArray.join(", "));
-        
-            """;
+        googletag.pubads().getSlots().map(s => {
+            console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
+        });;""";
+                
+                
 }
     public String scrapeContent(String url){
 
@@ -57,7 +45,7 @@ private String adUnitExtractionLogic(){
             Page page = browserFactory.getPageWithNewContext("Chrome.Desktop.Mac", null);
 
 
-            page.onConsoleMessage(consoleMessage -> {
+             page.onConsoleMessage(consoleMessage -> {
                  log.info("Console message: " + consoleMessage.text());
                 jsExtraction = consoleMessage.text();
             });
@@ -67,7 +55,7 @@ private String adUnitExtractionLogic(){
 
             // log.info(testPbjs.toString());
 
-            JSHandle adUnits= page.evaluateHandle(adUnitExtractionLogic());
+                JSHandle adUnits= page.evaluateHandle(adUnitExtractionLogic());
             
 
             // log.info(adUnits.toString() + "this is ad units");
@@ -81,4 +69,4 @@ private String adUnitExtractionLogic(){
         return "Error";
         
     }   
-}
+} 
