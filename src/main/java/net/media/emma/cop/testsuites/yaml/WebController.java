@@ -3,7 +3,6 @@ package net.media.emma.cop.testsuites.yaml;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,7 +48,7 @@ public class WebController {
             TestCriteriaBo yamlTc = mapper.readValue(yaml, TestCriteriaBo.class);
             // mav.addObject("message", yamlTc.getEnvironment());
             //mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
-            mav.addObject("message", yamlTestSuite.getTestResults_trishul(yamlTc));
+            mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
 
         }catch( JsonProcessingException  e){
             log.error("YAML Processing Error", e);;

@@ -8,5 +8,4 @@ import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
 public interface GenericTestSuite {
 
     public String getTestResults(TestCriteriaBo testData);
-    public String getTestResults_trishul(TestCriteriaBo testData);
 }

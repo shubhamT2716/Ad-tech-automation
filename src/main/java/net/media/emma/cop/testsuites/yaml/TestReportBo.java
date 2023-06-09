@@ -73,7 +73,8 @@ public class TestReportBo {
     @Getter @Setter @Builder @ToString
     public static class UrlData{
         String urlPattern;
-        List<String> matchingUrls;
+        @Builder.Default
+        List<String> matchingUrls = new java.util.ArrayList<String>();
         String size;
         String timeTakenToLoad;
         String statusCode;
