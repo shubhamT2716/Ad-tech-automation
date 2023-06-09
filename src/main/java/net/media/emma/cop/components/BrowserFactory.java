@@ -63,19 +63,19 @@ public class BrowserFactory {
 
     private Browser getBrowserByType(String browserType){
 
-        if(browserType.contains("chrome")){
+        if(browserType.contains("Chrome")){
             return playwright.chromium().launch(getBrowserLaunchOptions("chrome"));
         }
 
-        if(browserType.contains("firefox")){
-            return playwright.firefox().launch(getBrowserLaunchOptions(""));
+        if(browserType.contains("Firefox")){
+            return playwright.firefox().launch();
         }
 
-        if(browserType.contains("edge")){
+        if(browserType.contains("Edge")){
             return playwright.chromium().launch(getBrowserLaunchOptions("msedge"));
         }
 
-        return playwright.webkit().launch(getBrowserLaunchOptions(""));
+        return playwright.webkit().launch();
     }
 
     //Returns Playwright's Page obj with given browserType and cookies
@@ -93,8 +93,8 @@ public class BrowserFactory {
 
         BrowserContext newBc =  getBrowserByType(browserType).newContext(
                                         getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile")));
-        newBc.setDefaultNavigationTimeout(120000);
-            // .addCookies(cookies)
+        // newBc.setDefaultNavigationTimeout(120000);
+
         return newBc;
     }
 

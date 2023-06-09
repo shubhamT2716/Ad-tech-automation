@@ -10,6 +10,8 @@ import com.microsoft.playwright.BrowserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
@@ -24,13 +26,13 @@ import net.media.emma.cop.testsuites.yaml.TestReportBo.TestStatus;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.DomJsonUtils;
 
-
 @Service @Slf4j
 public class TestSuite implements GenericTestSuite {
 
     @Autowired BrowserFactory browserFactory;
     @Autowired Configuration jsonModelMapper;
     @Autowired DomJsonUtils domUtils;
+    @Autowired ObjectWriter jsonWriter;
     
     //List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
@@ -69,6 +71,7 @@ public class TestSuite implements GenericTestSuite {
         for(Request request : requestList){
 
             log.info(request.url());
+            log.info(url);
 
             if(request.url().contains(url)){
                 log.info(request.toString());
@@ -139,11 +142,16 @@ public class TestSuite implements GenericTestSuite {
 
                     logError(trb, entry.getKey(), CheckType.NEGERIVE, request);
                 }
-
             });
         }
 
-        return trb.toString();
+        try {
+            return jsonWriter.writeValueAsString(trb);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return "json error";
     }
 
     @Override
@@ -168,10 +176,19 @@ public class TestSuite implements GenericTestSuite {
         browserContext.newPage().navigate(testData.getPublisherUrl());
         // log.info(urlFromNetworkTab.toString());
         // return urlFromNetworkTab;
+    
+        try{
+            browserContext.newPage();
+            Thread.sleep(45000);
+        
+        }catch(Exception e){
+            
+        }
+
         browserContext.close();
 
-        // return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
-        return getNetworkCallAssertions(requestList, testData);
+        return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
+        //return getNetworkCallAssertions(requestList, testData);
     }
 
     private Page replaceBidExUrl(Page page, TestCriteriaBo testData){
@@ -242,6 +259,7 @@ public class TestSuite implements GenericTestSuite {
 
         return page;
     }
+
     private BrowserContext attachResponseMocking(BrowserContext browserContext, TestCriteriaBo testData){
 
         for (ResponseSimulateParams responseSim : testData.getResponseSimulate()){
