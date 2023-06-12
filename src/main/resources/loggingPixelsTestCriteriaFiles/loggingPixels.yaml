@@ -1,0 +1,4 @@
+loggingpixels: [
+  { key: "vid", valueDataType: "long", regex: "//[0-9]+" },
+  { key: "dn", valueDataType: "string", regex: "//[a-z.-]+" },
+]

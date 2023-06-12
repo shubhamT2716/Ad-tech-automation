@@ -20,7 +20,7 @@ public class Welcome {
             put("YAML Config Based Tests (Simple)", "/yamlTestSuite/");
             put("YAML Config Based Tests (TestNG)", "/testDataInput");
             put("Page Level Checks - Test Suite", "/contentScrape");
-            put("Logging Pixel Data Validation Tests", "testSuite3");
+            put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
             put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "testSuite4");
         }};
 
