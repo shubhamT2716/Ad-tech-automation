@@ -29,7 +29,7 @@ public class WebController
     public ModelAndView yamlTestSuite() {
 
         ModelAndView mav = new ModelAndView("yamlTestSuite");
-//        mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/loggingPixelsTestCriteriaFiles/"));//  Arrays.asList(null, "testCriteria.yaml", "testCriteria2.yaml"));
+        mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/loggingPixelsTestCriteriaFiles/"));//  Arrays.asList(null, "testCriteria.yaml", "testCriteria2.yaml"));
 
         return mav;
     }
@@ -59,5 +59,19 @@ public class WebController
 
        return mav;
     }
+    @PostMapping("fileContent")
+    @ResponseBody
+    public String getFileContent(@RequestBody String fileName){
 
+        if(fileName.length() > 0){
+
+            try {
+                return new String( Files.readAllBytes(Paths.get("src/main/resources/loggingPixelsTestCriteriaFiles/" + fileName)));
+            } catch (IOException e) {
+                log.error("File Read Error", e);
+                return e.getMessage();
+            }
+        }
+        return "Input File Name Empty";
+    }
 }
