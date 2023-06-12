@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller("pageLevelTestsController") @RequestMapping("/pageLevelTests")
+@Controller("pageLevelTestsController") @RequestMapping("/pageLevelTests/")
 public class WebController {
 
     @Autowired PageLevelTests pageLevelTests;
@@ -37,7 +37,7 @@ public class WebController {
         {
             put("YAML Config Based Tests (Simple)", "/yamlTestSuite/");
             put("YAML Config Based Tests (TestNG)", "/testDataInput");
-            put("Page Level Checks - Test Suite", "/contentScrape");
+            put("Page Level Checks - Test Suite", "/pageLevelTests/");
             put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
             put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "testSuite4");
         }};
@@ -45,7 +45,7 @@ public class WebController {
     @GetMapping
     public ModelAndView openIndex() {
 
-        ModelAndView mav = new ModelAndView("contentScrape");
+        ModelAndView mav = new ModelAndView("pageLevelTests");
         mav.addObject("testSuites", listOfTestSuites);
         return mav;
     }
@@ -56,8 +56,7 @@ public class WebController {
 
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("contentScrape");
-        modelAndView.addObject("testSuites", listOfTestSuites);
+        modelAndView.setViewName("pageLevelTests");
         modelAndView.addObject("message", pageLevelTests.scrapeContent(url));
         return modelAndView;  
 
