@@ -1,10 +1,18 @@
 package net.media.emma.cop.testsuites.pagetests;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.JSHandle;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.PlaywrightException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +23,9 @@ public class PageLevelTests {
 
     @Autowired BrowserFactory browserFactory;
      
-    String jsExtraction = "";
-
+    List<String> jsExtraction = new ArrayList<>();
     private String pbjsVarExtrationLogic(){
         return """
-            debugger;
             if(window._pbjsGlobals){
             var pbjsVar = window._pbjsGlobals[0];
             console.log(JSON.stringify(window[pbjsVar], null , 4));
@@ -32,9 +38,11 @@ public class PageLevelTests {
 
 private String adUnitExtractionLogic(){
     return """
+        if(googletag.pubads()){
         googletag.pubads().getSlots().map(s => {
             console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
-        });;""";
+        });
+    }""";
                 
                 
 }
@@ -42,26 +50,25 @@ private String adUnitExtractionLogic(){
 
         try {
             
-            Page page = browserFactory.getPageWithNewContext("Chrome.Desktop.Mac", null);
+        Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
 
 
              page.onConsoleMessage(consoleMessage -> {
                  log.info("Console message: " + consoleMessage.text());
-                jsExtraction = consoleMessage.text();
+                jsExtraction.add("\n" + consoleMessage.text() + "\n");
             });
             page.navigate(url);
-            page.waitForTimeout(2000);
+            page.waitForTimeout(500);
             JSHandle testPbjs = page.evaluateHandle(pbjsVarExtrationLogic());
 
             // log.info(testPbjs.toString());
-
+            
                 JSHandle adUnits= page.evaluateHandle(adUnitExtractionLogic());
             
-
+                String concatenatedString = String.join(" ", jsExtraction);
             // log.info(adUnits.toString() + "this is ad units");
 
-            return jsExtraction;
-
+            return concatenatedString;
         } catch (PlaywrightException  e) {
                 e.printStackTrace();
         }
