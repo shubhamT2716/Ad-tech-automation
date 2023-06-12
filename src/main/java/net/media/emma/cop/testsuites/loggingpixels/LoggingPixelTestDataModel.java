@@ -1,21 +1,18 @@
 package net.media.emma.cop.testsuites.loggingpixels;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
-@Setter @Getter @Builder
+@Setter @Getter @Builder  @NoArgsConstructor @AllArgsConstructor
 public class LoggingPixelTestDataModel{
 
-    private List<DataTypeChecks> loggingPixelTests = new ArrayList<>();
+    public List<DataTypeChecks> loggingPixelTests;
 
     @Getter @Setter
     public static class DataTypeChecks{
-        private String key;
-        private String valueDataType;
-        private String valueRegex;
+        public String key;
+        public String valueDataType;
+        public String valueRegex;
     }
+    public String pubUrl;
 }

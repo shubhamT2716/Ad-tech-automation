@@ -21,11 +21,14 @@ public class LoggingPixelTestSuite {
 
     public String getLoggingPixelResults(LoggingPixelTestDataModel testCriteria){
 
-//        testDummy = testCriteria.getLoggingPixelTests().get(0).getKey();
-
+        for (int i=0;i<testCriteria.getLoggingPixelTests().size();i++)
+        {
+            System.out.println("testCriteriaKeyFromTestSuite = " + testCriteria.getLoggingPixelTests().get(i).getKey());
+            System.out.println("testCriteriaValueDataTypeFromTestSuite = " + testCriteria.getLoggingPixelTests().get(i).getValueDataType());
+            System.out.println("testCriteriaValueRegexFromTestSuite = " + testCriteria.getLoggingPixelTests().get(i).getValueRegex());
+        }
         BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", null);
 
-        //list of arrays initialization
         List<String> urlFromNetworkTab = new ArrayList<>();
 
         bc.onRequest(request -> {
@@ -42,10 +45,9 @@ public class LoggingPixelTestSuite {
             request.url().contains("media.net");
         });
 
-
-        bc.newPage().navigate("https://www.forbes.com?mnet_test=1&force_hbtest=all");
-
-        return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "\n");
+        bc.newPage().navigate(testCriteria.getPubUrl());
+        bc.close();
+        return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
 
     }
 
