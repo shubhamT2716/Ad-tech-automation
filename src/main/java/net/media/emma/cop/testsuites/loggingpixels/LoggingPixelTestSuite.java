@@ -21,11 +21,14 @@ public class LoggingPixelTestSuite {
 
     public String getLoggingPixelResults(LoggingPixelTestDataModel testCriteria){
 
-//        testDummy = testCriteria.getLoggingPixelTests().get(0).getKey();
+        for (int i=0;i<testCriteria.getLoggingPixelTests().size();i++)
+        {
+            System.out.println("testCriteriaKeyFromTestSuite = " + testCriteria.getLoggingPixelTests().get(i).getKey());
+            System.out.println("testCriteriaValueDataTypeFromTestSuite = " + testCriteria.getLoggingPixelTests().get(i).getValueDataType());
+            System.out.println("testCriteriaValueRegexFromTestSuite = " + testCriteria.getLoggingPixelTests().get(i).getValueRegex());
+        }
+        BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", null);
 
-        BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", new ArrayList<>());
-
-        //list of arrays initialization
         List<String> urlFromNetworkTab = new ArrayList<>();
 
         bc.onRequest(request -> {
@@ -33,8 +36,8 @@ public class LoggingPixelTestSuite {
             urlFromNetworkTab.add(request.url());
         });
 
-        bc.newPage().navigate("https://www.nutritionix.com/?mnet_test=1&force_hbtest=all");
-
+        bc.newPage().navigate(testCriteria.getPubUrl());
+        bc.close();
         return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
 
     }
