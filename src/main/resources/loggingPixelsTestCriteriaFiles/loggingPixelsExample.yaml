@@ -1,5 +1,5 @@
 loggingPixelTests: [
-  { key: "vid", valueDataType: "long", valueRegex: "//[0-9]+" },
+  { key: "pvid", valueDataType: "long", valueRegex: "^\\d+$" },
   { key: "dn", valueDataType: "string", valueRegex: "//[a-z.-]+" },
 ]
 pubUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
