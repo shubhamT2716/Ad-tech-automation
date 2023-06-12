@@ -44,7 +44,7 @@ public class WebController
 
             ObjectMapper mapper = new YAMLMapper();
             testCriteria = mapper.readValue(yaml, LoggingPixelTestDataModel.class);
-            mav.addObject("message", "test");
+//            mav.addObject("message", "test");
 
 //            List<LoggingPixelTestDataModel.DataTypeChecks> loggingKeyVal =  testCriteria.getLoggingPixelTests();
 
@@ -60,22 +60,4 @@ public class WebController
        return mav;
     }
 
-    // @Value("${yamlFolderPath}")
-    // private String yamlFolderPath;
-
-    @PostMapping("fileContent")
-    @ResponseBody
-    public String getFileContent(@RequestBody String fileName){
-
-        if(fileName.length() > 0){
-
-            try {
-                return new String( Files.readAllBytes(Paths.get("src/main/resources/loggingPixelsTestCriteriaFiles/" + fileName)));
-            } catch (IOException e) {
-                log.error("File Read Error", e);
-                return e.getMessage();
-            }
-        }
-        return "Input File Name Empty";
-    }
 }

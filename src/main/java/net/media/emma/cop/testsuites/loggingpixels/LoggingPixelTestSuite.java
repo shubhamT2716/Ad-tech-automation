@@ -33,7 +33,7 @@ public class LoggingPixelTestSuite {
             urlFromNetworkTab.add(request.url());
         });
 
-        bc.newPage().navigate("https://google.com");
+        bc.newPage().navigate("https://www.nutritionix.com/?mnet_test=1&force_hbtest=all");
 
         return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
 
