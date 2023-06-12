@@ -23,19 +23,29 @@ public class LoggingPixelTestSuite {
 
 //        testDummy = testCriteria.getLoggingPixelTests().get(0).getKey();
 
-        BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", new ArrayList<>());
+        BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", null);
 
         //list of arrays initialization
         List<String> urlFromNetworkTab = new ArrayList<>();
 
         bc.onRequest(request -> {
+            String networkCall = request.url();
+            urlFromNetworkTab.add(networkCall);
 
-            urlFromNetworkTab.add(request.url());
+            List<LoggingPixelTestDataModel.DataTypeChecks> testData =  testCriteria.getLoggingPixelTests();
+            for(LoggingPixelTestDataModel.DataTypeChecks data:testData){
+                if(networkCall.contains(data.getKey())){
+                    networkCall.
+                }
+            }
+
+            request.url().contains("media.net");
         });
 
-        bc.newPage().navigate("https://www.nutritionix.com/?mnet_test=1&force_hbtest=all");
 
-        return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
+        bc.newPage().navigate("https://www.forbes.com?mnet_test=1&force_hbtest=all");
+
+        return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "\n");
 
     }
 
