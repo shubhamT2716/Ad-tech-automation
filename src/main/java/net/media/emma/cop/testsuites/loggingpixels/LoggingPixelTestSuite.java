@@ -36,7 +36,7 @@ public class LoggingPixelTestSuite
         {
 
             Map<String, String> urlParams;
-            if (currentUrl.startsWith(loggingPixelFormat)) //TODO: this needs to be defined by business
+            if (currentUrl.startsWith(loggingPixelFormat))
             {
                 urlParams = UrlQueryBuild.getQueryMap(currentUrl);
                 logUrlDetails.put("url", currentUrl);
@@ -45,11 +45,12 @@ public class LoggingPixelTestSuite
                 {
                     String key = data.getKey();
                     logUrlDetails.put("key", key);
+                    String regexFromYaml = data.getValueRegex();
                     if (urlParams.containsKey(key))
                     {
                         String value = null;
                         //value of the key
-                        value = urlParams.get(data.getKey()); //TODO run loop for all values
+                        value = urlParams.get(key);
                         if (value != null)
                         {
                             String dataTypeOfKey = data.getValueDataType().toLowerCase();
@@ -59,9 +60,9 @@ public class LoggingPixelTestSuite
                                 case "long":
                                     try
                                     {
-                                        long longValue = Long.parseLong(value);
+                                        Long.parseLong(value);
                                         logUrlDetails.put("dataType", "true");
-                                        regexMatchFlag = matchRegex(data, value);
+                                        regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
                                     } catch (Exception e)
                                     {
@@ -71,9 +72,9 @@ public class LoggingPixelTestSuite
                                 case "int":
                                     try
                                     {
-                                        int intValue = Integer.parseInt(value);
+                                        Integer.parseInt(value);
                                         logUrlDetails.put("dataType", "true");
-                                        regexMatchFlag = matchRegex(data, value);
+                                        regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
                                     } catch (Exception e)
                                     {
@@ -83,9 +84,9 @@ public class LoggingPixelTestSuite
                                 case "short":
                                     try
                                     {
-                                        short shortValue = Short.parseShort(value);
+                                        Short.parseShort(value);
                                         logUrlDetails.put("dataType", "true");
-                                        regexMatchFlag = matchRegex(data, value);
+                                        regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
                                     } catch (Exception e)
                                     {
@@ -95,9 +96,9 @@ public class LoggingPixelTestSuite
                                 case "byte":
                                     try
                                     {
-                                        byte byteValue = Byte.parseByte(value);
+                                        Byte.parseByte(value);
                                         logUrlDetails.put("dataType", "true");
-                                        regexMatchFlag = matchRegex(data, value);
+                                        regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
                                     } catch (Exception e)
                                     {
@@ -107,9 +108,9 @@ public class LoggingPixelTestSuite
                                 case "float":
                                     try
                                     {
-                                        float floatValue = Float.parseFloat(value);
+                                        Float.parseFloat(value);
                                         logUrlDetails.put("dataType", "true");
-                                        regexMatchFlag = matchRegex(data, value);
+                                        regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
                                     } catch (Exception e)
                                     {
@@ -119,9 +120,9 @@ public class LoggingPixelTestSuite
                                 case "double":
                                     try
                                     {
-                                        double doubleValue = Double.parseDouble(value);
+                                        Double.parseDouble(value);
                                         logUrlDetails.put("dataType", "true");
-                                        regexMatchFlag = matchRegex(data, value);
+                                        regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
                                     } catch (Exception e)
                                     {
@@ -131,9 +132,9 @@ public class LoggingPixelTestSuite
                                 case "string":
                                     try
                                     {
-                                        String stringValue = value.toString();
+                                        value.toString();
                                         logUrlDetails.put("dataType", "true");
-                                        regexMatchFlag = matchRegex(data, value);
+                                        regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
                                     } catch (Exception e)
                                     {
@@ -156,23 +157,19 @@ public class LoggingPixelTestSuite
     public String getLoggingPixelResults(LoggingPixelTestDataModel testCriteria)
     {
         BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", null);
-
-        //   Map<String, String> urlFromNetworkTab = new HashMap<>();
         AtomicReference<ArrayList<HashMap<String, Object>>> urlDetails = new AtomicReference<>(new ArrayList<>());
         bc.onRequest(request ->
         {
             String networkCall = request.url();
             urlDetails.set(doesTheLoggingPixelFormatMatches(testCriteria, networkCall));
-            //   urlFromNetworkTab.put("url", networkCall);
-            // urlFromNetworkTab.add(networkCall);
         });
         bc.newPage().navigate(testCriteria.getPubUrl());
         bc.close();
         return Arrays.toString(urlDetails.get().toArray()).replace(", ", "<br>\n");
     }
 
-    private Boolean matchRegex(LoggingPixelTestDataModel.DataTypeChecks data, String keyValue)
+    private Boolean matchRegex(String regex, String keyValue)
     {
-        return Pattern.compile(data.getValueRegex()).matcher(keyValue).find();
+        return Pattern.compile(regex).matcher(keyValue).find();
     }
 }
