@@ -17,7 +17,7 @@ networkCallsNegative: {
   Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
 }
 
-keysToVerifyPositive: [
+keysToVerifyPositive: {
 
   PRLog: {
     pvid: ["X"],
@@ -30,20 +30,20 @@ keysToVerifyPositive: [
     svr: ["060106_3473_060106_1067_ssp"],
     ugd: ["4"],
   },
- ]
+}
 
 #to_check_negative_keys
-keysToVerifyNegative: [
+keysToVerifyNegative: {
   prlog: { snm : ["removed","error",], nbr : ["13"]},
   aplog: { nbr: ["13"]},
   awlog: { ogbdp : ["0","-1","-2"]},
- ]
+}
 
 #to_check_any_keys_among_these
-keysToVerifyAnyOneOf: [
+keysToVerifyAnyOneOf: {
   prlog: { nbr : [ "45","3","69","0","1","99" ]},
   aplog: { nbr : [ "45","3","69","0","1","99" ]},
- ]
+}
 
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []

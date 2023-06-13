@@ -110,6 +110,8 @@ public class TestSuite implements GenericTestSuite {
         return null;
     }
 
+
+
     private String getNetworkCallAssertions3(List<String> requestList, TestCriteriaBo testData){
 
         for (String requestUrl : requestList) {
@@ -125,6 +127,9 @@ public class TestSuite implements GenericTestSuite {
                     PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
                                                                         .urlPattern(urlData.getValue())
                                                                         .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
+                                                                        .negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
+                                                                        .positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
+                                                                        .anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey()))
                                                                         .build();
 
                     urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);

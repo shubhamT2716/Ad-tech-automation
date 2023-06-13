@@ -3,25 +3,25 @@ cookies: [visitor-id : 3249269632710602062V1 ,  data-o : f88043f8-7631-0195-18cf
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.nutritionix.com?mnet_test=1&force_hbtest=all"
 
-networkCallsPositive: [
+networkCallsPositive: {
  aplogs: "https://hblg.media.net/log?logid=aplog",
  prlogs: "https://hblg.media.net/log?logid=prlog",
  awlogs: "https://hblg.media.net/log?logid=awlog",
  checksync: "https://hbx.media.net/checksync.php",
  bidexchange: "https://hbx.media.net/bidexchange.js"
- ]
+}
 
-networkCallsNegative: [
+networkCallsNegative: {
  nerrPing: "https://hblg.media.net/nerrping.php"
- ]
+ }
 
-keysToVerifyPositive: [
+keysToVerifyPositive: {
   prlogs: {pvid: ["326","2222"],cid: ["8CU66J63J"]},
   aplogs: {pvid: ["99"]}
- ]
+ }
 
-keysToVerifyNegative: []
-keysToVerifyAnyOneOf: []
+keysToVerifyNegative: {}
+keysToVerifyAnyOneOf: {}
 
 responseSimulate: [
  {urlPattern: "**//hb-pb.media.net/**", jsonPath: "$.ext.csUrl[1].url", overrideValue: "MYSESSINID"}

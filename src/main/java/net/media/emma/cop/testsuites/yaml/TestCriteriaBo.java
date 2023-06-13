@@ -16,9 +16,9 @@ public class TestCriteriaBo {
     Map<String, String> networkCallsPositive;
     Map<String, String> networkCallsNegative;
 
-    List<Map<String, Map<String, List<String>>>> keysToVerifyPositive;
-    List<Map<String, Map<String, List<String>>>> keysToVerifyNegative;
-    List<Map<String, Map<String, List<String>>>> keysToVerifyAnyOneOf;
+    Map<String, Map<String, List<String>>> keysToVerifyPositive;
+    Map<String, Map<String, List<String>>> keysToVerifyNegative;
+    Map<String, Map<String, List<String>>> keysToVerifyAnyOneOf;
 
     List<ResponseSimulateParams> responseSimulate;
     List<DomInjectParams> domInject;
