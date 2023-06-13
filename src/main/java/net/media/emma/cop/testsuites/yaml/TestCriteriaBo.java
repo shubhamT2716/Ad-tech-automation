@@ -13,8 +13,8 @@ public class TestCriteriaBo {
     String userAgent;
     String publisherUrl;
     String environment;
-    List<Map<String, String>> networkCallsPositive;
-    List<Map<String, String>> networkCallsNegative;
+    Map<String, String> networkCallsPositive;
+    Map<String, String> networkCallsNegative;
 
     List<Map<String, Map<String, List<String>>>> keysToVerifyPositive;
     List<Map<String, Map<String, List<String>>>> keysToVerifyNegative;

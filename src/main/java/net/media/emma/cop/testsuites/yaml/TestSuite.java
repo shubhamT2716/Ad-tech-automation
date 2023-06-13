@@ -3,10 +3,14 @@ package net.media.emma.cop.testsuites.yaml;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.microsoft.playwright.BrowserContext;
+
+import org.apache.http.annotation.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +26,8 @@ import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
 import net.media.emma.cop.testsuites.yaml.TestReportBo.CheckType;
 import net.media.emma.cop.testsuites.yaml.TestReportBo.UrlChecks;
+import net.media.emma.cop.testsuites.yaml.URLChecks.NegativeURLChecks;
+import net.media.emma.cop.testsuites.yaml.URLChecks.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.DomJsonUtils;
 import net.media.emma.utils.URLDataProcessing;
@@ -34,7 +40,8 @@ public class TestSuite implements GenericTestSuite {
     @Autowired DomJsonUtils domUtils;
     @Autowired ObjectWriter jsonWriter;
     @Autowired URLDataProcessing urlDataProcessing;
-    
+    URLChecks urlChecks = URLChecks.builder().build();
+
     //List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
     List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
@@ -74,45 +81,120 @@ public class TestSuite implements GenericTestSuite {
 
         //return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
         // return getNetworkCallAssertions(requestList, testData);
-        return getNetworkCallAssertions2(urlFromNetworkTab, testData);
+        return getNetworkCallAssertions3(urlFromNetworkTab, testData);
     }
 
-    private String getNetworkCallAssertions2(List<String> requestList, TestCriteriaBo testData){
+    private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, TestCriteriaBo testData){
 
-        TestReportBo trb = ReportBuilder.getNewReport(testData);
+        for(Map.Entry<String, String> urlData : testData.getNetworkCallsPositive().entrySet()){
 
-        for(Map<String, String> networkCalls:   testData.getNetworkCallsPositive()){
+            if(currentUrl.startsWith(urlData.getValue())){
 
-            networkCalls.entrySet().forEach(entry -> {
+                return urlData;
+            }
+        }
 
-                String matchedUrl = urlDataProcessing.getRequestFor2(entry.getValue(), requestList);
-                
-                if(matchedUrl == null){
+        return null;
+    }
 
-                    trb.getUrlChecks().add(ReportBuilder.logError(entry.getKey(), CheckType.POSSITIVE, entry.getValue()));
+    private Map.Entry<String, String> negativeURLPatternExists(String currentUrl, TestCriteriaBo testData){
 
+        for(Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()){
+
+            if(currentUrl.startsWith(urlData.getValue())){
+
+                return urlData;
+            }
+        }
+
+        return null;
+    }
+
+    private String getNetworkCallAssertions3(List<String> requestList, TestCriteriaBo testData){
+
+        for (String requestUrl : requestList) {
+
+            Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
+
+            if(urlData != null){
+
+                PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
+
+                if(labelExists == null){
+                    
+                    PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
+                                                                        .urlPattern(urlData.getValue())
+                                                                        .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
+                                                                        .build();
+
+                    urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
                 }else{
-
-                    UrlChecks uc = ReportBuilder.urlCheckExists(entry.getKey(), trb);
-
-                    if(uc != null){
-                        uc.getUrlData().getMatchingUrls().add(matchedUrl);
-                    }else{
-                        trb.getUrlChecks().add(ReportBuilder.logSuccess(entry.getKey(), CheckType.POSSITIVE, entry.getValue(), matchedUrl));
-                    }
+                    labelExists.getMatchingUrls().add(requestUrl);
                 }
-            });
-        }
 
+                continue;
+            }
 
-        try {
-            return jsonWriter.writeValueAsString(trb);
-        } catch (JsonProcessingException e) {
-            log.error("json processing error", e);
+            urlData = negativeURLPatternExists(requestUrl, testData);
+
+            if(urlData != null){
+                NegativeURLChecks nuc = urlChecks.getNegativeUrlChecks().get(urlData.getKey());
+                if(nuc == null){
+                    urlChecks.getNegativeUrlChecks().put(urlData.getKey(), NegativeURLChecks.builder().label(urlData.getKey())
+                                                                                                    .urlPattern(urlData.getValue())
+                                                                                                    .matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl))))
+                                                                                                    .build());
+                }else{
+                    nuc.getMatchingUrls().add(requestUrl);
+                }
         }
+    }
+
+    try {
+        return jsonWriter.writeValueAsString(urlChecks);
+    } catch (JsonProcessingException e) {
+        log.error("json processing error", e);
+    }
 
         return "json error";
     }
+
+    // private String getNetworkCallAssertions2(List<String> requestList, TestCriteriaBo testData){
+
+    //     TestReportBo trb = ReportBuilder.getNewReport(testData);
+
+    //     for(Map<String, String> networkCalls:   testData.getNetworkCallsPositive()){
+
+    //         networkCalls.entrySet().forEach(entry -> {
+
+    //             String matchedUrl = urlDataProcessing.getRequestFor2(entry.getValue(), requestList);
+                
+    //             if(matchedUrl == null){
+
+    //                 trb.getUrlChecks().add(ReportBuilder.logError(entry.getKey(), CheckType.POSSITIVE, entry.getValue()));
+
+    //             }else{
+
+    //                 UrlChecks uc = ReportBuilder.urlCheckExists(entry.getKey(), trb);
+
+    //                 if(uc != null){
+    //                     uc.getUrlData().getMatchingUrls().add(matchedUrl);
+    //                 }else{
+    //                     trb.getUrlChecks().add(ReportBuilder.logSuccess(entry.getKey(), CheckType.POSSITIVE, entry.getValue(), matchedUrl));
+    //                 }
+    //             }
+    //         });
+    //     }
+
+
+    //     try {
+    //         return jsonWriter.writeValueAsString(trb);
+    //     } catch (JsonProcessingException e) {
+    //         log.error("json processing error", e);
+    //     }
+
+    //     return "json error";
+    // }
 
     // private String getNetworkCallAssertions(List<Request> requestList, TestCriteriaBo testData){
 
