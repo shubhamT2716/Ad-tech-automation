@@ -42,7 +42,6 @@ public class WebController
 
         try{
             ObjectMapper mapper = new YAMLMapper();
-            System.out.println("yamlComplete =" + yaml);
             testCriteria = mapper.readValue(yaml, LoggingPixelTestDataModel.class);
 //            mav.addObject("message", "test");
 
