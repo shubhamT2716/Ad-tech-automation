@@ -1,6 +1,7 @@
 package net.media.emma.cop.testsuites.loggingpixels;
 
 import com.microsoft.playwright.BrowserContext;
+import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.utils.URLDataProcessing;
 import net.media.emma.utils.UrlQueryBuild;
@@ -8,75 +9,170 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 @Service
-public class LoggingPixelTestSuite {
+@Slf4j
+public class LoggingPixelTestSuite
+{
 
-    @Autowired BrowserFactory browserFactory;
-    @Autowired URLDataProcessing urlUtil;
+    @Autowired
+    BrowserFactory browserFactory;
+    @Autowired
+    URLDataProcessing urlUtil;
 
     String testDummy;
-    public String getLoggingPixelResults(LoggingPixelTestDataModel testCriteria){
 
-     /*   for (int i=0;i<testCriteria.getLoggingPixelTests().size();i++)
+    List<String> loggingPixelFormatData = new ArrayList<>(Arrays.asList("https://hblg.media.net/log"));
+
+    private ArrayList<HashMap<String, Object>> doesTheLoggingPixelFormatMatches(LoggingPixelTestDataModel testCriteria, String currentUrl)
+    {
+
+        ArrayList<HashMap<String, Object>> failureLogging = new ArrayList<>();
+        HashMap<String, Object> logUrlDetails = new HashMap<>();
+
+        for (String loggingPixelFormat : loggingPixelFormatData)
         {
-            System.out.println("testCriteriaKeyFromTestSuite = " + testCriteria.getLoggingPixelTests().get(i).getKey());
-            System.out.println("testCriteriaValueDataTypeFromTestSuite = " + testCriteria.getLoggingPixelTests().get(i).getValueDataType());
-            System.out.println("testCriteriaValueRegexFromTestSuite = " + testCriteria.getLoggingPixelTests().get(i).getValueRegex());
-        }*/
-        BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", null);
 
-        List<String> urlFromNetworkTab = new ArrayList<>();
-
-        bc.onRequest(request -> {
-            String networkCall = request.url();
-            urlFromNetworkTab.add(networkCall);
-            List<String> queryParams = null;
-
-            if(networkCall.split(String.valueOf(Pattern.compile("\\?"))).length>1){
-                queryParams = List.of(networkCall.split(String.valueOf(Pattern.compile("\\?")))[1].split(String.valueOf(Pattern.compile("="))));
-                System.out.println("queryParams.toString() = " + queryParams.toString());
-                List<LoggingPixelTestDataModel.DataTypeChecks> testData =  testCriteria.getLoggingPixelTests();
-                for(LoggingPixelTestDataModel.DataTypeChecks data:testData){
-                    if(queryParams.contains(data.getKey())){
-
-            urlFromNetworkTab.add(request.url());
-            if (request.url().contains("hblg.media.net")) //TODO: this needs to be defined by business
+            Map<String, String> urlParams;
+            if (currentUrl.startsWith(loggingPixelFormat)) //TODO: this needs to be defined by business
             {
-                Map<String, String> urlParams = UrlQueryBuild.getQueryMap(request.url());
-                String value = urlParams.get(testCriteria.getLoggingPixelTests().get(0).getKey()); //TODO run loop for all values
-                if (value == null)
+                urlParams = UrlQueryBuild.getQueryMap(currentUrl);
+                logUrlDetails.put("url", currentUrl);
+                List<LoggingPixelTestDataModel.DataTypeChecks> testData = testCriteria.getLoggingPixelTests();
+                for (LoggingPixelTestDataModel.DataTypeChecks data : testData)
                 {
-                    System.out.println("param is null = " + value);
-                }
-                else
-                {
-                    System.out.println("value = " + value);
-                    if (Objects.equals(testCriteria.getLoggingPixelTests().get(0).getValueDataType(), "long"))
+                    String key = data.getKey();
+                    logUrlDetails.put("key", key);
+                    if (urlParams.containsKey(key))
                     {
-                        long correctDataTypeValue = Long.parseLong(value);
-                        System.out.println("correctDataTypeValue = " + correctDataTypeValue);
+                        String value = null;
+                        //value of the key
+                        value = urlParams.get(data.getKey()); //TODO run loop for all values
+                        if (value != null)
+                        {
+                            String dataTypeOfKey = data.getValueDataType().toLowerCase();
+                            Boolean regexMatchFlag;
+                            switch (dataTypeOfKey)
+                            {
+                                case "long":
+                                    try
+                                    {
+                                        long longValue = Long.parseLong(value);
+                                        logUrlDetails.put("dataType", "true");
+                                        regexMatchFlag = matchRegex(data, value);
+                                        logUrlDetails.put("regexMatch", regexMatchFlag);
+                                    } catch (Exception e)
+                                    {
+                                        logUrlDetails.put("dataType", "false");
+                                    }
+                                    break;
+                                case "int":
+                                    try
+                                    {
+                                        int intValue = Integer.parseInt(value);
+                                        logUrlDetails.put("dataType", "true");
+                                        regexMatchFlag = matchRegex(data, value);
+                                        logUrlDetails.put("regexMatch", regexMatchFlag);
+                                    } catch (Exception e)
+                                    {
+                                        logUrlDetails.put("dataType", "false");
+                                    }
+                                    break;
+                                case "short":
+                                    try
+                                    {
+                                        short shortValue = Short.parseShort(value);
+                                        logUrlDetails.put("dataType", "true");
+                                        regexMatchFlag = matchRegex(data, value);
+                                        logUrlDetails.put("regexMatch", regexMatchFlag);
+                                    } catch (Exception e)
+                                    {
+                                        logUrlDetails.put("dataType", "false");
+                                    }
+                                    break;
+                                case "byte":
+                                    try
+                                    {
+                                        byte byteValue = Byte.parseByte(value);
+                                        logUrlDetails.put("dataType", "true");
+                                        regexMatchFlag = matchRegex(data, value);
+                                        logUrlDetails.put("regexMatch", regexMatchFlag);
+                                    } catch (Exception e)
+                                    {
+                                        logUrlDetails.put("dataType", "false");
+                                    }
+                                    break;
+                                case "float":
+                                    try
+                                    {
+                                        float floatValue = Float.parseFloat(value);
+                                        logUrlDetails.put("dataType", "true");
+                                        regexMatchFlag = matchRegex(data, value);
+                                        logUrlDetails.put("regexMatch", regexMatchFlag);
+                                    } catch (Exception e)
+                                    {
+                                        logUrlDetails.put("dataType", "false");
+                                    }
+                                    break;
+                                case "double":
+                                    try
+                                    {
+                                        double doubleValue = Double.parseDouble(value);
+                                        logUrlDetails.put("dataType", "true");
+                                        regexMatchFlag = matchRegex(data, value);
+                                        logUrlDetails.put("regexMatch", regexMatchFlag);
+                                    } catch (Exception e)
+                                    {
+                                        logUrlDetails.put("dataType", "false");
+                                    }
+                                    break;
+                                case "string":
+                                    try
+                                    {
+                                        String stringValue = value.toString();
+                                        logUrlDetails.put("dataType", "true");
+                                        regexMatchFlag = matchRegex(data, value);
+                                        logUrlDetails.put("regexMatch", regexMatchFlag);
+                                    } catch (Exception e)
+                                    {
+                                        logUrlDetails.put("dataType", "false");
+                                    }
+                                    break;
+                            }
 
-                        Boolean regexMatched = Pattern.compile(testCriteria.getLoggingPixelTests().get(0).getValueRegex()).matcher(value).find(); //TODO run loop for all values
-                        if (regexMatched)
-                        {
-                            System.out.println("regexMatched = " + regexMatched);
-                        }
-                        else
-                        {
-                            System.out.println("regexMatched = " + regexMatched);
                         }
                     }
+
                 }
+                failureLogging.add(logUrlDetails);
             }
-        });
 
-        bc.newPage().navigate(testCriteria.getPubUrl());
-        bc.close();
-        return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
-
+        }
+        return failureLogging;
     }
 
+    public String getLoggingPixelResults(LoggingPixelTestDataModel testCriteria)
+    {
+        BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", null);
 
+        //   Map<String, String> urlFromNetworkTab = new HashMap<>();
+        AtomicReference<ArrayList<HashMap<String, Object>>> urlDetails = new AtomicReference<>(new ArrayList<>());
+        bc.onRequest(request ->
+        {
+            String networkCall = request.url();
+            urlDetails.set(doesTheLoggingPixelFormatMatches(testCriteria, networkCall));
+            //   urlFromNetworkTab.put("url", networkCall);
+            // urlFromNetworkTab.add(networkCall);
+        });
+        bc.newPage().navigate(testCriteria.getPubUrl());
+        bc.close();
+        return Arrays.toString(urlDetails.get().toArray()).replace(", ", "<br>\n");
+    }
+
+    private Boolean matchRegex(LoggingPixelTestDataModel.DataTypeChecks data, String keyValue)
+    {
+        return Pattern.compile(data.getValueRegex()).matcher(keyValue).find();
+    }
 }

@@ -44,18 +44,12 @@ public class WebController
             ObjectMapper mapper = new YAMLMapper();
             System.out.println("yamlComplete =" + yaml);
             testCriteria = mapper.readValue(yaml, LoggingPixelTestDataModel.class);
-            for (int i=0;i<testCriteria.getLoggingPixelTests().size();i++)
-            {
-                System.out.println("testCriteriaKeyFromController = " + testCriteria.getLoggingPixelTests().get(i).getKey());
-                System.out.println("testCriteriaValueDataTypeFromController = " + testCriteria.getLoggingPixelTests().get(i).getValueDataType());
-                System.out.println("testCriteriaValueRegexFromController = " + testCriteria.getLoggingPixelTests().get(i).getValueRegex());
-            }
 //            mav.addObject("message", "test");
 
 //            List<LoggingPixelTestDataModel.DataTypeChecks> loggingKeyVal =  testCriteria.getLoggingPixelTests();
 
         }catch( Exception  e){
-            log.error("YAML Processing Error", e);;
+            log.error("YAML Processing Error", e);
             mav.addObject("message", e.getMessage());
             testCriteria = LoggingPixelTestDataModel.builder().build();
         }
