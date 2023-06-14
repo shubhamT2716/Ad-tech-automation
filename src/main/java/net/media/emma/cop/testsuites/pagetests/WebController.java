@@ -57,7 +57,7 @@ public class WebController {
         ModelAndView modelAndView = new ModelAndView();
 
         modelAndView.setViewName("pageLevelTests");
-        modelAndView.addObject("message", pageLevelTests.scrapeContent(url));
+        modelAndView.addObject("message", pageLevelTests.getPageLevelTestsData(url));
         return modelAndView;  
 
     }

@@ -78,7 +78,7 @@ public class URLDataProcessing {
         return sb.toString();
     }
 
-    private HashMap<String, String> queryStringToMap(String queryString){
+    public HashMap<String, String> queryStringToMap(String queryString){
 
         HashMap<String, String> queryStringMap = new HashMap<String, String>();
 
