@@ -1,11 +1,4 @@
-// Interface classes
-
-
-
 package net.media.emma.service;
-
-
-import java.io.IOException;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.Cookie;
