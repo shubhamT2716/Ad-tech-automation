@@ -12,6 +12,7 @@ import com.microsoft.playwright.BrowserContext;
 
 import org.apache.http.annotation.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.source.UnboundElementsSourceFilter;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,7 +41,6 @@ public class TestSuite implements GenericTestSuite {
     @Autowired DomJsonUtils domUtils;
     @Autowired ObjectWriter jsonWriter;
     @Autowired URLDataProcessing urlDataProcessing;
-    URLChecks urlChecks = URLChecks.builder().build();
 
     //List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
@@ -110,9 +110,9 @@ public class TestSuite implements GenericTestSuite {
         return null;
     }
 
-
-
     private String getNetworkCallAssertions3(List<String> requestList, TestCriteriaBo testData){
+
+        URLChecks urlChecks = URLChecks.builder().build();
 
         for (String requestUrl : requestList) {
 
@@ -152,14 +152,17 @@ public class TestSuite implements GenericTestSuite {
                 }else{
                     nuc.getMatchingUrls().add(requestUrl);
                 }
+            }
         }
-    }
 
-    try {
-        return jsonWriter.writeValueAsString(urlChecks);
-    } catch (JsonProcessingException e) {
-        log.error("json processing error", e);
-    }
+        urlChecks.updateMatchingUrlsCount();
+        urlChecks.updateNetworkCallErrors(testData);
+
+        try {
+            return jsonWriter.writeValueAsString(urlChecks);
+        } catch (JsonProcessingException e) {
+            log.error("json processing error", e);
+        }
 
         return "json error";
     }
