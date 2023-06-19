@@ -28,8 +28,8 @@ public class LoggingPixelTestSuite
 
     private TestReportModel doesTheLoggingPixelFormatMatches(LoggingPixelTestDataModel testCriteria, String currentUrl)
     {
+        //TODO: initial values overwrite the final ones, need to invoke without passing params
         TestReportModel testReportModel= new TestReportModel(currentUrl,"temp",true,true,true,0);
-        ArrayList<HashMap<String, Object>> failureLogging = new ArrayList<>();
 
         for (String loggingPixelFormat : loggingPixelFormatData)
         {
