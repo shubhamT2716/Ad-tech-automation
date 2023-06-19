@@ -199,6 +199,7 @@ public class LoggingPixelTestSuite
             String networkCall = request.url();
             urlDetails.set(doesTheLoggingPixelFormatMatches(testCriteria, networkCall));
         });
+        bc.setDefaultTimeout(0);
         bc.newPage().navigate(testCriteria.getPubUrl());
         bc.close();
         return urlDetails.toString();

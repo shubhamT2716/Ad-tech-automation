@@ -19,7 +19,8 @@ public class TestReportModel
 
         @Override
         public String toString() {
-                return "URL: " + getNetworkCall() + " KEY: " + getKey() +
-                        " DATA TYPE MATCH: " + getDataTypeMatch() + " REGEX MATCH: " + getRegexMatch() + " COUNT: " + getCountOfKey() + " NEGATIVE PRESENT: " + getNegativeValues();
+                return "\nURL: " + getNetworkCall() + "\nKEY: " + getKey() +
+                        "\nDATA TYPE MATCH: " + getDataTypeMatch() + "\nREGEX MATCH: " + getRegexMatch() +
+                        "\nCOUNT: " + getCountOfKey() + "\nNEGATIVE PRESENT: " + getNegativeValues();
         }
 }
