@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.JSHandle;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
@@ -45,7 +47,6 @@ public class PageLevelTests {
     // build a map<string,string> bidder key-val data from the URL
     public String getPageLevelTestsData(String url) {
 
-
         Page page = browserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList());
 
         // capturing all network calls
@@ -60,34 +61,46 @@ public class PageLevelTests {
         });
 
         String scrapeContentData = scrapeContent(page, url);
+        String networkCallAssertionData = networkCallDataChecks("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS", urlFromNetworkTab); //Yahoo SSP Call
 
-        Request sampleRequest = urlDataProcessing
-                .getRequestFor("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS", urlFromNetworkTab);
+        page.close();
+
+        return "Post Data of YPBJS request " + networkCallAssertionData + "\n  \n" + urlFromNetworkTab.toString() + "\n"
+                + scrapeContentData + "Request Urls " + requestUrls;
+    }
+
+    private String networkCallDataChecks(String networkCallFormat, List<Request> urlFromNetworkTab) {
+
+        String  resultsText = "";
+        
+        Request sampleRequest = urlDataProcessing.getRequestFor(networkCallFormat, urlFromNetworkTab);
+
+        if(sampleRequest == null){
+            return "No network call found for: " + networkCallFormat;
+        }
 
         URL urlData;
         String postData = sampleRequest.postData();
 
-        
-
         try {
-            urlData = new URL(sampleRequest.url().toString());
+        urlData = new URL(sampleRequest.url().toString());
 
-            // Can be used for deubbing
-            // fetches url
-            // log.info("urlData " + urlData);
-            // post request data of the said url
-            // log.info("postData " + postData);
+        // Can be used for deubbing
+        // fetches url
+        // log.info("urlData " + urlData);
+        // post request data of the said url
+        // log.info("postData " + postData);
+
+        resultsText += "postData " + postData + "\n";
 
         } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        // TODO Auto-generated catch block
+        e.printStackTrace();
         }
         // HashMap<String, String> queryStringMap =
         // urlDataProcessing.queryStringToMap(urlData.getQuery());
         // log.info("testing queryStringMap" + queryStringMap);
 
-
-        
         // creating hashmap of known Key values
 
         HashMap<String, String> knownBidderCallsDataMap = new HashMap<>();
@@ -96,21 +109,23 @@ public class PageLevelTests {
         knownBidderCallsDataMap.put("cobrand", "none");
         knownBidderCallsDataMap.put("page", "https://www.engadget.com/?headerbidding=1");
 
-
         // Logic for checking post data with hard coded known values
 
-        for (Entry<String, String> entry : knownBidderCallsDataMap.entrySet()) {
-            String keyOfHashMap = entry.getKey();
-            String valueOfHashMap = entry.getValue();
+   
 
-            Boolean keyPostData = postData.contains(keyOfHashMap);
-            Boolean valuePostData = postData.contains(valueOfHashMap);
-            log.info("key " + keyOfHashMap + " and key matching is " + keyPostData + " value is " + valueOfHashMap
-                    + " and value matching is " + valuePostData);
+        for (Entry<String, String> entry : knownBidderCallsDataMap.entrySet()) {
+        String keyOfHashMap = entry.getKey();
+        String valueOfHashMap = entry.getValue();
+
+        Boolean keyPostData = postData.contains(keyOfHashMap);
+        Boolean valuePostData = postData.contains(valueOfHashMap);
+
+        resultsText += "Key " + keyOfHashMap + " and key matching is " + keyPostData + " value is " + valueOfHashMap
+                + " and value matching is " + valuePostData;
+     
         }
 
-        return "Post Data of YPBJS request " + postData + "\n  \n" + urlFromNetworkTab.toString() + "\n"
-                + scrapeContentData + "Request Urls " + requestUrls;
+        return resultsText;
     }
 
     private String scrapeContent(Page page, String url) {
@@ -131,7 +146,6 @@ public class PageLevelTests {
 
             String concatenatedString = String.join(" ", jsExtraction);
             // log.info(adUnits.toString() + "this is ad units");
-            page.close();
             return concatenatedString;
 
         } catch (PlaywrightException e) {
