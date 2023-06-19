@@ -13,6 +13,8 @@ public class LoggingPixelTestDataModel{
         public String key;
         public String valueDataType;
         public String valueRegex;
+        public List<String> negativeStrings;
+
     }
     public String pubUrl;
 }

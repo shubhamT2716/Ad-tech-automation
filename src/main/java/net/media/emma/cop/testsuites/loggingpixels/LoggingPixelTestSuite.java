@@ -46,6 +46,7 @@ public class LoggingPixelTestSuite
                     String key = data.getKey();
                     logUrlDetails.put("key", key);
                     String regexFromYaml = data.getValueRegex();
+                    List<String> negativeStringChecks = data.getNegativeStrings();
                     if (urlParams.containsKey(key))
                     {
                         String value = null;
@@ -55,6 +56,7 @@ public class LoggingPixelTestSuite
                         {
                             String dataTypeOfKey = data.getValueDataType().toLowerCase();
                             Boolean regexMatchFlag;
+                            Boolean negativeStringFlag;
                             switch (dataTypeOfKey)
                             {
                                 case "long":
@@ -64,6 +66,8 @@ public class LoggingPixelTestSuite
                                         logUrlDetails.put("dataType", "true");
                                         regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
+                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
+                                        logUrlDetails.put("negativeString", negativeStringFlag);
                                     } catch (Exception e)
                                     {
                                         logUrlDetails.put("dataType", "false");
@@ -76,6 +80,8 @@ public class LoggingPixelTestSuite
                                         logUrlDetails.put("dataType", "true");
                                         regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
+                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
+                                        logUrlDetails.put("negativeString", negativeStringFlag);
                                     } catch (Exception e)
                                     {
                                         logUrlDetails.put("dataType", "false");
@@ -88,6 +94,8 @@ public class LoggingPixelTestSuite
                                         logUrlDetails.put("dataType", "true");
                                         regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
+                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
+                                        logUrlDetails.put("negativeString", negativeStringFlag);
                                     } catch (Exception e)
                                     {
                                         logUrlDetails.put("dataType", "false");
@@ -100,6 +108,8 @@ public class LoggingPixelTestSuite
                                         logUrlDetails.put("dataType", "true");
                                         regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
+                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
+                                        logUrlDetails.put("negativeString", negativeStringFlag);
                                     } catch (Exception e)
                                     {
                                         logUrlDetails.put("dataType", "false");
@@ -112,6 +122,8 @@ public class LoggingPixelTestSuite
                                         logUrlDetails.put("dataType", "true");
                                         regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
+                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
+                                        logUrlDetails.put("negativeString", negativeStringFlag);
                                     } catch (Exception e)
                                     {
                                         logUrlDetails.put("dataType", "false");
@@ -124,6 +136,8 @@ public class LoggingPixelTestSuite
                                         logUrlDetails.put("dataType", "true");
                                         regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
+                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
+                                        logUrlDetails.put("negativeString", negativeStringFlag);
                                     } catch (Exception e)
                                     {
                                         logUrlDetails.put("dataType", "false");
@@ -136,6 +150,8 @@ public class LoggingPixelTestSuite
                                         logUrlDetails.put("dataType", "true");
                                         regexMatchFlag = matchRegex(regexFromYaml, value);
                                         logUrlDetails.put("regexMatch", regexMatchFlag);
+                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
+                                        logUrlDetails.put("negativeString", negativeStringFlag);
                                     } catch (Exception e)
                                     {
                                         logUrlDetails.put("dataType", "false");
@@ -145,13 +161,20 @@ public class LoggingPixelTestSuite
 
                         }
                     }
-
                 }
                 failureLogging.add(logUrlDetails);
             }
 
         }
         return failureLogging;
+    }
+
+    private Boolean verifyNegativeString(List<String> negativeStringChecks, String value)
+    {
+            if(!(negativeStringChecks.contains(value))){
+                return true;
+            }else return false;
+
     }
 
     public String getLoggingPixelResults(LoggingPixelTestDataModel testCriteria)
