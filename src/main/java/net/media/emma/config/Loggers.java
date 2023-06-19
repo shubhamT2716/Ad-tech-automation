@@ -1,7 +1,6 @@
 package net.media.emma.config;
 
 import net.media.emma.coptests.AssertNetworkCalls;
-import net.media.emma.coptests.ConsoleError;
 import net.media.emma.coptests.SoftAssertion;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Bean;

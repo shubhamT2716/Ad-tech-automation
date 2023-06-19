@@ -6,11 +6,40 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import com.microsoft.playwright.Request;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class URLDataProcessing {
+
+    public String getRequestFor2(String url, List<String> networkCalls){
+
+        for(String currentCall : networkCalls){
+
+            if(currentCall.startsWith(url)){
+    
+                return currentCall;
+            }
+        }
+
+        return null;
+    }
+
+    public Request getRequestFor(String url, List<Request> requestList){
+
+        for(Request request : requestList){
+
+            log.info(request.url());
+            log.info(url);
+
+            if(request.url().startsWith(url)){
+                log.info(request.toString());
+                return request;
+            }
+        }
+
+        return null;
+    }
 
     public String printURLDetails(List<String> urlPatterns){
 
