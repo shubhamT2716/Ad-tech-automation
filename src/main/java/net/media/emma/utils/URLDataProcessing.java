@@ -28,10 +28,10 @@ public class URLDataProcessing {
     public Request getRequestFor(String url, List<Request> requestList){
 
         for(Request request : requestList){
-
+            if(request.postData() != null){
             log.info(request.url());
             log.info(url);
-
+            }
             if(request.url().startsWith(url)){
                 log.info(request.toString());
                 return request;
