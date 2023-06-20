@@ -3,6 +3,9 @@ package net.media.emma.cop.testsuites.yaml;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.HashMap;
 
 import lombok.Builder;
@@ -24,6 +27,7 @@ public class URLChecks {
     }
 
     @Getter @Setter @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class PositiveURLChecks{
         String label;
         String urlPattern;
@@ -51,6 +55,7 @@ public class URLChecks {
     }
 
     @Getter @Setter @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class NegativeURLChecks{
         String label;
         String urlPattern;
@@ -92,12 +97,12 @@ public class URLChecks {
 
     public void verifyPositiveKeyValChecks(){
 
-        positiveUrlChecks.forEach((key, value) -> {
-            value.getPositiveKeyValChecks().forEach((k, v) -> {
-                if(v.size() == 0){
-                    value.getTestMessages().add("No positive key value checks found for key: " + k);
-                    value.setTestResult(TestResult.FAIL);
-                }
+        positiveUrlChecks.forEach((callLabel, callData) -> { //key, value --> lable, PositiveURLChecks obj
+            callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
+                // if(listOfValues.size() == 0){
+                //     value.getTestMessages().add("No positive key value checks found for key: " + k);
+                //     value.setTestResult(TestResult.FAIL);
+                // }
             });
         });
        

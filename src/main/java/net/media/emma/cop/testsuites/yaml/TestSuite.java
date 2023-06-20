@@ -65,19 +65,23 @@ public class TestSuite implements GenericTestSuite {
             requestList.add(request);
         });
 
-        browserContext.newPage().navigate(testData.getPublisherUrl());
         // log.info(urlFromNetworkTab.toString());
         // return urlFromNetworkTab;
     
         try{
+            browserContext.newPage().navigate(testData.getPublisherUrl());
+            // browserContext.waitForPage(null, null);
             browserContext.newPage();
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         
         }catch(Exception e){
-            
-        }
 
-        browserContext.close();
+            log.error("Error while navigating to publisher url: {}", e.getMessage());
+            
+        }finally{
+
+            browserContext.close();
+        }
 
         //return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
         // return getNetworkCallAssertions(requestList, testData);
