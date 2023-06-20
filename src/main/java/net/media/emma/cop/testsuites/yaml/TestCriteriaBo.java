@@ -2,6 +2,7 @@ package net.media.emma.cop.testsuites.yaml;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,9 +17,9 @@ public class TestCriteriaBo {
     Map<String, String> networkCallsPositive;
     Map<String, String> networkCallsNegative;
 
-    Map<String, Map<String, List<String>>> keysToVerifyPositive;
-    Map<String, Map<String, List<String>>> keysToVerifyNegative;
-    Map<String, Map<String, List<String>>> keysToVerifyAnyOneOf;
+    Map<String, Map<String, Set<String>>> keysToVerifyPositive;
+    Map<String, Map<String, Set<String>>> keysToVerifyNegative;
+    Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
 
     List<ResponseSimulateParams> responseSimulate;
     List<DomInjectParams> domInject;

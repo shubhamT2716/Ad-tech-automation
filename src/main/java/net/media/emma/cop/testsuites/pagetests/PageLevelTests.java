@@ -74,11 +74,12 @@ public class PageLevelTests {
         String networkCallDataValidation = networkCallDataChecks(
                 "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS", urlFromNetworkTab); // Yahoo SSP Call
 
+        String networkCalls = requestUrls.stream().collect(Collectors.joining("\n"));
+
         page.close();
 
-        return "Post Data of YPBJS request " + networkCallDataValidation + "\n  \n" + urlFromNetworkTab.toString()
-                + "\n"
-                + scrapeContentData + "Request Urls " + requestUrls;
+        return "Post Data of YPBJS request " + networkCallDataValidation + "\n  \n" + urlFromNetworkTab.toString() + "\n"
+                + scrapeContentData + "Request Urls " + networkCalls;
     }
 
     private String networkCallDataChecks(String networkCallUrl, List<Request> urlFromNetworkTab) {
@@ -92,6 +93,7 @@ public class PageLevelTests {
         }
 
         URL urlData;
+
 
         String postData = sampleRequest.postData();
 
