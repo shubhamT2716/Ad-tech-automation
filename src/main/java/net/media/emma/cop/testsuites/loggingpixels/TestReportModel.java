@@ -25,7 +25,7 @@ public class TestReportModel
         }
         // Parameterized constructor
         public TestReportModel(List<String> networkCalls, List<String> keys, List<Boolean> dataTypeMatches,
-                        List<Boolean> regexMatches, List<Boolean> negativeValues, List<Integer> countOfKeys) {
+                        List<Boolean> regexMatches, List<Boolean> negativeValues) {
                 this.networkCalls = networkCalls;
                 this.keys = keys;
                 this.dataTypeMatches = dataTypeMatches;
