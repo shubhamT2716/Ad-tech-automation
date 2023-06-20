@@ -3,11 +3,12 @@ package net.media.emma.cop.testsuites.yaml;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
+import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.HashMap;
+import java.util.HashSet;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,13 +49,13 @@ public class URLChecks {
         Integer countOfMatchingUrls = 0;
         
         @Builder.Default
-        Map<String, List<String>> positiveKeyValChecks = new HashMap<String, List<String>>();
+        Map<String, Set<String>> positiveKeyValChecks = new HashMap<String, Set<String>>();
         
         @Builder.Default
-        Map<String, List<String>> negativeKeyValChecks = new HashMap<String, List<String>>();
+        Map<String, Set<String>> negativeKeyValChecks = new HashMap<String, Set<String>>();
         
         @Builder.Default
-        Map<String, List<String>> anyOneOfKeyValChecks = new HashMap<String, List<String>>();
+        Map<String, Set<String>> anyOneOfKeyValChecks = new HashMap<String, Set<String>>();
     }
 
     @Getter @Setter @Builder
@@ -101,12 +102,62 @@ public class URLChecks {
     public void verifyPositiveKeyValChecks(){
 
         positiveUrlChecks.forEach((callLabel, callData) -> { //key, value --> lable, PositiveURLChecks obj
+
+            if (callData.getPositiveKeyValChecks() == null) return;
+
             callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
 
-                // if(listOfValues.size() == 0){
-                //     value.getTestMessages().add("No positive key value checks found for key: " + k);
-                //     value.setTestResult(TestResult.FAIL);
-                // }
+                Set<String> actualValues = new HashSet<>();
+
+                callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                    if(qsMapFromNetworkCall.containsKey(qsParam)){
+                        actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                    }
+                });
+
+                if(!actualValues.equals(listOfValues)){
+                    callData.getTestMessages().add("Positive key value check failed for key: " + qsParam + ". Expected: " + listOfValues + " Actual: " + actualValues);
+                    callData.setTestResult(TestResult.FAIL);
+                }
+
+            });
+
+            if (callData.getNegativeKeyValChecks() == null) return;
+
+            callData.getNegativeKeyValChecks().forEach((qsParam, listOfValues) -> {
+
+                Set<String> actualValues = new HashSet<>();
+
+                callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                    if(qsMapFromNetworkCall.containsKey(qsParam)){
+                        actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                    }
+                });
+
+                if(actualValues.retainAll(listOfValues) && !actualValues.isEmpty()  ){
+                    callData.getTestMessages().add("Negative key value check failed for key: " + qsParam + ". Found negative matches: " + actualValues);
+                    callData.setTestResult(TestResult.FAIL);
+                }
+
+            });
+
+            if (callData.getAnyOneOfKeyValChecks() == null) return;
+
+            callData.getAnyOneOfKeyValChecks().forEach((qsParam, listOfValues) -> {
+
+                Set<String> actualValues = new HashSet<>();
+
+                callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                    if(qsMapFromNetworkCall.containsKey(qsParam)){
+                        actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                    }
+                });
+
+                if(actualValues.retainAll(listOfValues) && actualValues.isEmpty()  ){
+                    callData.getTestMessages().add("Any one of key value check failed for key: " + qsParam + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
+                    callData.setTestResult(TestResult.FAIL);
+                }
+
             });
         });
        

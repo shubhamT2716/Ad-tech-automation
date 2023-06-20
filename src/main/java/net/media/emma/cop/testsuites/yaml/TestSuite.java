@@ -25,8 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
-import net.media.emma.cop.testsuites.yaml.TestReportBo.CheckType;
-import net.media.emma.cop.testsuites.yaml.TestReportBo.UrlChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecks.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecks.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
@@ -163,6 +161,7 @@ public class TestSuite implements GenericTestSuite {
 
         urlChecks.updateMatchingUrlsCount();
         urlChecks.updateNetworkCallErrors(testData);
+        urlChecks.verifyPositiveKeyValChecks();
 
         try {
             return jsonWriter.writeValueAsString(urlChecks);
