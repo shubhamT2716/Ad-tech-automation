@@ -54,7 +54,10 @@ public class PageLevelTests {
 
     List<String> jsExtraction = new ArrayList<>();
     // List of urls to scrape the data from, basically bidder calls
-    List<String> knownBidderCallPatterns = Arrays.asList("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
+ HashMap<String, String> knownBidderCallPatterns = new HashMap<>(){{
+            put("YPBJS", "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
+            put("RTBSCall", "https://xch.media.net/AdExchange/rtbsspub?");
+    }};
     
 
 
