@@ -29,8 +29,6 @@ import net.media.emma.utils.URLDataProcessing;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONUtil;
 
-
-
 /*  ***************************************************************************************************
     // Open the URL using Playwright Page - Done
     // Scrape Content (as your doing right now) - Done
@@ -57,8 +55,6 @@ public class PageLevelTests {
     List<String> jsExtraction = new ArrayList<>();
     // List of urls to scrape the data from, basically bidder calls
     List<String> knownBidderCallPatterns = Arrays.asList("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
-    
-
 
     public String getPageLevelTestsData(String url) {
 
@@ -80,18 +76,14 @@ public class PageLevelTests {
 
         page.close();
 
-        return "Post Data of YPBJS request " + networkCallDataValidation + "\n  \n" + urlFromNetworkTab.toString() + "\n"
+        return "Post Data of YPBJS request " + networkCallDataValidation + "\n  \n" + urlFromNetworkTab.toString()
+                + "\n"
                 + scrapeContentData + "Request Urls " + requestUrls;
     }
-
-
-
-
 
     private String networkCallDataChecks(String networkCallUrl, List<Request> urlFromNetworkTab) {
 
         String resultsText = "";
-    
 
         Request sampleRequest = urlDataProcessing.getRequestFor(networkCallUrl, urlFromNetworkTab);
 
@@ -101,9 +93,7 @@ public class PageLevelTests {
 
         URL urlData;
 
-        
         String postData = sampleRequest.postData();
-
 
         // Logic to pretty print
 
@@ -115,7 +105,6 @@ public class PageLevelTests {
 
         try {
             urlData = new URL(sampleRequest.url().toString());
-
 
             resultsText += prettyPrint + "\n";
 
@@ -129,13 +118,16 @@ public class PageLevelTests {
 
         // creating hashmap of known Key values
 
-        HashMap<String, String> knownBidderCallsDataMap = new HashMap<>();
+        HashMap<String, String> knownBidderCallsDataMap = new HashMap<>() {
+            {
+                put("dfp_ad_unit_code", "us_eng_main_dt_top_center");
+                put("cobrand", "none");
+                put("page", "https://www.engadget.com/?headerbidding=1");
+                put("publisherblob", "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6jljbcpi8oe6m");
+                put("bucket", "eng-nl-hp-dis,ed-gam-migration1-1");
 
-        knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_eng_main_dt_top_center");
-        knownBidderCallsDataMap.put("cobrand", "none");
-        knownBidderCallsDataMap.put("page", "https://www.engadget.com/?headerbidding=1");
-        knownBidderCallsDataMap.put("publisherblob", "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6jljbcpi8oe6m");
-        knownBidderCallsDataMap.put("bucket", "eng-nl-hp-dis,ed-gam-migration1-1");
+            }
+        };
 
         // Logic for checking post data with hard coded known values
 
@@ -146,21 +138,14 @@ public class PageLevelTests {
             Boolean keyPostData = postData.contains(keyOfHashMap);
             Boolean valuePostData = postData.contains(valueOfHashMap);
 
-            resultsText += "\n Key to check is " + keyOfHashMap + " and matching is " + keyPostData + " and refrence value is " + valueOfHashMap
+            resultsText += "\n Key to check is " + keyOfHashMap + " and matching is " + keyPostData
+                    + " and refrence value is " + valueOfHashMap
                     + " and matching is " + valuePostData + "\n";
 
         }
 
         return resultsText;
     }
-
-
-
-
-
-
-
-
 
     private String scrapeContent(Page page, String url) {
 
