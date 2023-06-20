@@ -103,62 +103,62 @@ public class URLChecks {
 
         positiveUrlChecks.forEach((callLabel, callData) -> { //key, value --> lable, PositiveURLChecks obj
 
-            if (callData.getPositiveKeyValChecks() == null) return;
+            if (callData.getPositiveKeyValChecks() != null)
 
-            callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
+                callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
 
-                Set<String> actualValues = new HashSet<>();
+                    Set<String> actualValues = new HashSet<>();
 
-                callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
-                    if(qsMapFromNetworkCall.containsKey(qsParam)){
-                        actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                        if(qsMapFromNetworkCall.containsKey(qsParam)){
+                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                        }
+                    });
+
+                    if(!actualValues.equals(listOfValues)){
+                        callData.getTestMessages().add("Positive key value check failed for key: " + qsParam + ". Expected: " + listOfValues + " Actual: " + actualValues);
+                        callData.setTestResult(TestResult.FAIL);
                     }
+
                 });
 
-                if(!actualValues.equals(listOfValues)){
-                    callData.getTestMessages().add("Positive key value check failed for key: " + qsParam + ". Expected: " + listOfValues + " Actual: " + actualValues);
-                    callData.setTestResult(TestResult.FAIL);
-                }
+            if (callData.getNegativeKeyValChecks() != null) 
 
-            });
+                callData.getNegativeKeyValChecks().forEach((qsParam, listOfValues) -> {
 
-            if (callData.getNegativeKeyValChecks() == null) return;
+                    Set<String> actualValues = new HashSet<>();
 
-            callData.getNegativeKeyValChecks().forEach((qsParam, listOfValues) -> {
+                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                        if(qsMapFromNetworkCall.containsKey(qsParam)){
+                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                        }
+                    });
 
-                Set<String> actualValues = new HashSet<>();
-
-                callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
-                    if(qsMapFromNetworkCall.containsKey(qsParam)){
-                        actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                    if(actualValues.retainAll(listOfValues)){
+                        callData.getTestMessages().add("Negative key value check failed for key: " + qsParam + ". Found negative matches: " + actualValues);
+                        callData.setTestResult(TestResult.FAIL);
                     }
+
                 });
 
-                if(actualValues.retainAll(listOfValues) && !actualValues.isEmpty()  ){
-                    callData.getTestMessages().add("Negative key value check failed for key: " + qsParam + ". Found negative matches: " + actualValues);
-                    callData.setTestResult(TestResult.FAIL);
-                }
+            if (callData.getAnyOneOfKeyValChecks() != null)
 
-            });
+                callData.getAnyOneOfKeyValChecks().forEach((qsParam, listOfValues) -> {
 
-            if (callData.getAnyOneOfKeyValChecks() == null) return;
+                    Set<String> actualValues = new HashSet<>();
 
-            callData.getAnyOneOfKeyValChecks().forEach((qsParam, listOfValues) -> {
+                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                        if(qsMapFromNetworkCall.containsKey(qsParam)){
+                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                        }
+                    });
 
-                Set<String> actualValues = new HashSet<>();
-
-                callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
-                    if(qsMapFromNetworkCall.containsKey(qsParam)){
-                        actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                    if(actualValues.retainAll(listOfValues) && actualValues.isEmpty()  ){
+                        callData.getTestMessages().add("Any one of key value check failed for key: " + qsParam + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
+                        callData.setTestResult(TestResult.FAIL);
                     }
+
                 });
-
-                if(actualValues.retainAll(listOfValues) && actualValues.isEmpty()  ){
-                    callData.getTestMessages().add("Any one of key value check failed for key: " + qsParam + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
-                    callData.setTestResult(TestResult.FAIL);
-                }
-
-            });
         });
        
     }
