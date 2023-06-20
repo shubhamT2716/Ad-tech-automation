@@ -44,16 +44,13 @@ public class WebController
         try{
             ObjectMapper mapper = new YAMLMapper();
             testCriteria = mapper.readValue(yaml, LoggingPixelTestDataModel.class);
-//            mav.addObject("message", "test");
-
-//            List<LoggingPixelTestDataModel.DataTypeChecks> loggingKeyVal =  testCriteria.getLoggingPixelTests();
 
         }catch( Exception  e){
             log.error("YAML Processing Error", e);
             mav.addObject("message", e.getMessage());
             testCriteria = LoggingPixelTestDataModel.builder().build();
         }
-        mav.addObject("message",  pixelTestSuite.getLoggingPixelResults(testCriteria));//t
+        mav.addObject("message",  pixelTestSuite.getLoggingPixelResults(testCriteria));
 
        return mav;
     }
