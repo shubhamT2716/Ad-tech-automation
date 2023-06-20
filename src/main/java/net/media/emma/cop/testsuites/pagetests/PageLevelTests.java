@@ -80,13 +80,11 @@ public class PageLevelTests {
 
         page.close();
 
+        String networkCalls = requestUrls.stream().collect(Collectors.joining("\n"));
+
         return "Post Data of YPBJS request " + networkCallDataValidation + "\n  \n" + urlFromNetworkTab.toString() + "\n"
-                + scrapeContentData + "Request Urls " + requestUrls;
+                + scrapeContentData + "Request Urls " + networkCalls;
     }
-
-
-
-
 
     private String networkCallDataChecks(String networkCallUrl, List<Request> urlFromNetworkTab) {
 
