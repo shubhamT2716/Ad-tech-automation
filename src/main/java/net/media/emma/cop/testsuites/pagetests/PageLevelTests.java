@@ -9,10 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import com.google.gson.JsonObject;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.JSHandle;
 import com.microsoft.playwright.Page;
@@ -22,6 +26,24 @@ import com.microsoft.playwright.Request;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.utils.URLDataProcessing;
+import net.minidev.json.JSONObject;
+import net.minidev.json.JSONUtil;
+
+
+
+/*  ***************************************************************************************************
+    // Open the URL using Playwright Page - Done
+    // Scrape Content (as your doing right now) - Done
+    // capture all network calls
+    // find out bidder calls (keep a list of known bidder URL formats and filter
+    // network calls against them) - In progress
+    // bidder calls request data (QA Params / Request Body) should have expeted
+    // values only. - In Progress
+    // ???
+    // build a map<string,string> bidder key-val data from the URL
+
+
+ ********************************************************************************************* */
 
 @Service
 @Slf4j
@@ -35,21 +57,13 @@ public class PageLevelTests {
     List<String> jsExtraction = new ArrayList<>();
     // List of urls to scrape the data from, basically bidder calls
     List<String> knownBidderCallPatterns = Arrays.asList("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
+    
 
-    // Open the URL using Playwright Page - Done
-    // Scrape Content (as your doing right now) - Done
-    // capture all network calls
-    // find out bidder calls (keep a list of known bidder URL formats and filter
-    // network calls against them) - In progress
-    // bidder calls request data (QA Params / Request Body) should have expeted
-    // values only. - In Progress
-    // ???
-    // build a map<string,string> bidder key-val data from the URL
+
     public String getPageLevelTestsData(String url) {
 
         Page page = browserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList());
 
-        // capturing all network calls
         // list of arrays initialization
         List<Request> urlFromNetworkTab = new ArrayList<>();
         List<String> requestUrls = new ArrayList<>();
@@ -61,41 +75,53 @@ public class PageLevelTests {
         });
 
         String scrapeContentData = scrapeContent(page, url);
-        String networkCallAssertionData = networkCallDataChecks("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS", urlFromNetworkTab); //Yahoo SSP Call
+        String networkCallDataValidation = networkCallDataChecks(
+                "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS", urlFromNetworkTab); // Yahoo SSP Call
 
         page.close();
 
-        return "Post Data of YPBJS request " + networkCallAssertionData + "\n  \n" + urlFromNetworkTab.toString() + "\n"
+        return "Post Data of YPBJS request " + networkCallDataValidation + "\n  \n" + urlFromNetworkTab.toString() + "\n"
                 + scrapeContentData + "Request Urls " + requestUrls;
     }
 
-    private String networkCallDataChecks(String networkCallFormat, List<Request> urlFromNetworkTab) {
 
-        String  resultsText = "";
-        
-        Request sampleRequest = urlDataProcessing.getRequestFor(networkCallFormat, urlFromNetworkTab);
 
-        if(sampleRequest == null){
-            return "No network call found for: " + networkCallFormat;
+
+
+    private String networkCallDataChecks(String networkCallUrl, List<Request> urlFromNetworkTab) {
+
+        String resultsText = "";
+    
+
+        Request sampleRequest = urlDataProcessing.getRequestFor(networkCallUrl, urlFromNetworkTab);
+
+        if (sampleRequest == null) {
+            return "No network call found for: " + networkCallUrl;
         }
 
         URL urlData;
+
+        
         String postData = sampleRequest.postData();
 
+
+        // Logic to pretty print
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        Object jsonObject = gson.fromJson(postData, Object.class);
+
+        String prettyPrint = gson.toJson(jsonObject);
+
         try {
-        urlData = new URL(sampleRequest.url().toString());
+            urlData = new URL(sampleRequest.url().toString());
 
-        // Can be used for deubbing
-        // fetches url
-        // log.info("urlData " + urlData);
-        // post request data of the said url
-        // log.info("postData " + postData);
 
-        resultsText += "postData " + postData + "\n";
+            resultsText += prettyPrint + "\n";
 
         } catch (MalformedURLException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         // HashMap<String, String> queryStringMap =
         // urlDataProcessing.queryStringToMap(urlData.getQuery());
@@ -108,25 +134,33 @@ public class PageLevelTests {
         knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_eng_main_dt_top_center");
         knownBidderCallsDataMap.put("cobrand", "none");
         knownBidderCallsDataMap.put("page", "https://www.engadget.com/?headerbidding=1");
+        knownBidderCallsDataMap.put("publisherblob", "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6jljbcpi8oe6m");
+        knownBidderCallsDataMap.put("bucket", "eng-nl-hp-dis,ed-gam-migration1-1");
 
         // Logic for checking post data with hard coded known values
 
-   
-
         for (Entry<String, String> entry : knownBidderCallsDataMap.entrySet()) {
-        String keyOfHashMap = entry.getKey();
-        String valueOfHashMap = entry.getValue();
+            String keyOfHashMap = entry.getKey();
+            String valueOfHashMap = entry.getValue();
 
-        Boolean keyPostData = postData.contains(keyOfHashMap);
-        Boolean valuePostData = postData.contains(valueOfHashMap);
+            Boolean keyPostData = postData.contains(keyOfHashMap);
+            Boolean valuePostData = postData.contains(valueOfHashMap);
 
-        resultsText += "Key " + keyOfHashMap + " and key matching is " + keyPostData + " value is " + valueOfHashMap
-                + " and value matching is " + valuePostData;
-     
+            resultsText += "\n Key to check is " + keyOfHashMap + " and matching is " + keyPostData + " and refrence value is " + valueOfHashMap
+                    + " and matching is " + valuePostData + "\n";
+
         }
 
         return resultsText;
     }
+
+
+
+
+
+
+
+
 
     private String scrapeContent(Page page, String url) {
 
@@ -169,6 +203,7 @@ public class PageLevelTests {
         return """
                     if(googletag.pubads()){
                     googletag.pubads().getSlots().map(s => {
+                        console.log('List of Ad units and Targeting: ');
                         console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
                     });
                 }""";
