@@ -131,6 +131,7 @@ public class TestSuite implements GenericTestSuite {
                     PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
                                                                         .urlPattern(urlData.getValue())
                                                                         .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
+                                                                        .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
                                                                         .negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
                                                                         .positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
                                                                         .anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey()))
@@ -139,6 +140,7 @@ public class TestSuite implements GenericTestSuite {
                     urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
                 }else{
                     labelExists.getMatchingUrls().add(requestUrl);
+                    labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
                 }
 
                 continue;

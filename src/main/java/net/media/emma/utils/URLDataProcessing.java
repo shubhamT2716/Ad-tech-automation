@@ -95,4 +95,18 @@ public class URLDataProcessing {
 
         return queryStringMap;
     }
+
+    public HashMap<String, String> getQueryStringMapFromUrl(String url){
+
+        try{
+            URL urlObj = new URL(url);
+            return queryStringToMap(urlObj.getQuery());
+
+        }
+        catch(MalformedURLException e){
+            log.error("URL malformed exception");
+        }
+
+        return new HashMap<>();
+    }
 }
