@@ -36,174 +36,201 @@ public class LoggingPixelTestSuite
         List<Boolean> dataTypeMatches = new ArrayList<>();
         List<Boolean> regexMatches = new ArrayList<>();
         List<Boolean> negativeValues = new ArrayList<>();
-        List<Integer> countOfKeys = new ArrayList<>();
         for (String loggingPixelFormat : loggingPixelFormatData)
         {
-
             Map<String, String> urlParams;
             if (currentUrl.startsWith(loggingPixelFormat))
             {
-                urlParams = UrlQueryBuild.getQueryMap(currentUrl);
-                networkCalls.add(currentUrl);
-                List<LoggingPixelTestDataModel.DataTypeChecks> testData = testCriteria.getLoggingPixelTests();
-                for (LoggingPixelTestDataModel.DataTypeChecks data : testData)
+                if(!networkCalls.contains(loggingPixelFormat))
                 {
-                    String key = data.getKey();
-                    keys.add(key);
-                    String regexFromYaml = data.getValueRegex();
-                    List<String> negativeStringChecks = data.getNegativeStrings();
-                    if (urlParams.containsKey(key))
+                    networkCalls.add(currentUrl);
+                    urlParams = UrlQueryBuild.getQueryMap(currentUrl);
+                    List<LoggingPixelTestDataModel.DataTypeChecks> testData = testCriteria.getLoggingPixelTests();
+                    for (LoggingPixelTestDataModel.DataTypeChecks data : testData)
                     {
-                        String value = null;
-                        //value of the key
-                        value = urlParams.get(key);
-                        if (value != null)
+                        String key = data.getKey();
+                        if (!keys.contains(key))
                         {
-                            String dataTypeOfKey = data.getValueDataType().toLowerCase();
-                            Boolean regexMatchFlag;
-                            Boolean negativeStringFlag;
-                            switch (dataTypeOfKey)
+                            String regexFromYaml = data.getValueRegex();
+                            List<String> negativeStringChecks = data.getNegativeStrings();
+                            if (urlParams.containsKey(key))
                             {
-                                case "long":
-                                    try
+                                String value = null;
+                                //value of the key
+                                value = urlParams.get(key);
+                                if (value != null)
+                                {
+                                    String dataTypeOfKey = data.getValueDataType().toLowerCase();
+                                    Boolean regexMatchFlag;
+                                    Boolean negativeStringFlag;
+                                    keys.add(key);
+                                    switch (dataTypeOfKey)
                                     {
-                                        Long.parseLong(value);
-                                        dataTypeMatches.add(true);
-                                        
-                                        regexMatchFlag = matchRegex(regexFromYaml, value);
-                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
-                                        regexMatches.add(regexMatchFlag);
-                                        negativeValues.add(negativeStringFlag);
-                                    } catch (Exception e)
-                                    {
-                                        dataTypeMatches.add(false);
-                                        regexMatches.add(false);
-                                        negativeValues.add(false);
+                                        case "long":
+                                            try
+                                            {
+                                                Long.parseLong(value);
+                                                dataTypeMatches.add(true);
+
+                                                regexMatchFlag = matchRegex(regexFromYaml, value);
+                                                regexMatches.add(regexMatchFlag);
+                                                if (!negativeStringChecks.isEmpty())
+                                                {
+                                                    negativeStringFlag = verifyNegativeString(negativeStringChecks, value);
+                                                    negativeValues.add(negativeStringFlag);
+                                                }
+                                                else negativeValues.add(false);
+                                            } catch (Exception e)
+                                            {
+                                                dataTypeMatches.add(false);
+                                                regexMatches.add(false);
+                                                negativeValues.add(false);
+                                            }
+                                            break;
+                                        case "int":
+                                            try
+                                            {
+                                                Integer.parseInt(value);
+                                                dataTypeMatches.add(true);
+                                                regexMatchFlag = matchRegex(regexFromYaml, value);
+                                                regexMatches.add(regexMatchFlag);
+                                                if (!negativeStringChecks.isEmpty())
+                                                {
+                                                    negativeStringFlag = verifyNegativeString(negativeStringChecks, value);
+                                                    negativeValues.add(negativeStringFlag);
+                                                }else negativeValues.add(false);
+                                            } catch (Exception e)
+                                            {
+                                                dataTypeMatches.add(false);
+
+                                                regexMatches.add(false);
+                                                negativeValues.add(false);
+                                            }
+                                            break;
+                                        case "short":
+                                            try
+                                            {
+                                                Short.parseShort(value);
+                                                dataTypeMatches.add(true);
+                                                regexMatchFlag = matchRegex(regexFromYaml, value);
+                                                regexMatches.add(regexMatchFlag);
+                                                if (!negativeStringChecks.isEmpty())
+                                                {
+                                                    negativeStringFlag = verifyNegativeString(negativeStringChecks, value);
+                                                    negativeValues.add(negativeStringFlag);
+                                                }else negativeValues.add(false);
+                                            } catch (Exception e)
+                                            {
+                                                dataTypeMatches.add(false);
+                                                regexMatches.add(false);
+
+                                                negativeValues.add(false);
+                                            }
+                                            break;
+                                        case "byte":
+                                            try
+                                            {
+                                                Byte.parseByte(value);
+                                                dataTypeMatches.add(true);
+                                                regexMatchFlag = matchRegex(regexFromYaml, value);
+                                                regexMatches.add(regexMatchFlag);
+                                                if (!negativeStringChecks.isEmpty())
+                                                {
+                                                    negativeStringFlag = verifyNegativeString(negativeStringChecks, value);
+                                                    negativeValues.add(negativeStringFlag);
+                                                }else negativeValues.add(false);
+                                            } catch (Exception e)
+                                            {
+                                                dataTypeMatches.add(false);
+                                                regexMatches.add(false);
+                                                negativeValues.add(false);
+                                            }
+                                            break;
+                                        case "float":
+                                            try
+                                            {
+                                                Float.parseFloat(value);
+                                                dataTypeMatches.add(true);
+                                                regexMatchFlag = matchRegex(regexFromYaml, value);
+                                                regexMatches.add(regexMatchFlag);
+                                                if (!negativeStringChecks.isEmpty())
+                                                {
+                                                    negativeStringFlag = verifyNegativeString(negativeStringChecks, value);
+                                                    negativeValues.add(negativeStringFlag);
+                                                }else negativeValues.add(false);
+                                            } catch (Exception e)
+                                            {
+                                                dataTypeMatches.add(false);
+                                                regexMatches.add(false);
+                                                negativeValues.add(false);
+
+                                            }
+                                            break;
+                                        case "double":
+                                            try
+                                            {
+                                                Double.parseDouble(value);
+                                                dataTypeMatches.add(true);
+                                                regexMatchFlag = matchRegex(regexFromYaml, value);
+                                                regexMatches.add(regexMatchFlag);
+                                                if (!negativeStringChecks.isEmpty())
+                                                {
+                                                    negativeStringFlag = verifyNegativeString(negativeStringChecks, value);
+                                                    negativeValues.add(negativeStringFlag);
+                                                }else negativeValues.add(false);
+                                            } catch (Exception e)
+                                            {
+                                                dataTypeMatches.add(false);
+                                                regexMatches.add(false);
+                                                negativeValues.add(false);
+                                            }
+                                            break;
+                                        case "string":
+                                            try
+                                            {
+                                                value.toString();
+                                                dataTypeMatches.add(true);
+                                                regexMatchFlag = matchRegex(regexFromYaml, value);
+                                                regexMatches.add(regexMatchFlag);
+                                                if (!negativeStringChecks.isEmpty())
+                                                {
+                                                    negativeStringFlag = verifyNegativeString(negativeStringChecks, value);
+                                                    negativeValues.add(negativeStringFlag);
+                                                }else negativeValues.add(false);
+                                            } catch (Exception e)
+                                            {
+                                                dataTypeMatches.add(false);
+                                                regexMatches.add(false);
+                                                negativeValues.add(false);
+                                            }
+                                            break;
                                     }
-                                    break;
-                                case "int":
-                                    try
-                                    {
-                                        Integer.parseInt(value);
-                                        dataTypeMatches.add(true);
-                                        regexMatchFlag = matchRegex(regexFromYaml, value);
-                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
-                                        regexMatches.add(regexMatchFlag);
-                                        
-                                        negativeValues.add(negativeStringFlag);
-                                    } catch (Exception e)
-                                    {
-                                        dataTypeMatches.add(false);
-                                        
-                                        regexMatches.add(false);
-                                        negativeValues.add(false);
-                                    }
-                                    break;
-                                case "short":
-                                    try
-                                    {
-                                        Short.parseShort(value);
-                                        dataTypeMatches.add(true);
-                                        regexMatchFlag = matchRegex(regexFromYaml, value);
-                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
-                                        regexMatches.add(regexMatchFlag);
-                                        negativeValues.add(negativeStringFlag);
-                                    } catch (Exception e)
-                                    {
-                                        dataTypeMatches.add(false);
-                                        regexMatches.add(false);
-                                        
-                                        negativeValues.add(false);
-                                    }
-                                    break;
-                                case "byte":
-                                    try
-                                    {
-                                        Byte.parseByte(value);
-                                        dataTypeMatches.add(true);
-                                        regexMatchFlag = matchRegex(regexFromYaml, value);
-                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
-                                        regexMatches.add(regexMatchFlag);
-                                        negativeValues.add(negativeStringFlag);
-                                        negativeValues.add(negativeStringFlag);
-                                    } catch (Exception e)
-                                    {
-                                        dataTypeMatches.add(false);
-                                        regexMatches.add(false);
-                                        negativeValues.add(false);
-                                    }
-                                    break;
-                                case "float":
-                                    try
-                                    {
-                                        Float.parseFloat(value);
-                                        dataTypeMatches.add(true);
-                                        regexMatchFlag = matchRegex(regexFromYaml, value);
-                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
-                                        regexMatches.add(regexMatchFlag);
-                                        negativeValues.add(negativeStringFlag);
-                                    } catch (Exception e)
-                                    {
-                                        dataTypeMatches.add(false);
-                                        regexMatches.add(false);
-                                        negativeValues.add(false);
-                                        
-                                    }
-                                    break;
-                                case "double":
-                                    try
-                                    {
-                                        Double.parseDouble(value);
-                                        dataTypeMatches.add(true);
-                                        regexMatchFlag = matchRegex(regexFromYaml, value);
-                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
-                                        regexMatches.add(regexMatchFlag);
-                                        negativeValues.add(negativeStringFlag);
-                                    } catch (Exception e)
-                                    {
-                                        dataTypeMatches.add(false);
-                                        regexMatches.add(false);
-                                        negativeValues.add(false);
-                                    }
-                                    break;
-                                case "string":
-                                    try
-                                    {
-                                        value.toString();
-                                        dataTypeMatches.add(true);
-                                        regexMatchFlag = matchRegex(regexFromYaml, value);
-                                        negativeStringFlag = verifyNegativeString(negativeStringChecks,value);
-                                        regexMatches.add(regexMatchFlag);
-                                        negativeValues.add(negativeStringFlag);
-                                    } catch (Exception e)
-                                    {
-                                        dataTypeMatches.add(false);
-                                        regexMatches.add(false);
-                                        negativeValues.add(false);
-                                    }
-                                    break;
+                                    log.info("networkCalls to string : "+networkCalls.toString());
+                                    log.info("keys to string : "+keys.toString());
+                                    log.info("dataTypeMatches to string : "+dataTypeMatches.toString());
+                                    log.info("regexMatches to string : "+regexMatches.toString());
+                                    log.info("negativeValues to string : "+negativeValues.toString());
+
+                                }
                             }
-
                         }
-                    }
-                }
-                testReportModel.setNetworkCalls(networkCalls);
-                testReportModel.setKeys(keys);
-                testReportModel.setDataTypeMatches(dataTypeMatches);
-                testReportModel.setRegexMatches(regexMatches);
-                testReportModel.setNegativeValues(negativeValues);
-                testReportModel.setCountOfKeys(countOfKeys);
-            }
 
+                    }
+                    testReportModel.setNetworkCalls(networkCalls);
+                    testReportModel.setKeys(keys);
+                    testReportModel.setDataTypeMatches(dataTypeMatches);
+                    testReportModel.setRegexMatches(regexMatches);
+                    testReportModel.setNegativeValues(negativeValues);
+
+                }
+        }
         }
         return testReportModel;
     }
 
-    private Boolean verifyNegativeString(List<String> negativeStringChecks, String value)
+    private Boolean verifyNegativeString(List<String> negativeStringValues, String value)
     {
-        //return negativeStringChecks.contains(value);
-        //TODO : heena to fix the above
-        return true;
+        return negativeStringValues.contains(value);
     }
 
     public String getLoggingPixelResults(LoggingPixelTestDataModel testCriteria)

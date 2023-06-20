@@ -18,7 +18,7 @@ public class TestReportModel
         private List<Boolean> dataTypeMatches;
         private List<Boolean> regexMatches;
         private List<Boolean> negativeValues;
-        private List<Integer> countOfKeys;
+
 
         // Default constructor
         public TestReportModel() {
@@ -31,12 +31,12 @@ public class TestReportModel
                 this.dataTypeMatches = dataTypeMatches;
                 this.regexMatches = regexMatches;
                 this.negativeValues = negativeValues;
-                this.countOfKeys = countOfKeys;
+
         }
         @Override
         public String toString(){
                     return "\nURL: " + getNetworkCalls() + "\nKEY: " + getKeys()  +
                         "\nDATA TYPE MATCH: " + getDataTypeMatches()  + "\nREGEX MATCH: " + getRegexMatches()  +
-                        "\nCOUNT: " + getCountOfKeys()  + "\nNEGATIVE PRESENT: " + getNegativeValues()+ "\n-----------";
+                         "\nNEGATIVE PRESENT: " + getNegativeValues()+ "\n-----------";
         }
 }
