@@ -12,6 +12,7 @@ import com.microsoft.playwright.BrowserContext;
 
 import org.apache.http.annotation.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.source.UnboundElementsSourceFilter;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,8 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
-import net.media.emma.cop.testsuites.yaml.TestReportBo.CheckType;
-import net.media.emma.cop.testsuites.yaml.TestReportBo.UrlChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecks.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecks.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
@@ -40,7 +39,6 @@ public class TestSuite implements GenericTestSuite {
     @Autowired DomJsonUtils domUtils;
     @Autowired ObjectWriter jsonWriter;
     @Autowired URLDataProcessing urlDataProcessing;
-    URLChecks urlChecks = URLChecks.builder().build();
 
     //List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
@@ -65,19 +63,23 @@ public class TestSuite implements GenericTestSuite {
             requestList.add(request);
         });
 
-        browserContext.newPage().navigate(testData.getPublisherUrl());
         // log.info(urlFromNetworkTab.toString());
         // return urlFromNetworkTab;
     
         try{
+            browserContext.newPage().navigate(testData.getPublisherUrl());
+            // browserContext.waitForPage(null, null);
             browserContext.newPage();
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         
         }catch(Exception e){
-            
-        }
 
-        browserContext.close();
+            log.error("Error while navigating to publisher url: {}", e.getMessage());
+            
+        }finally{
+
+            browserContext.close();
+        }
 
         //return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
         // return getNetworkCallAssertions(requestList, testData);
@@ -110,9 +112,9 @@ public class TestSuite implements GenericTestSuite {
         return null;
     }
 
-
-
     private String getNetworkCallAssertions3(List<String> requestList, TestCriteriaBo testData){
+
+        URLChecks urlChecks = URLChecks.builder().build();
 
         for (String requestUrl : requestList) {
 
@@ -127,6 +129,7 @@ public class TestSuite implements GenericTestSuite {
                     PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
                                                                         .urlPattern(urlData.getValue())
                                                                         .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
+                                                                        .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
                                                                         .negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
                                                                         .positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
                                                                         .anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey()))
@@ -135,6 +138,7 @@ public class TestSuite implements GenericTestSuite {
                     urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
                 }else{
                     labelExists.getMatchingUrls().add(requestUrl);
+                    labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
                 }
 
                 continue;
@@ -152,14 +156,18 @@ public class TestSuite implements GenericTestSuite {
                 }else{
                     nuc.getMatchingUrls().add(requestUrl);
                 }
+            }
         }
-    }
 
-    try {
-        return jsonWriter.writeValueAsString(urlChecks);
-    } catch (JsonProcessingException e) {
-        log.error("json processing error", e);
-    }
+        urlChecks.updateMatchingUrlsCount();
+        urlChecks.updateNetworkCallErrors(testData);
+        urlChecks.verifyPositiveKeyValChecks();
+
+        try {
+            return jsonWriter.writeValueAsString(urlChecks);
+        } catch (JsonProcessingException e) {
+            log.error("json processing error", e);
+        }
 
         return "json error";
     }
