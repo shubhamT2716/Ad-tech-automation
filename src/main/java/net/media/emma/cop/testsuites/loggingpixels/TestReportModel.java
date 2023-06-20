@@ -33,10 +33,4 @@ public class TestReportModel
                 this.negativeValues = negativeValues;
 
         }
-        @Override
-        public String toString(){
-                    return "\nURL: " + getNetworkCalls() + "\nKEY: " + getKeys()  +
-                        "\nDATA TYPE MATCH: " + getDataTypeMatches()  + "\nREGEX MATCH: " + getRegexMatches()  +
-                         "\nNEGATIVE PRESENT: " + getNegativeValues()+ "\n-----------";
-        }
 }

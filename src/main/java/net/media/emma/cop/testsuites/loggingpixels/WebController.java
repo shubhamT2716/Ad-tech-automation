@@ -35,7 +35,8 @@ public class WebController
     }
 
     @PostMapping
-    public ModelAndView yamlTestSuite(@RequestParam String yaml) {
+    public ModelAndView yamlTestSuite(@RequestParam String yaml) throws JsonProcessingException
+    {
 
         ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
         LoggingPixelTestDataModel testCriteria;

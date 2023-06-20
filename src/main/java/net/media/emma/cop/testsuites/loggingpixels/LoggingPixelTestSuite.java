@@ -1,6 +1,9 @@
 package net.media.emma.cop.testsuites.loggingpixels;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.Request;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.utils.URLDataProcessing;
@@ -22,27 +25,32 @@ public class LoggingPixelTestSuite
     @Autowired
     URLDataProcessing urlUtil;
 
+    @Autowired
+    ObjectWriter jsonWriter;
+
     String testDummy;
 
     List<String> loggingPixelFormatData = new ArrayList<>(Arrays.asList("https://hblg.media.net/log"));
-    List<String> networkCalls = new ArrayList<>();
-    List<String> keys = new ArrayList<>();
-    List<Boolean> dataTypeMatches = new ArrayList<>();
-    List<Boolean> regexMatches = new ArrayList<>();
-    List<Boolean> negativeValues = new ArrayList<>();
-    private TestReportModel doesTheLoggingPixelFormatMatches(LoggingPixelTestDataModel testCriteria, String currentUrl)
+
+    private String doesTheLoggingPixelFormatMatches(LoggingPixelTestDataModel testCriteria, List<Request> allUrl) throws JsonProcessingException
     {
-        //TODO: initial values overwrite the final ones, need to invoke without passing params
         TestReportModel testReportModel= new TestReportModel();
         // Create lists for each variable
-
+        List<String> networkCalls = new ArrayList<>();
+        List<String> keys = new ArrayList<>();
+        List<Boolean> dataTypeMatches = new ArrayList<>();
+        List<Boolean> regexMatches = new ArrayList<>();
+        List<Boolean> negativeValues = new ArrayList<>();
         for (String loggingPixelFormat : loggingPixelFormatData)
         {
-            Map<String, String> urlParams;
-            if (currentUrl.startsWith(loggingPixelFormat))
+            for(Request currentUrl:allUrl)
             {
-                    networkCalls.add(currentUrl);
-                    urlParams = UrlQueryBuild.getQueryMap(currentUrl);
+
+            Map<String, String> urlParams;
+            if (currentUrl.toString().startsWith(loggingPixelFormat))
+            {
+                    networkCalls.add(currentUrl.toString());
+                    urlParams = UrlQueryBuild.getQueryMap(currentUrl.toString());
                     List<LoggingPixelTestDataModel.DataTypeChecks> testData = testCriteria.getLoggingPixelTests();
                     for (LoggingPixelTestDataModel.DataTypeChecks data : testData)
                     {
@@ -180,8 +188,9 @@ public class LoggingPixelTestSuite
                     testReportModel.setRegexMatches(regexMatches);
                     testReportModel.setNegativeValues(negativeValues);
         }
-        }
-        return testReportModel;
+        }}
+
+        return jsonWriter.writeValueAsString(testReportModel);
     }
 
 
@@ -199,24 +208,29 @@ public class LoggingPixelTestSuite
         if (!negativeStringChecks.isEmpty())
         {
             negativeStringFlag = verifyNegativeString(negativeStringChecks, value);
-            negativeValues.add(negativeStringFlag);
-        }else  negativeValues.add(false);
+            flags.add(negativeStringFlag);
+        }else  flags.add(false);
         return flags;
     }
 
-    public String getLoggingPixelResults(LoggingPixelTestDataModel testCriteria)
+    public String getLoggingPixelResults(LoggingPixelTestDataModel testCriteria) throws JsonProcessingException
     {
+
         BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", null);
-        AtomicReference<TestReportModel> urlDetails = new AtomicReference<>();
+        List<String> urlFromNetworkTab = new ArrayList<>();
+        List<Request> requestList = new ArrayList<>();
         bc.onRequest(request ->
         {
-            String networkCall = request.url();
-            urlDetails.set(doesTheLoggingPixelFormatMatches(testCriteria, networkCall));
+            //list of arrays initialization
+
+            urlFromNetworkTab.add(request.url());
+            requestList.add(request);
         });
         bc.setDefaultTimeout(0);
         bc.newPage().navigate(testCriteria.getPubUrl());
         bc.close();
-        return urlDetails.toString();
+
+        return doesTheLoggingPixelFormatMatches(testCriteria,requestList);
     }
 
     private Boolean matchRegex(String regex, String keyValue)
