@@ -55,9 +55,14 @@ public class PageLevelTests {
     URLDataProcessing urlDataProcessing;
 
     List<String> jsExtraction = new ArrayList<>();
-    // List of urls to scrape the data from, basically bidder calls
-    List<String> knownBidderCallPatterns = Arrays.asList("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
+
+    // Map is bidder-name with bidder call
+    HashMap<String, String> knownBidderCallPatterns = new HashMap<>(){{
+            put("YPBJS", "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
+            put("RTBSCall", "https://xch.media.net/AdExchange/rtbsspub?");
+    }};
     
+
 
 
     public String getPageLevelTestsData(String url) {
@@ -76,7 +81,7 @@ public class PageLevelTests {
 
         String scrapeContentData = scrapeContent(page, url);
         String networkCallDataValidation = networkCallDataChecks(
-                "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS", urlFromNetworkTab); // Yahoo SSP Call
+            knownBidderCallPatterns.get("YPBJS"), urlFromNetworkTab); // Yahoo SSP Call
 
         page.close();
 
