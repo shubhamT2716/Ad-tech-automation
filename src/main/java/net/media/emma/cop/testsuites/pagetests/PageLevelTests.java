@@ -54,12 +54,12 @@ public class PageLevelTests {
 
     List<String> jsExtraction = new ArrayList<>();
     // List of urls to scrape the data from, basically bidder calls
- HashMap<String, String> knownBidderCallPatterns = new HashMap<>(){{
+    HashMap<String, String> knownBidderCallPatterns = new HashMap<>() {
+        {
             put("YPBJS", "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
             put("RTBSCall", "https://xch.media.net/AdExchange/rtbsspub?");
-    }};
-    
-
+        }
+    };
 
     public String getPageLevelTestsData(String url) {
 
@@ -77,19 +77,21 @@ public class PageLevelTests {
 
         String scrapeContentData = scrapeContent(page, url);
         String networkCallDataValidation = networkCallDataChecks(
-            knownBidderCallPatterns.get("YPBJS"), urlFromNetworkTab); // Yahoo SSP Call
+                knownBidderCallPatterns.get("YPBJS"), urlFromNetworkTab, url); // Yahoo SSP Call
 
         String networkCalls = requestUrls.stream().collect(Collectors.joining("\n"));
 
         page.close();
 
-        return "Post Data of YPBJS request " + networkCallDataValidation + "\n  \n" + urlFromNetworkTab.toString() + "\n"
+        return "Post Data of YPBJS request " + networkCallDataValidation + "\n  \n" + urlFromNetworkTab.toString()
+                + "\n"
                 + scrapeContentData + "Request Urls " + networkCalls;
     }
 
-    private String networkCallDataChecks(String networkCallUrl, List<Request> urlFromNetworkTab) {
-
+    private String networkCallDataChecks(String networkCallUrl, List<Request> urlFromNetworkTab, String url) {
+        String urlPassed = url;
         String resultsText = "";
+        HashMap<String, String> knownBidderCallsDataMap = new HashMap<>();
 
         Request sampleRequest = urlDataProcessing.getRequestFor(networkCallUrl, urlFromNetworkTab);
 
@@ -98,7 +100,6 @@ public class PageLevelTests {
         }
 
         URL urlData;
-
 
         String postData = sampleRequest.postData();
 
@@ -119,22 +120,30 @@ public class PageLevelTests {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        // HashMap<String, String> queryStringMap =
-        // urlDataProcessing.queryStringToMap(urlData.getQuery());
-        // log.info("testing queryStringMap" + queryStringMap);
 
         // creating hashmap of known Key values
+        // if conditons for various sites and KVs for yahoo, hard coded right now
+        if (url.contains("www.engadget.com")) {
+            
 
-        HashMap<String, String> knownBidderCallsDataMap = new HashMap<>() {
-            {
-                put("dfp_ad_unit_code", "us_eng_main_dt_top_center");
-                put("cobrand", "none");
-                put("page", "https://www.engadget.com/?headerbidding=1");
-                put("publisherblob", "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6jljbcpi8oe6m");
-                put("bucket", "eng-nl-hp-dis,ed-gam-migration1-1");
+            knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_eng_main_dt_top_center");
+            knownBidderCallsDataMap.put("cobrand", "none");
+            knownBidderCallsDataMap.put("page", urlPassed);
+            knownBidderCallsDataMap.put("publisherblob",
+                    "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6jljbcpi8oe6m");
+            knownBidderCallsDataMap.put("bucket", "eng-nl-hp-dis,ed-gam-migration1-1");
 
-            }
-        };
+        } else if (url.contains("sports.yahoo.com")) {
+
+            knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_ysports_main_dt_top_right");
+            knownBidderCallsDataMap.put("cobrand", "none");
+            knownBidderCallsDataMap.put("page", urlPassed);
+            knownBidderCallsDataMap.put("publisherblob",
+                    "lu:0;pct:;pd:;pt:home;site:sports;ver:y20||25664825||028fg2di95m9p");
+            knownBidderCallsDataMap.put("bucket", "JARVISUSSPORTSDESKCSMIGRATION000");
+
+        }
+        ;
 
         // Logic for checking post data with hard coded known values
 
@@ -194,8 +203,8 @@ public class PageLevelTests {
     private String adUnitExtractionLogic() {
         return """
                     if(googletag.pubads()){
-                    googletag.pubads().getSlots().map(s => {
                         console.log('List of Ad units and Targeting: ');
+                    googletag.pubads().getSlots().map(s => {
                         console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
                     });
                 }""";
