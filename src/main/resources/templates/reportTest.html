@@ -13,7 +13,7 @@
     </div>
 
     <div class="container my-5">
-      <button onClick="display('errors')" type="button" class="btn btn-danger">Show Errors</button> <button onClick="display('pass')" type="button" class="btn btn-success">Show Success</button>
+      <button onClick="display('FAIL')" type="button" class="btn btn-danger">Show Errors</button> <button onClick="display('PASS')" type="button" class="btn btn-success">Show Success</button>
     </div>
 
     <div class="container my-5">
@@ -24,18 +24,57 @@
 
       // class{}
 
-    
+  function printObj(obj) {
 
-      function display(status) {
-        var x = document.getElementById("testReport");
-        x.innerHTML = status;
-      }
-            var reportData ={
+    const h4 = document.createElement("h4");
+    h4.innerHTML = obj.label;
+
+    const small = document.createElement("span");
+    small.innerHTML = obj.urlPattern;
+   
+
+    const ul = document.createElement("ul");
+
+      if(obj.hasOwnProperty('testMessages'))
+      obj.testMessages.forEach(element => {
+
+        li = document.createElement("li");
+        li.innerHTML = element;
+
+        ul.appendChild(li);
+       
+      });
+     
+      const para = document.createElement("p");
+      para.appendChild(h4);
+      para.appendChild(small);
+      para.appendChild(ul);
+
+
+      return para;
+  }
+
+  function display(status) {
+
+    console.log(status);
+
+    document.getElementById("testReport").innerHTML = "";
+
+    for (var key in reportData.positiveUrlChecks) 
+      if (reportData.positiveUrlChecks.hasOwnProperty(key))
+        if(reportData.positiveUrlChecks[key].testResult == status){
+          document.getElementById("testReport").append(printObj(reportData.positiveUrlChecks[key]))
+        }
+          
+  }
+
+  let reportData ={
   "positiveUrlChecks" : {
     "AWLog" : {
       "label" : "AWLog",
       "urlPattern" : "https://hblg.media.net/log?logid=awlog",
       "testResult" : "FAIL",
+      "testMessages" : [ "No matching URL found" ],
       "countOfMatchingUrls" : 0
     },
     "bidExchange" : {
