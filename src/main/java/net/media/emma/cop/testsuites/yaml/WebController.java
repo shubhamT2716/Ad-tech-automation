@@ -76,4 +76,11 @@ public class WebController {
         }
         return "Input File Name Empty";
     }
+
+    @GetMapping("reportTest")
+    public ModelAndView reportTest() {
+
+        ModelAndView mav = new ModelAndView("reportTest");
+        return mav;
+    }
 }
