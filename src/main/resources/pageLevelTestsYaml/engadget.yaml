@@ -3,7 +3,7 @@ userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.engadget.com/?headerbidding=1"
 
 ypbjs: {
-  "asdf": "asdf",
+  "$.imp.[0].ext.dfp_ad_unit_code": "asdf",
   "123213": "123123",
  }
 
