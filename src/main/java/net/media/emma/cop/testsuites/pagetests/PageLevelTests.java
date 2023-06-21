@@ -13,6 +13,12 @@ import java.util.stream.Collectors;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -51,6 +57,8 @@ public class PageLevelTests {
     BrowserFactory browserFactory;
     @Autowired
     URLDataProcessing urlDataProcessing;
+
+    @Autowired ObjectMapper jsonReader;
 
     List<String> jsExtraction = new ArrayList<>();
     // List of urls to scrape the data from, basically bidder calls
@@ -177,6 +185,24 @@ public class PageLevelTests {
             // log.info(testPbjs.toString());
 
             JSHandle adUnits = page.evaluateHandle(adUnitExtractionLogic());
+
+            // https://stackoverflow.com/questions/34111276/jsonpath-with-jackson-or-gson
+            // String json = "...";
+
+            // Map<String, Object> book = JsonPath.read(json, "$.store.book[0]");
+            // System.out.println(book); 
+
+
+            try {
+                JsonNode adUnitsInJsonFormat = jsonReader.readTree(adUnits.toString());
+
+                log.info("Parsed Json Adunits data: ", adUnitsInJsonFormat);
+
+                
+
+            } catch ( JsonProcessingException e) {
+                log.error("Json Parsing error", e);
+            }
 
             String concatenatedString = String.join(" ", jsExtraction);
             // log.info(adUnits.toString() + "this is ad units");

@@ -23,4 +23,9 @@ public class ModelMapperConfig {
     public ObjectWriter jsonWriter(){
         return new ObjectMapper().writer().withDefaultPrettyPrinter();
     }
+
+    @Bean
+    public ObjectMapper jsonReader(){
+        return new ObjectMapper();
+    }
 }
