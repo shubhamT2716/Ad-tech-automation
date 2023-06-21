@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 
 import com.microsoft.playwright.BrowserContext;
 
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.LoadState;
 import org.apache.http.annotation.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.source.UnboundElementsSourceFilter;
@@ -67,10 +69,10 @@ public class TestSuite implements GenericTestSuite {
         // return urlFromNetworkTab;
     
         try{
-            browserContext.newPage().navigate(testData.getPublisherUrl());
-            // browserContext.waitForPage(null, null);
-            browserContext.newPage();
-            Thread.sleep(5000);
+            Page page = browserContext.newPage();
+            page.navigate(testData.getPublisherUrl());
+            page.waitForLoadState(LoadState.NETWORKIDLE,new Page.WaitForLoadStateOptions().setTimeout(5000));
+            page.waitForFunction("() => performance.getEntriesByType('resource').length > 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
         
         }catch(Exception e){
 
