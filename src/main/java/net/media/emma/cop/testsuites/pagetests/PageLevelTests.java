@@ -61,9 +61,9 @@ public class PageLevelTests {
         }
     };
 
-    public String getPageLevelTestsData(String url) {
+    public String getPageLevelTestsData(TestCriteria yaml) {
 
-        Page page = browserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList());
+        Page page = browserFactory.getPageWithNewContext(yaml.getUserAgent(), Arrays.asList());
 
         // list of arrays initialization
         List<Request> urlFromNetworkTab = new ArrayList<>();
@@ -75,9 +75,9 @@ public class PageLevelTests {
             requestUrls.add(request.url());
         });
 
-        String scrapeContentData = scrapeContent(page, url);
+        String scrapeContentData = scrapeContent(page, yaml.getPublisherUrl());
         String networkCallDataValidation = networkCallDataChecks(
-                knownBidderCallPatterns.get("YPBJS"), urlFromNetworkTab, url); // Yahoo SSP Call
+                knownBidderCallPatterns.get("YPBJS"), urlFromNetworkTab, yaml); // Yahoo SSP Call
 
         String networkCalls = requestUrls.stream().collect(Collectors.joining("\n"));
 
@@ -88,10 +88,10 @@ public class PageLevelTests {
                 + scrapeContentData + "Request Urls " + networkCalls;
     }
 
-    private String networkCallDataChecks(String networkCallUrl, List<Request> urlFromNetworkTab, String url) {
-        String urlPassed = url;
+    private String networkCallDataChecks(String networkCallUrl, List<Request> urlFromNetworkTab, TestCriteria yaml) {
+        String urlPassed = yaml.getPublisherUrl();
         String resultsText = "";
-        HashMap<String, String> knownBidderCallsDataMap = new HashMap<>();
+        Map<String, String> knownBidderCallsDataMap = yaml.getYpbjs();
 
         Request sampleRequest = urlDataProcessing.getRequestFor(networkCallUrl, urlFromNetworkTab);
 
@@ -123,27 +123,26 @@ public class PageLevelTests {
 
         // creating hashmap of known Key values
         // if conditons for various sites and KVs for yahoo, hard coded right now
-        if (url.contains("www.engadget.com")) {
+        // if (url.contains("www.engadget.com")) {
             
 
-            knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_eng_main_dt_top_center");
-            knownBidderCallsDataMap.put("cobrand", "none");
-            knownBidderCallsDataMap.put("page", urlPassed);
-            knownBidderCallsDataMap.put("publisherblob",
-                    "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6jljbcpi8oe6m");
-            knownBidderCallsDataMap.put("bucket", "eng-nl-hp-dis,ed-gam-migration1-1");
+        //     knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_eng_main_dt_top_center");
+        //     knownBidderCallsDataMap.put("cobrand", "none");
+        //     knownBidderCallsDataMap.put("page", urlPassed);
+        //     knownBidderCallsDataMap.put("publisherblob",
+        //             "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6jljbcpi8oe6m");
+        //     knownBidderCallsDataMap.put("bucket", "eng-nl-hp-dis,ed-gam-migration1-1");
 
-        } else if (url.contains("sports.yahoo.com")) {
+        // } else if (url.contains("sports.yahoo.com")) {
 
-            knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_ysports_main_dt_top_right");
-            knownBidderCallsDataMap.put("cobrand", "none");
-            knownBidderCallsDataMap.put("page", urlPassed);
-            knownBidderCallsDataMap.put("publisherblob",
-                    "lu:0;pct:;pd:;pt:home;site:sports;ver:y20||25664825||028fg2di95m9p");
-            knownBidderCallsDataMap.put("bucket", "JARVISUSSPORTSDESKCSMIGRATION000");
+        //     knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_ysports_main_dt_top_right");
+        //     knownBidderCallsDataMap.put("cobrand", "none");
+        //     knownBidderCallsDataMap.put("page", urlPassed);
+        //     knownBidderCallsDataMap.put("publisherblob",
+        //             "lu:0;pct:;pd:;pt:home;site:sports;ver:y20||25664825||028fg2di95m9p");
+        //     knownBidderCallsDataMap.put("bucket", "JARVISUSSPORTSDESKCSMIGRATION000");
 
-        }
-        ;
+        // }
 
         // Logic for checking post data with hard coded known values
 

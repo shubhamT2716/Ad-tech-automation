@@ -1,5 +1,8 @@
 package net.media.emma.cop.testsuites.pagetests;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -7,14 +10,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller("pageLevelTestsController") @RequestMapping("/pageLevelTests/")
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import net.media.emma.utils.FileOperations;
+
+@Controller("pageLevelTestsController") @RequestMapping("/pageLevelTests/") @Slf4j
 public class WebController {
 
     @Autowired PageLevelTests pageLevelTests;
+    @Autowired ObjectMapper mapper;
+    @Autowired FileOperations fileOperations;
 
     // @GetMapping("/domInject")
     // public String domINject() {
@@ -46,20 +60,45 @@ public class WebController {
     public ModelAndView openIndex() {
 
         ModelAndView mav = new ModelAndView("pageLevelTests");
+        mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/pageLevelTestsYaml/"));//  Arrays.asList(null, "testCriteria.yaml", "testCriteria2.yaml"));
         mav.addObject("testSuites", listOfTestSuites);
         return mav;
     }
     
 
     @PostMapping
-    public ModelAndView scrapeContent(@RequestParam String url){
+    public ModelAndView scrapeContent(@RequestParam String yaml){
 
-        ModelAndView modelAndView = new ModelAndView();
+        ModelAndView modelAndView = new ModelAndView("pageLevelTests");
 
-        modelAndView.setViewName("pageLevelTests");
-        modelAndView.addObject("message", pageLevelTests.getPageLevelTestsData(url));
-        return modelAndView;  
+        try{
 
+            ObjectMapper mapper = new YAMLMapper();
+            TestCriteria yamlTc = mapper.readValue(yaml, TestCriteria.class);
+            // mav.addObject("message", yamlTc.getEnvironment());
+            //mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
+            modelAndView.addObject("message", pageLevelTests.getPageLevelTestsData(yamlTc));
+
+        }catch( JsonProcessingException  e){
+            log.error("YAML Processing Error", e);;
+            modelAndView.addObject("message", e.getMessage());
+        }
+        return modelAndView;
     }
-    
+
+    @PostMapping("fileContent")
+    @ResponseBody
+    public String getFileContent(@RequestBody String fileName){
+
+        if(fileName.length() > 0){
+
+            try {
+                return new String( Files.readAllBytes(Paths.get("src/main/resources/pageLevelTestsYaml/" + fileName)));
+            } catch (IOException e) {
+                log.error("File Read Error", e);
+                return e.getMessage();
+            }
+        }
+        return "Input File Name Empty";
+    }
 }
