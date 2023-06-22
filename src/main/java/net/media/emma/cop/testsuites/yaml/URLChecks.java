@@ -3,7 +3,11 @@ package net.media.emma.cop.testsuites.yaml;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +15,7 @@ import lombok.Setter;
 
 @Getter @Setter @Builder
 public class URLChecks {
-    
+
     @Builder.Default
     Map<String, PositiveURLChecks> positiveUrlChecks = new HashMap<String, PositiveURLChecks>();
     @Builder.Default
@@ -24,6 +28,7 @@ public class URLChecks {
     }
 
     @Getter @Setter @Builder
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class PositiveURLChecks{
         String label;
         String urlPattern;
@@ -37,20 +42,24 @@ public class URLChecks {
         @Builder.Default
         List<String> matchingUrls = new ArrayList<>();
 
+        @Builder.Default @JsonIgnore
+        List<HashMap<String, String>> queryStringMap = new ArrayList<>();
+
         @Builder.Default
         Integer countOfMatchingUrls = 0;
         
         @Builder.Default
-        Map<String, List<String>> positiveKeyValChecks = new HashMap<String, List<String>>();
+        Map<String, Set<String>> positiveKeyValChecks = new HashMap<String, Set<String>>();
         
         @Builder.Default
-        Map<String, List<String>> negativeKeyValChecks = new HashMap<String, List<String>>();
+        Map<String, Set<String>> negativeKeyValChecks = new HashMap<String, Set<String>>();
         
         @Builder.Default
-        Map<String, List<String>> anyOneOfKeyValChecks = new HashMap<String, List<String>>();
+        Map<String, Set<String>> anyOneOfKeyValChecks = new HashMap<String, Set<String>>();
     }
 
     @Getter @Setter @Builder
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class NegativeURLChecks{
         String label;
         String urlPattern;
@@ -92,13 +101,64 @@ public class URLChecks {
 
     public void verifyPositiveKeyValChecks(){
 
-        positiveUrlChecks.forEach((key, value) -> {
-            value.getPositiveKeyValChecks().forEach((k, v) -> {
-                if(v.size() == 0){
-                    value.getTestMessages().add("No positive key value checks found for key: " + k);
-                    value.setTestResult(TestResult.FAIL);
-                }
-            });
+        positiveUrlChecks.forEach((callLabel, callData) -> { //key, value --> lable, PositiveURLChecks obj
+
+            if (callData.getPositiveKeyValChecks() != null)
+
+                callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
+
+                    Set<String> actualValues = new HashSet<>();
+
+                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                        if(qsMapFromNetworkCall.containsKey(qsParam)){
+                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                        }
+                    });
+
+                    if(!actualValues.equals(listOfValues)){
+                        callData.getTestMessages().add("Positive key value check failed for key: " + qsParam + ". Expected: " + listOfValues + " Actual: " + actualValues);
+                        callData.setTestResult(TestResult.FAIL);
+                    }
+
+                });
+
+            if (callData.getNegativeKeyValChecks() != null) 
+
+                callData.getNegativeKeyValChecks().forEach((qsParam, listOfValues) -> {
+
+                    Set<String> actualValues = new HashSet<>();
+
+                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                        if(qsMapFromNetworkCall.containsKey(qsParam)){
+                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                        }
+                    });
+
+                    if(actualValues.retainAll(listOfValues)){
+                        callData.getTestMessages().add("Negative key value check failed for key: " + qsParam + ". Found negative matches: " + actualValues);
+                        callData.setTestResult(TestResult.FAIL);
+                    }
+
+                });
+
+            if (callData.getAnyOneOfKeyValChecks() != null)
+
+                callData.getAnyOneOfKeyValChecks().forEach((qsParam, listOfValues) -> {
+
+                    Set<String> actualValues = new HashSet<>();
+
+                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                        if(qsMapFromNetworkCall.containsKey(qsParam)){
+                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                        }
+                    });
+
+                    if(actualValues.retainAll(listOfValues) && actualValues.isEmpty()  ){
+                        callData.getTestMessages().add("Any one of key value check failed for key: " + qsParam + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
+                        callData.setTestResult(TestResult.FAIL);
+                    }
+
+                });
         });
        
     }

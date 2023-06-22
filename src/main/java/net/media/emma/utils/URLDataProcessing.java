@@ -28,10 +28,10 @@ public class URLDataProcessing {
     public Request getRequestFor(String url, List<Request> requestList){
 
         for(Request request : requestList){
-
+            if(request.postData() != null){
             log.info(request.url());
             log.info(url);
-
+            }
             if(request.url().startsWith(url)){
                 log.info(request.toString());
                 return request;
@@ -78,7 +78,7 @@ public class URLDataProcessing {
         return sb.toString();
     }
 
-    private HashMap<String, String> queryStringToMap(String queryString){
+    public HashMap<String, String> queryStringToMap(String queryString){
 
         HashMap<String, String> queryStringMap = new HashMap<String, String>();
 
@@ -94,5 +94,19 @@ public class URLDataProcessing {
         }
 
         return queryStringMap;
+    }
+
+    public HashMap<String, String> getQueryStringMapFromUrl(String url){
+
+        try{
+            URL urlObj = new URL(url);
+            return queryStringToMap(urlObj.getQuery());
+
+        }
+        catch(MalformedURLException e){
+            log.error("URL malformed exception");
+        }
+
+        return new HashMap<>();
     }
 }

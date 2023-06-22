@@ -27,3 +27,4 @@
 src/main/resources/Test-Automation-Report.html
 src/main/resources/yaml/TestData.yaml
 test-output/*
+*.DS_Store

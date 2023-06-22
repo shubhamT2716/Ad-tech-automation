@@ -1,79 +1,214 @@
 package net.media.emma.cop.testsuites.pagetests;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.Key;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-
-
-
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserType;
+import com.google.gson.JsonObject;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.JSHandle;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.PlaywrightException;
+import com.microsoft.playwright.Request;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
+import net.media.emma.utils.URLDataProcessing;
+import net.minidev.json.JSONObject;
+import net.minidev.json.JSONUtil;
 
-@Service @Slf4j
+
+
+/*  ***************************************************************************************************
+    // Open the URL using Playwright Page - Done
+    // Scrape Content (as your doing right now) - Done
+    // capture all network calls
+    // find out bidder calls (keep a list of known bidder URL formats and filter
+    // network calls against them) - In progress
+    // bidder calls request data (QA Params / Request Body) should have expeted
+    // values only. - In Progress
+    // ???
+    // build a map<string,string> bidder key-val data from the URL
+
+
+ ********************************************************************************************* */
+
+@Service
+@Slf4j
 public class PageLevelTests {
 
-    @Autowired BrowserFactory browserFactory;
-     
+    @Autowired
+    BrowserFactory browserFactory;
+    @Autowired
+    URLDataProcessing urlDataProcessing;
+
     List<String> jsExtraction = new ArrayList<>();
-    private String pbjsVarExtrationLogic(){
-        return """
-            if(window._pbjsGlobals){
-            var pbjsVar = window._pbjsGlobals[0];
-            console.log(JSON.stringify(window[pbjsVar], null , 4));
-            }
-                """;
+
+    // Map is bidder-name with bidder call
+    HashMap<String, String> knownBidderCallPatterns = new HashMap<>(){{
+            put("YPBJS", "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
+            put("RTBSCall", "https://xch.media.net/AdExchange/rtbsspub?");
+    }};
+    
+
+
+
+    public String getPageLevelTestsData(String url) {
+
+        Page page = browserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList());
+
+        // list of arrays initialization
+        List<Request> urlFromNetworkTab = new ArrayList<>();
+        List<String> requestUrls = new ArrayList<>();
+
+        page.onRequest(request -> {
+
+            urlFromNetworkTab.add(request);
+            requestUrls.add(request.url());
+        });
+
+        String scrapeContentData = scrapeContent(page, url);
+        String networkCallDataValidation = networkCallDataChecks(
+            knownBidderCallPatterns.get("YPBJS"), urlFromNetworkTab); // Yahoo SSP Call
+
+        page.close();
+
+        String networkCalls = requestUrls.stream().collect(Collectors.joining("\n"));
+
+        return "Post Data of YPBJS request " + networkCallDataValidation + "\n  \n" + urlFromNetworkTab.toString() + "\n"
+                + scrapeContentData + "Request Urls " + networkCalls;
     }
 
-     // Scraping ad unit detials
-// Scraping only adunit path for now, can be modified as per requirements
+    private String networkCallDataChecks(String networkCallUrl, List<Request> urlFromNetworkTab) {
 
-private String adUnitExtractionLogic(){
-    return """
-        if(googletag.pubads()){
-        googletag.pubads().getSlots().map(s => {
-            console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
-        });
-    }""";
-                
-                
-}
-    public String scrapeContent(String url){
+        String resultsText = "";
+    
+
+        Request sampleRequest = urlDataProcessing.getRequestFor(networkCallUrl, urlFromNetworkTab);
+
+        if (sampleRequest == null) {
+            return "No network call found for: " + networkCallUrl;
+        }
+
+        URL urlData;
+
+        
+        String postData = sampleRequest.postData();
+
+
+        // Logic to pretty print
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        Object jsonObject = gson.fromJson(postData, Object.class);
+
+        String prettyPrint = gson.toJson(jsonObject);
 
         try {
-            
-        Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
+            urlData = new URL(sampleRequest.url().toString());
 
 
-             page.onConsoleMessage(consoleMessage -> {
-                 log.info("Console message: " + consoleMessage.text());
+            resultsText += prettyPrint + "\n";
+
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // HashMap<String, String> queryStringMap =
+        // urlDataProcessing.queryStringToMap(urlData.getQuery());
+        // log.info("testing queryStringMap" + queryStringMap);
+
+        // creating hashmap of known Key values
+
+        HashMap<String, String> knownBidderCallsDataMap = new HashMap<>();
+
+        knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_eng_main_dt_top_center");
+        knownBidderCallsDataMap.put("cobrand", "none");
+        knownBidderCallsDataMap.put("page", "https://www.engadget.com/?headerbidding=1");
+        knownBidderCallsDataMap.put("publisherblob", "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6jljbcpi8oe6m");
+        knownBidderCallsDataMap.put("bucket", "eng-nl-hp-dis,ed-gam-migration1-1");
+
+        // Logic for checking post data with hard coded known values
+
+        for (Entry<String, String> entry : knownBidderCallsDataMap.entrySet()) {
+            String keyOfHashMap = entry.getKey();
+            String valueOfHashMap = entry.getValue();
+
+            Boolean keyPostData = postData.contains(keyOfHashMap);
+            Boolean valuePostData = postData.contains(valueOfHashMap);
+
+            resultsText += "\n Key to check is " + keyOfHashMap + " and matching is " + keyPostData + " and refrence value is " + valueOfHashMap
+                    + " and matching is " + valuePostData + "\n";
+
+        }
+
+        return resultsText;
+    }
+
+
+
+
+
+
+
+
+
+    private String scrapeContent(Page page, String url) {
+
+        try {
+
+            page.onConsoleMessage(consoleMessage -> {
                 jsExtraction.add("\n" + consoleMessage.text() + "\n");
             });
+
             page.navigate(url);
             page.waitForTimeout(500);
             JSHandle testPbjs = page.evaluateHandle(pbjsVarExtrationLogic());
 
             // log.info(testPbjs.toString());
-            
-                JSHandle adUnits= page.evaluateHandle(adUnitExtractionLogic());
-            
-                String concatenatedString = String.join(" ", jsExtraction);
-            // log.info(adUnits.toString() + "this is ad units");
 
+            JSHandle adUnits = page.evaluateHandle(adUnitExtractionLogic());
+
+            String concatenatedString = String.join(" ", jsExtraction);
+            // log.info(adUnits.toString() + "this is ad units");
             return concatenatedString;
-        } catch (PlaywrightException  e) {
-                e.printStackTrace();
+
+        } catch (PlaywrightException e) {
+            log.error("Error in scraping content", e);
         }
 
         return "Error";
-        
-    }   
-} 
+    }
+
+    private String pbjsVarExtrationLogic() {
+        return """
+                if(window._pbjsGlobals){
+                var pbjsVar = window._pbjsGlobals[0];
+                console.log(JSON.stringify(window[pbjsVar], null , 4));
+                }
+                    """;
+    }
+
+    // Scraping ad unit detials
+    private String adUnitExtractionLogic() {
+        return """
+                    if(googletag.pubads()){
+                    googletag.pubads().getSlots().map(s => {
+                        console.log('List of Ad units and Targeting: ');
+                        console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
+                    });
+                }""";
+    }
+}

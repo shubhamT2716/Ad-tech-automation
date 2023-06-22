@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 
 import com.microsoft.playwright.BrowserContext;
 
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.LoadState;
 import org.apache.http.annotation.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.source.UnboundElementsSourceFilter;
@@ -25,8 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
-import net.media.emma.cop.testsuites.yaml.TestReportBo.CheckType;
-import net.media.emma.cop.testsuites.yaml.TestReportBo.UrlChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecks.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecks.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
@@ -65,19 +65,23 @@ public class TestSuite implements GenericTestSuite {
             requestList.add(request);
         });
 
-        browserContext.newPage().navigate(testData.getPublisherUrl());
         // log.info(urlFromNetworkTab.toString());
         // return urlFromNetworkTab;
     
         try{
-            browserContext.newPage();
-            Thread.sleep(10000);
+            Page page = browserContext.newPage();
+            page.navigate(testData.getPublisherUrl());
+            page.waitForLoadState(LoadState.NETWORKIDLE,new Page.WaitForLoadStateOptions().setTimeout(5000));
+            page.waitForFunction("() => performance.getEntriesByType('resource').length > 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
         
         }catch(Exception e){
-            
-        }
 
-        browserContext.close();
+            log.error("Error while navigating to publisher url: {}", e.getMessage());
+            
+        }finally{
+
+            browserContext.close();
+        }
 
         //return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
         // return getNetworkCallAssertions(requestList, testData);
@@ -127,6 +131,7 @@ public class TestSuite implements GenericTestSuite {
                     PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
                                                                         .urlPattern(urlData.getValue())
                                                                         .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
+                                                                        .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
                                                                         .negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
                                                                         .positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
                                                                         .anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey()))
@@ -135,6 +140,7 @@ public class TestSuite implements GenericTestSuite {
                     urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
                 }else{
                     labelExists.getMatchingUrls().add(requestUrl);
+                    labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
                 }
 
                 continue;
@@ -157,6 +163,7 @@ public class TestSuite implements GenericTestSuite {
 
         urlChecks.updateMatchingUrlsCount();
         urlChecks.updateNetworkCallErrors(testData);
+        urlChecks.verifyPositiveKeyValChecks();
 
         try {
             return jsonWriter.writeValueAsString(urlChecks);
