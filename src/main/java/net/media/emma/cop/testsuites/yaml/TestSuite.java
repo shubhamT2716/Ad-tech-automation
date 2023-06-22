@@ -6,23 +6,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.microsoft.playwright.BrowserContext;
-
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.LoadState;
-import org.apache.http.annotation.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.source.UnboundElementsSourceFilter;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
-
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
@@ -71,8 +64,11 @@ public class TestSuite implements GenericTestSuite {
         try{
             Page page = browserContext.newPage();
             page.navigate(testData.getPublisherUrl());
-            page.waitForLoadState(LoadState.NETWORKIDLE,new Page.WaitForLoadStateOptions().setTimeout(5000));
-            page.waitForFunction("() => performance.getEntriesByType('resource').length > 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
+            // page.waitForLoadState(LoadState.NETWORKIDLE,new Page.WaitForLoadStateOptions().setTimeout(5000));
+            //page.waitForFunction("() => performance.getEntriesByType('resource').length > 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
+
+            Page page2 = browserContext.newPage();
+            Thread.sleep(1000);
         
         }catch(Exception e){
 
