@@ -192,17 +192,26 @@ public class PageLevelTests {
             // Map<String, Object> book = JsonPath.read(json, "$.store.book[0]");
             // System.out.println(book); 
 
+            Gson gson = new Gson();
+            
+            ObjectMapper objectMapper =new ObjectMapper();
+            try{
+            String test = objectMapper.writeValueAsString(adUnits);
+            log.info("test value "+ test);
+            } catch ( JsonProcessingException e) {
+                 log.error("Json Parsing error", e);
+             }
 
-            try {
-                JsonNode adUnitsInJsonFormat = jsonReader.readTree(adUnits.toString());
+            // try {
+            //     JsonNode adUnitsInJsonFormat = jsonReader.readTree(adUnits.toString());
 
-                log.info("Parsed Json Adunits data: ", adUnitsInJsonFormat);
+            //     log.info("Parsed Json Adunits data: ", adUnitsInJsonFormat);
 
                 
 
-            } catch ( JsonProcessingException e) {
-                log.error("Json Parsing error", e);
-            }
+            // } catch ( JsonProcessingException e) {
+            //     log.error("Json Parsing error", e);
+            // }
 
             String concatenatedString = String.join(" ", jsExtraction);
             // log.info(adUnits.toString() + "this is ad units");
