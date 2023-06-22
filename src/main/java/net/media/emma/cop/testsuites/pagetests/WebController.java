@@ -50,16 +50,14 @@ public class WebController {
         return mav;
     }
     
-
     @PostMapping
     public ModelAndView scrapeContent(@RequestParam String url){
 
         ModelAndView modelAndView = new ModelAndView();
 
         modelAndView.setViewName("pageLevelTests");
-        modelAndView.addObject("message", pageLevelTests.scrapeContent(url));
+        modelAndView.addObject("message", pageLevelTests.getPageLevelTestsData(url));
         return modelAndView;  
 
-    }
-    
+    }   
 }
