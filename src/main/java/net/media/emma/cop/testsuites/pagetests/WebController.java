@@ -69,7 +69,7 @@ public class WebController {
     @PostMapping
     public ModelAndView scrapeContent(@RequestParam String yaml){
 
-        ModelAndView modelAndView = new ModelAndView("pageLevelTests");
+        ModelAndView modelAndView = new ModelAndView("pageLevelTestsDataReport");
 
         try{
 
