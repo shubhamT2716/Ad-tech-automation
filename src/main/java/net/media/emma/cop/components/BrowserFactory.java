@@ -1,5 +1,6 @@
 package net.media.emma.cop.components;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -9,7 +10,6 @@ import java.util.Map;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.Browser.NewContextOptions;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
-import com.microsoft.playwright.options.Geolocation;
 import com.microsoft.playwright.options.HarMode;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -33,7 +33,7 @@ public class BrowserFactory {
     private static String getFileNameForHar(){
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(new java.util.Date());
         String random = String.valueOf((int)(Math.random() * 10000));
-        return "test-output/har-files/generated-har-file-" + timeStamp + "-" + random + ".har";
+        return "emma-working-directory/har-files/generated-har-file-" + timeStamp + "-" + random + ".har";
     }
 
     private static NewContextOptions getCommonBrowserContext(String userAgent, Boolean isMobile) {
@@ -43,6 +43,7 @@ public class BrowserFactory {
             .setRecordHarPath(Paths.get(getFileNameForHar()))
             .setRecordHarMode(HarMode.FULL)
             .setIgnoreHTTPSErrors(true);
+            // .setStorageStatePath(Paths.get("emma-working-directory/browser-context-storage/state.json"));
 
         if(isMobile){
             newContextOptions
@@ -121,7 +122,14 @@ public class BrowserFactory {
 
         BrowserContext newBc =  getBrowserByType(browserType).newContext(
                                         getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile")));
-        // newBc.setDefaultNavigationTimeout(120000);
+
+        BrowserContext.StorageStateOptions storageStateOptions = new BrowserContext.StorageStateOptions();
+        newBc.storageState(storageStateOptions.setPath(Paths.get("emma-working-directory/browser-context-storage/state.json")));
+
+                                        
+                                        
+
+        newBc.setDefaultNavigationTimeout(120000);
 
         return newBc;
     }

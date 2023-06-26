@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
+
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
@@ -39,10 +40,36 @@ public class TestSuite implements GenericTestSuite {
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
     List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
 
+    private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData){
+
+        try{
+
+            Page page = bc.newPage();
+            page.navigate(testData.getLoginUrl());
+            page.locator("//*[@id=\"login-username\"]").fill(testData.getUserName());
+            page.locator("//*[@id=\"login-signin\"]").click();
+            page.locator("//*[@id=\"login-passwd\"]").fill(testData.getPassword());
+            page.locator("//*[@id=\"login-signin\"]").click();
+            page.waitForLoadState();
+            
+        }catch(Exception e){
+
+            log.error("Error while logging in: {}", e.getMessage());
+        }
+
+        return bc;
+    }
+
     @Override
     public String getTestResults(TestCriteriaBo testData){
 
         BrowserContext browserContext = browserFactory.getBc(testData.getUserAgent(), testData.getCookies());
+
+        if(testData.getLoginUrl() != null && testData.getUserName() != null && testData.getPassword() != null) {
+
+            doLogin(browserContext, testData);
+
+        }
 
         browserContext = replaceBidExUrl(browserContext, testData);
         browserContext = attachResponseMocking(browserContext, testData);
