@@ -190,20 +190,21 @@ public class PageLevelTests {
             // String json = "...";
 
             // Map<String, Object> book = JsonPath.read(json, "$.store.book[0]");
-            // System.out.println(book); 
+            // System.out.println(book)
+            Object adUnitDataEval = page.evaluate(adUnitDataCheck());
 
-            JSHandle adUnitDataAssertion = page.evaluateHandle(adUnitDataCheck());
-            
+            log.info("JSHandle evaluate "+ adUnitDataEval);
 
-            log.info("Raw data"+ adUnitDataAssertion.toString());
             ObjectMapper objectMapper =new ObjectMapper();
             try{
-            String test = objectMapper.writeValueAsString(adUnitDataAssertion.toString());
+            String test = objectMapper.writeValueAsString(adUnitDataEval);
+            // JsonNode testJson = objectMapper.readTree(adUnitDataEval);
             log.info("test value "+ test);
             } catch ( JsonProcessingException e) {
                  log.error("Json Parsing error", e);
              }
 
+            
             
 
             // try {
@@ -251,18 +252,19 @@ public class PageLevelTests {
 
 
     private String adUnitDataCheck(){
-        return"""
+        return """
             var jsonObj = [];
+            function adUnitJs(){
+                return JSON.stringify(jsonObj);
+            }
+            
                    if(googletag.pubads()){
                     googletag.pubads().getSlots().map(s => {
-
-                        jsonObj.push( {"adunits": s.getAdUnitPath(), "sizes":s.getSizes(), "targetingMap":s.getTargetingMap()} );
-
-                        ///console.log(s.getAdUnitPath(), s.getSizes(), s.getTargetingMap());
-                        
+                    jsonObj.push(s.getAdUnitPath(), s.getSizes(), s.getTargetingMap())
                     });
                     console.log(JSON.stringify(jsonObj));
                 }
+                adUnitJs();
                 """;
     }
 }
