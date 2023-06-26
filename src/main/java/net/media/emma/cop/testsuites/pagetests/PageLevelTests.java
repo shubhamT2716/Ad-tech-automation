@@ -111,11 +111,26 @@ public class PageLevelTests {
 
         String postData = sampleRequest.postData();
 
+
+
+
         // Logic to pretty print
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        Object jsonObject = gson.fromJson(postData, Object.class);
+        JsonObject jsonObject = gson.fromJson(postData, JsonObject.class);
+
+        log.info("Json object" + jsonObject);
+
+
+        try{
+            String valueYpbjsPostData = jsonObject.get("id").getAsString();
+
+       log.info("Scarping from ypbjs " + valueYpbjsPostData);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
 
         String prettyPrint = gson.toJson(jsonObject);
 
@@ -163,7 +178,7 @@ public class PageLevelTests {
 
             resultsText += "\n Key to check is " + keyOfHashMap + " and matching is " + keyPostData
                     + " and refrence value is " + valueOfHashMap
-                    + " and matching is " + valuePostData + "\n";
+                    + " and matching is " + valuePostData + "\n" + "Sample value " + knownBidderCallsDataMap.get("$.imp.[0].ext.dfp_ad_unit_code");
 
         }
 
