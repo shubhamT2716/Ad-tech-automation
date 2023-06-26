@@ -6,18 +6,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.*;
 import com.microsoft.playwright.Browser.NewContextOptions;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
+import com.microsoft.playwright.options.Geolocation;
 import com.microsoft.playwright.options.HarMode;
+import org.springframework.beans.factory.annotation.Value;
 
 public class BrowserFactory {
 
     private Playwright playwright = Playwright.create();
-    
+
+    @Value("${browserPath}")
+    private String chromeBrowserPath;
+
     //Map of Browser Type with Device and User Agents
     private Map<String, String> browserContexts = new HashMap<String, String>() {{
         put("Chrome.Mobile.iPhone", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/114.0.5735.50 Mobile/15E148 Safari/604.1");
@@ -52,9 +54,27 @@ public class BrowserFactory {
         return newContextOptions;
     }
 
+    private static BrowserType.LaunchPersistentContextOptions getSystemBrowserContextOptions(String userAgent, Boolean isMobile, List<String> extension) {
+
+        BrowserType.LaunchPersistentContextOptions newContextOptions = new BrowserType.LaunchPersistentContextOptions()
+                .setUserAgent(userAgent)
+                .setRecordHarPath(Paths.get(getFileNameForHar()))
+                .setRecordHarMode(HarMode.FULL)
+                .setIgnoreHTTPSErrors(true).setHeadless(false).setArgs(extension);
+
+        if(isMobile){
+            newContextOptions
+                    .setViewportSize(360, 640)
+                    .setIsMobile(true)
+                    .setHasTouch(true);
+        }
+
+        return newContextOptions;
+    }
+
     private LaunchOptions getBrowserLaunchOptions(String channel){
         LaunchOptions lo = new LaunchOptions().setHeadless(false);
-        
+
         if(channel.length() > 0)
             lo.setChannel(channel);
 
@@ -78,6 +98,14 @@ public class BrowserFactory {
         return playwright.webkit().launch();
     }
 
+    private BrowserContext getSystemBrowserByType(String browserType,List<Map<String, String>> cookies, List<String> extension) {
+        if(browserType.contains("Chrome")){
+            return playwright.chromium().launchPersistentContext(Paths.get(chromeBrowserPath),getSystemBrowserContextOptions(browserContexts.get(browserType),browserType.contains("Mobile"),extension));
+        }
+
+        return playwright.webkit().launchPersistentContext(Paths.get(chromeBrowserPath));
+    }
+
     //Returns Playwright's Page obj with given browserType and cookies
     // @Bean(name = "getPageWithNewContext")
     // @Scope("prototype")
@@ -95,6 +123,11 @@ public class BrowserFactory {
                                         getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile")));
         // newBc.setDefaultNavigationTimeout(120000);
 
+        return newBc;
+    }
+
+    public BrowserContext getSystemBc(String browserType, List<Map<String, String>> cookies, List<String> extension) {
+        BrowserContext newBc = getSystemBrowserByType(browserType,cookies,extension);
         return newBc;
     }
 

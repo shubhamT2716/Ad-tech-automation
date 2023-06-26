@@ -21,7 +21,7 @@ public class Welcome {
             put("YAML Config Based Tests (TestNG)", "/testDataInput");
             put("Page Level Checks - Test Suite", "/pageLevelTests/");
             put("Logging Pixel Data Validation Tests", "testSuite3");
-            put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "testSuite4");
+            put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "/privacyComplianceTestSuite/");
         }};
 
     @GetMapping("/welcome")
