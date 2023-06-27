@@ -1,6 +1,7 @@
 package net.media.emma.cop.testsuites.loggingpixels;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Request;
@@ -28,6 +29,24 @@ public class LoggingPixelTestSuite
     ObjectWriter jsonWriter;
 
     List<String> loggingPixelFormatData = new ArrayList<>(Arrays.asList("https://hblg.media.net/log"));
+
+    // private JsonNode buildReport(LoggingPixelTestDataModel testCriteria, List<Request> matchingNetworkCalls){
+
+
+
+
+    //     //getMatchingNetworkCalls()
+    //     //Loop through matching network calls
+    //     // {
+    //             // get key-val map "urlUtil.getQueryMap(currentUrl.toString());"
+
+    //             loop through each key in key-val map{
+    //                 every key ---> pull data from testCrtiteria "testCriteria.getDataTypeCheckFor(key);"
+
+    //             }
+    //     // }
+
+    // }
 
     private String doesTheLoggingPixelFormatMatches(LoggingPixelTestDataModel testCriteria, List<Request> allUrl) throws JsonProcessingException
     {
