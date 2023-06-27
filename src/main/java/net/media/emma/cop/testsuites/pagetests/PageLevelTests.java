@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.*;
+
+import com.google.gson.*;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +22,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import com.google.gson.JsonObject;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.JSHandle;
 import com.microsoft.playwright.Page;
@@ -123,13 +123,33 @@ public class PageLevelTests {
         log.info("Json object" + jsonObject);
 
 
-        try{
-            String valueYpbjsPostData = jsonObject.get("id").getAsString();
 
-       log.info("Scarping from ypbjs " + valueYpbjsPostData);
+        try{
+            if(jsonObject.has("imp") && jsonObject.get("imp").isJsonArray()){
+                JsonArray impArray = jsonObject.getAsJsonArray("imp");
+
+                if(impArray.size() != 0){
+                    JsonObject firstImpObject = impArray.get(0).getAsJsonObject();
+
+                    if(firstImpObject.has("ext") && firstImpObject.get("ext").isJsonObject() && firstImpObject.size() != 0){
+                        JsonObject extObject = firstImpObject.getAsJsonObject("ext");
+
+                        if(extObject.has("dfp_ad_unit_code")){
+                            String dfpAdUnitCode = extObject.get("dfp_ad_unit_code").getAsString();
+                            log.info("dfpAdUnitCode = " + dfpAdUnitCode);
+                        }
+                    }
+                }
+            }else {
+                log.info("Didnt find");
+            }
+
+//       log.info("Scarping from ypbjs " + dfpAdUnitCodeElement);
         } catch(Exception e){
             e.printStackTrace();
         }
+
+        String testDataDatMap = knownBidderCallsDataMap.get("ext.dfp_ad_unit_code");
 
 
         String prettyPrint = gson.toJson(jsonObject);
@@ -147,7 +167,7 @@ public class PageLevelTests {
         // creating hashmap of known Key values
         // if conditons for various sites and KVs for yahoo, hard coded right now
         // if (url.contains("www.engadget.com")) {
-            
+
 
         //     knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_eng_main_dt_top_center");
         //     knownBidderCallsDataMap.put("cobrand", "none");
@@ -170,6 +190,7 @@ public class PageLevelTests {
         // Logic for checking post data with hard coded known values
 
         for (Entry<String, String> entry : knownBidderCallsDataMap.entrySet()) {
+
             String keyOfHashMap = entry.getKey();
             String valueOfHashMap = entry.getValue();
 
@@ -205,7 +226,7 @@ public class PageLevelTests {
             // String json = "...";
 
             // Map<String, Object> book = JsonPath.read(json, "$.store.book[0]");
-            // System.out.println(book)
+            // log.info(book)
             Object adUnitDataEval = page.evaluate(adUnitDataCheck());
 
             log.info("JSHandle evaluate "+ adUnitDataEval);
