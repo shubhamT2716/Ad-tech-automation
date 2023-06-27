@@ -1,12 +1,12 @@
 package net.media.emma.cop.testsuites.loggingpixels;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Request;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
+import net.media.emma.cop.testsuites.loggingpixels.TestReportV2.KeyData;
 import net.media.emma.utils.URLDataProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,16 +25,17 @@ public class LoggingPixelTestSuite
     URLDataProcessing urlUtil;
 
     @Autowired
-    ObjectWriter jsonWriter;
+    ObjectMapper objectMapper;
 
-    List<String> loggingPixelFormatData = new ArrayList<>(Arrays.asList("https://hblg.media.net/log"));
+    List<String> loggingPixelFormatData = new ArrayList<>(Arrays.asList( "https://lg1.hb.yahoo.net/log?logid=prlog",
+                                                                              "https://lg1.hb.yahoo.net/log?logid=aplog",
+                                                                              "https://lg1.hb.yahoo.net/log?logid=awlog"));
 
     private JsonNode buildReport(LoggingPixelTestDataModel testCriteria, List<String> allUrl)
     {
-
         List<String> matchingUrls = getMatchingNetworkCalls(allUrl);
         List<LoggingPixelTestDataModel.DataTypeChecks> testData = testCriteria.getLoggingPixelTests();
-
+        TestReportV2 testReportV2 = TestReportV2.builder().build();
 
         //Loop through matching network calls
         for (String url : matchingUrls)
@@ -43,20 +44,15 @@ public class LoggingPixelTestSuite
             // get key-val map "urlUtil.getQueryMap(currentUrl.toString());"
             urlParams = urlUtil.getQueryStringMapFromUrl(url);;//  UrlQueryBuild.getQueryMap(url.toString());
             //verify key related data present in yaml against data present in url key query
-            TestReportModel testReportModel = verifyKeyDetails(urlParams, testData);
+
+            testReportV2.getNetworkCalls().put(url, verifyKeyDetails(urlParams, testData));
         }
 
-        // {
-               /*  loop through each key in key-val map{
-                     every key ---> pull data from testCrtiteria "testCriteria.getDataTypeCheckFor(key);"
-
-                 }*/
-        // }
-        return null;
+        return objectMapper.valueToTree(testReportV2);
     }
 
-    private void toDel()
-    {
+    // private void toDel()
+    // {
 //        if (urlParams.containsKey(key))
 //        {
 //            String value = null;
@@ -179,7 +175,32 @@ public class LoggingPixelTestSuite
 //
 //            }
 //        }
-    }
+//         negetiveCheckFailed
+//        testReportModel.setKeys(keys);
+//        testReportModel.setDataTypeMatches(dataTypeMatches);
+//        testReportModel.setRegexMatches(regexMatches);
+// //        testReportModel.setNegativeValues(negativeValues);
+//     }
+
+//     public JsonNode getLoggingPixelResults (LoggingPixelTestDataModel testCriteria) throws JsonProcessingException
+//     {
+
+//         BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", null);
+//         List<String> urlFromNetworkTab = new ArrayList<>();
+//         List<Request> requestList = new ArrayList<>();
+//         bc.onRequest(request ->
+//         {
+//             //list of arrays initialization
+
+//             urlFromNetworkTab.add(request.url());
+//             requestList.add(request);
+//         });
+//         bc.setDefaultTimeout(0);
+//         bc.newPage().navigate(testCriteria.getPublisherUrl());
+//         bc.close();
+
+//         return buildReport(testCriteria, urlFromNetworkTab);
+//     }
 
     private boolean dataTypeCheck(String val, String dataType)
     {
@@ -195,41 +216,42 @@ public class LoggingPixelTestSuite
                 case "string": val.toString(); break;
 
             }
-        }catch(Exception e)
+        }
+        catch(Exception e)
         {
             log.error("Data Type Parsing Error", e );
             return false;
         }
 
         return true;
-
     }
 
-    private TestReportModel verifyKeyDetails(Map<String, String> urlParams, List<LoggingPixelTestDataModel.DataTypeChecks> testData)
+    private List<KeyData> verifyKeyDetails(Map<String, String> urlParams, List<LoggingPixelTestDataModel.DataTypeChecks> testData)
     {
-        TestReportModel testReportModel = new TestReportModel();
+        List<KeyData> keyDataList = new ArrayList<>();
 
         for (LoggingPixelTestDataModel.DataTypeChecks data : testData)
         {
             String key = data.getKey();
+            KeyData keyData = KeyData.builder().key(key).build();
 
             if (urlParams.containsKey(key) && urlParams.get(key) != null)
             {
                 String value = urlParams.get(key);
-                String dataTypeOfKey = data.getValueDataType().toLowerCase();
-                List<Boolean> flags;
-                //  keys.add(key);
                 String regexFromYaml = data.getValueRegex();
                 List<String> negativeStringChecks = data.getNegativeStrings();
+
                 if (!dataTypeCheck(value, data.getValueDataType().toLowerCase()))
                 {
                     log.info("Data Type Check Failed for Key: " + key);
+                    keyData.getMessages().add("Data Type Check Failed for Key: " + key + " Expected Data Type: " + data.getValueDataType() + ", Actual Value: " + value);
                     continue;
                 }
 
                 if (matchRegex(regexFromYaml, value))
                 {
                     log.info("Regex Failed for Key: " + key);
+                    keyData.getMessages().add("Regex Failed for Key: " + key + "Regex: " + regexFromYaml + ", Actual Value: " + value);
                     continue;
 
                 }
@@ -237,17 +259,20 @@ public class LoggingPixelTestSuite
                 if (!verifyNegativeString(negativeStringChecks, value))
                 {
                     log.info("Negative string check Failed for Key: " + key);
+                    keyData.getMessages().add("Negative string check Failed for Key: " + key + "Negative String Matches: " + negativeStringChecks + ", Actual Value: " + value);
                 }
             }
-//         negetiveCheckFailed
-//        testReportModel.setKeys(keys);
-//        testReportModel.setDataTypeMatches(dataTypeMatches);
-//        testReportModel.setRegexMatches(regexMatches);
-//        testReportModel.setNegativeValues(negativeValues);
 
-
+            if(keyData.getMessages().size() > 0)
+            {
+                keyData.setTestResult("FAIL");
+            }else
+            {
+                keyData.setTestResult("PASS");
+            }
         }
-        return testReportModel;
+
+        return keyDataList;
     }
         private List<String> getMatchingNetworkCalls(List < String > allUrl)
         {
@@ -260,7 +285,6 @@ public class LoggingPixelTestSuite
                     {
                         matchingUrls.add(currentUrl);
                     }
-
                 }
             }
             return matchingUrls;
@@ -272,12 +296,13 @@ public class LoggingPixelTestSuite
             return negativeStringValues.contains(value);
         }
 
-        public JsonNode getLoggingPixelResults (LoggingPixelTestDataModel testCriteria) throws JsonProcessingException
-        {
 
-            BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", null);
+        public JsonNode getLoggingPixelTestResults(LoggingPixelTestDataModel testCriteria)
+        {
+            BrowserContext bc = browserFactory.getBc(testCriteria.getUserAgent(), null);
             List<String> urlFromNetworkTab = new ArrayList<>();
             List<Request> requestList = new ArrayList<>();
+
             bc.onRequest(request ->
             {
                 //list of arrays initialization
@@ -285,8 +310,18 @@ public class LoggingPixelTestSuite
                 urlFromNetworkTab.add(request.url());
                 requestList.add(request);
             });
-            bc.setDefaultTimeout(0);
-            bc.newPage().navigate(testCriteria.getPubUrl());
+
+
+            try {
+                bc.setDefaultTimeout(120000);
+                bc.newPage().navigate(testCriteria.getPublisherUrl());
+                Thread.sleep(1000);
+            } catch (Exception e) {
+
+                log.error("Exception during Playwright Execution", e);
+               
+            }
+
             bc.close();
 
             return buildReport(testCriteria, urlFromNetworkTab);
@@ -296,5 +331,4 @@ public class LoggingPixelTestSuite
         {
             return Pattern.compile(regex).matcher(keyValue).find();
         }
-
     }

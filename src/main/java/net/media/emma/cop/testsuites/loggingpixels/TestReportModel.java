@@ -13,8 +13,6 @@ import java.util.List;
 @ToString
 public class TestReportModel
 {
-
-
     private List<String> networkCalls;
     private List<String> keys;
     private List<Boolean> dataTypeMatches;

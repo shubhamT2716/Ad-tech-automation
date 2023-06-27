@@ -1,21 +1,16 @@
 package net.media.emma.cop.testsuites.loggingpixels;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.extern.slf4j.Slf4j;
-import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
-import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 
 @Controller("loggingPixelsTestSuiteController") @Slf4j @RequestMapping("/loggingPixelsTestSuite/")
 public class WebController
@@ -35,7 +30,7 @@ public class WebController
     }
 
     @PostMapping
-    public ModelAndView yamlTestSuite(@RequestParam String yaml) throws JsonProcessingException
+    public ModelAndView yamlTestSuite(@RequestParam String yaml)
     {
 
         ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
@@ -48,12 +43,14 @@ public class WebController
         }catch( Exception  e){
             log.error("YAML Processing Error", e);
             mav.addObject("message", e.getMessage());
-            testCriteria = LoggingPixelTestDataModel.builder().build();
+            return mav;
         }
-        mav.addObject("message",  pixelTestSuite.getLoggingPixelResults(testCriteria));
+
+        mav.addObject("message",  pixelTestSuite.getLoggingPixelTestResults(testCriteria));
 
        return mav;
     }
+
     @PostMapping("fileContent")
     @ResponseBody
     public String getFileContent(@RequestBody String fileName){

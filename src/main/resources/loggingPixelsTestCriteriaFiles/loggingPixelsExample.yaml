@@ -1,6 +1,8 @@
+publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
+envuronment: "hb.yahoo.net"
+
 loggingPixelTests: [
   { key: "pvid", valueDataType: "long", valueRegex: "^\\d+$",negativeStrings:[]},
   { key: "dn", valueDataType: "String", valueRegex: "[a-zA-Z]+\\.[a-zA-Z]+",negativeStrings:[] },
   { key: "ogbdp", valueDataType: "int", valueRegex: "^[1-9]\\d*$",negativeStrings:[0,-1,-2]}
 ]
-pubUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"

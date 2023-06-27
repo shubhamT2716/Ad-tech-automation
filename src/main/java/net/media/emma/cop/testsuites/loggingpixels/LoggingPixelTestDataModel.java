@@ -1,25 +1,24 @@
 package net.media.emma.cop.testsuites.loggingpixels;
 
 import lombok.*;
-
 import java.util.List;
-import java.util.Map;
-@Setter @Getter @Builder  @NoArgsConstructor @AllArgsConstructor
+@Setter @Getter
 public class LoggingPixelTestDataModel{
 
-    public List<DataTypeChecks> loggingPixelTests;
-
-    // Map<String, DataTypeChecks> loggingPixelTestsMap; //key-->  DataTypeChecks
+    String userAgent;
+    String environment;
+    String publisherUrl;
+    List<DataTypeChecks> loggingPixelTests;
 
     @Getter @Setter
     public static class DataTypeChecks{
+
         public String key;
         public String valueDataType;
         public String valueRegex;
         public List<String> negativeStrings;
 
     }
-    public String pubUrl;
 
     public DataTypeChecks getDataTypeCheckFor(String key){
 
