@@ -46,7 +46,7 @@ public class WebController
             return mav;
         }
 
-        mav.addObject("message",  pixelTestSuite.getLoggingPixelTestResults(testCriteria));
+        mav.addObject("message1",  pixelTestSuite.getLoggingPixelTestResults(testCriteria));
 
        return mav;
     }

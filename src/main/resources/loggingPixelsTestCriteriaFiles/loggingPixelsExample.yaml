@@ -1,5 +1,6 @@
 publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
-envuronment: "hb.yahoo.net"
+environment: hb.yahoo.net
+userAgent: Chrome.Desktop.Mac
 
 loggingPixelTests: [
   { key: "pvid", valueDataType: "long", valueRegex: "^\\d+$",negativeStrings:[]},

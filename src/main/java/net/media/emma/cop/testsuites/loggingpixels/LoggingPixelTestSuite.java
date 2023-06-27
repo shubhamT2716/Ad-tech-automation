@@ -29,11 +29,22 @@ public class LoggingPixelTestSuite
 
     List<String> loggingPixelFormatData = new ArrayList<>(Arrays.asList( "https://lg1.hb.yahoo.net/log?logid=prlog",
                                                                               "https://lg1.hb.yahoo.net/log?logid=aplog",
-                                                                              "https://lg1.hb.yahoo.net/log?logid=awlog"));
+                                                                              "https://lg1.hb.yahoo.net/log?logid=awlog",
+                                                                              "https://hblg.media.net/log?logid=prlog",
+                                                                              "https://hblg.media.net/log?logid=aplog",
+                                                                              "https://hblg.media.net/log?logid=awlog"
+                                                                              
+                                                                              ));
 
     private JsonNode buildReport(LoggingPixelTestDataModel testCriteria, List<String> allUrl)
     {
+
+        // log.info("all Url Data: " + allUrl.toString());
+
         List<String> matchingUrls = getMatchingNetworkCalls(allUrl);
+
+        // log.info("matching Url Data: " + matchingUrls.toString());
+
         List<LoggingPixelTestDataModel.DataTypeChecks> testData = testCriteria.getLoggingPixelTests();
         TestReportV2 testReportV2 = TestReportV2.builder().build();
 
@@ -244,22 +255,22 @@ public class LoggingPixelTestSuite
                 if (!dataTypeCheck(value, data.getValueDataType().toLowerCase()))
                 {
                     log.info("Data Type Check Failed for Key: " + key);
-                    keyData.getMessages().add("Data Type Check Failed for Key: " + key + " Expected Data Type: " + data.getValueDataType() + ", Actual Value: " + value);
-                    continue;
+                    keyData.getMessages().add("Data Type Check Failed for Key: " + key + ". Expected Data Type: " + data.getValueDataType() + ", Actual Value: " + value);
+                    // continue;
                 }
 
                 if (matchRegex(regexFromYaml, value))
                 {
                     log.info("Regex Failed for Key: " + key);
-                    keyData.getMessages().add("Regex Failed for Key: " + key + "Regex: " + regexFromYaml + ", Actual Value: " + value);
-                    continue;
+                    keyData.getMessages().add("Regex Failed for Key: " + key + ". Regex: " + regexFromYaml + ", Actual Value: " + value);
+                    // continue;
 
                 }
 
-                if (!verifyNegativeString(negativeStringChecks, value))
+                if (doesNegativeStringExists(negativeStringChecks, value))
                 {
                     log.info("Negative string check Failed for Key: " + key);
-                    keyData.getMessages().add("Negative string check Failed for Key: " + key + "Negative String Matches: " + negativeStringChecks + ", Actual Value: " + value);
+                    keyData.getMessages().add("Negative string check Failed for Key: " + key + ". Negative String Matches: " + negativeStringChecks + ", Actual Value: " + value);
                 }
             }
 
@@ -270,6 +281,8 @@ public class LoggingPixelTestSuite
             {
                 keyData.setTestResult("PASS");
             }
+
+            keyDataList.add(keyData);
         }
 
         return keyDataList;
@@ -277,13 +290,15 @@ public class LoggingPixelTestSuite
         private List<String> getMatchingNetworkCalls(List < String > allUrl)
         {
             List<String> matchingUrls = new ArrayList<>();
+
             for (String loggingPixelFormat : loggingPixelFormatData)
             {
                 for (String currentUrl : allUrl)
                 {
-                    if (currentUrl.toString().startsWith(loggingPixelFormat))
+                    if (currentUrl.startsWith(loggingPixelFormat))
                     {
                         matchingUrls.add(currentUrl);
+                        break;
                     }
                 }
             }
@@ -291,7 +306,7 @@ public class LoggingPixelTestSuite
         }
 
 
-        private Boolean verifyNegativeString (List < String > negativeStringValues, String value)
+        private Boolean doesNegativeStringExists (List < String > negativeStringValues, String value)
         {
             return negativeStringValues.contains(value);
         }
