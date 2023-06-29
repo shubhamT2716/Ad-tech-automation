@@ -3,7 +3,6 @@ package net.media.emma.cop.testsuites.yaml;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
@@ -27,6 +24,7 @@ public class WebController {
 
     @Autowired GenericTestSuite yamlTestSuite;
     @Autowired FileOperations fileOperations;
+    @Autowired ObjectMapper mapper;
 
     @GetMapping
     public ModelAndView yamlTestSuite() {
@@ -46,9 +44,11 @@ public class WebController {
 
             ObjectMapper mapper = new YAMLMapper();
             TestCriteriaBo yamlTc = mapper.readValue(yaml, TestCriteriaBo.class);
-            // mav.addObject("message", yamlTc.getEnvironment());
-            //mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
-            mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
+
+            String message = yamlTestSuite.getTestResults(yamlTc);
+
+            // mav.addObject("message2", message);
+            mav.addObject("message1", mapper.readTree(message) );
 
         }catch( JsonProcessingException  e){
             log.error("YAML Processing Error", e);;

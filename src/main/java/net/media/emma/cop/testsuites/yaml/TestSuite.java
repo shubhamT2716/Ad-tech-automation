@@ -6,17 +6,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.microsoft.playwright.BrowserContext;
-
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.LoadState;
-import org.apache.http.annotation.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.source.UnboundElementsSourceFilter;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
@@ -46,10 +40,36 @@ public class TestSuite implements GenericTestSuite {
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
     List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
 
+    private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData){
+
+        try{
+
+            Page page = bc.newPage();
+            page.navigate(testData.getLoginUrl());
+            page.locator("//*[@id=\"login-username\"]").fill(testData.getUserName());
+            page.locator("//*[@id=\"login-signin\"]").click();
+            page.locator("//*[@id=\"login-passwd\"]").fill(testData.getPassword());
+            page.locator("//*[@id=\"login-signin\"]").click();
+            page.waitForLoadState();
+            
+        }catch(Exception e){
+
+            log.error("Error while logging in: {}", e.getMessage());
+        }
+
+        return bc;
+    }
+
     @Override
     public String getTestResults(TestCriteriaBo testData){
 
         BrowserContext browserContext = browserFactory.getBc(testData.getUserAgent(), testData.getCookies());
+
+        if(testData.getLoginUrl() != null && testData.getUserName() != null && testData.getPassword() != null) {
+
+            doLogin(browserContext, testData);
+
+        }
 
         browserContext = replaceBidExUrl(browserContext, testData);
         browserContext = attachResponseMocking(browserContext, testData);
@@ -71,8 +91,11 @@ public class TestSuite implements GenericTestSuite {
         try{
             Page page = browserContext.newPage();
             page.navigate(testData.getPublisherUrl());
-            page.waitForLoadState(LoadState.NETWORKIDLE,new Page.WaitForLoadStateOptions().setTimeout(5000));
-            page.waitForFunction("() => performance.getEntriesByType('resource').length > 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
+            // page.waitForLoadState(LoadState.NETWORKIDLE,new Page.WaitForLoadStateOptions().setTimeout(5000));
+            //page.waitForFunction("() => performance.getEntriesByType('resource').length > 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
+
+            Page page2 = browserContext.newPage();
+            Thread.sleep(1000);
         
         }catch(Exception e){
 

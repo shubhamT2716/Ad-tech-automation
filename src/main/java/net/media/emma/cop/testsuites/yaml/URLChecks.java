@@ -1,6 +1,7 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +29,6 @@ public class URLChecks {
     }
 
     @Getter @Setter @Builder
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class PositiveURLChecks{
         String label;
         String urlPattern;
@@ -86,7 +86,12 @@ public class URLChecks {
 
         testData.getNetworkCallsPositive().forEach((key, value) -> {
             if(!positiveUrlChecks.containsKey(key)){
-                positiveUrlChecks.put(key,  PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL).urlPattern(value).build());
+                positiveUrlChecks.put(key,  PositiveURLChecks.builder()
+                    .label(key)
+                    .testResult(TestResult.FAIL)
+                    .testMessages(Arrays.asList("Call not fired"))
+                    .urlPattern(value)
+                    .build());
             }
         });
 
