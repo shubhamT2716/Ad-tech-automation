@@ -66,7 +66,7 @@ public class WebController {
     }
     
     @PostMapping
-    public ModelAndView scrapeContent(@RequestParam String yaml){
+    public ModelAndView getPageLevelTestsResult(@RequestParam String yaml){
 
         ModelAndView modelAndView = new ModelAndView("pageLevelTestsDataReport");
 
@@ -76,7 +76,8 @@ public class WebController {
             TestCriteria yamlTc = mapper.readValue(yaml, TestCriteria.class);
             // mav.addObject("message", yamlTc.getEnvironment());
             //mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
-            modelAndView.addObject("message", pageLevelTests.getPageLevelTestsData(yamlTc));
+            // modelAndView.addObject("message", );
+            modelAndView.addObject("message1", pageLevelTests.getPageLevelTestsData(yamlTc));
 
         }catch( JsonProcessingException  e){
             log.error("YAML Processing Error", e);;
