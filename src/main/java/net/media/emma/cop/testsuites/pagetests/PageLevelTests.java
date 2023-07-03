@@ -123,17 +123,23 @@ public class PageLevelTests {
         log.info("Json object" + jsonObject);
 
 
+        //logic to get any object from YPBJS post data
 
         try{
+            //Check to see if YPBJS request post data has imp object
+            //jsonObject(""ext.dp_ad_)
             if(jsonObject.has("imp") && jsonObject.get("imp").isJsonArray()){
                 JsonArray impArray = jsonObject.getAsJsonArray("imp");
 
+                //Check if imp size != 0
                 if(impArray.size() != 0){
                     JsonObject firstImpObject = impArray.get(0).getAsJsonObject();
 
+                    //check if imp has ext object
                     if(firstImpObject.has("ext") && firstImpObject.get("ext").isJsonObject() && firstImpObject.size() != 0){
                         JsonObject extObject = firstImpObject.getAsJsonObject("ext");
 
+                        //check if ext has dfpadunit key present
                         if(extObject.has("dfp_ad_unit_code")){
                             String dfpAdUnitCode = extObject.get("dfp_ad_unit_code").getAsString();
                             log.info("dfpAdUnitCode = " + dfpAdUnitCode);
