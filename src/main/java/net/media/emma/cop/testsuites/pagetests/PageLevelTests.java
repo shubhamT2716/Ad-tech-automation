@@ -1,8 +1,8 @@
 package net.media.emma.cop.testsuites.pagetests;
 
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,30 +10,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.*;
 
 import com.google.gson.*;
-import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-
-import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.JSHandle;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.Request;
+import com.mongodb.util.JSON;
 
+import ch.qos.logback.core.net.ObjectWriter;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.utils.URLDataProcessing;
-import net.minidev.json.JSONObject;
-import net.minidev.json.JSONUtil;
 
 /*  ***************************************************************************************************
     // Open the URL using Playwright Page - Done
@@ -69,150 +63,151 @@ public class PageLevelTests {
         }
     };
 
-    public String getPageLevelTestsData(TestCriteria yaml) {
+    public List<JsonNode> getPageLevelTestsData(TestCriteria yaml) {
 
         Page page = browserFactory.getPageWithNewContext(yaml.getUserAgent(), Arrays.asList());
 
         // list of arrays initialization
-        List<Request> urlFromNetworkTab = new ArrayList<>();
-        List<String> requestUrls = new ArrayList<>();
+        List<Request> urlsFromNetworkTab = new ArrayList<>();
 
         page.onRequest(request -> {
 
-            urlFromNetworkTab.add(request);
-            requestUrls.add(request.url());
+            urlsFromNetworkTab.add(request);
         });
 
-        String scrapeContentData = scrapeContent(page, yaml.getPublisherUrl());
-        String networkCallDataValidation = networkCallDataChecks(
-                knownBidderCallPatterns.get("YPBJS"), urlFromNetworkTab, yaml); // Yahoo SSP Call
-
-        String networkCalls = requestUrls.stream().collect(Collectors.joining("\n"));
-
+        JsonNode slotsData = extractSlotsDataFromPage(page, yaml.getPublisherUrl());
+        JsonNode networkCallDataValidation = networkCallDataChecks(knownBidderCallPatterns.get("YPBJS"), urlsFromNetworkTab, yaml); // Yahoo SSP Call
         page.close();
 
-        return "Post Data of YPBJS request " + networkCallDataValidation + "\n  \n" + urlFromNetworkTab.toString()
-                + "\n"
-                + scrapeContentData + "Request Urls " + networkCalls;
+        return matchSlotsDataWithBidderRequestData(slotsData, networkCallDataValidation);
+
     }
 
-    private String networkCallDataChecks(String networkCallUrl, List<Request> urlFromNetworkTab, TestCriteria yaml) {
-        String urlPassed = yaml.getPublisherUrl();
-        String resultsText = "";
-        Map<String, String> knownBidderCallsDataMap = yaml.getYpbjs();
+    private List<JsonNode> matchSlotsDataWithBidderRequestData(JsonNode slotsData, JsonNode networkCallDataValidation){
 
-        Request sampleRequest = urlDataProcessing.getRequestFor(networkCallUrl, urlFromNetworkTab);
+        log.info("Slots Data from Page: " + slotsData.toPrettyString());
+        log.info("Bidder Call POST Data: " + networkCallDataValidation.toPrettyString());
 
-        if (sampleRequest == null) {
-            return "No network call found for: " + networkCallUrl;
-        }
+        return Arrays.asList(slotsData, networkCallDataValidation);
 
-        URL urlData;
-
-        String postData = sampleRequest.postData();
+        //     String resultsText = "";
+        //     Map<String, String> knownBidderCallsDataMap = yaml.getYpbjs();
 
 
+        //         // Logic to pretty print
 
+        //         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        // Logic to pretty print
+        //         JsonObject jsonObject = gson.fromJson(postData, JsonObject.class);
+        
+        //         log.info("Json object" + jsonObject);
+        
+        //         try{
+        //             if(jsonObject.has("imp") && jsonObject.get("imp").isJsonArray()){
+        //                 JsonArray impArray = jsonObject.getAsJsonArray("imp");
+        
+        //                 if(impArray.size() != 0){
+        //                     JsonObject firstImpObject = impArray.get(0).getAsJsonObject();
+        
+        //                     if(firstImpObject.has("ext") && firstImpObject.get("ext").isJsonObject() && firstImpObject.size() != 0){
+        //                         JsonObject extObject = firstImpObject.getAsJsonObject("ext");
+        
+        //                         if(extObject.has("dfp_ad_unit_code")){
+        //                             String dfpAdUnitCode = extObject.get("dfp_ad_unit_code").getAsString();
+        //                             log.info("dfpAdUnitCode = " + dfpAdUnitCode);
+        //                         }
+        //                     }
+        //                 }
+        //             }else {
+        //                 log.info("Didnt find");
+        //             }
+        
+        // //       log.info("Scarping from ypbjs " + dfpAdUnitCodeElement);
+        //         } catch(Exception e){
+        //             e.printStackTrace();
+        //         }
+        
+        //         // Logic for checking post data with hard coded known values
+        
+        //         for (Entry<String, String> entry : knownBidderCallsDataMap.entrySet()) {
+        
+        //             String keyOfHashMap = entry.getKey();
+        //             String valueOfHashMap = entry.getValue();
+        
+        //             Boolean keyPostData = postData.contains(keyOfHashMap);
+        //             Boolean valuePostData = postData.contains(valueOfHashMap);
+        
+        //             resultsText += "\n Key to check is " + keyOfHashMap + " and matching is " + keyPostData
+        //                     + " and refrence value is " + valueOfHashMap
+        //                     + " and matching is " + valuePostData + "\n" + "Sample value " + knownBidderCallsDataMap.get("$.imp.[0].ext.dfp_ad_unit_code");
+        
+        //         }
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        JsonObject jsonObject = gson.fromJson(postData, JsonObject.class);
-
-        log.info("Json object" + jsonObject);
-
-
-        //logic to get any object from YPBJS post data
-
-        try{
-            //Check to see if YPBJS request post data has imp object
-            //jsonObject(""ext.dp_ad_)
-            if(jsonObject.has("imp") && jsonObject.get("imp").isJsonArray()){
-                JsonArray impArray = jsonObject.getAsJsonArray("imp");
-
-                //Check if imp size != 0
-                if(impArray.size() != 0){
-                    JsonObject firstImpObject = impArray.get(0).getAsJsonObject();
-
-                    //check if imp has ext object
-                    if(firstImpObject.has("ext") && firstImpObject.get("ext").isJsonObject() && firstImpObject.size() != 0){
-                        JsonObject extObject = firstImpObject.getAsJsonObject("ext");
-
-                        //check if ext has dfpadunit key present
-                        if(extObject.has("dfp_ad_unit_code")){
-                            String dfpAdUnitCode = extObject.get("dfp_ad_unit_code").getAsString();
-                            log.info("dfpAdUnitCode = " + dfpAdUnitCode);
-                        }
-                    }
-                }
-            }else {
-                log.info("Didnt find");
-            }
-
-//       log.info("Scarping from ypbjs " + dfpAdUnitCodeElement);
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-
-        String testDataDatMap = knownBidderCallsDataMap.get("ext.dfp_ad_unit_code");
-
-
-        String prettyPrint = gson.toJson(jsonObject);
-
-        try {
-            urlData = new URL(sampleRequest.url().toString());
-
-            resultsText += prettyPrint + "\n";
-
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // creating hashmap of known Key values
-        // if conditons for various sites and KVs for yahoo, hard coded right now
-        // if (url.contains("www.engadget.com")) {
-
-
-        //     knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_eng_main_dt_top_center");
-        //     knownBidderCallsDataMap.put("cobrand", "none");
-        //     knownBidderCallsDataMap.put("page", urlPassed);
-        //     knownBidderCallsDataMap.put("publisherblob",
-        //             "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6jljbcpi8oe6m");
-        //     knownBidderCallsDataMap.put("bucket", "eng-nl-hp-dis,ed-gam-migration1-1");
-
-        // } else if (url.contains("sports.yahoo.com")) {
-
-        //     knownBidderCallsDataMap.put("dfp_ad_unit_code", "us_ysports_main_dt_top_right");
-        //     knownBidderCallsDataMap.put("cobrand", "none");
-        //     knownBidderCallsDataMap.put("page", urlPassed);
-        //     knownBidderCallsDataMap.put("publisherblob",
-        //             "lu:0;pct:;pd:;pt:home;site:sports;ver:y20||25664825||028fg2di95m9p");
-        //     knownBidderCallsDataMap.put("bucket", "JARVISUSSPORTSDESKCSMIGRATION000");
-
-        // }
-
-        // Logic for checking post data with hard coded known values
-
-        for (Entry<String, String> entry : knownBidderCallsDataMap.entrySet()) {
-
-            String keyOfHashMap = entry.getKey();
-            String valueOfHashMap = entry.getValue();
-
-            Boolean keyPostData = postData.contains(keyOfHashMap);
-            Boolean valuePostData = postData.contains(valueOfHashMap);
-
-            resultsText += "\n Key to check is " + keyOfHashMap + " and matching is " + keyPostData
-                    + " and refrence value is " + valueOfHashMap
-                    + " and matching is " + valuePostData + "\n" + "Sample value " + knownBidderCallsDataMap.get("$.imp.[0].ext.dfp_ad_unit_code");
-
-        }
-
-        return resultsText;
     }
 
-    private String scrapeContent(Page page, String url) {
+   private JsonNode networkCallDataChecks(String networkCallUrl, List < Request > urlFromNetworkTab, TestCriteria yaml) {
+     Request sampleRequest = urlDataProcessing.getRequestFor(networkCallUrl, urlFromNetworkTab);
+
+     if (sampleRequest != null) {
+
+       URL urlData;
+
+       String postData = sampleRequest.postData();
+
+       // Logic to pretty print
+
+       Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+       JsonObject jsonObject = gson.fromJson(postData, JsonObject.class);
+
+       log.info("Json object" + jsonObject);
+
+       //logic to get any object from YPBJS post data
+
+       try {
+         //Check to see if YPBJS request post data has imp object
+         //jsonObject(""ext.dp_ad_)
+         if (jsonObject.has("imp") && jsonObject.get("imp").isJsonArray()) {
+           JsonArray impArray = jsonObject.getAsJsonArray("imp");
+
+           //Check if imp size != 0
+           if (impArray.size() != 0) {
+             JsonObject firstImpObject = impArray.get(0).getAsJsonObject();
+
+             //check if imp has ext object
+             if (firstImpObject.has("ext") && firstImpObject.get("ext").isJsonObject() && firstImpObject.size() != 0) {
+               JsonObject extObject = firstImpObject.getAsJsonObject("ext");
+
+               //check if ext has dfpadunit key present
+               if (extObject.has("dfp_ad_unit_code")) {
+                 String dfpAdUnitCode = extObject.get("dfp_ad_unit_code").getAsString();
+                 log.info("dfpAdUnitCode = " + dfpAdUnitCode);
+               }
+             }
+           }
+         } else {
+           log.info("Didnt find");
+
+           try {
+             return jsonReader.readTree(sampleRequest.postData());
+           } catch (JsonProcessingException e) {
+             log.error("JSON Marshalling of post Data from bidder request has failed.", e);
+             //>>>>>>> 4b040afd561d91559c6fe12bd2e08f69ac6d311f
+           }
+         }
+
+        
+
+              }catch (Exception e){
+                log.info("wtf failed");
+              }
+     }
+      return null;
+ }
+
+
+
+    private JsonNode extractSlotsDataFromPage(Page page, String url) {
 
         try {
 
@@ -222,53 +217,24 @@ public class PageLevelTests {
 
             page.navigate(url);
             page.waitForTimeout(500);
-            JSHandle testPbjs = page.evaluateHandle(pbjsVarExtrationLogic());
 
-            // log.info(testPbjs.toString());
-
-            JSHandle adUnits = page.evaluateHandle(adUnitExtractionLogic());
-
-            // https://stackoverflow.com/questions/34111276/jsonpath-with-jackson-or-gson
-            // String json = "...";
-
-            // Map<String, Object> book = JsonPath.read(json, "$.store.book[0]");
-            // log.info(book)
-            Object adUnitDataEval = page.evaluate(adUnitDataCheck());
-
-            log.info("JSHandle evaluate "+ adUnitDataEval);
-
-            ObjectMapper objectMapper =new ObjectMapper();
             try{
-            String test = objectMapper.writeValueAsString(adUnitDataEval);
-            // JsonNode testJson = objectMapper.readTree(adUnitDataEval);
-            log.info("test value "+ test);
+                JsonNode slotsData;
+                Object adUnitDataEval = page.evaluate(adUnitDataCheckV2());
+                // log.info("Extracted json data from the page: " + adUnitDataEval.toString());
+                slotsData = jsonReader.readTree(adUnitDataEval.toString());
+                // log.info("JSON Node as pretty print: " + jsonReader.writerWithDefaultPrettyPrinter().writeValueAsString(slotsData));
+                return slotsData;
+    
             } catch ( JsonProcessingException e) {
                  log.error("Json Parsing error", e);
-             }
-
-            
-            
-
-            // try {
-            //     JsonNode adUnitsInJsonFormat = jsonReader.readTree(adUnits.toString());
-
-            //     log.info("Parsed Json Adunits data: ", adUnitsInJsonFormat);
-
-                
-
-            // } catch ( JsonProcessingException e) {
-            //     log.error("Json Parsing error", e);
-            // }
-
-            String concatenatedString = String.join(" ", jsExtraction);
-            // log.info(adUnits.toString() + "this is ad units");
-            return concatenatedString;
+            }
 
         } catch (PlaywrightException e) {
             log.error("Error in scraping content", e);
         }
 
-        return "Error";
+        return null;
     }
 
     private String pbjsVarExtrationLogic() {
@@ -296,17 +262,55 @@ public class PageLevelTests {
     private String adUnitDataCheck(){
         return """
             var jsonObj = [];
-            function adUnitJs(){
-                return JSON.stringify(jsonObj);
-            }
+            // function adUnitJs(){
+            //     return JSON.stringify(jsonObj);
+            // }
             
                    if(googletag.pubads()){
                     googletag.pubads().getSlots().map(s => {
-                    jsonObj.push(s.getAdUnitPath(), s.getSizes(), s.getTargetingMap())
+                    jsonObj.push(
+                            new Map([
+                                    ["adunitPath", s.getAdUnitPath()], ["sizes", s.getSizes()], ["targetting", s.getTargetingMap()]
+                                    ])
+                        )
                     });
                     console.log(JSON.stringify(jsonObj));
+                    //console.dir(jsonObj)
                 }
-                adUnitJs();
+                //adUnitJs();
+                // console.dir(jsonObj);
                 """;
+    }
+
+    private String adUnitDataCheckV2(){
+        return """
+            class AdUnitsData {
+                constructor(path, sizes, targetting) {
+                    this.path = path;
+                    this.sizes = sizes;
+                  this.targetting = targetting;
+                }
+              }
+            
+            slotsData = [];
+
+            function adUnitJs(){
+                     return JSON.stringify(slotsData);
+                 }
+
+            if(googletag.pubads()){
+                googletag.pubads().getSlots().map(s => {
+        
+                    // console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
+                    slotsData.push( new AdUnitsData(s.getAdUnitPath(), s.getSizes(), s.getTargetingMap()));
+            
+                });
+                
+            }
+        
+            //console.log(JSON.stringify(slotsData, null, 4));
+
+            adUnitJs();
+            """;
     }
 }

@@ -19,6 +19,7 @@
         <h1>Page Level Tests</h1>
         <div id="app">
             <pre><code id="msg" th:text="${message}"></code></pre>
+            <pre><code id="testReport" th:text="${message}"></code></pre>
         </div>
     </div>
 
@@ -31,6 +32,80 @@
    document.getElementById("msg").innerHTML = "Your tests are running! Results will be displayed soon";
 }
     </script> 
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+       var reportData = /*[[${message1}]]*/ 'User Name';
+     /*]]>*/
+</script> 
+
+
+<script type="text/javascript">
+
+    function printObj(obj) {
+  
+      const h4 = document.createElement("h4");
+      h4.innerHTML = obj.label;
+  
+      const p = document.createElement("span");
+      p.innerHTML =  obj.urlPattern + " " + obj.countOfMatchingUrls + " Urls Matched.<br/>";
+  
+      const bold = document.createElement("b");
+      bold.innerHTML = "Messages:";
+     
+      const ul = document.createElement("ul");
+  
+        if(obj.hasOwnProperty('testMessages'))
+        obj.testMessages.forEach(element => {
+  
+          li = document.createElement("li");
+          li.innerHTML = element;
+  
+          ul.appendChild(li);
+         
+        });
+       
+        const para = document.createElement("p");
+        para.appendChild(h4);
+        para.appendChild(p);
+        para.appendChild(bold);
+        para.appendChild(ul);
+  
+  
+        return para;
+    }
+  
+    function displayRaw() {
+  
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      code.classList.add("language-json");
+      code.innerHTML = JSON.stringify(reportData, null, 2);
+      pre.appendChild(code);
+      document.getElementById("testReport").innerHTML = "";
+      document.getElementById("testReport").appendChild(pre);
+      hljs.highlightAll();
+    }
+  
+    function display(status) {
+  
+      // console.log(status);
+  
+      document.getElementById("testReport").innerHTML = "";
+  
+      for (var key in reportData.positiveUrlChecks) 
+        if (reportData.positiveUrlChecks.hasOwnProperty(key))
+          if(reportData.positiveUrlChecks[key].testResult == status){
+            document.getElementById("testReport").append(printObj(reportData.positiveUrlChecks[key]))
+          }
+            
+    }
+  
+    displayRaw();
+          
+  </script>
+  
     
 
 </body>

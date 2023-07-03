@@ -10,10 +10,15 @@ import lombok.Setter;
 @Getter @Setter
 public class TestCriteriaBo {
 
+    String loginUrl;
+    String userName;
+    String password;
+
     List<Map<String, String>> cookies;
     String userAgent;
     String publisherUrl;
     String environment;
+
     Map<String, String> networkCallsPositive;
     Map<String, String> networkCallsNegative;
 
