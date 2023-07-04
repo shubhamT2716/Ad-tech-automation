@@ -20,8 +20,6 @@ public class BrowserFactory {
     @Value("${browserPath}")
     private String chromeBrowserPath;
 
-    @Value("${browserPathFirefox}")
-    private String firefoxBrowserPath;
 
     //Map of Browser Type with Device and User Agents
     private Map<String, String> browserContexts = new HashMap<String, String>() {{
@@ -107,11 +105,6 @@ public class BrowserFactory {
         if(browserType.contains("Chrome")){
             return playwright.chromium().launchPersistentContext(Paths.get(chromeBrowserPath),getSystemBrowserContextOptions(browserContexts.get(browserType),browserType.contains("Mobile"),extension));
         }
-        else if(browserType.contains("Firefox")){
-            return playwright.firefox().launchPersistentContext(Paths.get(firefoxBrowserPath),getSystemBrowserContextOptions(browserContexts.get(browserType),browserType.contains("Mobile"),extension));
-        }
-
-
         return playwright.webkit().launchPersistentContext(Paths.get(chromeBrowserPath));
     }
 
