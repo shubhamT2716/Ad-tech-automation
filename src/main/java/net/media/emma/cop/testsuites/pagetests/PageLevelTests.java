@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.gson.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,65 +86,62 @@ public class PageLevelTests {
 
     private List<JsonNode> matchSlotsDataWithBidderRequestData(JsonNode slotsData, JsonNode networkCallDataValidation){
 
+        JsonNode bidderCallDataNode;
+        String bidderCallDataNodeTarget = "";
+        String bidderCallDataNodeTargetReplace = "";
+
+        JsonNode slotsDataPathNode = slotsData.get(0);
+        String slotsDataPath = slotsDataPathNode.get("path").asText();
         log.info("Slots Data from Page: " + slotsData.toPrettyString());
-        log.info("Bidder Call POST Data: " + networkCallDataValidation.toPrettyString());
+        log.info("Target: " + slotsDataPath);
+
+
+        try {
+            log.info("Bidder Call POST Data: " + networkCallDataValidation.toPrettyString());
+            bidderCallDataNode= networkCallDataValidation.get("imp");
+            bidderCallDataNodeTarget = bidderCallDataNode.get(0).get("ext").get("dfp_ad_unit_code").toString();
+            bidderCallDataNodeTargetReplace = bidderCallDataNodeTarget.replace('"', ' ').trim();
+            log.info("Replaced string " + bidderCallDataNodeTargetReplace);
+            log.info("Target value "+ bidderCallDataNodeTarget);
+            log.info("Bidder call data target " + bidderCallDataNode);
+
+        }catch (Exception e){
+            log.info("Got null");
+        }
+
+        String pageLeveldataAssertionResult = pageLeveldataAssertion(slotsDataPath, bidderCallDataNodeTargetReplace);
+
+        log.info("result matching " + pageLeveldataAssertionResult);
 
         return Arrays.asList(slotsData, networkCallDataValidation);
 
-        //     String resultsText = "";
-        //     Map<String, String> knownBidderCallsDataMap = yaml.getYpbjs();
 
-
-        //         // Logic to pretty print
-
-        //         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        //         JsonObject jsonObject = gson.fromJson(postData, JsonObject.class);
-        
-        //         log.info("Json object" + jsonObject);
-        
-        //         try{
-        //             if(jsonObject.has("imp") && jsonObject.get("imp").isJsonArray()){
-        //                 JsonArray impArray = jsonObject.getAsJsonArray("imp");
-        
-        //                 if(impArray.size() != 0){
-        //                     JsonObject firstImpObject = impArray.get(0).getAsJsonObject();
-        
-        //                     if(firstImpObject.has("ext") && firstImpObject.get("ext").isJsonObject() && firstImpObject.size() != 0){
-        //                         JsonObject extObject = firstImpObject.getAsJsonObject("ext");
-        
-        //                         if(extObject.has("dfp_ad_unit_code")){
-        //                             String dfpAdUnitCode = extObject.get("dfp_ad_unit_code").getAsString();
-        //                             log.info("dfpAdUnitCode = " + dfpAdUnitCode);
-        //                         }
-        //                     }
-        //                 }
-        //             }else {
-        //                 log.info("Didnt find");
-        //             }
-        
-        // //       log.info("Scarping from ypbjs " + dfpAdUnitCodeElement);
-        //         } catch(Exception e){
-        //             e.printStackTrace();
-        //         }
-        
-        //         // Logic for checking post data with hard coded known values
-        
-        //         for (Entry<String, String> entry : knownBidderCallsDataMap.entrySet()) {
-        
-        //             String keyOfHashMap = entry.getKey();
-        //             String valueOfHashMap = entry.getValue();
-        
-        //             Boolean keyPostData = postData.contains(keyOfHashMap);
-        //             Boolean valuePostData = postData.contains(valueOfHashMap);
-        
-        //             resultsText += "\n Key to check is " + keyOfHashMap + " and matching is " + keyPostData
-        //                     + " and refrence value is " + valueOfHashMap
-        //                     + " and matching is " + valuePostData + "\n" + "Sample value " + knownBidderCallsDataMap.get("$.imp.[0].ext.dfp_ad_unit_code");
-        
-        //         }
 
     }
+
+    private String pageLeveldataAssertion(String slotsDataPath, String bidderCallDataNodeTargetReplace){
+    String result = "Didnt match";
+    Boolean flag = false;
+        String extractedValueFromSLotsData = slotsDataPath.substring(slotsDataPath.lastIndexOf("/") + 1);
+        log.info("Exact value of dfp path " + extractedValueFromSLotsData);
+        if(extractedValueFromSLotsData.equals(bidderCallDataNodeTargetReplace)) {
+            flag = true;
+            result = "The value of Dfp path in defined slots is " + extractedValueFromSLotsData + "and Value of Dfp Path in passed in bidder call " + bidderCallDataNodeTargetReplace + "and Matching lookup is " + flag;
+        }else{
+            log.info("Dfp slot extracted is " + extractedValueFromSLotsData);
+            log.info("Bidder call extracted is " + bidderCallDataNodeTargetReplace);
+        }
+        return result;
+    }
+
+
+
+
+
+
+
+
+
 
    private JsonNode networkCallDataChecks(String networkCallUrl, List < Request > urlFromNetworkTab, TestCriteria yaml) {
      Request sampleRequest = urlDataProcessing.getRequestFor(networkCallUrl, urlFromNetworkTab);
@@ -164,7 +162,7 @@ public class PageLevelTests {
 
        //logic to get any object from YPBJS post data
 
-       try {
+
          //Check to see if YPBJS request post data has imp object
          //jsonObject(""ext.dp_ad_)
          if (jsonObject.has("imp") && jsonObject.get("imp").isJsonArray()) {
@@ -187,23 +185,16 @@ public class PageLevelTests {
            }
          } else {
            log.info("Didnt find");
-
-           try {
-             return jsonReader.readTree(sampleRequest.postData());
-           } catch (JsonProcessingException e) {
-             log.error("JSON Marshalling of post Data from bidder request has failed.", e);
-             //>>>>>>> 4b040afd561d91559c6fe12bd2e08f69ac6d311f
-           }
          }
 
-        
-
-              }catch (Exception e){
-                log.info("wtf failed");
-              }
      }
-      return null;
- }
+       try {
+           return jsonReader.readTree(sampleRequest.postData());
+       } catch (JsonProcessingException e) {
+           log.info("Scraping ypbjs failed");
+       }
+       return null;
+   }
 
 
 
