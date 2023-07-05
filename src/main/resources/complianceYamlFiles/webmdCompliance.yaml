@@ -10,47 +10,42 @@ networkCallsPositive: {
   APLog: "https://hblg.media.net/log?logid=aplog",
   AWLog: "https://hblg.media.net/log?logid=awlog",
   RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  Checksync: "https://hbx.media.net/checksync.php",
   # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
-}
-
-networkCallsNegative: {
-  nerrping: "https://hblg.media.net/nerrping.php?",
-  Flog: "https://hblg.media.net/log?logid=flog",
 }
 
 keysToVerifyPositive: {
   PRLog: {
-    pvid: ["X"],
-    cid: ["8CU66J63J"],
-    svr: ["053111_327_053111_262_ssp"],
-    ugd: ["4"],
-    #usp_ldf: ["0","1"],
+    tcf_cmp: ["28"],
+    tcf_status: ["loaded"],
+    tcf_prp: ["1111--1"],
+    tcf_api: ["1"],
   },
   APLog: {
-    svr: ["053111_327_053111_262_ssp"],
-    ugd: ["4"],
-    #usp_ldf: ["0","1"],
+    tcf_cmp: ["28"],
+    tcf_status: ["loaded"],
+    tcf_prp: ["1111--1"],
+    tcf_api: ["1"],
   },
   RTBSCall:{
     gdpr: ["1"],
     gdprconsent:["1"],
-    gdprstring: [""],
-    isRefresh: [""],
+  #  gdprstring: [""],
   },
-}
-
-#to_check_negative_keys
-keysToVerifyNegative: {
-  prlog: { snm: ["removed","error",], nbr: ["13"], usp_ldf: [""]},
-  aplog: { nbr: ["13"]},
-  awlog: { ogbdp: ["0","-1","-2"]},
+  Checksync:{
+    gdpr: ["1"],
+    gdprconsent:["1"],
+  #  gdprstring:[""],
+  },
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  prlog: { nbr: [ "45","3","69","0","1","99" ],
-           cc: ["FR", "DE"],
+  prlog: {
+    cc: ["FR", "DE"],
+    ct:["PARIS","FRANKFURT"]},
+  aplog: { cc: ["FR", "DE"],
            ct:["PARIS","FRANKFURT"]},
-  aplog: { nbr: [ "45","3","69","0","1","99" ]},
   RTBSCall: {isRefresh: ["0", "1"] },
 }
+
