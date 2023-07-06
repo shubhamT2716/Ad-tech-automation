@@ -30,7 +30,6 @@ import net.media.emma.utils.URLDataProcessing;
 @Service @Slf4j
 public class TestSuite implements GenericTestSuite {
 
-    @Autowired BrowserFactory browserFactory;
     @Autowired Configuration jsonModelMapper;
     @Autowired DomJsonUtils domUtils;
     @Autowired ObjectWriter jsonWriter;
@@ -63,7 +62,7 @@ public class TestSuite implements GenericTestSuite {
     @Override
     public String getTestResults(TestCriteriaBo testData){
 
-        BrowserContext browserContext = browserFactory.getBc(testData.getUserAgent(), testData.getCookies());
+        BrowserContext browserContext = BrowserFactory.getBc(testData.getUserAgent(), testData.getCookies());
 
         if(testData.getLoginUrl() != null && testData.getUserName() != null && testData.getPassword() != null) {
 
