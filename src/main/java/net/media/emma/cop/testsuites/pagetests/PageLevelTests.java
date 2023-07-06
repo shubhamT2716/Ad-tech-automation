@@ -85,35 +85,63 @@ public class PageLevelTests {
     }
 
     private List<JsonNode> matchSlotsDataWithBidderRequestData(JsonNode slotsData, JsonNode networkCallDataValidation){
+//----------------------------------------------
+        //      Json path to extract data directly
+
+//        To get ad slot path from YPBJS call (Post Data) :   $.imp[0].ext.dfp_ad_unit_code
+//        To get width from from YPBJS call (Post Data) :     $.imp[0].banner.format[0].w     (If there are two sizes, use [0] to get first, [1] to get second)
+//        To get height from from YPBJS call (Post Data) :     $.imp[0].banner.format[0].h    (If there are two sizes, use [0] to get first, [1] to get second)
+//        To get adslot path as Json path : $[0].path
+//        To get width in ad slot as Json object : $[0].sizes[0].width  (If there are two sizes, use [0] to get first, [1] to get second)
+//        To get width in ad slot as Json object : $[0].sizes[0].height  (If there are two sizes, use [0] to get first, [1] to get second)
+//------------------------------------------------
 
         JsonNode bidderCallDataNode;
         String bidderCallDataNodeTarget = "";
         String bidderCallDataNodeTargetReplace = "";
-
+        JsonNode slotsDataSizeNode = slotsData.get(0).get("sizes").get(0).get("width");
         JsonNode slotsDataPathNode = slotsData.get(0);
+        JsonNode bidderCallDataSizesNode;
+
         String slotsDataPath = slotsDataPathNode.get("path").asText();
         log.info("Slots Data from Page: " + slotsData.toPrettyString());
         log.info("Target: " + slotsDataPath);
+        log.info("size from slots "+slotsDataSizeNode);
 
+        bidderCallDataNode= networkCallDataValidation.get("imp");
 
         try {
             log.info("Bidder Call POST Data: " + networkCallDataValidation.toPrettyString());
-            bidderCallDataNode= networkCallDataValidation.get("imp");
             bidderCallDataNodeTarget = bidderCallDataNode.get(0).get("ext").get("dfp_ad_unit_code").toString();
             bidderCallDataNodeTargetReplace = bidderCallDataNodeTarget.replace('"', ' ').trim();
             log.info("Replaced string " + bidderCallDataNodeTargetReplace);
             log.info("Target value "+ bidderCallDataNodeTarget);
             log.info("Bidder call data target " + bidderCallDataNode);
 
+
+
         }catch (Exception e){
             log.info("Got null");
         }
 
+        bidderCallDataSizesNode = bidderCallDataNode.get(0).get("banner").get("format").get(0).get("w");
+        log.info("sizes " + bidderCallDataSizesNode);
+
+
+        if(slotsDataSizeNode.equals(bidderCallDataSizesNode)){
+            Boolean _flag = true;
+            log.info("Size matching is "+ _flag + "Slots size " + slotsDataSizeNode + "Bidder call data is " + bidderCallDataSizesNode);
+        }else {
+
+            log.info("Sizes didnt match");
+        }
+
+
         String pageLeveldataAssertionResult = pageLeveldataAssertion(slotsDataPath, bidderCallDataNodeTargetReplace);
 
-        log.info("result matching " + pageLeveldataAssertionResult);
+        log.info("Result " + pageLeveldataAssertionResult);
 
-        return Arrays.asList(slotsData, networkCallDataValidation);
+        return Arrays.asList(networkCallDataValidation, slotsData);
 
 
 
@@ -133,15 +161,6 @@ public class PageLevelTests {
         }
         return result;
     }
-
-
-
-
-
-
-
-
-
 
    private JsonNode networkCallDataChecks(String networkCallUrl, List < Request > urlFromNetworkTab, TestCriteria yaml) {
      Request sampleRequest = urlDataProcessing.getRequestFor(networkCallUrl, urlFromNetworkTab);
