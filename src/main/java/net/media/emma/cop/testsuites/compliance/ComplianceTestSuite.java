@@ -22,8 +22,6 @@ import java.util.*;
 public class ComplianceTestSuite {
 
     @Autowired
-    BrowserFactory browserFactory;
-    @Autowired
     URLDataProcessing urlDataProcessing;
     @Autowired
     ObjectWriter jsonWriter;
@@ -47,7 +45,7 @@ public class ComplianceTestSuite {
 
     public String getTestResults(ComplianceTestCriteria testData) throws InterruptedException {
 
-        BrowserContext browserContext = browserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList());
+        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList());
         browserContext.clearCookies();
 
         //list of arrays initialization

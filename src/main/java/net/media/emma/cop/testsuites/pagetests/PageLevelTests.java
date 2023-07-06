@@ -50,8 +50,6 @@ import net.minidev.json.JSONUtil;
 public class PageLevelTests {
 
     @Autowired
-    BrowserFactory browserFactory;
-    @Autowired
     URLDataProcessing urlDataProcessing;
 
     List<String> jsExtraction = new ArrayList<>();
@@ -67,7 +65,7 @@ public class PageLevelTests {
 
     public String getPageLevelTestsData(String url) {
 
-        Page page = browserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList());
+        Page page = BrowserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList());
 
         // list of arrays initialization
         List<Request> urlFromNetworkTab = new ArrayList<>();
