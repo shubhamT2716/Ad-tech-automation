@@ -99,14 +99,16 @@ public class PageLevelTests {
         JsonNode bidderCallDataNode;
         String bidderCallDataNodeTarget = "";
         String bidderCallDataNodeTargetReplace = "";
-        JsonNode slotsDataSizeNode = slotsData.get(0).get("sizes").get(0).get("width");
+        JsonNode slotsDataSizeNodeWidth = slotsData.get(0).get("sizes").get(0).get("width");
+        JsonNode slotsDataSizeNodeHeight = slotsData.get(0).get("sizes").get(0).get("height");
         JsonNode slotsDataPathNode = slotsData.get(0);
-        JsonNode bidderCallDataSizesNode;
+        JsonNode bidderCallDataSizesNodeWidth;
+        JsonNode bidderCallDataSizesNodeHeight;
 
         String slotsDataPath = slotsDataPathNode.get("path").asText();
         log.info("Slots Data from Page: " + slotsData.toPrettyString());
         log.info("Target: " + slotsDataPath);
-        log.info("size from slots "+slotsDataSizeNode);
+        log.info("size from slots " + slotsDataSizeNodeWidth + " " + slotsDataSizeNodeHeight);
 
         bidderCallDataNode= networkCallDataValidation.get("imp");
 
@@ -124,13 +126,14 @@ public class PageLevelTests {
             log.info("Got null");
         }
 
-        bidderCallDataSizesNode = bidderCallDataNode.get(0).get("banner").get("format").get(0).get("w");
-        log.info("sizes " + bidderCallDataSizesNode);
+        bidderCallDataSizesNodeWidth = bidderCallDataNode.get(0).get("banner").get("format").get(0).get("w");
+        bidderCallDataSizesNodeHeight = bidderCallDataNode.get(0).get("banner").get("format").get(0).get("h");
+        log.info("sizes " + bidderCallDataSizesNodeWidth + " " + bidderCallDataSizesNodeHeight);
 
 
-        if(slotsDataSizeNode.equals(bidderCallDataSizesNode)){
+        if(slotsDataSizeNodeWidth.equals(bidderCallDataSizesNodeWidth) && slotsDataSizeNodeHeight.equals(bidderCallDataSizesNodeHeight)){
             Boolean _flag = true;
-            log.info("Size matching is "+ _flag + "Slots size " + slotsDataSizeNode + "Bidder call data is " + bidderCallDataSizesNode);
+            log.info("Size matching is "+ _flag + " Slots size width " + slotsDataSizeNodeWidth + " Slots size height " + slotsDataSizeNodeHeight +" Bidder call width is " + bidderCallDataSizesNodeWidth +" Bidder call height is " + bidderCallDataSizesNodeHeight);
         }else {
 
             log.info("Sizes didnt match");
