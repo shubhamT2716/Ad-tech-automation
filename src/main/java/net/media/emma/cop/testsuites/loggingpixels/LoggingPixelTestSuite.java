@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Request;
+
+import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.loggingpixels.TestReportV2.KeyData;
@@ -213,6 +215,9 @@ public class LoggingPixelTestSuite
 //         return buildReport(testCriteria, urlFromNetworkTab);
 //     }
 
+    
+    
+    
     private boolean dataTypeCheck(String val, String dataType)
     {
         try{
@@ -241,52 +246,78 @@ public class LoggingPixelTestSuite
     {
         List<KeyData> keyDataList = new ArrayList<>();
 
+       
+        
         for (LoggingPixelTestDataModel.DataTypeChecks data : testData)
         {
             String key = data.getKey();
-            KeyData keyData = KeyData.builder().key(key).build();
+           
+            	 KeyData keyData = KeyData.builder().key(key).build();
+            	
+                 if (urlParams.containsKey(key) && urlParams.get(key) != null)
+                 {
+                     String value = urlParams.get(key);
+                     
+                    
+                     
+                    	 String regexFromYaml = data.getValueRegex();
+                         List<String> negativeStringChecks = data.getNegativeStrings();
+                         boolean notNullValue=data.isNotNull();
+                         boolean mandatoryVlaue=data.isMandatory();
+                        
+                         if (!dataTypeCheck(value, data.getValueDataType().toLowerCase()))
+                         {
+                             log.info("Data Type Check Failed for Key: " + key);
+                             keyData.getMessages().add("Data Type Check Failed for Key: " + key + ". Expected Data Type: " + data.getValueDataType() + ", Actual Value: " + value);
+                             // continue;
+                         }
+                         
+                         if(isNotNull(value, notNullValue)==false)
+                         {
+                        	 log.info("Not Null Check Failed for key: "+key);
+                        	 keyData.getMessages().add("Not Null check failed for key: "+key+" value not found");
+                         }
+                         
+                         if(isMandatory(value, mandatoryVlaue)==false)
+                         {
+                        	 log.info("Mendatory check Failed for key: "+key);
+                        	 keyData.getMessages().add("Mendatory check failed for key: "+key); 
+                         }
 
-            if (urlParams.containsKey(key) && urlParams.get(key) != null)
-            {
-                String value = urlParams.get(key);
-                String regexFromYaml = data.getValueRegex();
-                List<String> negativeStringChecks = data.getNegativeStrings();
+                         if (matchRegex(regexFromYaml, value))
+                         {
+                             log.info("Regex Failed for Key: " + key);
+                             keyData.getMessages().add("Regex Failed for Key: " + key + ". Regex: " + regexFromYaml + ", Actual Value: " + value);
+                             // continue;
 
-                if (!dataTypeCheck(value, data.getValueDataType().toLowerCase()))
-                {
-                    log.info("Data Type Check Failed for Key: " + key);
-                    keyData.getMessages().add("Data Type Check Failed for Key: " + key + ". Expected Data Type: " + data.getValueDataType() + ", Actual Value: " + value);
-                    // continue;
-                }
+                         }
 
-                if (matchRegex(regexFromYaml, value))
-                {
-                    log.info("Regex Failed for Key: " + key);
-                    keyData.getMessages().add("Regex Failed for Key: " + key + ". Regex: " + regexFromYaml + ", Actual Value: " + value);
-                    // continue;
+                         if (doesNegativeStringExists(negativeStringChecks, value))
+                         {
+                             log.info("Negative string check Failed for Key: " + key);
+                             keyData.getMessages().add("Negative string check Failed for Key: " + key + ". Negative String Matches: " + negativeStringChecks + ", Actual Value: " + value);
+                         }
+                     
+                     
+//                     
+                 }
 
-                }
+                 if(keyData.getMessages().size() > 0 )
+                 {
+                     keyData.setTestResult("FAIL");
+                 }else
+                 {
+                     keyData.setTestResult("PASS");
+                 }
 
-                if (doesNegativeStringExists(negativeStringChecks, value))
-                {
-                    log.info("Negative string check Failed for Key: " + key);
-                    keyData.getMessages().add("Negative string check Failed for Key: " + key + ". Negative String Matches: " + negativeStringChecks + ", Actual Value: " + value);
-                }
+                 keyDataList.add(keyData);
             }
-
-            if(keyData.getMessages().size() > 0)
-            {
-                keyData.setTestResult("FAIL");
-            }else
-            {
-                keyData.setTestResult("PASS");
-            }
-
-            keyDataList.add(keyData);
+            
+        return keyDataList;
         }
 
-        return keyDataList;
-    }
+        
+    
         private List<String> getMatchingNetworkCalls(List < String > allUrl)
         {
             List<String> matchingUrls = new ArrayList<>();
@@ -305,12 +336,35 @@ public class LoggingPixelTestSuite
             return matchingUrls;
         }
 
+        public boolean isNotNull(String valueOfKey, boolean  value)
+        {
+        	if(valueOfKey==null && value==true)
+        	{
+        		return false;
+        	}
+        	else {
+        		return true;
+        	}
+        }
+        
+        public boolean isMandatory(String valueOfKey, boolean value)
+        {
+        	if(valueOfKey==null && value==true)
+        	{
+        		return false;
+        	}
+        	else {
+        		return true;
+        	}
+        }
 
         private Boolean doesNegativeStringExists (List < String > negativeStringValues, String value)
         {
             return negativeStringValues.contains(value);
         }
 
+       
+        
 
         public JsonNode getLoggingPixelTestResults(LoggingPixelTestDataModel testCriteria)
         {

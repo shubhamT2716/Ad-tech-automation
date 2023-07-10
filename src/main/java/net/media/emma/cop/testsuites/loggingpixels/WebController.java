@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -25,7 +28,7 @@ public class WebController
 
         ModelAndView mav = new ModelAndView("yamlTestSuite");
         mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/loggingPixelsTestCriteriaFiles/"));//  Arrays.asList(null, "testCriteria.yaml", "testCriteria2.yaml"));
-
+        
         return mav;
     }
 
@@ -33,9 +36,12 @@ public class WebController
     public ModelAndView yamlTestSuite(@RequestParam String yaml)
     {
 
+    	
         ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
         LoggingPixelTestDataModel testCriteria;
 
+        
+        
         try{
             ObjectMapper mapper = new YAMLMapper();
             testCriteria = mapper.readValue(yaml, LoggingPixelTestDataModel.class);
