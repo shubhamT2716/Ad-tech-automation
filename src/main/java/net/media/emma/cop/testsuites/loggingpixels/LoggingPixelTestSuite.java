@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Request;
 
-import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.loggingpixels.TestReportV2.KeyData;
@@ -276,14 +275,14 @@ public class LoggingPixelTestSuite
                              // continue;
                          }
                          
-                         if(isNotNull(value, notNullValue)==false)
+                         if(!isNotNull(value, notNullValue))
                          {
                         	 log.info("Not Null Check Failed for key: "+key);
                         	 keyData.getMessages().add("Not Null check failed for key: "+key+" value not found");
                         	 // here value of key coming null but not null check is true then message generate
                          }
                          
-                         if(isMandatory(key, mandatoryVlaue)==false)
+                         if(!isMandatory(key, mandatoryVlaue))
                          {
                         	 log.info("Mendatory check Failed ");
                         	 keyData.getMessages().add("Mendatory check failed  key should not exist"); 
