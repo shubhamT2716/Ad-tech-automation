@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -83,6 +84,27 @@ public class PageLevelTests {
         return matchSlotsDataWithBidderRequestData(slotsData, networkCallDataValidation);
 
     }
+
+    private Set<String> getSetOfSizesFromSlots(JsonNode slotsData, int index) {
+
+        Set<String> sizes = slotsData.get(index).get("sizes").findValuesAsText("width").stream().map(width -> width + "x"
+                + slotsData.get(index).get("sizes").findValuesAsText("height").stream().findFirst().get())
+                .collect(Collectors.toSet());
+
+        return sizes;
+    }
+
+    private Set<String> getSetOfSizesFromBidderData(JsonNode bidderCallDataNode, int index) {
+
+        Set<String> sizes = bidderCallDataNode.get(index).get("banner").get("format").findValuesAsText("w").stream()
+                .map(width -> width + "x"
+                        + bidderCallDataNode.get(index).get("banner").get("format").findValuesAsText("h").stream()
+                        .findFirst().get())
+                .collect(Collectors.toSet());
+
+        return sizes;
+    }
+
 
     private List<JsonNode> matchSlotsDataWithBidderRequestData(JsonNode slotsData, JsonNode networkCallDataValidation){
 //----------------------------------------------
