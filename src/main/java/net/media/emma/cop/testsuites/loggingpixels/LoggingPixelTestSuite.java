@@ -251,8 +251,6 @@ public class LoggingPixelTestSuite
         {
             String key = data.getKey();
            
-            System.err.println("key = "+key);
-            
             	 KeyData keyData = KeyData.builder().key(key).build();
             	
             	 
