@@ -19,9 +19,6 @@ import java.util.regex.Pattern;
 @Slf4j
 public class LoggingPixelTestSuite
 {
-
-    @Autowired
-    BrowserFactory browserFactory;
     @Autowired
     URLDataProcessing urlUtil;
 
@@ -373,7 +370,7 @@ public class LoggingPixelTestSuite
 
         public JsonNode getLoggingPixelTestResults(LoggingPixelTestDataModel testCriteria)
         {
-            BrowserContext bc = browserFactory.getBc(testCriteria.getUserAgent(), null);
+            BrowserContext bc = BrowserFactory.getBc(testCriteria.getUserAgent(), null);
             List<String> urlFromNetworkTab = new ArrayList<>();
             List<Request> requestList = new ArrayList<>();
 
