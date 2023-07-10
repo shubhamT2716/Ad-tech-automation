@@ -23,9 +23,4 @@ public class TestReportV2
         @Builder.Default
         List<String> messages = new ArrayList<>();
     }
-
-	
-    
-    
-    
 }

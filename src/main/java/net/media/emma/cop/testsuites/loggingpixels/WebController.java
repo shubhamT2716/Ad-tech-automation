@@ -35,13 +35,9 @@ public class WebController
     @PostMapping
     public ModelAndView yamlTestSuite(@RequestParam String yaml)
     {
-
-    	
         ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
         LoggingPixelTestDataModel testCriteria;
 
-        
-        
         try{
             ObjectMapper mapper = new YAMLMapper();
             testCriteria = mapper.readValue(yaml, LoggingPixelTestDataModel.class);

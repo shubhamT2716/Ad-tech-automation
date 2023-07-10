@@ -252,8 +252,12 @@ public class LoggingPixelTestSuite
         {
             String key = data.getKey();
            
+            System.err.println("key = "+key);
+            
             	 KeyData keyData = KeyData.builder().key(key).build();
             	
+            	 
+            	 
                  if (urlParams.containsKey(key) && urlParams.get(key) != null)
                  {
                      String value = urlParams.get(key);
@@ -276,12 +280,15 @@ public class LoggingPixelTestSuite
                          {
                         	 log.info("Not Null Check Failed for key: "+key);
                         	 keyData.getMessages().add("Not Null check failed for key: "+key+" value not found");
+                        	 // here value of key coming null but not null check is true then message generate
                          }
                          
-                         if(isMandatory(value, mandatoryVlaue)==false)
+                         if(isMandatory(key, mandatoryVlaue)==false)
                          {
-                        	 log.info("Mendatory check Failed for key: "+key);
-                        	 keyData.getMessages().add("Mendatory check failed for key: "+key); 
+                        	 log.info("Mendatory check Failed ");
+                        	 keyData.getMessages().add("Mendatory check failed  key should not exist"); 
+                        	 //if key should not exist then this check failed.
+                        	
                          }
 
                          if (matchRegex(regexFromYaml, value))
@@ -338,6 +345,7 @@ public class LoggingPixelTestSuite
 
         public boolean isNotNull(String valueOfKey, boolean  value)
         {
+        	
         	if(valueOfKey==null && value==true)
         	{
         		return false;
@@ -347,9 +355,9 @@ public class LoggingPixelTestSuite
         	}
         }
         
-        public boolean isMandatory(String valueOfKey, boolean value)
+        public boolean isMandatory(String key, boolean value)
         {
-        	if(valueOfKey==null && value==true)
+        	if(key==null && value==true)
         	{
         		return false;
         	}
