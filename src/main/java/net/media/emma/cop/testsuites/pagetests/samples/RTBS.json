@@ -1,0 +1,81 @@
+{
+    "site": {
+      "domain": "www.engadget.com",
+      "page": "https://www.engadget.com/metas-threads-is-already-showing-conversations-on-the-web-120453471.html?headerbidding=1",
+      "ref": "",
+      "topMostLocation": "https://www.engadget.com/metas-threads-is-already-showing-conversations-on-the-web-120453471.html?headerbidding=1",
+      "isTop": true,
+      "canonical_url": "https://www.engadget.com/metas-threads-is-already-showing-conversations-on-the-web-120453471.html",
+      "og_url": "https://www.engadget.com/metas-threads-is-already-showing-conversations-on-the-web-120453471.html"
+    },
+    "ext": {
+      "abte": "SSP_CLIENT",
+      "customer_id": "8YHBL12EX",
+      "prebid_version": 1,
+      "gdpr_applies": false,
+      "usp_applies": true,
+      "usp_consent_string": "1YNN",
+      "coppa_applies": false,
+      "screen": {
+        "w": 400,
+        "h": 474
+      },
+      "user_id": {},
+      "pvid_exc": [
+        "25014"
+      ],
+      "sd": 7
+    },
+    "id": "126427297614054471689062412963",
+    "ortb2": {
+      "regs": {
+        "gpp": "DBABLA~BVRqAAAAAgA.QA",
+        "gpp_sid": [
+          7
+        ]
+      }
+    },
+    "imp": [
+      {
+        "id": "60763621834295431689062412965",
+        "ext": {
+          "dfp_id": "MOBILE-BOTTOM_BTF-2b917f10-c1ee-48f9-8334-1ce261328d65",
+          "coordinates": {
+            "top_left": {
+              "x": 20,
+              "y": 1260.6458740234375
+            },
+            "bottom_right": {
+              "x": 380,
+              "y": 1510.6458740234375
+            }
+          },
+          "viewability": 0,
+          "visibility": 2,
+          "channel": "",
+          "section": "",
+          "mnrf": 0,
+          "mnrfc": 0,
+          "mniv": 0
+        },
+        "all": {
+          "cid": "8YHBL12EX",
+          "crid": "638126531"
+        },
+        "cacid": "99419169922809741689062412965",
+        "transactionId": "96366781355280521689062412963",
+        "banner": [
+          {
+            "w": 300,
+            "h": 250
+          },
+          {
+            "w": 320,
+            "h": 50
+          }
+        ],
+        "tagid": "638126531"
+      }
+    ],
+    "tmax": 1400
+  }
