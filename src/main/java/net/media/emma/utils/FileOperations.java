@@ -3,9 +3,13 @@ package net.media.emma.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import com.jayway.jsonpath.spi.cache.Cache;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Service
+@Service @Slf4j
 public class FileOperations {
 
     @Autowired
@@ -47,5 +51,21 @@ public class FileOperations {
             loggers.standardLogger().error("YAML List Failed", e);
             return new java.util.HashSet<String>();
         }
+    }
+
+   //loadFileAsResource
+    public Resource loadFileAsResource(String fileName) {
+
+        try {
+            Path filePath = Paths.get(fileName);
+            Resource resource = new UrlResource(filePath.toUri());
+            if(resource.exists()) {
+                return resource;
+            }
+        } catch (Exception e) {
+            log.error("File read error: " + fileName, e);
+        }
+
+        return null;
     }
 }
