@@ -213,9 +213,6 @@ public class TestSuite implements GenericTestSuite {
         
         	
         try {
-        	
-        	System.out.println("Urlcheckout = "+jsonWriter.writeValueAsString(urlChecks));
-        	
             return jsonWriter.writeValueAsString(urlChecks);
         } catch (JsonProcessingException e) {
             log.error("json processing error", e);
