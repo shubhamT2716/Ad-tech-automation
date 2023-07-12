@@ -129,7 +129,7 @@ public class TestSuite implements GenericTestSuite {
 									.testName("YAML Test Suite")
 									.publisherUrl(testData.getPublisherUrl())
 									.environment(testData.getEnvironment())
-									.userAgent(testData.getUserAgent())
+									.userAgent(testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
 									.harFileDownloadLink( "harDownload/" + harFilePath).build())
 														
 				.urlChecks(getUrlAssertionsData(urlFromNetworkTab, testData)).build();

@@ -81,10 +81,10 @@
 
     document.getElementById("testReport").innerHTML = "";
 
-    for (var key in reportData.positiveUrlChecks) 
-      if (reportData.positiveUrlChecks.hasOwnProperty(key))
-        if(reportData.positiveUrlChecks[key].testResult == status){
-          document.getElementById("testReport").append(printObj(reportData.positiveUrlChecks[key]))
+    for (var key in reportData.urlChecks.positiveUrlChecks) 
+      if (reportData.urlChecks.positiveUrlChecks.hasOwnProperty(key))
+        if(reportData.urlChecks.positiveUrlChecks[key].testResult == status){
+          document.getElementById("testReport").append(printObj(reportData.urlChecks.positiveUrlChecks[key]))
         }
           
   }
