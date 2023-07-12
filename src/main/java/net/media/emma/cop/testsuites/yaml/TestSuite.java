@@ -24,11 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
-import net.media.emma.cop.testsuites.yaml.TestReportBo.TestMetaData;
-import net.media.emma.cop.testsuites.yaml.URLChecks.NegativeURLChecks;
-import net.media.emma.cop.testsuites.yaml.URLChecks.PositiveURLChecks;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.TestMetaData;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
-import net.media.emma.utils.CommanBrowserUtil;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.DomJsonUtils;
 import net.media.emma.utils.URLDataProcessing;
 
@@ -75,7 +75,7 @@ public class TestSuite implements GenericTestSuite {
 	@Override
 	public String getTestResults(TestCriteriaBo testData) {
 
-		String harFilePath = CommanBrowserUtil.getFileNameForHar();
+		String harFilePath = CommonBrowserUtil.getFileNameForHar();
 
 		BrowserContext browserContext = BrowserFactory.getBc(testData.getUserAgent(), testData.getCookies(), harFileBasePath + harFilePath);
 
@@ -103,6 +103,8 @@ public class TestSuite implements GenericTestSuite {
 		// return urlFromNetworkTab;
 
 		try {
+
+			browserContext.setDefaultTimeout(90000); // 90 seconds
 			Page page = browserContext.newPage();
 			page.navigate(testData.getPublisherUrl());
 			// page.waitForLoadState(LoadState.NETWORKIDLE,new
@@ -115,15 +117,14 @@ public class TestSuite implements GenericTestSuite {
 
 			log.error("Error while navigating to publisher url: {}", e.getMessage());
 
-		} finally {
+		} 
 
-			browserContext.close();
-		}
-
+		browserContext.close();
+	
 		// return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
 		// return getNetworkCallAssertions(requestList, testData);
 
-		TestReportBo testReport = TestReportBo.builder()
+		TestReportModel testReport = TestReportModel.builder()
 				.testMetaData(TestMetaData.builder()
 									.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
 									.testName("YAML Test Suite")
@@ -171,9 +172,9 @@ public class TestSuite implements GenericTestSuite {
 		return null;
 	}
 
-	private URLChecks getUrlAssertionsData(List<String> requestList, TestCriteriaBo testData) {
+	private URLChecksReportModel getUrlAssertionsData(List<String> requestList, TestCriteriaBo testData) {
 
-		URLChecks urlChecks = URLChecks.builder().build();
+		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
 
 		for (String requestUrl : requestList) {
 

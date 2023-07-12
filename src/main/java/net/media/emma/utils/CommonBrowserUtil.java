@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CommanBrowserUtil {
+public class CommonBrowserUtil {
 
 	public static String getFileNameForHar() {
 

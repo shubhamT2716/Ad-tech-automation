@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter @Builder
-public class TestReportBo {
+public class TestReportModel {
 
     TestMetaData testMetaData;
-    URLChecks urlChecks;
+    URLChecksReportModel urlChecks;
     NetworkAnalytics networkAnalytics;
 
     @Getter @Setter @Builder

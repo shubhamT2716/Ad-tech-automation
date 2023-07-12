@@ -15,10 +15,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-@Builder
-public class URLChecks {
+@Getter @Setter @Builder
+public class URLChecksReportModel {
 
 	@Builder.Default
 	Map<String, PositiveURLChecks> positiveUrlChecks = new HashMap<String, PositiveURLChecks>();
@@ -29,9 +27,7 @@ public class URLChecks {
 		PASS, FAIL, NA
 	}
 
-	@Getter
-	@Setter
-	@Builder
+	@Getter @Setter @Builder
 	public static class PositiveURLChecks {
 		String label;
 		String urlPattern;
@@ -62,9 +58,7 @@ public class URLChecks {
 		Map<String, Set<String>> anyOneOfKeyValChecks = new HashMap<String, Set<String>>();
 	}
 
-	@Getter
-	@Setter
-	@Builder
+	@Getter @Setter @Builder
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	public static class NegativeURLChecks {
 		String label;

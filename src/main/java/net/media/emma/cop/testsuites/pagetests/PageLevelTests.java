@@ -25,7 +25,7 @@ import com.microsoft.playwright.Request;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
-import net.media.emma.utils.CommanBrowserUtil;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONUtil;
@@ -54,7 +54,7 @@ public class PageLevelTests {
     URLDataProcessing urlDataProcessing;
     
     @Autowired
-    private CommanBrowserUtil browserUtil;
+    private CommonBrowserUtil browserUtil;
 
     List<String> jsExtraction = new ArrayList<>();
 

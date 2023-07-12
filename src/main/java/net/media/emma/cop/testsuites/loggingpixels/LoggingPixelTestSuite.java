@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Request;
+import com.microsoft.playwright.Route;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.loggingpixels.TestReportV2.KeyData;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,6 +28,9 @@ public class LoggingPixelTestSuite
     @Autowired
     ObjectMapper objectMapper;
 
+    @Value("${harFileBasePath}")
+    private String harFileBasePath;
+
     List<String> loggingPixelFormatData = new ArrayList<>(Arrays.asList( "https://lg1.hb.yahoo.net/log?logid=prlog",
                                                                               "https://lg1.hb.yahoo.net/log?logid=aplog",
                                                                               "https://lg1.hb.yahoo.net/log?logid=awlog",
@@ -33,6 +39,9 @@ public class LoggingPixelTestSuite
                                                                               "https://hblg.media.net/log?logid=awlog"
                                                                               
                                                                               ));
+
+    List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
+    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
 
     private JsonNode buildReport(LoggingPixelTestDataModel testCriteria, List<String> allUrl)
     {
@@ -59,160 +68,6 @@ public class LoggingPixelTestSuite
 
         return objectMapper.valueToTree(testReportV2);
     }
-
-    // private void toDel()
-    // {
-//        if (urlParams.containsKey(key))
-//        {
-//            String value = null;
-//            //value of the key
-//            value = urlParams.get(key);
-//            if (value != null)
-//            {
-//                String dataTypeOfKey = data.getValueDataType().toLowerCase();
-//                List<Boolean> flags;
-//                //  keys.add(key);
-//                switch (dataTypeOfKey)
-//                {
-//                    case "long":
-//                        try
-//                        {
-//                            Long.parseLong(value);
-//                            dataTypeMatches.add(true);
-//                            flags = verifyRegexAndNegativeString(regexFromYaml, negativeStringChecks, value);
-//                            regexMatches.add(flags.get(0));
-//                            negativeValues.add(flags.get(1));
-//                        } catch (Exception e)
-//                        {
-//                            dataTypeMatches.add(false);
-//                            regexMatches.add(false);
-//                            negativeValues.add(false);
-//                        }
-//                        break;
-//                    case "int":
-//                        try
-//                        {
-//                            Integer.parseInt(value);
-//                            dataTypeMatches.add(true);
-//                            flags = verifyRegexAndNegativeString(regexFromYaml, negativeStringChecks, value);
-//                            regexMatches.add(flags.get(0));
-//                            negativeValues.add(flags.get(1));
-//                        } catch (Exception e)
-//                        {
-//                            dataTypeMatches.add(false);
-//                            regexMatches.add(false);
-//                            negativeValues.add(false);
-//                        }
-//                        break;
-//                    case "short":
-//                        try
-//                        {
-//                            Short.parseShort(value);
-//                            dataTypeMatches.add(true);
-//                            flags = verifyRegexAndNegativeString(regexFromYaml, negativeStringChecks, value);
-//                            regexMatches.add(flags.get(0));
-//                            negativeValues.add(flags.get(1));
-//                        } catch (Exception e)
-//                        {
-//                            dataTypeMatches.add(false);
-//                            regexMatches.add(false);
-//                            negativeValues.add(false);
-//                        }
-//                        break;
-//                    case "byte":
-//                        try
-//                        {
-//                            Byte.parseByte(value);
-//                            dataTypeMatches.add(true);
-//                            flags = verifyRegexAndNegativeString(regexFromYaml, negativeStringChecks, value);
-//                            regexMatches.add(flags.get(0));
-//                            negativeValues.add(flags.get(1));
-//                        } catch (Exception e)
-//                        {
-//                            dataTypeMatches.add(false);
-//                            regexMatches.add(false);
-//                            negativeValues.add(false);
-//                        }
-//                        break;
-//                    case "float":
-//                        try
-//                        {
-//                            Float.parseFloat(value);
-//                            dataTypeMatches.add(true);
-//                            flags = verifyRegexAndNegativeString(regexFromYaml, negativeStringChecks, value);
-//                            regexMatches.add(flags.get(0));
-//                            negativeValues.add(flags.get(1));
-//                        } catch (Exception e)
-//                        {
-//                            dataTypeMatches.add(false);
-//                            regexMatches.add(false);
-//                            negativeValues.add(false);
-//                        }
-//                        break;
-//                    case "double":
-//                        try
-//                        {
-//                            Double.parseDouble(value);
-//                            dataTypeMatches.add(true);
-//                            flags = verifyRegexAndNegativeString(regexFromYaml, negativeStringChecks, value);
-//                            regexMatches.add(flags.get(0));
-//                            negativeValues.add(flags.get(1));
-//                        } catch (Exception e)
-//                        {
-//                            dataTypeMatches.add(false);
-//                            regexMatches.add(false);
-//                            negativeValues.add(false);
-//                        }
-//                        break;
-//                    case "string":
-//                        try
-//                        {
-//                            value.toString();
-//                            dataTypeMatches.add(true);
-//                            flags = verifyRegexAndNegativeString(regexFromYaml, negativeStringChecks, value);
-//                            regexMatches.add(flags.get(0));
-//                            negativeValues.add(flags.get(1));
-//                        } catch (Exception e)
-//                        {
-//                            dataTypeMatches.add(false);
-//                            regexMatches.add(false);
-//                            negativeValues.add(false);
-//                        }
-//                        break;
-//                }
-//
-//
-//            }
-//        }
-//         negetiveCheckFailed
-//        testReportModel.setKeys(keys);
-//        testReportModel.setDataTypeMatches(dataTypeMatches);
-//        testReportModel.setRegexMatches(regexMatches);
-// //        testReportModel.setNegativeValues(negativeValues);
-//     }
-
-//     public JsonNode getLoggingPixelResults (LoggingPixelTestDataModel testCriteria) throws JsonProcessingException
-//     {
-
-//         BrowserContext bc = browserFactory.getBc("Chrome.Desktop.Mac", null);
-//         List<String> urlFromNetworkTab = new ArrayList<>();
-//         List<Request> requestList = new ArrayList<>();
-//         bc.onRequest(request ->
-//         {
-//             //list of arrays initialization
-
-//             urlFromNetworkTab.add(request.url());
-//             requestList.add(request);
-//         });
-//         bc.setDefaultTimeout(0);
-//         bc.newPage().navigate(testCriteria.getPublisherUrl());
-//         bc.close();
-
-//         return buildReport(testCriteria, urlFromNetworkTab);
-//     }
-
-    
-    
     
     private boolean dataTypeCheck(String val, String dataType)
     {
@@ -242,65 +97,54 @@ public class LoggingPixelTestSuite
     {
         List<KeyData> keyDataList = new ArrayList<>();
 
-       
-        
         for (LoggingPixelTestDataModel.DataTypeChecks data : testData)
         {
             String key = data.getKey();
            
             	 KeyData keyData = KeyData.builder().key(key).build();
-            	
-            	 
-            	 
+
                  if (urlParams.containsKey(key) && urlParams.get(key) != null)
                  {
-                     String value = urlParams.get(key);
-                     
+                    String value = urlParams.get(key);
+                    String regexFromYaml = data.getValueRegex();
+                    List<String> negativeStringChecks = data.getNegativeStrings();
+                    boolean notNullValue=data.isNotNull();
+                    boolean mandatoryVlaue=data.isMandatory();
+                
+                    if (!dataTypeCheck(value, data.getValueDataType().toLowerCase()))
+                    {
+                        log.info("Data Type Check Failed for Key: " + key);
+                        keyData.getMessages().add("Data Type Check Failed for Key: " + key + ". Expected Data Type: " + data.getValueDataType() + ", Actual Value: " + value);
+                        // continue;
+                    }
                     
-                     
-                    	 String regexFromYaml = data.getValueRegex();
-                         List<String> negativeStringChecks = data.getNegativeStrings();
-                         boolean notNullValue=data.isNotNull();
-                         boolean mandatoryVlaue=data.isMandatory();
-                        
-                         if (!dataTypeCheck(value, data.getValueDataType().toLowerCase()))
-                         {
-                             log.info("Data Type Check Failed for Key: " + key);
-                             keyData.getMessages().add("Data Type Check Failed for Key: " + key + ". Expected Data Type: " + data.getValueDataType() + ", Actual Value: " + value);
-                             // continue;
-                         }
-                         
-                         if(!isNotNull(value, notNullValue))
-                         {
-                        	 log.info("Not Null Check Failed for key: "+key);
-                        	 keyData.getMessages().add("Not Null check failed for key: "+key+" value not found");
-                        	 // here value of key coming null but not null check is true then message generate
-                         }
-                         
-                         if(!isMandatory(key, mandatoryVlaue))
-                         {
-                        	 log.info("Mendatory check Failed ");
-                        	 keyData.getMessages().add("Mendatory check failed  key should not exist"); 
-                        	 //if key should not exist then this check failed.
-                        	
-                         }
+                    if(!isNotNull(value, notNullValue))
+                    {
+                        log.info("Not Null Check Failed for key: "+key);
+                        keyData.getMessages().add("Not Null check failed for key: "+key+" value not found");
+                        // here value of key coming null but not null check is true then message generate
+                    }
+                    
+                    if(!isMandatory(key, mandatoryVlaue))
+                    {
+                        log.info("Mendatory check Failed ");
+                        keyData.getMessages().add("Mendatory check failed  key should not exist"); 
+                        //if key should not exist then this check failed.
+                    
+                    }
 
-                         if (matchRegex(regexFromYaml, value))
-                         {
-                             log.info("Regex Failed for Key: " + key);
-                             keyData.getMessages().add("Regex Failed for Key: " + key + ". Regex: " + regexFromYaml + ", Actual Value: " + value);
-                             // continue;
+                    if (matchRegex(regexFromYaml, value))
+                    {
+                        log.info("Regex Failed for Key: " + key);
+                        keyData.getMessages().add("Regex Failed for Key: " + key + ". Regex: " + regexFromYaml + ", Actual Value: " + value);
+                        // continue;
+                    }
 
-                         }
-
-                         if (doesNegativeStringExists(negativeStringChecks, value))
-                         {
-                             log.info("Negative string check Failed for Key: " + key);
-                             keyData.getMessages().add("Negative string check Failed for Key: " + key + ". Negative String Matches: " + negativeStringChecks + ", Actual Value: " + value);
-                         }
-                     
-                     
-//                     
+                    if (doesNegativeStringExists(negativeStringChecks, value))
+                    {
+                        log.info("Negative string check Failed for Key: " + key);
+                        keyData.getMessages().add("Negative string check Failed for Key: " + key + ". Negative String Matches: " + negativeStringChecks + ", Actual Value: " + value);
+                    }
                  }
 
                  if(keyData.getMessages().size() > 0 )
@@ -314,11 +158,9 @@ public class LoggingPixelTestSuite
                  keyDataList.add(keyData);
             }
             
-        return keyDataList;
+            return keyDataList;
         }
 
-        
-    
         private List<String> getMatchingNetworkCalls(List < String > allUrl)
         {
             List<String> matchingUrls = new ArrayList<>();
@@ -365,12 +207,36 @@ public class LoggingPixelTestSuite
             return negativeStringValues.contains(value);
         }
 
-       
-        
+        private BrowserContext replaceBidExUrl(BrowserContext browserContext, LoggingPixelTestDataModel testData) {
+
+            for (String currentHost : bidExHosts) {
+                for (String currentController : bidExControlers) {
+    
+                    browserContext.route("**/" + currentHost + "/" + currentController + "*", route -> {
+    
+                        String replacedURL = "";
+                        String originalURl = route.request().url();
+    
+                        for (String currentHostInner : bidExHosts) {
+                            if (originalURl.contains(currentHostInner)) {
+                                replacedURL = originalURl.replace(currentHost, testData.getEnvironment());
+                                break;
+                            }
+                        }
+                        route.resume(new Route.ResumeOptions().setUrl(replacedURL));
+                    });
+                }
+            }
+    
+            return browserContext;
+        }
 
         public JsonNode getLoggingPixelTestResults(LoggingPixelTestDataModel testCriteria)
         {
-            BrowserContext bc = BrowserFactory.getBc(testCriteria.getUserAgent(), null, null);
+            BrowserContext bc = BrowserFactory.getBc(testCriteria.getUserAgent(), null, harFileBasePath + CommonBrowserUtil.getFileNameForHar());
+
+            bc = replaceBidExUrl(bc, testCriteria);
+
             List<String> urlFromNetworkTab = new ArrayList<>();
             List<Request> requestList = new ArrayList<>();
 
@@ -384,9 +250,8 @@ public class LoggingPixelTestSuite
 
 
             try {
-                bc.setDefaultTimeout(120000);
+                bc.setDefaultTimeout(90000);
                 bc.newPage().navigate(testCriteria.getPublisherUrl());
-                Thread.sleep(1000);
             } catch (Exception e) {
 
                 log.error("Exception during Playwright Execution", e);
