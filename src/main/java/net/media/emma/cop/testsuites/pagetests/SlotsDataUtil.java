@@ -24,6 +24,13 @@ public class SlotsDataUtil {
         public Set<String> getSetOfSizes(){
 
            return sizes.stream().map(size -> size.getWidth() + "x" + size.getHeight()).collect(Collectors.toSet());
+           // [ "300x250", "300x600"]
+        }
+
+        public String getAdUnitPath(){
+
+            //pls add trim logic here
+            return adUnitPath;
         }
 
     }

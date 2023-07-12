@@ -106,14 +106,14 @@ public class PageLevelTests {
         List<YPBJSUtil> ypbjsCallData = filterRequestsByTypeAndReturnPostData(knownBidderCallPatterns.get("YPBJS"), urlsFromNetworkTab)
                                         .stream().map(data -> {
                                             try {
-                                                return jsonReader.readValue(data, YPBJSUtil.class);
+                                                
+                                                return YPBJSUtil.builder().ypbjsPostData(jsonReader.readValue(data, JsonNode.class)).build();
+                                                        
                                             } catch (JsonProcessingException e) {
                                                 log.error("Error while converting YPBJS call data to JsonNode: " + data);
                                                 return null;
                                             }
                                         }).filter( data -> data !=null ) .collect(Collectors.toList());
-                                        
-
 
         for (SlotsData slot : slotsData.getSlots()) {
 

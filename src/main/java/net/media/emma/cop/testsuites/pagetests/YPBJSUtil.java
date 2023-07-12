@@ -10,7 +10,7 @@ import lombok.Builder;
 @Builder
 public class YPBJSUtil {
 
-    private JsonNode ypbjsPostData;
+    JsonNode ypbjsPostData;
     private Set<String> sizes;
     private String adUnitPath;
 
