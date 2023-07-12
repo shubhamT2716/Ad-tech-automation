@@ -5,11 +5,14 @@ publisherUrl: "https://sports.yahoo.com/?headerbidding=1"
 
 networkCallsPositive: {
     bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHBN4BN8",
+    checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBN4BN8";,
     PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
     APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
     AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
-    #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-    # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+    BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog",
+    RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+    GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+    ucreative: "https://hb.yahoo.net/ucreative.php?cv=1",
  }
 
 networkCallsNegative: {
@@ -18,6 +21,11 @@ networkCallsNegative: {
  }
 
 keysToVerifyPositive: {
+
+    checksync: {
+        gpp: "",
+        gpp_sid: ""
+    },
 
     PRLog: {
         pvid: ["X"],
@@ -29,7 +37,9 @@ keysToVerifyPositive: {
 
     APLog: {
         svr: ["060106_3473_060106_1067_ssp"],
+        cid: ["8YHBN4BN8"],
         ugd: ["4"],
+
     },
  }
 
@@ -38,12 +48,13 @@ keysToVerifyNegative: {
     prlog: { snm : ["removed","error",], nbr : ["13"]},
     aplog: { nbr: ["13"]},
     awlog: { ogbdp : ["0","-1","-2"]},
+    belog: { name : ["DFS_PERF","NO_DOMINANT_BID_ERROR"]}
  }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
     prlog: { nbr : [ "45","3","69","0","1","99" ]},
-    aplog: { nbr : [ "45","3","69","0","1","99" ]},
+    aplog: { nbr : [ "45","3","69","0","1","99" ], snm : ["success", "response_after_auction", "nobid"]},
 }
 
 # ------------------------------ignore the lines below--rats---------------------
