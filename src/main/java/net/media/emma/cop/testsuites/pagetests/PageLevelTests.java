@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.gson.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,6 @@ import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.Request;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
-import net.media.emma.cop.testsuites.pagetests.SlotsDataUtil.SlotsData;
 import net.media.emma.utils.URLDataProcessing;
 
 /*  ***************************************************************************************************
@@ -48,6 +47,7 @@ public class PageLevelTests {
 
     @Autowired ObjectMapper jsonReader;
 
+
     List<String> jsExtraction = new ArrayList<>();
     // List of urls to scrape the data from, basically bidder calls
     HashMap<String, String> knownBidderCallPatterns = new HashMap<>() {
@@ -69,15 +69,24 @@ public class PageLevelTests {
             urlsFromNetworkTab.add(request);
         });
 
-        JsonNode slotsData = extractSlotsDataFromPage(page, yaml.getPublisherUrl());
+        //JsonNode slotsData = extractSlotsDataFromPage(page, yaml.getPublisherUrl());
 
-        // SlotsDataUtil slotsData2 = extractSlotsDataFromPage2(page, yaml.getPublisherUrl());
-
-
-        JsonNode networkCallDataValidation = networkCallDataChecks(knownBidderCallPatterns.get("YPBJS"), urlsFromNetworkTab, yaml); // Yahoo SSP Call
+        List<Slots> slotsData = extractSlotsDataFromPage2(page, yaml.getPublisherUrl());
         page.close();
 
-        return matchSlotsDataWithBidderRequestData(slotsData, networkCallDataValidation);
+        String testResult = verifyYPBJSCallData(slotsData, urlsFromNetworkTab);
+
+        List<JsonNode> testResultData = new ArrayList<>();
+
+        try {
+            testResultData.add(jsonReader.readTree(testResult));
+        } catch (JsonProcessingException e) {
+            log.error("failed");
+        }
+
+        return testResultData;
+//        JsonNode networkCallDataValidation = networkCallDataChecks(knownBidderCallPatterns.get("YPBJS"), urlsFromNetworkTab, yaml); // Yahoo SSP Call
+//        return matchSlotsDataWithBidderRequestData(slotsData, networkCallDataValidation);
 
     }
 
@@ -89,40 +98,66 @@ public class PageLevelTests {
 
             if (request.url().startsWith(urlPattern)) {
 
+                //post data of all ypbjs calls stored
                 try {
                     postData.add(request.postData());
                 } catch (PlaywrightException e) {
                     log.error("Error while getting post data from request: " + request.url());
                 }
             }
-               
+
             }
-    
+
         return postData;
     }
 
-    private String verifyYPBJSCallData(SlotsDataUtil slotsData, List<Request> urlsFromNetworkTab){
+
+
+    private YPBJSUtil getMatchingDataByAdUnit(Slots slotData, List<YPBJSUtil> ypbjsCalls){
+
+        for (YPBJSUtil ypbjs: ypbjsCalls
+             ) {
+
+            if(slotData.getAdUnitPath().equals(ypbjs.getAdUnitPath())) return ypbjs;
+
+        }
+
+        return null;
+
+    }
+
+    private String verifyYPBJSCallData(List<Slots> slotsData, List<Request> urlsFromNetworkTab){
 
         List<YPBJSUtil> ypbjsCallData = filterRequestsByTypeAndReturnPostData(knownBidderCallPatterns.get("YPBJS"), urlsFromNetworkTab)
                                         .stream().map(data -> {
                                             try {
-                                                
+
                                                 return YPBJSUtil.builder().ypbjsPostData(jsonReader.readValue(data, JsonNode.class)).build();
-                                                        
+
                                             } catch (JsonProcessingException e) {
                                                 log.error("Error while converting YPBJS call data to JsonNode: " + data);
                                                 return null;
                                             }
                                         }).filter( data -> data !=null ) .collect(Collectors.toList());
 
-        for (SlotsData slot : slotsData.getSlots()) {
+        log.info("count of ypbjs calls: " + ypbjsCallData.size());
 
-            Optional<YPBJSUtil> ypbjsdata = ypbjsCallData.stream().findAny().filter(data -> data.getAdUnitPath().equals(slot.getAdUnitPath()));
+        ypbjsCallData.stream().forEach(ypbjs -> log.info("AdUnitPath: " + ypbjs.getAdUnitPath()));;
 
-            if (ypbjsdata.isPresent()) {
+        for (Slots slot : slotsData) {
 
+            YPBJSUtil ypbjsdata = getMatchingDataByAdUnit(slot, ypbjsCallData);
 
-               if( ypbjsdata.get().getSizes().equals(slot.getSetOfSizes())){
+//            try {
+//                ypbjsdata = ypbjsCallData.stream().findAny().filter(data -> data.getAdUnitPath().equals(slot.getAdUnitPath())).get();
+//            }catch (Exception e){
+//
+//                log.info("Streams failed. Slots adunit path: " + slot.getAdUnitPath());
+//
+//            }
+            if (ypbjsdata != null) {
+
+               if( ypbjsdata.getSizes().equals(slot.getSetOfSizes())){
                      log.info("Sizes matched for slot: " + slot.getAdUnitPath());
                }else{
                      log.info("Sizes did not match for slot: " + slot.getAdUnitPath());
@@ -131,7 +166,7 @@ public class PageLevelTests {
             } else {
                 log.info("Slots Data with ad unit path: " + slot.getAdUnitPath() + " not found in YPBJS call data");
             }
-           
+
         }
 
         return "WIP --rats";
@@ -170,9 +205,9 @@ public class PageLevelTests {
             log.info("Bidder Call POST Data: " + networkCallDataValidation.toPrettyString());
             bidderCallDataNodeTarget = bidderCallDataNode.get(0).get("ext").get("dfp_ad_unit_code").toString();
             bidderCallDataNodeTargetReplace = bidderCallDataNodeTarget.replace('"', ' ').trim();
-            log.info("Replaced string " + bidderCallDataNodeTargetReplace);
-            log.info("Target value "+ bidderCallDataNodeTarget);
-            log.info("Bidder call data target " + bidderCallDataNode);
+//            log.info("Replaced string " + bidderCallDataNodeTargetReplace);
+//            log.info("Target value "+ bidderCallDataNodeTarget);
+//            log.info("Bidder call data target " + bidderCallDataNode);
 
         }catch (Exception e){
             log.info("Got null");
@@ -266,7 +301,7 @@ public class PageLevelTests {
        return null;
    }
 
-   private SlotsDataUtil extractSlotsDataFromPage2(Page page, String url) {
+   private List<Slots> extractSlotsDataFromPage2(Page page, String url) {
 
     try {
 
@@ -276,13 +311,14 @@ public class PageLevelTests {
 
         page.navigate(url);
         page.waitForTimeout(500);
-            
-        Object adUnitDataEval = page.evaluate(adUnitDataCheckV2());
-        // log.info("Extracted json data from the page: " + adUnitDataEval.toString());
-        SlotsDataUtil slotsDataUtil = jsonReader.readValue(adUnitDataEval.toString(), SlotsDataUtil.class);
-        // log.info("JSON Node as pretty print: " + jsonReader.writerWithDefaultPrettyPrinter().writeValueAsString(slotsData));
-        return slotsDataUtil;
 
+        Object adUnitDataEval = page.evaluate(adUnitDataCheckV2());
+        log.info("Extracted json data from the page: " + adUnitDataEval.toString());
+//        SlotsDataUtil slotsDataUtil = jsonReader.readValue(adUnitDataEval.toString(), SlotsDataUtil.class);
+        List<Slots> slotsData = jsonReader.readValue(adUnitDataEval.toString(), new TypeReference<List<Slots>>(){});
+        // log.info("JSON Node as pretty print: " + jsonReader.writerWithDefaultPrettyPrinter().writeValueAsString(slotsData));
+//        return SlotsDataUtil.builder().slots(slotsData).build();
+            return slotsData;
 
     } catch (Exception e) {
         log.error("Error in scraping content", e);
@@ -311,7 +347,7 @@ public class PageLevelTests {
                 slotsData = jsonReader.readTree(adUnitDataEval.toString());
                 // log.info("JSON Node as pretty print: " + jsonReader.writerWithDefaultPrettyPrinter().writeValueAsString(slotsData));
                 return slotsData;
-    
+
             } catch ( JsonProcessingException e) {
                  log.error("Json Parsing error", e);
             }
