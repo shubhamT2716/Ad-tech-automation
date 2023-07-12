@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
@@ -24,6 +26,7 @@ import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
 import net.media.emma.cop.testsuites.yaml.URLChecks.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecks.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
+import net.media.emma.utils.CommanBrowserUtil;
 import net.media.emma.utils.DomJsonUtils;
 import net.media.emma.utils.URLDataProcessing;
 
@@ -34,6 +37,9 @@ public class TestSuite implements GenericTestSuite {
     @Autowired DomJsonUtils domUtils;
     @Autowired ObjectWriter jsonWriter;
     @Autowired URLDataProcessing urlDataProcessing;
+    
+    @Autowired
+    private CommanBrowserUtil browserUtil;
 
     //List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
@@ -60,10 +66,13 @@ public class TestSuite implements GenericTestSuite {
     }
 
     @Override
-    public String getTestResults(TestCriteriaBo testData){
+    public  String getTestResults(TestCriteriaBo testData){
 
-        BrowserContext browserContext = BrowserFactory.getBc(testData.getUserAgent(), testData.getCookies());
+    	String fileName=browserUtil.getFileNameForHar();
 
+        BrowserContext browserContext = BrowserFactory.getBc(testData.getUserAgent(), testData.getCookies(), fileName);
+        
+        
         if(testData.getLoginUrl() != null && testData.getUserName() != null && testData.getPassword() != null) {
 
             doLogin(browserContext, testData);
@@ -107,7 +116,7 @@ public class TestSuite implements GenericTestSuite {
 
         //return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
         // return getNetworkCallAssertions(requestList, testData);
-        return getNetworkCallAssertions3(urlFromNetworkTab, testData);
+        return getNetworkCallAssertions3(urlFromNetworkTab, testData, fileName);
     }
 
     private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, TestCriteriaBo testData){
@@ -136,7 +145,7 @@ public class TestSuite implements GenericTestSuite {
         return null;
     }
 
-    private String getNetworkCallAssertions3(List<String> requestList, TestCriteriaBo testData){
+    private String getNetworkCallAssertions3(List<String> requestList, TestCriteriaBo testData, String file){
 
         URLChecks urlChecks = URLChecks.builder().build();
 
@@ -183,11 +192,30 @@ public class TestSuite implements GenericTestSuite {
             }
         }
 
+        Pattern pattern=Pattern.compile("([^/]+)\\.har");
+        
+        Matcher matcher=pattern.matcher(file);
+        
+        String updatedFileName = null;
+        
+        if(matcher.find())
+        {
+        	
+        	String fileName=matcher.group();
+        	updatedFileName="harDownload/"+fileName;
+        }
+        
+        
         urlChecks.updateMatchingUrlsCount();
         urlChecks.updateNetworkCallErrors(testData);
         urlChecks.verifyPositiveKeyValChecks();
-
+        urlChecks.setHarFileUrl(updatedFileName);
+        
+        	
         try {
+        	
+        	System.out.println("Urlcheckout = "+jsonWriter.writeValueAsString(urlChecks));
+        	
             return jsonWriter.writeValueAsString(urlChecks);
         } catch (JsonProcessingException e) {
             log.error("json processing error", e);
@@ -196,6 +224,12 @@ public class TestSuite implements GenericTestSuite {
         return "json error";
     }
 
+    
+//    public String filterFileName(String filename)
+//    {
+//    	
+//    }
+    
     // private String getNetworkCallAssertions2(List<String> requestList, TestCriteriaBo testData){
 
     //     TestReportBo trb = ReportBuilder.getNewReport(testData);

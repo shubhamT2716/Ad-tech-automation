@@ -57,7 +57,7 @@ public class FileOperations {
     public Resource loadFileAsResource(String fileName) {
 
         try {
-            Path filePath = Paths.get(fileName);
+            Path filePath = Paths.get("emma-working-directory/har-files/" +fileName);
             Resource resource = new UrlResource(filePath.toUri());
             if(resource.exists()) {
                 return resource;

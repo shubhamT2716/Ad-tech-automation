@@ -25,6 +25,7 @@ import com.microsoft.playwright.Request;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
+import net.media.emma.utils.CommanBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONUtil;
@@ -51,6 +52,9 @@ public class PageLevelTests {
 
     @Autowired
     URLDataProcessing urlDataProcessing;
+    
+    @Autowired
+    private CommanBrowserUtil browserUtil;
 
     List<String> jsExtraction = new ArrayList<>();
 
@@ -65,7 +69,9 @@ public class PageLevelTests {
 
     public String getPageLevelTestsData(String url) {
 
-        Page page = BrowserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList());
+    	String fileName=browserUtil.getFileNameForHar();
+    	
+        Page page = BrowserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList(), fileName);
 
         // list of arrays initialization
         List<Request> urlFromNetworkTab = new ArrayList<>();

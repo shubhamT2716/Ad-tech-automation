@@ -17,6 +17,9 @@ import lombok.Setter;
 @Getter @Setter @Builder
 public class URLChecks {
 
+	
+	String harFileUrl;
+	
     @Builder.Default
     Map<String, PositiveURLChecks> positiveUrlChecks = new HashMap<String, PositiveURLChecks>();
     @Builder.Default

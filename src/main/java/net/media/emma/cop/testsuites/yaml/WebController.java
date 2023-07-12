@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+
+import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
@@ -51,7 +54,7 @@ public class WebController {
 
             String message = yamlTestSuite.getTestResults(yamlTc);
 
-            // mav.addObject("message2", message);
+            // mav.	addObject("message2", message);
             mav.addObject("message1", mapper.readTree(message) );
 
         }catch( JsonProcessingException  e){
@@ -88,8 +91,10 @@ public class WebController {
         return mav;
     }
 
-    @GetMapping("harDownload")
-    public ResponseEntity<Resource> downloadFile(@RequestParam String fileName) {
+    @GetMapping("harDownload/{fileName}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
+    	
+    	log.info("filename = "+fileName);
 
         // add a new function in FileOperations.java to get the file as a resource
         Resource resource = fileOperations.loadFileAsResource(fileName);
