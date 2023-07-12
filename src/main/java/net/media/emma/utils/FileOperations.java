@@ -23,9 +23,6 @@ public class FileOperations {
 	@Autowired
 	private net.media.emma.config.Loggers loggers;
 
-	@Value("${download.path}")
-	private String downloadBasePath;
-
 	@Value("${yamlFilePath}")
 	private String yamlFilePath;
 
@@ -55,7 +52,7 @@ public class FileOperations {
 	public Resource loadFileAsResource(String fileName) {
 
 		try {
-			Path filePath = Paths.get(downloadBasePath + fileName);
+			Path filePath = Paths.get(fileName);
 			Resource resource = new UrlResource(filePath.toUri());
 			if (resource.exists()) {
 				return resource;

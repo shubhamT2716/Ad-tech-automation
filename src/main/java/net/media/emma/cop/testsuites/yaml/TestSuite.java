@@ -1,15 +1,15 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
+import net.media.emma.cop.testsuites.yaml.TestReportBo.TestMetaData;
 import net.media.emma.cop.testsuites.yaml.URLChecks.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecks.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
@@ -44,8 +45,8 @@ public class TestSuite implements GenericTestSuite {
 	@Autowired
 	URLDataProcessing urlDataProcessing;
 
-	@Autowired
-	private CommanBrowserUtil browserUtil;
+	@Value("${harFileBasePath}")
+    private String harFileBasePath;
 
 	// List of strings "1", "2"
 	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
@@ -74,9 +75,9 @@ public class TestSuite implements GenericTestSuite {
 	@Override
 	public String getTestResults(TestCriteriaBo testData) {
 
-		String fileName = browserUtil.getFileNameForHar();
+		String harFilePath = CommanBrowserUtil.getFileNameForHar();
 
-		BrowserContext browserContext = BrowserFactory.getBc(testData.getUserAgent(), testData.getCookies(), fileName);
+		BrowserContext browserContext = BrowserFactory.getBc(testData.getUserAgent(), testData.getCookies(), harFileBasePath + harFilePath);
 
 		if (testData.getLoginUrl() != null && testData.getUserName() != null && testData.getPassword() != null) {
 
@@ -108,9 +109,7 @@ public class TestSuite implements GenericTestSuite {
 			// Page.WaitForLoadStateOptions().setTimeout(5000));
 			// page.waitForFunction("() => performance.getEntriesByType('resource').length >
 			// 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
-
-			Page page2 = browserContext.newPage();
-			Thread.sleep(1000);
+			Thread.sleep(500);
 
 		} catch (Exception e) {
 
@@ -123,7 +122,27 @@ public class TestSuite implements GenericTestSuite {
 
 		// return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
 		// return getNetworkCallAssertions(requestList, testData);
-		return getNetworkCallAssertions3(urlFromNetworkTab, testData, fileName);
+
+		TestReportBo testReport = TestReportBo.builder()
+				.testMetaData(TestMetaData.builder()
+									.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+									.testName("YAML Test Suite")
+									.publisherUrl(testData.getPublisherUrl())
+									.environment(testData.getEnvironment())
+									.userAgent(testData.getUserAgent())
+									.harFileDownloadLink( "harDownload/" + harFilePath).build())
+														
+				.urlChecks(getUrlAssertionsData(urlFromNetworkTab, testData)).build();
+
+		try {
+
+			return jsonWriter.writeValueAsString(testReport);
+
+		} catch (JsonProcessingException e) {
+
+			log.error("Error while converting test report to json: {}", e.getMessage());
+			return "Error while converting test report to json";
+		}
 	}
 
 	private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, TestCriteriaBo testData) {
@@ -152,7 +171,7 @@ public class TestSuite implements GenericTestSuite {
 		return null;
 	}
 
-	private String getNetworkCallAssertions3(List<String> requestList, TestCriteriaBo testData, String file) {
+	private URLChecks getUrlAssertionsData(List<String> requestList, TestCriteriaBo testData) {
 
 		URLChecks urlChecks = URLChecks.builder().build();
 
@@ -198,30 +217,11 @@ public class TestSuite implements GenericTestSuite {
 			}
 		}
 
-		Pattern pattern = Pattern.compile("([^/]+)\\.har");
-
-		Matcher matcher = pattern.matcher(file);
-
-		String updatedFileName = null;
-
-		if (matcher.find()) {
-
-			String fileName = matcher.group();
-			updatedFileName = "harDownload/" + fileName;
-		}
-
 		urlChecks.updateMatchingUrlsCount();
 		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
-		urlChecks.setHarFileDownloadLink(updatedFileName);
 
-		try {
-			return jsonWriter.writeValueAsString(urlChecks);
-		} catch (JsonProcessingException e) {
-			log.error("json processing error", e);
-		}
-
-		return "json error";
+		return urlChecks;
 	}
 
 	// private String getNetworkCallAssertions2(List<String> requestList,
@@ -395,17 +395,17 @@ public class TestSuite implements GenericTestSuite {
 	// return urlFromNetworkTab;
 	// }
 
-	private void buildTestReport(List<String> networkCalls, TestCriteriaBo testData) {
+	// private void buildTestReport(List<String> networkCalls, TestCriteriaBo testData) {
 
-		TestReportBo tbo = TestReportBo.builder().build();
+	// 	TestReportBo tbo = TestReportBo.builder().build();
 
-		tbo.setTestMetaData(TestReportBo.TestData.builder().environment(testData.getEnvironment())
-				.publisherUrl(testData.getPublisherUrl()).userAgent(testData.getUserAgent()).build());
+	// 	tbo.setTestMetaData(TestReportBo.TestData.builder().environment(testData.getEnvironment())
+	// 			.publisherUrl(testData.getPublisherUrl()).userAgent(testData.getUserAgent()).build());
 
-		for (String networkcall : networkCalls) {
+	// 	for (String networkcall : networkCalls) {
 
-		}
+	// 	}
 
-		tbo.toString();
-	}
+	// 	tbo.toString();
+	// }
 }

@@ -1,7 +1,6 @@
 package net.media.emma.cop.components;
 
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import com.microsoft.playwright.Browser.NewContextOptions;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
 import com.microsoft.playwright.options.HarMode;
 
-import net.media.emma.utils.CommanBrowserUtil;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -34,8 +32,6 @@ public class BrowserFactory {
         }};
 
 
-     
-     
     private static NewContextOptions getCommonBrowserContext(String userAgent, Boolean isMobile, String harFileName) {
 
         NewContextOptions newContextOptions = new NewContextOptions()

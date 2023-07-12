@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
+
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
@@ -38,6 +40,10 @@ public class WebController {
 	FileOperations fileOperations;
 	@Autowired
 	ObjectMapper mapper;
+
+	@Value("${harFileBasePath}")
+	private String harFileBasePath;
+
 
 	@GetMapping
 	public ModelAndView yamlTestSuite() {
@@ -104,10 +110,8 @@ public class WebController {
 	@GetMapping("harDownload/{fileName}")
 	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
 
-		log.info("filename = " + fileName);
-
 		// add a new function in FileOperations.java to get the file as a resource
-		Resource resource = fileOperations.loadFileAsResource(fileName);
+		Resource resource = fileOperations.loadFileAsResource(harFileBasePath + fileName);
 
 		if (resource == null) {
 			return ResponseEntity.notFound().build();
