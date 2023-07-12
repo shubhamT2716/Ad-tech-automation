@@ -45,7 +45,7 @@ public class ComplianceTestSuite {
 
     public String getTestResults(ComplianceTestCriteria testData) throws InterruptedException {
 
-        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList());
+        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(),null);
         browserContext.clearCookies();
 
         //list of arrays initialization

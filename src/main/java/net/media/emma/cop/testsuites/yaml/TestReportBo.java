@@ -1,52 +1,28 @@
 package net.media.emma.cop.testsuites.yaml;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
-@Getter @Setter @Builder @ToString
+@Getter @Setter @Builder
 public class TestReportBo {
 
-    TestData testMetaData;
-    BidExController bidExController;
-    @Builder.Default
-    List<UrlChecks> urlChecks = new java.util.ArrayList<UrlChecks>();
+    TestMetaData testMetaData;
+    URLChecks urlChecks;
     NetworkAnalytics networkAnalytics;
 
-    @Getter @Setter @Builder @ToString
-    public static class TestData{
+    @Getter @Setter @Builder
+    public static class TestMetaData{
+        String testName;
+        TestStatus testStatus;
+        String dateTime ;
         String publisherUrl;
         String environment;
         String userAgent;
-        Date testTime;
-        TestStatus testStatus;
+        String harFileDownloadLink;
     }
 
-    @Getter @Setter @Builder @ToString
-    public static class BidExController{
-        TestStatus testStatus;
-        UrlData urlData;
-        String jsErrors;
-    }
-
-    @Getter @Setter @Builder @ToString
-    public static class UrlChecks{
-
-        String urlLabel; //APLOng, pr
-        CheckType urlCheckType;
-        TestStatus testStatus;
-        UrlData urlData;
-        List<Map<String, List<String>>> keysToVerifyPositive;
-        List<Map<String, List<String>>> keysToVerifyNegative;
-        List<Map<String, List<String>>> keysToVerifyAnyOneOf;
-    }
-
-    @Getter @Setter @Builder @ToString
+    @Getter @Setter @Builder
     public static class NetworkAnalytics{
         // Logging Calls - Analytics:
         // Total Logging pixels fired (for the host):
@@ -68,15 +44,5 @@ public class TestReportBo {
         POSSITIVE,
         NEGERIVE,
         OPTIONAL
-    }
-
-    @Getter @Setter @Builder @ToString
-    public static class UrlData{
-        String urlPattern;
-        @Builder.Default
-        List<String> matchingUrls = new java.util.ArrayList<String>();
-        String size;
-        String timeTakenToLoad;
-        String statusCode;
     }
 }

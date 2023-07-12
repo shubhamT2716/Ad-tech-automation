@@ -370,7 +370,7 @@ public class LoggingPixelTestSuite
 
         public JsonNode getLoggingPixelTestResults(LoggingPixelTestDataModel testCriteria)
         {
-            BrowserContext bc = BrowserFactory.getBc(testCriteria.getUserAgent(), null);
+            BrowserContext bc = BrowserFactory.getBc(testCriteria.getUserAgent(), null, null);
             List<String> urlFromNetworkTab = new ArrayList<>();
             List<Request> requestList = new ArrayList<>();
 
