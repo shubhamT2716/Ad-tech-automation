@@ -5,6 +5,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.utils.FileOperations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,6 +25,9 @@ public class WebController
 //    @Autowired GenericTestSuite yamlTestSuite;
     @Autowired FileOperations fileOperations;
     @Autowired LoggingPixelTestSuite pixelTestSuite;
+
+    @Value("${harFileBasePath}")
+	private String harFileBasePath;
 
     @GetMapping
     public ModelAndView yamlTestSuite() {
@@ -66,4 +74,19 @@ public class WebController
         }
         return "Input File Name Empty";
     }
+
+	@GetMapping("harDownload/{fileName}")
+	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
+
+		// add a new function in FileOperations.java to get the file as a resource
+		Resource resource = fileOperations.loadFileAsResource(harFileBasePath + fileName);
+
+		if (resource == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
+	}
 }

@@ -2,6 +2,7 @@ package net.media.emma.cop.testsuites.loggingpixels;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
@@ -9,12 +10,14 @@ import com.microsoft.playwright.Route;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.loggingpixels.TestReportV2.KeyData;
+import net.media.emma.cop.testsuites.loggingpixels.TestReportV2.TestMetaData;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -31,7 +34,7 @@ public class LoggingPixelTestSuite
     @Value("${harFileBasePath}")
     private String harFileBasePath;
 
-    List<String> loggingPixelFormatData = new ArrayList<>(Arrays.asList( "https://lg1.hb.yahoo.net/log?logid=prlog",
+    List<String> loggingPixelUrlPatterns = new ArrayList<>(Arrays.asList( "https://lg1.hb.yahoo.net/log?logid=prlog",
                                                                               "https://lg1.hb.yahoo.net/log?logid=aplog",
                                                                               "https://lg1.hb.yahoo.net/log?logid=awlog",
                                                                               "https://hblg.media.net/log?logid=prlog",
@@ -43,7 +46,7 @@ public class LoggingPixelTestSuite
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
     List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
 
-    private JsonNode buildReport(LoggingPixelTestDataModel testCriteria, List<String> allUrl)
+    private JsonNode buildReport(LoggingPixelTestDataModel testCriteria, List<String> allUrl, String harFilePath)
     {
 
         // log.info("all Url Data: " + allUrl.toString());
@@ -53,7 +56,16 @@ public class LoggingPixelTestSuite
         // log.info("matching Url Data: " + matchingUrls.toString());
 
         List<LoggingPixelTestDataModel.DataTypeChecks> testData = testCriteria.getLoggingPixelTests();
-        TestReportV2 testReportV2 = TestReportV2.builder().build();
+        TestReportV2 testReportV2 = TestReportV2.builder()
+                                                .testMetaData(TestMetaData.builder()
+                                                                    .testName("Logging Pixel Test Suite")
+                                                                    .environment(testCriteria.getEnvironment())
+                                                                    .dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+                                                                    .publisherUrl(testCriteria.getPublisherUrl())
+                                                                    .userAgent(testCriteria.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testCriteria.getUserAgent()))
+                                                                    .harFileDownloadLink("harDownload/" + harFilePath)
+                                                                  .build())
+                                                .build();
 
         //Loop through matching network calls
         for (String url : matchingUrls)
@@ -165,14 +177,13 @@ public class LoggingPixelTestSuite
         {
             List<String> matchingUrls = new ArrayList<>();
 
-            for (String loggingPixelFormat : loggingPixelFormatData)
+            for (String loggingPixelFormat : loggingPixelUrlPatterns)
             {
                 for (String currentUrl : allUrl)
                 {
                     if (currentUrl.startsWith(loggingPixelFormat))
                     {
                         matchingUrls.add(currentUrl);
-                        break;
                     }
                 }
             }
@@ -233,7 +244,9 @@ public class LoggingPixelTestSuite
 
         public JsonNode getLoggingPixelTestResults(LoggingPixelTestDataModel testCriteria)
         {
-            BrowserContext bc = BrowserFactory.getBc(testCriteria.getUserAgent(), null, harFileBasePath + CommonBrowserUtil.getFileNameForHar());
+            String harFilePath = CommonBrowserUtil.getFileNameForHar();
+
+            BrowserContext bc = BrowserFactory.getBc(testCriteria.getUserAgent(), null, harFileBasePath + harFilePath);
 
             bc = replaceBidExUrl(bc, testCriteria);
 
@@ -260,7 +273,7 @@ public class LoggingPixelTestSuite
 
             bc.close();
 
-            return buildReport(testCriteria, urlFromNetworkTab);
+            return buildReport(testCriteria, urlFromNetworkTab, harFilePath);
         }
 
         private boolean matchRegex (String regex, String keyValue)
