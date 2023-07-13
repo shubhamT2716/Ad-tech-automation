@@ -1,0 +1,62 @@
+environment: hb.yahoo.net
+cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://sports.yahoo.com/"
+
+
+networkCallsPositive: {
+    bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHBN4BN8",
+    checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBN4BN8",
+    PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+    APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+    AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+    RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+    GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+    ucreative: "https://hb.yahoo.net/ucreative.php?cv=1",
+ }
+
+networkCallsNegative: {
+    nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+    Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
+    BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog",
+ }
+
+keysToVerifyPositive: {
+
+    checksync: {
+        gpp: ["DBABLA~BVRqAAAAAgA.QA"],
+        gpp_sid: ["7"]
+    },
+
+    PRLog: {
+        pvid: ["-3","25014"],
+        cid: ["8YHBN4BN8"],
+        svr: ["2023071110_121_071211_683_071211_646_ssp"],
+        ugd: ["4"]
+        #usp_ldf: ["0","1"],
+    },
+
+    APLog: {
+        svr: ["2023071110_121_071211_683_071211_646_ssp"],
+        cid: ["8YHBN4BN8"],
+        ugd: ["4"]
+    }
+ }
+
+#to_check_negative_keys
+keysToVerifyNegative: {
+    prlog: { snm : ["removed"], nbr : ["13"]},
+    aplog: { nbr: ["13"]},
+    awlog: { ogbdp : ["0","-1","-2"]},
+    belog: { name : ["DFS_PERF","NO_DOMINANT_BID_ERROR","DFST"]}
+ }
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: {
+    prlog: { nbr : [ "45","3","69","0","1","99" ]},
+    aplog: { nbr : [ "45","3","69","0","1","99" ], snm : ["success", "response_after_auction", "nobid","error"]}
+ }
+
+# ------------------------------ignore the lines below--rats---------------------
+responseSimulate: []
+domInject: []
