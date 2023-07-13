@@ -1,6 +1,5 @@
 package net.media.emma.cop.testsuites.yaml;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -24,7 +23,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
-
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
@@ -44,14 +42,16 @@ public class WebController {
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
 
+	@Value("${yamlTestCriteriaFilesPath}")
+	private String yamlTestCriteriaFilesPath;
 
 	@GetMapping
 	public ModelAndView yamlTestSuite() {
 
 		ModelAndView mav = new ModelAndView("yamlTestSuite");
-		mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/yamlTestCriteriaFiles/"));// Arrays.asList(null,
-																													// "testCriteria.yaml",
-																													// "testCriteria2.yaml"));
+		mav.addObject("files", fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath));// Arrays.asList(null,
+		// "testCriteria.yaml",
+		// "testCriteria2.yaml"));
 
 		return mav;
 	}
@@ -87,17 +87,14 @@ public class WebController {
 	@ResponseBody
 	public String getFileContent(@RequestBody String fileName) {
 
-		if (fileName.length() > 0) {
+		try {
 
-			try {
-				return new String(
-						Files.readAllBytes(Paths.get("src/main/resources/yamlTestCriteriaFiles/" + fileName)));
-			} catch (IOException e) {
-				log.error("File Read Error", e);
-				return e.getMessage();
-			}
+			return new String(Files.readAllBytes(Paths.get(yamlTestCriteriaFilesPath + fileName)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "File  not found";
 		}
-		return "Input File Name Empty";
+
 	}
 
 	@GetMapping("reportTest")
