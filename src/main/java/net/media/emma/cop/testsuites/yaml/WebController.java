@@ -91,7 +91,7 @@ public class WebController {
 
 			return new String(Files.readAllBytes(Paths.get(yamlTestCriteriaFilesPath + fileName)));
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error reading file.", e);
 			return "File  not found";
 		}
 
