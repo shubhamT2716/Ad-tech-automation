@@ -12,16 +12,20 @@ networkCallsPositive: {
     AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
     RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
     GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
-    ucreative: "https://hb.yahoo.net/ucreative.php?cv=1",
+    ucreative: "https://hb.yahoo.net/ucreative.php?cv=1"
  }
 
 networkCallsNegative: {
     nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
     Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
-    BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog",
+    BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog"
  }
 
 keysToVerifyPositive: {
+
+    bidexchange: {
+        size: [150
+    }
 
     checksync: {
         gpp: ["DBABLA~BVRqAAAAAgA.QA"],
@@ -48,7 +52,7 @@ keysToVerifyNegative: {
     prlog: { snm : ["removed"], nbr : ["13"]},
     aplog: { nbr: ["13"]},
     awlog: { ogbdp : ["0","-1","-2"]},
-    belog: { name : ["DFS_PERF","NO_DOMINANT_BID_ERROR","DFST"]}
+    belog: { name : ["DFS_PERF","NO_DOMINANT_BID_ERROR","DFST","ADS_DISABLED"]}
  }
 
 #to_check_any_keys_among_these
