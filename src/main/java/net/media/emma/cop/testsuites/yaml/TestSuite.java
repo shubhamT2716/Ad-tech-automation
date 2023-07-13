@@ -1,19 +1,22 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.microsoft.playwright.BrowserContext;
-import com.microsoft.playwright.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
 
@@ -21,361 +24,389 @@ import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
-import net.media.emma.cop.testsuites.yaml.URLChecks.NegativeURLChecks;
-import net.media.emma.cop.testsuites.yaml.URLChecks.PositiveURLChecks;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.TestMetaData;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.DomJsonUtils;
 import net.media.emma.utils.URLDataProcessing;
 
-@Service @Slf4j
+@Service
+@Slf4j
 public class TestSuite implements GenericTestSuite {
 
-    @Autowired Configuration jsonModelMapper;
-    @Autowired DomJsonUtils domUtils;
-    @Autowired ObjectWriter jsonWriter;
-    @Autowired URLDataProcessing urlDataProcessing;
+	@Autowired
+	Configuration jsonModelMapper;
+	@Autowired
+	DomJsonUtils domUtils;
+	@Autowired
+	ObjectWriter jsonWriter;
+	@Autowired
+	URLDataProcessing urlDataProcessing;
 
-    //List of strings "1", "2"
-    List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
-    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
+	@Value("${harFileBasePath}")
+    private String harFileBasePath;
 
-    private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData){
+	// List of strings "1", "2"
+	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
+	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
 
-        try{
+	private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
 
-            Page page = bc.newPage();
-            page.navigate(testData.getLoginUrl());
-            page.locator("//*[@id=\"login-username\"]").fill(testData.getUserName());
-            page.locator("//*[@id=\"login-signin\"]").click();
-            page.locator("//*[@id=\"login-passwd\"]").fill(testData.getPassword());
-            page.locator("//*[@id=\"login-signin\"]").click();
-            page.waitForLoadState();
-            
-        }catch(Exception e){
+		try {
 
-            log.error("Error while logging in: {}", e.getMessage());
-        }
+			Page page = bc.newPage();
+			page.navigate(testData.getLoginUrl());
+			page.locator("//*[@id=\"login-username\"]").fill(testData.getUserName());
+			page.locator("//*[@id=\"login-signin\"]").click();
+			page.locator("//*[@id=\"login-passwd\"]").fill(testData.getPassword());
+			page.locator("//*[@id=\"login-signin\"]").click();
+			page.waitForLoadState();
 
-        return bc;
-    }
+		} catch (Exception e) {
 
-    @Override
-    public String getTestResults(TestCriteriaBo testData){
+			log.error("Error while logging in: {}", e.getMessage());
+		}
 
-        BrowserContext browserContext = BrowserFactory.getBc(testData.getUserAgent(), testData.getCookies());
+		return bc;
+	}
 
-        if(testData.getLoginUrl() != null && testData.getUserName() != null && testData.getPassword() != null) {
+	@Override
+	public String getTestResults(TestCriteriaBo testData) {
 
-            doLogin(browserContext, testData);
+		String harFilePath = CommonBrowserUtil.getFileNameForHar();
 
-        }
+		BrowserContext browserContext = BrowserFactory.getBc(testData.getUserAgent(), testData.getCookies(), harFileBasePath + harFilePath);
 
-        browserContext = replaceBidExUrl(browserContext, testData);
-        browserContext = attachResponseMocking(browserContext, testData);
-        browserContext = injectDOM(browserContext, testData);
+		if (testData.getLoginUrl() != null && testData.getUserName() != null && testData.getPassword() != null) {
 
-        //list of arrays initialization
-        List<String> urlFromNetworkTab = new ArrayList<>();
-        List<Request> requestList = new ArrayList<>();
+			doLogin(browserContext, testData);
 
-        browserContext.onRequest(request -> {
+		}
 
-            urlFromNetworkTab.add(request.url());
-            requestList.add(request);
-        });
+		browserContext = replaceBidExUrl(browserContext, testData);
+		browserContext = attachResponseMocking(browserContext, testData);
+		browserContext = injectDOM(browserContext, testData);
 
-        // log.info(urlFromNetworkTab.toString());
-        // return urlFromNetworkTab;
-    
-        try{
-            Page page = browserContext.newPage();
-            page.navigate(testData.getPublisherUrl());
-            // page.waitForLoadState(LoadState.NETWORKIDLE,new Page.WaitForLoadStateOptions().setTimeout(5000));
-            //page.waitForFunction("() => performance.getEntriesByType('resource').length > 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
+		// list of arrays initialization
+		List<String> urlFromNetworkTab = new ArrayList<>();
+		List<Request> requestList = new ArrayList<>();
 
-            Page page2 = browserContext.newPage();
-            Thread.sleep(1000);
-        
-        }catch(Exception e){
+		browserContext.onRequest(request -> {
 
-            log.error("Error while navigating to publisher url: {}", e.getMessage());
-            
-        }finally{
+			urlFromNetworkTab.add(request.url());
+			requestList.add(request);
+		});
 
-            browserContext.close();
-        }
+		// log.info(urlFromNetworkTab.toString());
+		// return urlFromNetworkTab;
 
-        //return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
-        // return getNetworkCallAssertions(requestList, testData);
-        return getNetworkCallAssertions3(urlFromNetworkTab, testData);
-    }
+		try {
 
-    private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, TestCriteriaBo testData){
+			browserContext.setDefaultTimeout(90000); // 90 seconds
+			Page page = browserContext.newPage();
+			page.navigate(testData.getPublisherUrl());
+			// page.waitForLoadState(LoadState.NETWORKIDLE,new
+			// Page.WaitForLoadStateOptions().setTimeout(5000));
+			// page.waitForFunction("() => performance.getEntriesByType('resource').length >
+			// 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
+			Thread.sleep(500);
 
-        for(Map.Entry<String, String> urlData : testData.getNetworkCallsPositive().entrySet()){
+		} catch (Exception e) {
 
-            if(currentUrl.startsWith(urlData.getValue())){
+			log.error("Error while navigating to publisher url: {}", e.getMessage());
 
-                return urlData;
-            }
-        }
+		} 
 
-        return null;
-    }
+		browserContext.close();
+	
+		// return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
+		// return getNetworkCallAssertions(requestList, testData);
 
-    private Map.Entry<String, String> negativeURLPatternExists(String currentUrl, TestCriteriaBo testData){
+		TestReportModel testReport = TestReportModel.builder()
+				.testMetaData(TestMetaData.builder()
+									.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+									.testName("YAML Test Suite")
+									.publisherUrl(testData.getPublisherUrl())
+									.environment(testData.getEnvironment())
+									.userAgent(testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
+									.harFileDownloadLink( "harDownload/" + harFilePath).build())
+														
+				.urlChecks(getUrlAssertionsData(urlFromNetworkTab, testData)).build();
 
-        for(Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()){
+		try {
 
-            if(currentUrl.startsWith(urlData.getValue())){
+			return jsonWriter.writeValueAsString(testReport);
 
-                return urlData;
-            }
-        }
+		} catch (JsonProcessingException e) {
 
-        return null;
-    }
+			log.error("Error while converting test report to json: {}", e.getMessage());
+			return "Error while converting test report to json";
+		}
+	}
 
-    private String getNetworkCallAssertions3(List<String> requestList, TestCriteriaBo testData){
+	private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, TestCriteriaBo testData) {
 
-        URLChecks urlChecks = URLChecks.builder().build();
+		for (Map.Entry<String, String> urlData : testData.getNetworkCallsPositive().entrySet()) {
 
-        for (String requestUrl : requestList) {
+			if (currentUrl.startsWith(urlData.getValue())) {
 
-            Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
+				return urlData;
+			}
+		}
 
-            if(urlData != null){
+		return null;
+	}
 
-                PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
+	private Map.Entry<String, String> negativeURLPatternExists(String currentUrl, TestCriteriaBo testData) {
 
-                if(labelExists == null){
-                    
-                    PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
-                                                                        .urlPattern(urlData.getValue())
-                                                                        .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
-                                                                        .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
-                                                                        .negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
-                                                                        .positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
-                                                                        .anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey()))
-                                                                        .build();
+		for (Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()) {
 
-                    urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
-                }else{
-                    labelExists.getMatchingUrls().add(requestUrl);
-                    labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
-                }
+			if (currentUrl.startsWith(urlData.getValue())) {
 
-                continue;
-            }
+				return urlData;
+			}
+		}
 
-            urlData = negativeURLPatternExists(requestUrl, testData);
+		return null;
+	}
 
-            if(urlData != null){
-                NegativeURLChecks nuc = urlChecks.getNegativeUrlChecks().get(urlData.getKey());
-                if(nuc == null){
-                    urlChecks.getNegativeUrlChecks().put(urlData.getKey(), NegativeURLChecks.builder().label(urlData.getKey())
-                                                                                                    .urlPattern(urlData.getValue())
-                                                                                                    .matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl))))
-                                                                                                    .build());
-                }else{
-                    nuc.getMatchingUrls().add(requestUrl);
-                }
-            }
-        }
+	private URLChecksReportModel getUrlAssertionsData(List<String> requestList, TestCriteriaBo testData) {
 
-        urlChecks.updateMatchingUrlsCount();
-        urlChecks.updateNetworkCallErrors(testData);
-        urlChecks.verifyPositiveKeyValChecks();
+		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
 
-        try {
-            return jsonWriter.writeValueAsString(urlChecks);
-        } catch (JsonProcessingException e) {
-            log.error("json processing error", e);
-        }
+		for (String requestUrl : requestList) {
 
-        return "json error";
-    }
+			Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
 
-    // private String getNetworkCallAssertions2(List<String> requestList, TestCriteriaBo testData){
+			if (urlData != null) {
 
-    //     TestReportBo trb = ReportBuilder.getNewReport(testData);
+				PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
 
-    //     for(Map<String, String> networkCalls:   testData.getNetworkCallsPositive()){
+				if (labelExists == null) {
 
-    //         networkCalls.entrySet().forEach(entry -> {
+					PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
+							.urlPattern(urlData.getValue())
+							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
+							.queryStringMap(new ArrayList<HashMap<String, String>>(
+									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
+							.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
+							.positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
+							.anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey())).build();
 
-    //             String matchedUrl = urlDataProcessing.getRequestFor2(entry.getValue(), requestList);
-                
-    //             if(matchedUrl == null){
+					urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
+				} else {
+					labelExists.getMatchingUrls().add(requestUrl);
+					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
+				}
 
-    //                 trb.getUrlChecks().add(ReportBuilder.logError(entry.getKey(), CheckType.POSSITIVE, entry.getValue()));
+				continue;
+			}
 
-    //             }else{
+			urlData = negativeURLPatternExists(requestUrl, testData);
 
-    //                 UrlChecks uc = ReportBuilder.urlCheckExists(entry.getKey(), trb);
+			if (urlData != null) {
+				NegativeURLChecks nuc = urlChecks.getNegativeUrlChecks().get(urlData.getKey());
+				if (nuc == null) {
+					urlChecks.getNegativeUrlChecks().put(urlData.getKey(),
+							NegativeURLChecks.builder().label(urlData.getKey()).urlPattern(urlData.getValue())
+									.matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl)))).build());
+				} else {
+					nuc.getMatchingUrls().add(requestUrl);
+				}
+			}
+		}
 
-    //                 if(uc != null){
-    //                     uc.getUrlData().getMatchingUrls().add(matchedUrl);
-    //                 }else{
-    //                     trb.getUrlChecks().add(ReportBuilder.logSuccess(entry.getKey(), CheckType.POSSITIVE, entry.getValue(), matchedUrl));
-    //                 }
-    //             }
-    //         });
-    //     }
+		urlChecks.updateMatchingUrlsCount();
+		urlChecks.updateNetworkCallErrors(testData);
+		urlChecks.verifyPositiveKeyValChecks();
 
+		return urlChecks;
+	}
 
-    //     try {
-    //         return jsonWriter.writeValueAsString(trb);
-    //     } catch (JsonProcessingException e) {
-    //         log.error("json processing error", e);
-    //     }
+	// private String getNetworkCallAssertions2(List<String> requestList,
+	// TestCriteriaBo testData){
 
-    //     return "json error";
-    // }
+	// TestReportBo trb = ReportBuilder.getNewReport(testData);
 
-    // private String getNetworkCallAssertions(List<Request> requestList, TestCriteriaBo testData){
+	// for(Map<String, String> networkCalls: testData.getNetworkCallsPositive()){
 
-    //     TestReportBo trb = TestReportBo.builder().build();
+	// networkCalls.entrySet().forEach(entry -> {
 
-    //     for(Map<String, String> networkCalls:   testData.getNetworkCallsPositive()){
+	// String matchedUrl = urlDataProcessing.getRequestFor2(entry.getValue(),
+	// requestList);
 
-    //         networkCalls.entrySet().forEach(entry -> {
+	// if(matchedUrl == null){
 
-    //             Request request = urlDataProcessing.getRequestFor(entry.getValue(), requestList);
+	// trb.getUrlChecks().add(ReportBuilder.logError(entry.getKey(),
+	// CheckType.POSSITIVE, entry.getValue()));
 
-    //             if(request == null || request.failure() == null){
+	// }else{
 
-    //                 logError(trb, entry.getKey(), CheckType.POSSITIVE, request);
-    //             }else{
-    //                 logLogSuccess(trb, entry.getKey(), CheckType.POSSITIVE, request);
-    //             }
+	// UrlChecks uc = ReportBuilder.urlCheckExists(entry.getKey(), trb);
 
-    //         });
-    //     }
+	// if(uc != null){
+	// uc.getUrlData().getMatchingUrls().add(matchedUrl);
+	// }else{
+	// trb.getUrlChecks().add(ReportBuilder.logSuccess(entry.getKey(),
+	// CheckType.POSSITIVE, entry.getValue(), matchedUrl));
+	// }
+	// }
+	// });
+	// }
 
-    //     for(Map<String, String> networkCalls:   testData.getNetworkCallsNegative()){
+	// try {
+	// return jsonWriter.writeValueAsString(trb);
+	// } catch (JsonProcessingException e) {
+	// log.error("json processing error", e);
+	// }
 
-    //         networkCalls.entrySet().forEach(entry -> {
+	// return "json error";
+	// }
 
-    //             Request request = urlDataProcessing.getRequestFor(entry.getValue(), requestList);
+	// private String getNetworkCallAssertions(List<Request> requestList,
+	// TestCriteriaBo testData){
 
-    //             if(request == null || request.failure() == null){
+	// TestReportBo trb = TestReportBo.builder().build();
 
-    //                 logLogSuccess(trb, entry.getKey(), CheckType.NEGERIVE, request);
+	// for(Map<String, String> networkCalls: testData.getNetworkCallsPositive()){
 
-    //             }else{
+	// networkCalls.entrySet().forEach(entry -> {
 
-    //                 logError(trb, entry.getKey(), CheckType.NEGERIVE, request);
-    //             }
-    //         });
-    //     }
+	// Request request = urlDataProcessing.getRequestFor(entry.getValue(),
+	// requestList);
 
-    //     try {
-    //         return jsonWriter.writeValueAsString(trb);
-    //     } catch (JsonProcessingException e) {
-    //         log.error("json processing error", e);
-    //     }
+	// if(request == null || request.failure() == null){
 
-    //     return "json error";
-    // }
+	// logError(trb, entry.getKey(), CheckType.POSSITIVE, request);
+	// }else{
+	// logLogSuccess(trb, entry.getKey(), CheckType.POSSITIVE, request);
+	// }
 
-    private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteriaBo testData){
+	// });
+	// }
 
-        for(String currentHost : bidExHosts){
-            for(String currentController : bidExControlers){
+	// for(Map<String, String> networkCalls: testData.getNetworkCallsNegative()){
 
-                browserContext.route("**/" + currentHost + "/" + currentController + "*", route -> {
+	// networkCalls.entrySet().forEach(entry -> {
 
-                    String replacedURL = "";
-                    String originalURl = route.request().url();
+	// Request request = urlDataProcessing.getRequestFor(entry.getValue(),
+	// requestList);
 
-                    for (String currentHostInner : bidExHosts) {
-                        if (originalURl.contains(currentHostInner)) {
-                            replacedURL = originalURl.replace(currentHost, testData.getEnvironment());
-                            break;
-                        }
-                    }
-                    route.resume(new Route.ResumeOptions().setUrl(replacedURL));
-                });
-            }
-        }
+	// if(request == null || request.failure() == null){
 
-        return browserContext;
-    }
+	// logLogSuccess(trb, entry.getKey(), CheckType.NEGERIVE, request);
 
-    private BrowserContext attachResponseMocking(BrowserContext browserContext, TestCriteriaBo testData){
+	// }else{
 
-        for (ResponseSimulateParams responseSim : testData.getResponseSimulate()){
+	// logError(trb, entry.getKey(), CheckType.NEGERIVE, request);
+	// }
+	// });
+	// }
 
-                browserContext.route(responseSim.getUrlPattern(), route -> {
+	// try {
+	// return jsonWriter.writeValueAsString(trb);
+	// } catch (JsonProcessingException e) {
+	// log.error("json processing error", e);
+	// }
 
-                // String originalURl = route.request().url();
+	// return "json error";
+	// }
 
-                String responseBody = new String(route.fetch().body(), StandardCharsets.UTF_8);
-                String newResponseBody = domUtils.replaceInJson(responseBody, responseSim.getJsonPath(), responseSim.getOverrideValue());
+	private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteriaBo testData) {
 
-                if(newResponseBody == responseBody){
-                    route.resume();
-                } else{
-                    route.fulfill(new Route.FulfillOptions().setBody(newResponseBody));
-                }
-            });
-        }
+		for (String currentHost : bidExHosts) {
+			for (String currentController : bidExControlers) {
 
-        return browserContext;
-    }
+				browserContext.route("**/" + currentHost + "/" + currentController + "*", route -> {
 
-    private BrowserContext injectDOM(BrowserContext browserContext, TestCriteriaBo testData){
+					String replacedURL = "";
+					String originalURl = route.request().url();
 
-            browserContext.route(testData.getPublisherUrl() + "**", route ->  {
+					for (String currentHostInner : bidExHosts) {
+						if (originalURl.contains(currentHostInner)) {
+							replacedURL = originalURl.replace(currentHost, testData.getEnvironment());
+							break;
+						}
+					}
+					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
+				});
+			}
+		}
 
-                String pageContent = new String(route.fetch().body());
+		return browserContext;
+	}
 
-                for (DomInjectParams domInject : testData.getDomInject()) {
+	private BrowserContext attachResponseMocking(BrowserContext browserContext, TestCriteriaBo testData) {
 
-                    pageContent = domUtils.domManipulate(pageContent, domInject);
-                }
+		for (ResponseSimulateParams responseSim : testData.getResponseSimulate()) {
 
-                route.fulfill(new Route.FulfillOptions().setBody(pageContent));
+			browserContext.route(responseSim.getUrlPattern(), route -> {
 
-            });
+				// String originalURl = route.request().url();
 
-        return browserContext;
-    }
+				String responseBody = new String(route.fetch().body(), StandardCharsets.UTF_8);
+				String newResponseBody = domUtils.replaceInJson(responseBody, responseSim.getJsonPath(),
+						responseSim.getOverrideValue());
 
-    // public List<String> getURLAnalyticsFor(Page page, YamlTestCriteria testData){
+				if (newResponseBody == responseBody) {
+					route.resume();
+				} else {
+					route.fulfill(new Route.FulfillOptions().setBody(newResponseBody));
+				}
+			});
+		}
 
-    //     //list of arrays initialization
-    //     List<String> urlFromNetworkTab = new ArrayList<>();
+		return browserContext;
+	}
 
-    //     page.onRequest(request -> { 
+	private BrowserContext injectDOM(BrowserContext browserContext, TestCriteriaBo testData) {
 
-    //             urlFromNetworkTab.add(request.url());           
-    //     });
+		browserContext.route(testData.getPublisherUrl() + "**", route -> {
 
-    //     page.navigate(testData.getPublisherUrl());
-    //     // log.info(urlFromNetworkTab.toString());
-    //     // return urlFromNetworkTab;
+			String pageContent = new String(route.fetch().body());
 
-    //     return urlFromNetworkTab;
-    // }
+			for (DomInjectParams domInject : testData.getDomInject()) {
 
-    private void buildTestReport(List<String> networkCalls, TestCriteriaBo testData){
+				pageContent = domUtils.domManipulate(pageContent, domInject);
+			}
 
-        TestReportBo tbo = TestReportBo.builder().build();
+			route.fulfill(new Route.FulfillOptions().setBody(pageContent));
 
-        tbo.setTestMetaData(TestReportBo.TestData.builder()
-            .environment(testData.getEnvironment())
-            .publisherUrl(testData.getPublisherUrl())
-            .userAgent(testData.getUserAgent()).build()
-                );
+		});
 
+		return browserContext;
+	}
 
-                for(String networkcall: networkCalls){
+	// public List<String> getURLAnalyticsFor(Page page, YamlTestCriteria testData){
 
-                    
-                }
+	// //list of arrays initialization
+	// List<String> urlFromNetworkTab = new ArrayList<>();
 
-        tbo.toString();
-    }
+	// page.onRequest(request -> {
+
+	// urlFromNetworkTab.add(request.url());
+	// });
+
+	// page.navigate(testData.getPublisherUrl());
+	// // log.info(urlFromNetworkTab.toString());
+	// // return urlFromNetworkTab;
+
+	// return urlFromNetworkTab;
+	// }
+
+	// private void buildTestReport(List<String> networkCalls, TestCriteriaBo testData) {
+
+	// 	TestReportBo tbo = TestReportBo.builder().build();
+
+	// 	tbo.setTestMetaData(TestReportBo.TestData.builder().environment(testData.getEnvironment())
+	// 			.publisherUrl(testData.getPublisherUrl()).userAgent(testData.getUserAgent()).build());
+
+	// 	for (String networkcall : networkCalls) {
+
+	// 	}
+
+	// 	tbo.toString();
+	// }
 }

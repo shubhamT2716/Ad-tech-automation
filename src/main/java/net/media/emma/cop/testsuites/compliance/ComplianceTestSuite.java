@@ -45,7 +45,7 @@ public class ComplianceTestSuite {
 
     public String getTestResults(ComplianceTestCriteria testData) throws InterruptedException {
 
-        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList());
+        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(),null);
         browserContext.clearCookies();
 
         //list of arrays initialization
@@ -67,9 +67,8 @@ public class ComplianceTestSuite {
         page.locator(acceptAllBtn).click();
         page.waitForLoadState(LoadState.NETWORKIDLE);
         Thread.sleep(1000);
-        HashMap<String,String> tcfResponse = getTcfApiResponse(page);
-
-        System.out.println(tcfResponse.keySet());
+        HashMap<String, String> tcfResponse = getTcfApiResponse(page);
+        String gdprString = tcfResponse.get("tcString");
 
         browserContext.onRequest(request -> {
 
@@ -82,7 +81,9 @@ public class ComplianceTestSuite {
 
         page.close();
         browserContext.close();
-        return getNetworkCallAssertions3(urlFromNetworkTab,testData);
+
+        updateTestCriteriaGdprString(testData,gdprString);
+        return getNetworkCallAssertions3(urlFromNetworkTab, testData);
     }
 
     public List<String> getExtensionList() {
@@ -95,7 +96,6 @@ public class ComplianceTestSuite {
     public void openWindscribe(Page page) {
         page.navigate(url);
         try {
-            page.locator(windscribeLogin).isEnabled();
             page.locator(windscribeLogin).click();
             page.locator(windscribeUsername).click();
             page.locator(windscribeUsername).fill(username);
@@ -114,7 +114,7 @@ public class ComplianceTestSuite {
         page.close();
     }
 
-    private String getNetworkCallAssertions3(List<String> requestList, ComplianceTestCriteria testData){
+    private String getNetworkCallAssertions3(List<String> requestList, ComplianceTestCriteria testData) {
 
         URLChecks urlChecks = URLChecks.builder().build();
 
@@ -122,23 +122,23 @@ public class ComplianceTestSuite {
 
             Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
 
-            if(urlData != null){
+            if (urlData != null) {
 
                 URLChecks.PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
 
-                if(labelExists == null){
+                if (labelExists == null) {
 
                     URLChecks.PositiveURLChecks puc = URLChecks.PositiveURLChecks.builder().label(urlData.getKey())
                             .urlPattern(urlData.getValue())
                             .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
                             .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
-                          //  .negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
+                            //  .negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
                             .positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
                             .anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey()))
                             .build();
 
                     urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
-                }else{
+                } else {
                     labelExists.getMatchingUrls().add(requestUrl);
                     labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
                 }
@@ -174,11 +174,11 @@ public class ComplianceTestSuite {
         return "json error";
     }
 
-    private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, ComplianceTestCriteria testData){
+    private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, ComplianceTestCriteria testData) {
 
-        for(Map.Entry<String, String> urlData : testData.getNetworkCallsPositive().entrySet()){
+        for (Map.Entry<String, String> urlData : testData.getNetworkCallsPositive().entrySet()) {
 
-            if(currentUrl.startsWith(urlData.getValue())){
+            if (currentUrl.startsWith(urlData.getValue())) {
 
                 return urlData;
             }
@@ -200,7 +200,7 @@ public class ComplianceTestSuite {
         return null;
     }*/
 
-    private LinkedHashMap<String, String> getTcfApiResponse(Page page){
+    private LinkedHashMap<String, String> getTcfApiResponse(Page page) {
         Object d = page.evaluate("() => {\n" +
                 "  return new Promise((resolve) => {\n" +
                 "    window.__tcfapi(\"addEventListener\", 2, (tcfApiInfo, success) => {\n" +
@@ -210,10 +210,27 @@ public class ComplianceTestSuite {
                 "    });\n" +
                 "  });\n" +
                 "}");
-        return (LinkedHashMap<String,String>) d;
+        return (LinkedHashMap<String, String>) d;
     }
 
-    private void pubsRefresh(Page page){
+    private void pubsRefresh(Page page) {
         page.evaluate("googletag.pubads().refresh(); timeFunction(); timeFunction(); function timeFunction() {setTimeout(function(){ googletag.pubads().refresh();}, 10000);}");
+    }
+
+    private void updateTestCriteriaGdprString(ComplianceTestCriteria testData, String updatedValue) {
+        Map<String, Map<String, Set<String>>> keysToVerifyPositiveMap = testData.getKeysToVerifyPositive();
+        if (keysToVerifyPositiveMap != null) {
+            // Iterate over the entries of keysToVerifyPositive map
+            for (Map.Entry<String, Map<String, Set<String>>> entry : keysToVerifyPositiveMap.entrySet()) {
+                Map<String, Set<String>> networkCallMap = entry.getValue();
+
+                // Check if gdprString key is present in the networkCallMap
+                if (networkCallMap.containsKey("gdprstring")) {
+                    // Set the value of gdprString
+                    networkCallMap.get("gdprstring").clear(); // Clear the existing value if needed
+                    networkCallMap.get("gdprstring").add(updatedValue);
+                }
+            }
+        }
     }
 }
