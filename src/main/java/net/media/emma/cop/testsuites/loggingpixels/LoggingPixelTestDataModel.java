@@ -17,6 +17,9 @@ public class LoggingPixelTestDataModel{
         public String valueDataType;
         public String valueRegex;
         public List<String> negativeStrings;
+        public boolean notNull;
+        public boolean mandatory;
+       
 
     }
 
@@ -31,4 +34,20 @@ public class LoggingPixelTestDataModel{
         return null;
 
     }
+
+	public LoggingPixelTestDataModel(String userAgent, String environment, String publisherUrl,
+			List<DataTypeChecks> loggingPixelTests) {
+		super();
+		this.userAgent = userAgent;
+		this.environment = environment;
+		this.publisherUrl = publisherUrl;
+		this.loggingPixelTests = loggingPixelTests;
+	}
+
+	public LoggingPixelTestDataModel() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+    
+    
 }

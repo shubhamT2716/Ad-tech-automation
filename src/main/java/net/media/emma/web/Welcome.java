@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller
+import lombok.extern.slf4j.Slf4j;
+
+@Controller @Slf4j
 public class Welcome {
 
     @Autowired private net.media.emma.service.BrowserRemote browserRemote;
@@ -25,6 +27,7 @@ public class Welcome {
 
     @GetMapping("/welcome")
     public String openUrl() {
+
         return "welcome";
     }
 
