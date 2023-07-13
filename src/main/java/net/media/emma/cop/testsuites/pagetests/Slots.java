@@ -34,6 +34,11 @@ public class Slots {
         return adUnitPathTrimmed;
     }
 
+    public String getSlothPath(){
+        this.path= path;
+        return path;
+    }
+
     @Getter
     @Setter
     @Builder

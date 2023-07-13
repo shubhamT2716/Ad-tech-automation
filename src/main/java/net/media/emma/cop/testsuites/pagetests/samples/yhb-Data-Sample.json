@@ -1,0 +1,76 @@
+{
+  "site": {
+    "domain": "sports.yahoo.com",
+    "page": "https://sports.yahoo.com/",
+    "ref": "",
+    "topMostLocation": "https://sports.yahoo.com/",
+    "isTop": true,
+    "canonical_url": "https://sports.yahoo.com/"
+  },
+  "ext": {
+    "abte": "SSP_CLIENT",
+    "customer_id": "8YHBN4BN8",
+    "prebid_version": 1,
+    "gdpr_applies": false,
+    "usp_applies": true,
+    "usp_consent_string": "1YNN",
+    "coppa_applies": false,
+    "screen": {
+      "w": 2560,
+      "h": 1304
+    },
+    "user_id": {},
+    "pvid_exc": [
+      "25014"
+    ],
+    "sd": 21
+  },
+  "id": "376924229381264661689252227855",
+  "ortb2": {
+    "regs": {
+      "gpp": "DBABLA~BVRqAAAAAgA.QA",
+      "gpp_sid": [
+        7
+      ]
+    }
+  },
+  "imp": [
+    {
+      "id": "96046814153624581689252227856",
+      "ext": {
+        "dfp_id": "defaultLREC4-sizer",
+        "coordinates": {
+          "top_left": {
+            "x": 1582.5,
+            "y": 2202.109375
+          },
+          "bottom_right": {
+            "x": 1882.5,
+            "y": 2452.109375
+          }
+        },
+        "viewability": 0,
+        "visibility": 2,
+        "channel": "",
+        "section": "",
+        "mnrf": 0,
+        "mnrfc": 0,
+        "mniv": 0
+      },
+      "all": {
+        "cid": "8YHBN4BN8",
+        "crid": "164457376"
+      },
+      "cacid": "75828027647557651689252227856",
+      "transactionId": "73954972892376641689252227855",
+      "banner": [
+        {
+          "w": 300,
+          "h": 250
+        }
+      ],
+      "tagid": "164457376"
+    }
+  ],
+  "tmax": 1400
+}

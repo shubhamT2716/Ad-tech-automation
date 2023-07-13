@@ -54,6 +54,7 @@ public class PageLevelTests {
         {
             put("YPBJS", "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
             put("RTBSCall", "https://xch.media.net/AdExchange/rtbsspub?");
+            put("YHBcall", "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBN4BN8");
         }
     };
 
@@ -75,13 +76,14 @@ public class PageLevelTests {
         page.close();
 
         String testResult = verifyYPBJSCallData(slotsData, urlsFromNetworkTab);
+        String testResult2= getYHBCallData(slotsData, urlsFromNetworkTab);
 
         List<JsonNode> testResultData = new ArrayList<>();
 
         try {
             testResultData.add(jsonReader.readTree(testResult));
         } catch (JsonProcessingException e) {
-            log.error("failed");
+            log.info("Done");
         }
 
         return testResultData;
@@ -111,6 +113,21 @@ public class PageLevelTests {
         return postData;
     }
 
+    private List<String> returnYhbPostData(String urlPattern, List<Request> urlsFromNetworkTab){
+        List<String> yhbPostData = new ArrayList<>();
+        for (Request request : urlsFromNetworkTab){
+            if (request.url().startsWith(urlPattern)){
+                try{
+                    yhbPostData.add(request.postData());
+                    log.info("YHB post Data :" + yhbPostData);
+                }catch (PlaywrightException e){
+                    log.error("couldnt get YHB post Data "+ request.url());
+                }
+            }
+        }
+        return yhbPostData;
+    }
+
 
 
     private YPBJSUtil getMatchingDataByAdUnit(Slots slotData, List<YPBJSUtil> ypbjsCalls){
@@ -125,6 +142,8 @@ public class PageLevelTests {
         return null;
 
     }
+
+
 
     private String verifyYPBJSCallData(List<Slots> slotsData, List<Request> urlsFromNetworkTab){
 
@@ -142,7 +161,7 @@ public class PageLevelTests {
 
         log.info("count of ypbjs calls: " + ypbjsCallData.size());
 
-        ypbjsCallData.stream().forEach(ypbjs -> log.info("AdUnitPath: " + ypbjs.getAdUnitPath()));;
+//        ypbjsCallData.stream().forEach(ypbjs -> log.info("AdUnitPath: " + ypbjs.getAdUnitPath()));;
 
         for (Slots slot : slotsData) {
 
@@ -158,13 +177,13 @@ public class PageLevelTests {
             if (ypbjsdata != null) {
 
                if( ypbjsdata.getSizes().equals(slot.getSetOfSizes())){
-                     log.info("Sizes matched for slot: " + slot.getAdUnitPath());
+                     log.info("Sizes matched for slot: " + slot.getSlothPath());
                }else{
-                     log.info("Sizes did not match for slot: " + slot.getAdUnitPath());
+                     log.info("Sizes did not match for slot: " + slot.getSlothPath());
                }
 
             } else {
-                log.info("Slots Data with ad unit path: " + slot.getAdUnitPath() + " not found in YPBJS call data");
+                log.info("Slots Data with ad unit path: " + slot.getSlothPath() + " not found in YPBJS call data");
             }
 
         }
@@ -173,133 +192,26 @@ public class PageLevelTests {
     }
 
 
-    private List<JsonNode> matchSlotsDataWithBidderRequestData(JsonNode slotsData, JsonNode networkCallDataValidation){
-//----------------------------------------------
-        //      Json path to extract data directly
+    private String getYHBCallData(List<Slots> slotsData, List<Request> urlsFromNetworkTab){
 
-//        To get ad slot path from YPBJS call (Post Data) :   $.imp[0].ext.dfp_ad_unit_code
-//        To get width from from YPBJS call (Post Data) :     $.imp[0].banner.format[0].w     (If there are two sizes, use [0] to get first, [1] to get second)
-//        To get height from from YPBJS call (Post Data) :     $.imp[0].banner.format[0].h    (If there are two sizes, use [0] to get first, [1] to get second)
-//        To get adslot path as Json path : $[0].path
-//        To get width in ad slot as Json object : $[0].sizes[0].width  (If there are two sizes, use [0] to get first, [1] to get second)
-//        To get width in ad slot as Json object : $[0].sizes[0].height  (If there are two sizes, use [0] to get first, [1] to get second)
-//------------------------------------------------
+        List<YHBUtil> yhbCallData = returnYhbPostData(knownBidderCallPatterns.get("YHBcall"), urlsFromNetworkTab)
+                .stream().map(data -> {
+                    try {
 
-        JsonNode bidderCallDataNode;
-        String bidderCallDataNodeTarget = "";
-        String bidderCallDataNodeTargetReplace = "";
-        JsonNode slotsDataSizeNodeWidth = slotsData.get(0).get("sizes").get(0).get("width");
-        JsonNode slotsDataSizeNodeHeight = slotsData.get(0).get("sizes").get(0).get("height");
-        JsonNode slotsDataPathNode = slotsData.get(0);
-        JsonNode bidderCallDataSizesNodeWidth;
-        JsonNode bidderCallDataSizesNodeHeight;
+                        return YHBUtil.builder().yhbPostData(jsonReader.readValue(data, JsonNode.class)).build();
 
-        String slotsDataPath = slotsDataPathNode.get("path").asText();
-        log.info("Slots Data from Page: " + slotsData.toPrettyString());
-        log.info("Target: " + slotsDataPath);
-        log.info("size from slots " + slotsDataSizeNodeWidth + " " + slotsDataSizeNodeHeight);
+                    } catch (JsonProcessingException e) {
+                        log.error("Error while converting YHB call data to JsonNode: " + data);
+                        return null;
+                    }
+                }).filter( data -> data !=null ) .collect(Collectors.toList());
 
-        bidderCallDataNode= networkCallDataValidation.get("imp");
+        log.info("count of YHB calls: " + yhbCallData.size());
 
-        try {
-            log.info("Bidder Call POST Data: " + networkCallDataValidation.toPrettyString());
-            bidderCallDataNodeTarget = bidderCallDataNode.get(0).get("ext").get("dfp_ad_unit_code").toString();
-            bidderCallDataNodeTargetReplace = bidderCallDataNodeTarget.replace('"', ' ').trim();
-//            log.info("Replaced string " + bidderCallDataNodeTargetReplace);
-//            log.info("Target value "+ bidderCallDataNodeTarget);
-//            log.info("Bidder call data target " + bidderCallDataNode);
-
-        }catch (Exception e){
-            log.info("Got null");
-        }
-
-        bidderCallDataSizesNodeWidth = bidderCallDataNode.get(0).get("banner").get("format").get(0).get("w");
-        bidderCallDataSizesNodeHeight = bidderCallDataNode.get(0).get("banner").get("format").get(0).get("h");
-        log.info("sizes " + bidderCallDataSizesNodeWidth + " " + bidderCallDataSizesNodeHeight);
-
-
-        if(slotsDataSizeNodeWidth.equals(bidderCallDataSizesNodeWidth) && slotsDataSizeNodeHeight.equals(bidderCallDataSizesNodeHeight)){
-            Boolean _flag = true;
-            log.info("Size matching is "+ _flag + " Slots size width " + slotsDataSizeNodeWidth + " Slots size height " + slotsDataSizeNodeHeight +" Bidder call width is " + bidderCallDataSizesNodeWidth +" Bidder call height is " + bidderCallDataSizesNodeHeight);
-        }else {
-
-            log.info("Sizes didnt match");
-        }
-
-        String pageLeveldataAssertionResult = pageLeveldataAssertion(slotsDataPath, bidderCallDataNodeTargetReplace);
-
-        log.info("Result " + pageLeveldataAssertionResult);
-
-        return Arrays.asList(networkCallDataValidation, slotsData);
+        return "YHB Utils Data";
     }
 
-    private String pageLeveldataAssertion(String slotsDataPath, String bidderCallDataNodeTargetReplace){
-    String result = "Didnt match";
-    Boolean flag = false;
-        String extractedValueFromSLotsData = slotsDataPath.substring(slotsDataPath.lastIndexOf("/") + 1);
-        log.info("Exact value of dfp path " + extractedValueFromSLotsData);
-        if(extractedValueFromSLotsData.equals(bidderCallDataNodeTargetReplace)) {
-            flag = true;
-            result = "The value of Dfp path in defined slots is " + extractedValueFromSLotsData + "and Value of Dfp Path in passed in bidder call " + bidderCallDataNodeTargetReplace + "and Matching lookup is " + flag;
-        }else{
-            log.info("Dfp slot extracted is " + extractedValueFromSLotsData);
-            log.info("Bidder call extracted is " + bidderCallDataNodeTargetReplace);
-        }
-        return result;
-    }
 
-   private JsonNode networkCallDataChecks(String networkCallUrl, List < Request > urlFromNetworkTab, TestCriteria yaml) {
-     Request sampleRequest = urlDataProcessing.getRequestFor(networkCallUrl, urlFromNetworkTab);
-
-     if (sampleRequest != null) {
-
-       URL urlData;
-
-       String postData = sampleRequest.postData();
-
-       // Logic to pretty print
-
-       Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-       JsonObject jsonObject = gson.fromJson(postData, JsonObject.class);
-
-       log.info("Json object" + jsonObject);
-
-       //logic to get any object from YPBJS post data
-
-
-         //Check to see if YPBJS request post data has imp object
-         //jsonObject(""ext.dp_ad_)
-         if (jsonObject.has("imp") && jsonObject.get("imp").isJsonArray()) {
-           JsonArray impArray = jsonObject.getAsJsonArray("imp");
-
-           //Check if imp size != 0
-           if (impArray.size() != 0) {
-             JsonObject firstImpObject = impArray.get(0).getAsJsonObject();
-
-             //check if imp has ext object
-             if (firstImpObject.has("ext") && firstImpObject.get("ext").isJsonObject() && firstImpObject.size() != 0) {
-               JsonObject extObject = firstImpObject.getAsJsonObject("ext");
-
-               //check if ext has dfpadunit key present
-               if (extObject.has("dfp_ad_unit_code")) {
-                 String dfpAdUnitCode = extObject.get("dfp_ad_unit_code").getAsString();
-                 log.info("dfpAdUnitCode = " + dfpAdUnitCode);
-               }
-             }
-           }
-         } else {
-           log.info("Didnt find");
-         }
-
-     }
-       try {
-           return jsonReader.readTree(sampleRequest.postData());
-       } catch (JsonProcessingException e) {
-           log.info("Scraping ypbjs failed");
-       }
-       return null;
-   }
 
    private List<Slots> extractSlotsDataFromPage2(Page page, String url) {
 
