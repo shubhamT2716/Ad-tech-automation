@@ -11,9 +11,10 @@ public class YHBUtil {
 
         JsonNode yhbPostData;
         private Set<String> sizes;
+        String adUnitPath;
 
 
-        public Set<String> getSizes(){
+        public Set<String> getSizeYHB(){
 
             if(sizes == null){
 
@@ -35,6 +36,25 @@ public class YHBUtil {
 
             return sizes;
         }
+
+//    public String getSamplePath(){
+//
+//        if(adUnitPath == null){
+//
+//            JsonNode adUnitPath = yhbPostData.at("/imp/0/ext/dfp_ad_unit_code");
+//
+//            if(!adUnitPath.isMissingNode()) {
+//                log.info("Adunit Path found: " + adUnitPath.asText());
+//                this.adUnitPath = adUnitPath.asText();
+//            }else{
+//                this.adUnitPath = "";
+//                log.info("Adunit Path json path not found");
+//                log.info(yhbPostData.toPrettyString());
+//            }
+//        }
+//
+//        return adUnitPath;
+//    }
     }
 
 

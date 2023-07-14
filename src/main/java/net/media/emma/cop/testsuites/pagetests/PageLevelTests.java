@@ -54,7 +54,7 @@ public class PageLevelTests {
         {
             put("YPBJS", "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
             put("RTBSCall", "https://xch.media.net/AdExchange/rtbsspub?");
-            put("YHBcall", "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBN4BN8");
+            put("YHBcall", "https://m.hb.yahoo.net/rtb/yhb?cid");
         }
     };
 
@@ -143,6 +143,16 @@ public class PageLevelTests {
 
     }
 
+    private YHBUtil getSizesYHB(Slots slotData, List<YHBUtil> yhbCalls) {
+        for (YHBUtil yhbData : yhbCalls) {
+            if (slotData.getSetOfSizes().equals(yhbData.getSizeYHB())) {
+                log.info("Inside IF, sizes matched " + slotData.getSetOfSizes().toString() + " and " + yhbData.getSizeYHB().toString());
+                return yhbData;
+            }
+        }
+        return null;
+    }
+
 
 
     private String verifyYPBJSCallData(List<Slots> slotsData, List<Request> urlsFromNetworkTab){
@@ -161,19 +171,11 @@ public class PageLevelTests {
 
         log.info("count of ypbjs calls: " + ypbjsCallData.size());
 
-//        ypbjsCallData.stream().forEach(ypbjs -> log.info("AdUnitPath: " + ypbjs.getAdUnitPath()));;
 
         for (Slots slot : slotsData) {
 
             YPBJSUtil ypbjsdata = getMatchingDataByAdUnit(slot, ypbjsCallData);
 
-//            try {
-//                ypbjsdata = ypbjsCallData.stream().findAny().filter(data -> data.getAdUnitPath().equals(slot.getAdUnitPath())).get();
-//            }catch (Exception e){
-//
-//                log.info("Streams failed. Slots adunit path: " + slot.getAdUnitPath());
-//
-//            }
             if (ypbjsdata != null) {
 
                if( ypbjsdata.getSizes().equals(slot.getSetOfSizes())){
@@ -192,21 +194,31 @@ public class PageLevelTests {
     }
 
 
-    private String getYHBCallData(List<Slots> slotsData, List<Request> urlsFromNetworkTab){
+    private String getYHBCallData(List<Slots> slotsData, List<Request> urlsFromNetworkTab) {
 
         List<YHBUtil> yhbCallData = returnYhbPostData(knownBidderCallPatterns.get("YHBcall"), urlsFromNetworkTab)
                 .stream().map(data -> {
                     try {
-
                         return YHBUtil.builder().yhbPostData(jsonReader.readValue(data, JsonNode.class)).build();
-
                     } catch (JsonProcessingException e) {
                         log.error("Error while converting YHB call data to JsonNode: " + data);
                         return null;
                     }
-                }).filter( data -> data !=null ) .collect(Collectors.toList());
+                }).filter(data -> data != null).collect(Collectors.toList());
 
         log.info("count of YHB calls: " + yhbCallData.size());
+
+        for (Slots slot : slotsData) {
+
+      YHBUtil yhbDataMatchResult = getSizesYHB(slot, yhbCallData);
+            if (yhbDataMatchResult != null) {
+            log.info("Reached Here");
+            } else {
+                log.info("Slots Data with ad unit path: " + slot.getSlothPath() + " not found in YHB call data");
+            }
+
+        }
+
 
         return "YHB Utils Data";
     }
