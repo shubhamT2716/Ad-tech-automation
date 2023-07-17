@@ -6,9 +6,11 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.TimeoutError;
+import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
 import net.media.emma.utils.URLDataProcessing;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,8 @@ import java.util.*;
 @Service
 @Slf4j
 public class ComplianceTestSuite {
-
+    @Autowired
+    Logger logger;
     @Autowired
     BrowserFactory browserFactory;
     @Autowired
@@ -81,11 +84,46 @@ public class ComplianceTestSuite {
         pubsRefresh(page);
         page.waitForLoadState(LoadState.NETWORKIDLE);
 
+        List<Cookie> allCookies = browserContext.cookies();
+        for (Cookie cookie : allCookies) {
+            logger.info("Cookie Name: " + cookie.name);
+            logger.info("Cookie Value: " + cookie.value);
+            logger.info("------------------------");
+        }
+        verifyCookies(allCookies,testData.getCookiesToVerify());
         page.close();
         browserContext.close();
 
         updateTestCriteriaGdprString(testData,gdprString);
         return getNetworkCallAssertions3(urlFromNetworkTab, testData);
+    }
+
+    public void verifyCookies(List<Cookie> allCookies, List<Map<String, String>> cookiesToVerify)
+    {
+        boolean areCookiesPresent = true;
+
+        for (Map<String, String> cookieToVerify : cookiesToVerify) {
+            String cookieName = cookieToVerify.get("name");
+            boolean isCookiePresent = false;
+
+            for (Cookie cookie : allCookies) {
+                if (cookie.name.equals(cookieName)) {
+                    isCookiePresent = true;
+                    break;
+                }
+            }
+
+            if (!isCookiePresent) {
+                areCookiesPresent = false;
+                break;
+            }
+        }
+
+        if (areCookiesPresent) {
+            logger.info("All cookies to verify are present.");
+        } else {
+            logger.info("One or more cookies to verify are missing.");
+        }
     }
 
     public List<String> getExtensionList() {
