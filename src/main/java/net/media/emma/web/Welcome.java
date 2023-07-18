@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller
+import lombok.extern.slf4j.Slf4j;
+
+@Controller @Slf4j
 public class Welcome {
 
     @Autowired private net.media.emma.service.BrowserRemote browserRemote;
@@ -18,14 +20,14 @@ public class Welcome {
     private static final Map<String,String> listOfTestSuites = new LinkedHashMap<>() {
         {
             put("YAML Config Based Tests (Simple)", "/yamlTestSuite/");
-            put("YAML Config Based Tests (TestNG)", "/testDataInput");
             put("Page Level Checks - Test Suite", "/pageLevelTests/");
-            put("Logging Pixel Data Validation Tests", "testSuite3");
+            put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
             put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "/privacyComplianceTestSuite/");
         }};
 
     @GetMapping("/welcome")
     public String openUrl() {
+
         return "welcome";
     }
 
