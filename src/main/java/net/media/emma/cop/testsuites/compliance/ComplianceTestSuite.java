@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
+import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -108,6 +109,7 @@ public class ComplianceTestSuite {
 
             for (Cookie cookie : allCookies) {
                 if (cookie.name.equals(cookieName)) {
+                    Assert.notNull(cookie.value,"cookie value should not be null");
                     isCookiePresent = true;
                     break;
                 }
