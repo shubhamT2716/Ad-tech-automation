@@ -72,11 +72,11 @@ public class ComplianceTestSuite {
         page.navigate(testData.getPublisherUrl());
 
         List<Cookie> allCookies = browserContext.cookies();
-        for (Cookie cookie : allCookies) {
-            logger.info("Cookie Name: " + cookie.name);
-            logger.info("Cookie Value: " + cookie.value);
-            logger.info("------------------------");
-        }
+//        for (Cookie cookie : allCookies) {
+//            logger.info("Cookie Name: " + cookie.name);
+//            logger.info("Cookie Value: " + cookie.value);
+//            logger.info("------------------------");
+//        }
         verifyCookies(allCookies,testData.getCookiesToVerify());
 
         browserContext.onRequest(request -> {
@@ -109,34 +109,28 @@ public class ComplianceTestSuite {
 
     public void verifyCookies(List<Cookie> allCookies, List<Map<String, String>> cookiesToVerify)
     {
-        boolean areCookiesPresent = true;
+        for (Map<String, String> cookieToVerify : cookiesToVerify)
+        {
+            Set<String> allcookieName = cookieToVerify.keySet();
+            for (String cookieName : allcookieName)
+            {
+                for (Cookie cookie : allCookies)
+                {
+//                    logger.info("YAML COOKIE NAME: "+cookieName);
+//                    logger.info("BROWSER COOKIE NAME: "+cookie.name);
 
-        for (Map<String, String> cookieToVerify : cookiesToVerify) {
-            String cookieName = cookieToVerify.get("name");
-            boolean isCookiePresent = false;
-
-            for (Cookie cookie : allCookies) {
-                if (cookie.name.equals(cookieName)) {
-                    Assert.notNull(cookie.value,"cookie value should not be null");
-                    isCookiePresent = true;
-                    logger.info("cookie present"+cookie.name);
-                    break;
+                    if (cookie.name.equals(cookieName))
+                    {
+                        Assert.notNull(cookie.value, "cookie value should not be null");
+                        logger.info("cookie present: " + cookie.name); //TODO: Add SUCCESS to report/result class
+                        break;
+                    }
+                    else
+                    {
+                        logger.info("cookie absent: " + cookie.name); //TODO: Add FAILURE to report/result class
+                    }
                 }
-                else {logger.info("cookie absent"+cookie.name);}
             }
-
-            if (!isCookiePresent) {
-                areCookiesPresent = false;
-                break;
-            }
-        }
-
-        if (areCookiesPresent) {
-            //TODO: add SUCCESS to report/result class
-            logger.info("All cookies to verify are present.");
-        } else {
-            //TODO: add FAILURE to report/result class
-            logger.info("One or more cookies to verify are missing.");
         }
     }
 
