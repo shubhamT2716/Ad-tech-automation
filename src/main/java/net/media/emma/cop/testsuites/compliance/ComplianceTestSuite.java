@@ -71,6 +71,14 @@ public class ComplianceTestSuite {
         page = browserContext.newPage();
         page.navigate(testData.getPublisherUrl());
 
+        List<Cookie> allCookies = browserContext.cookies();
+        for (Cookie cookie : allCookies) {
+            logger.info("Cookie Name: " + cookie.name);
+            logger.info("Cookie Value: " + cookie.value);
+            logger.info("------------------------");
+        }
+        verifyCookies(allCookies,testData.getCookiesToVerify());
+
         browserContext.onRequest(request -> {
 
             urlFromNetworkTab.add(request.url());
@@ -92,13 +100,6 @@ public class ComplianceTestSuite {
         pubsRefresh(page);
         page.waitForLoadState(LoadState.NETWORKIDLE);
 
-        List<Cookie> allCookies = browserContext.cookies();
-        for (Cookie cookie : allCookies) {
-            logger.info("Cookie Name: " + cookie.name);
-            logger.info("Cookie Value: " + cookie.value);
-            logger.info("------------------------");
-        }
-        verifyCookies(allCookies,testData.getCookiesToVerify());
         page.close();
         browserContext.close();
 
@@ -118,8 +119,10 @@ public class ComplianceTestSuite {
                 if (cookie.name.equals(cookieName)) {
                     Assert.notNull(cookie.value,"cookie value should not be null");
                     isCookiePresent = true;
+                    logger.info("cookie present"+cookie.name);
                     break;
                 }
+                else {logger.info("cookie absent"+cookie.name);}
             }
 
             if (!isCookiePresent) {
@@ -129,8 +132,10 @@ public class ComplianceTestSuite {
         }
 
         if (areCookiesPresent) {
+            //TODO: add SUCCESS to report/result class
             logger.info("All cookies to verify are present.");
         } else {
+            //TODO: add FAILURE to report/result class
             logger.info("One or more cookies to verify are missing.");
         }
     }
