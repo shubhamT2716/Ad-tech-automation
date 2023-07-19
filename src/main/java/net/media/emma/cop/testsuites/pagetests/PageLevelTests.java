@@ -210,7 +210,10 @@ public class PageLevelTests {
 
 						// return AbstractBidder.builder().ypbjsPostData(jsonReader.readValue(data, JsonNode.class)).build();
 						// return AbstractBidder.builder().yhbPostData(jsonReader.readValue(data, JsonNode.class)).build();
-						bidderDataUtils.get(bidderName).setYhbPostData(jsonReader.readValue(data, JsonNode.class));
+
+						JsonNode asdfas = jsonReader.readValue(data, JsonNode.class);
+						bidderDataUtils.get(bidderName).setYhbPostData(asdfas);
+						return bidderDataUtils.get(bidderName);
 
 					} catch (JsonProcessingException e) {
 						log.error("Error while converting YPBJS call data to JsonNode: " + data);

@@ -1,5 +1,7 @@
 package net.media.emma.cop.testsuites.pagetests.bidders;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
