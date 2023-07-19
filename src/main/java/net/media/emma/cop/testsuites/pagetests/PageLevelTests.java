@@ -68,6 +68,13 @@ public class PageLevelTests {
 		}
 	};
 
+	Map<String, AbstractBidder> bidderDataUtils = new HashMap<>(){
+		{
+			put("YPBJS", YPBJSUtil.builder().bidderCallFormat("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS") .build());
+			put("YHBcall", YHBUtil.builder().build());
+		}
+	};
+
 	public JsonNode getPageLevelTestsData(TestCriteria yaml) {
 
 		Page page = browserFactory.getPageWithNewContext(yaml.getUserAgent(), Arrays.asList());
@@ -202,7 +209,8 @@ public class PageLevelTests {
 					try {
 
 						// return AbstractBidder.builder().ypbjsPostData(jsonReader.readValue(data, JsonNode.class)).build();
-						return AbstractBidder.builder().yhbPostData(jsonReader.readValue(data, JsonNode.class)).build();
+						// return AbstractBidder.builder().yhbPostData(jsonReader.readValue(data, JsonNode.class)).build();
+						bidderDataUtils.get(bidderName).setYhbPostData(jsonReader.readValue(data, JsonNode.class));
 
 					} catch (JsonProcessingException e) {
 						log.error("Error while converting YPBJS call data to JsonNode: " + data);

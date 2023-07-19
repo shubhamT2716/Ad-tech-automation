@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 @Getter @Setter @SuperBuilder
 public abstract class AbstractBidder {
 
+    String bidderCallFormat;
     JsonNode yhbPostData;
 
    //abstract get ad unit path that retuns string
