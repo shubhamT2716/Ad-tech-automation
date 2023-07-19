@@ -45,6 +45,7 @@ public class PageLevelTests {
     URLDataProcessing urlDataProcessing;
 
     @Autowired ObjectMapper jsonReader;
+    // @Autowired BrowserFactory browserFactory;
 
 
     List<String> jsExtraction = new ArrayList<>();
@@ -60,10 +61,7 @@ public class PageLevelTests {
     public List<JsonNode> getPageLevelTestsData(TestCriteria yaml) {
 
 
-
-    public String getPageLevelTestsData(String url) {
-
-        Page page = browserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList());
+        Page page = BrowserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList(), null);
 
         // list of arrays initialization
         List<Request> urlsFromNetworkTab = new ArrayList<>();
