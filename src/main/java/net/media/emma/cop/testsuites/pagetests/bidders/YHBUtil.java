@@ -38,14 +38,20 @@ public class YHBUtil  extends AbstractBidder {
         @Override
         public String getAdUnitPath() {
             
-            if(adUnitPath == null){
+            if(this.adUnitPath == null){
 
-               // JsonNode adUnitPath = ypbjsPostData.at("/imp/0/ext/dfp_ad_unit_code");
+               JsonNode adUnitPath = getYhbPostData().at("/imp/0/ext/dfp_ad_unit_code");
+
+               if(!adUnitPath.isMissingNode()) {
+                   log.info("Adunit Path found: " + adUnitPath.asText());
+                   this.adUnitPath = adUnitPath.asText();
+                }else{
+                     this.adUnitPath = "";
+                }
             }
 
-            return "testing";
+            return this.adUnitPath;
         }
-
 
 
         @Override

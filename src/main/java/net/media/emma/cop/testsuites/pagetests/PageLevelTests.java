@@ -68,12 +68,12 @@ public class PageLevelTests {
 		}
 	};
 
-	Map<String, AbstractBidder> bidderDataUtils = new HashMap<>(){
-		{
-			put("YPBJS", YPBJSUtil.builder().bidderCallFormat("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS") .build());
-			put("YHBcall", YHBUtil.builder().build());
-		}
-	};
+	// Map<String, AbstractBidder> bidderDataUtils = new HashMap<>(){
+	// 	{
+	// 		put("YPBJS", YPBJSUtil.builder().bidderCallFormat("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS") .build());
+	// 		put("YHBcall", YHBUtil.builder().build());
+	// 	}
+	// };
 
 	public JsonNode getPageLevelTestsData(TestCriteria yaml) {
 
@@ -92,13 +92,24 @@ public class PageLevelTests {
 
 		Map<String, List<? extends AbstractBidder>> bidderData = new HashMap<>();
 
-		// merge all bidder data into one map
-		// bidderData.putAll(getBidderUtils(urlsFromNetworkTab, "YPBJS"));
-		// bidderData.putAll(getBidderUtils(urlsFromNetworkTab, "YHBcall"));
+		// knownBidderCallPatterns.forEach((bidderName, urlPattern) -> {
+		// 	bidderData.putAll(getBidderUtils(urlsFromNetworkTab, bidderName));
+		// });
 
-		knownBidderCallPatterns.forEach((bidderName, urlPattern) -> {
-			bidderData.putAll(getBidderUtils(urlsFromNetworkTab, bidderName));
-		});
+		//iterate through all the known bidder call patterns and get the data
+		for (Map.Entry<String, String> bidderCallPattern : knownBidderCallPatterns.entrySet()) {
+
+			List<? extends AbstractBidder> bidderDataasdfs = getBidderUtils(urlsFromNetworkTab, bidderCallPattern.getKey());
+
+			log.info("Bidders List for " + bidderCallPattern.getKey() + " : " + bidderDataasdfs);
+
+			if(bidderDataasdfs.size() > 0)
+			{
+				bidderData.put(bidderCallPattern.getKey(), bidderDataasdfs);
+			}
+		}
+
+		log.info("All known bidders size:" +  bidderData.size(), bidderData);
 
 		TestReportV2 testReport = TestReportV2.builder()
 				.testMetaData(TestReportV2.TestMetaData.builder().testName("Pagelevel Test Suite")
@@ -112,17 +123,22 @@ public class PageLevelTests {
 
 			for (Map.Entry<String, List<? extends AbstractBidder>> bidderList : bidderData.entrySet()) {
 
+				log.info("Bidder Name: " + bidderList.getKey() + " Bidder Data: " + bidderList.getValue());
+
 				TestReportV2.Bidder bidderReport = TestReportV2.Bidder.builder().bidderName(bidderList.getKey()).build();
 
 				AbstractBidder bidder = getMatchingDataByAdUnit(slotData, bidderList.getValue());
 
 				if (null == bidder) {
 					bidderReport.getTestMessages().add("Bidder Call not found");
+					slotReport.getBidders().add(bidderReport);
 					continue;
 				}
 
 				if (!slotData.getSizes().equals(bidder.getSizes())) {
 					bidderReport.getTestMessages().add("Slot Sizes (" + slotData.getSizes() + ") mismatched with bidder sizes (" + bidder.getSizes() + ")");
+				}else{
+					bidderReport.getTestMessages().add("Sizes matched (" + slotData.getSizes() + ")");
 				}
 
 				slotReport.getBidders().add(bidderReport);
@@ -182,6 +198,8 @@ public class PageLevelTests {
 
 		for (AbstractBidder bidderUtil : bidderCallData) {
 
+			log.info("Slot Ad Unit Path: " + slotData.getPath() + " Bidder Ad Unit Path: " + bidderUtil.getAdUnitPath());
+
 			if (slotData.getAdUnitPath().contains(bidderUtil.getAdUnitPath())) {
 
 				return bidderUtil;
@@ -202,32 +220,34 @@ public class PageLevelTests {
 	// 	return null;
 	// }
 
-	private Map<String, List<? extends AbstractBidder>> getBidderUtils(List<Request> urlsFromNetworkTab, String bidderName) {
+	private List<? extends AbstractBidder> getBidderUtils(List<Request> urlsFromNetworkTab, String bidderName) {
 
 		List<? extends AbstractBidder> ypbjsCallData = filterRequestsByTypeAndReturnPostData(knownBidderCallPatterns.get(bidderName),
 				urlsFromNetworkTab).stream().map(data -> {
 					try {
 
-						// return AbstractBidder.builder().ypbjsPostData(jsonReader.readValue(data, JsonNode.class)).build();
-						// return AbstractBidder.builder().yhbPostData(jsonReader.readValue(data, JsonNode.class)).build();
+						switch(bidderName){
+							case "YPBJS":
+								return YPBJSUtil.builder().bidderCallFormat(knownBidderCallPatterns.get(bidderName)).yhbPostData(jsonReader.readValue(data, JsonNode.class)).build();
+							case "YHBcall":
+								return YHBUtil.builder().bidderCallFormat(knownBidderCallPatterns.get(bidderName)).yhbPostData(jsonReader.readValue(data, JsonNode.class)).build();
+						}
 
-						JsonNode asdfas = jsonReader.readValue(data, JsonNode.class);
-						bidderDataUtils.get(bidderName).setYhbPostData(asdfas);
-						return bidderDataUtils.get(bidderName);
+
+						// JsonNode asdfas = jsonReader.readValue(data, JsonNode.class);
+						// AbstractBidder bidder = bidderDataUtils.get(bidderName).
+
+						// bidderDataUtils.get(bidderName).setYhbPostData(asdfas);
+						// return bidderDataUtils.get(bidderName);
 
 					} catch (JsonProcessingException e) {
 						log.error("Error while converting YPBJS call data to JsonNode: " + data);
 						return null;
 					}
+					return null;
 				}).filter(data -> data != null).collect(Collectors.toList());
 
-		Map<String, List<? extends AbstractBidder>> map = new HashMap<>() {
-			{
-				put("YPBJS", ypbjsCallData);
-			}
-		};
-
-		return map;
+		return ypbjsCallData;
 	}
 
 //	private TempClass verifyYPBJSCallData(List<Slots> slotsData, List<Request> urlsFromNetworkTab) {
