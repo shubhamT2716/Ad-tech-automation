@@ -1,18 +1,16 @@
 package net.media.emma.cop.testsuites.pagetests.bidders;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.HashSet;
 import java.util.Set;
-@Builder @Slf4j
+
+@SuperBuilder @Slf4j
 public class YHBUtil  extends AbstractBidder {
 
-        JsonNode yhbPostData;
         private Set<String> sizes;
         String adUnitPath;
-
 
         private Set<String> getSizeYHB(){
 
@@ -36,8 +34,6 @@ public class YHBUtil  extends AbstractBidder {
 
             return sizes;
         }
-
-
 
         @Override
         public String getAdUnitPath() {

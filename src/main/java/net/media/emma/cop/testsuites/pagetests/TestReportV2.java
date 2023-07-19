@@ -1,7 +1,12 @@
 package net.media.emma.cop.testsuites.pagetests;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +19,8 @@ public class TestReportV2 {
 	TestMetaData testMetaData;
 	@Builder.Default
 	List<Slot> slots = new ArrayList<>();
-
+	@Builder.Default
+	Map<String, JsonNode> testRawData = new HashMap<>();
 
 	@Getter
 	@Setter

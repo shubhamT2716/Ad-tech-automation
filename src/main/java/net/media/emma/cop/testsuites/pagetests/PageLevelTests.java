@@ -86,8 +86,12 @@ public class PageLevelTests {
 		Map<String, List<? extends AbstractBidder>> bidderData = new HashMap<>();
 
 		// merge all bidder data into one map
-		bidderData.putAll(getBidderUtils(urlsFromNetworkTab, "YPBJS"));
-		bidderData.putAll(getBidderUtils(urlsFromNetworkTab, "YHBcall"));
+		// bidderData.putAll(getBidderUtils(urlsFromNetworkTab, "YPBJS"));
+		// bidderData.putAll(getBidderUtils(urlsFromNetworkTab, "YHBcall"));
+
+		knownBidderCallPatterns.forEach((bidderName, urlPattern) -> {
+			bidderData.putAll(getBidderUtils(urlsFromNetworkTab, bidderName));
+		});
 
 		TestReportV2 testReport = TestReportV2.builder()
 				.testMetaData(TestReportV2.TestMetaData.builder().testName("Pagelevel Test Suite")
@@ -120,6 +124,9 @@ public class PageLevelTests {
 			testReport.getSlots().add(slotReport);
 		}
 
+		testReport.getTestRawData().put("Slots Raw Data",  jsonReader.valueToTree(slotsData));
+		testReport.getTestRawData().put("Bidder Calls Raw Data",  jsonReader.valueToTree(bidderData));
+
 		try {
 			return jsonReader.readTree(jsonWriter.writeValueAsString(testReport));
 		} catch (JsonProcessingException e) {
@@ -144,7 +151,6 @@ public class PageLevelTests {
 					log.error("Error while getting post data from request: " + request.url());
 				}
 			}
-
 		}
 
 		return postData;
@@ -189,14 +195,14 @@ public class PageLevelTests {
 	// 	return null;
 	// }
 
-	private Map<String, List<? extends AbstractBidder>> getBidderUtils(List<Request> urlsFromNetworkTab,
-			String bidderName) {
+	private Map<String, List<? extends AbstractBidder>> getBidderUtils(List<Request> urlsFromNetworkTab, String bidderName) {
 
-		List<YPBJSUtil> ypbjsCallData = filterRequestsByTypeAndReturnPostData(knownBidderCallPatterns.get(bidderName),
+		List<? extends AbstractBidder> ypbjsCallData = filterRequestsByTypeAndReturnPostData(knownBidderCallPatterns.get(bidderName),
 				urlsFromNetworkTab).stream().map(data -> {
 					try {
 
-						return YPBJSUtil.builder().ypbjsPostData(jsonReader.readValue(data, JsonNode.class)).build();
+						// return AbstractBidder.builder().ypbjsPostData(jsonReader.readValue(data, JsonNode.class)).build();
+						return AbstractBidder.builder().yhbPostData(jsonReader.readValue(data, JsonNode.class)).build();
 
 					} catch (JsonProcessingException e) {
 						log.error("Error while converting YPBJS call data to JsonNode: " + data);

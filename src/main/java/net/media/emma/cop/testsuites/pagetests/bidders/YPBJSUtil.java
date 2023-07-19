@@ -4,14 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
-@Builder @Slf4j
+@SuperBuilder @Slf4j
 public class YPBJSUtil extends AbstractBidder {
 
-    JsonNode ypbjsPostData;
     private Set<String> sizes;
     private String adUnitPath;
 
@@ -21,7 +19,7 @@ public class YPBJSUtil extends AbstractBidder {
 
             sizes = new HashSet<>();
 
-            JsonNode listOfSizes = ypbjsPostData.at("/imp/0/banner/format");
+            JsonNode listOfSizes = getYhbPostData().at("/imp/0/banner/format");
 
             if(!listOfSizes.isMissingNode()) {
 
@@ -42,7 +40,7 @@ public class YPBJSUtil extends AbstractBidder {
 
         if(adUnitPath == null){
 
-            JsonNode adUnitPath = ypbjsPostData.at("/imp/0/ext/dfp_ad_unit_code");
+            JsonNode adUnitPath = getYhbPostData().at("/imp/0/ext/dfp_ad_unit_code");
 
             if(!adUnitPath.isMissingNode()) {
                 log.info("Adunit Path found: " + adUnitPath.asText());
@@ -50,7 +48,7 @@ public class YPBJSUtil extends AbstractBidder {
             }else{
                 this.adUnitPath = "";
                 log.info("Adunit Path json path not found");
-                log.info(ypbjsPostData.toPrettyString());
+                log.info(getYhbPostData().toPrettyString());
             }
         }
 
