@@ -12,6 +12,7 @@ import lombok.Setter;
 public class TestReportV2 {
 
 	TestMetaData testMetaData;
+	@Builder.Default
 	List<Slot> slots = new ArrayList<>();
 
 
@@ -32,14 +33,19 @@ public class TestReportV2 {
 	public static class Slot{
 		String testStatus;
 		String slotName; //this will be the slot-name/adunit path that we get from eval-js
-		List<Bidder> bidders;
+		@Builder.Default
+		List<Bidder> bidders = new ArrayList<>();
 	}
 
 	@Getter @Setter @Builder
 	public static class Bidder{
 
-		String bidderName; //this will be the pattern of the bidder url that we use this test case
-		List<String> testMessages; //push message when the test case fails. Make sure message has complete informatin as to why the test case has failed.
+		//this will be the pattern of the bidder url that we use this test case
+		String bidderName; 
+
+		 //push message when the test case fails. Make sure message has complete informatin as to why the test case has failed.
+		@Builder.Default
+		 List<String> testMessages = new ArrayList<>();
 
 	}
 
