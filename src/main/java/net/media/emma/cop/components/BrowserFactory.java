@@ -17,9 +17,6 @@ public class BrowserFactory {
 
     private Playwright playwright = Playwright.create();
 
-    @Value("${browserPath}")
-    private static String chromeBrowserPath;
-    
     //Map of Browser Type with Device and User Agents
     public static Map<String, String> browserContexts = new HashMap<String, String>() {{
         put("Chrome.Mobile.iPhone", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/114.0.5735.50 Mobile/15E148 Safari/604.1");
@@ -100,12 +97,12 @@ public class BrowserFactory {
         return getPlaywrightObj().webkit().launch();
     }
 
-    private static BrowserContext getSystemBrowserByType(String browserType,List<Map<String, String>> cookies, List<String> extension,String fileName) {
+    private static BrowserContext getSystemBrowserByType(String browserType,List<Map<String, String>> cookies, List<String> extension,String fileName, String browserPath) {
         if(browserType.contains("Chrome")){
-            return getPlaywrightObj().chromium().launchPersistentContext(Paths.get(chromeBrowserPath),getSystemBrowserContextOptions(browserContexts.get(browserType),browserType.contains("Mobile"),extension,fileName));
+            return getPlaywrightObj().chromium().launchPersistentContext(Paths.get(browserPath),getSystemBrowserContextOptions(browserContexts.get(browserType),browserType.contains("Mobile"),extension,fileName));
         }
 
-        return getPlaywrightObj().webkit().launchPersistentContext(Paths.get(chromeBrowserPath));
+        return getPlaywrightObj().webkit().launchPersistentContext(Paths.get(browserPath));
     }
 
     //Returns Playwright's Page obj with given browserType and cookies
@@ -119,11 +116,11 @@ public class BrowserFactory {
             // .addCookies(cookies)
         return newBc.newPage();
     }
-    
+
     public static BrowserContext getBc(String browserType, List<Map<String, String>> cookies) {
-    	
+
     	return getBc(browserType, cookies, null);
-    	
+
     }
 
     public static BrowserContext getBc(String browserType, List<Map<String, String>> cookies, String harFileName) {
@@ -131,17 +128,17 @@ public class BrowserFactory {
         BrowserContext newBc =  getBrowserByType(browserType).newContext(
                                         getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile"), harFileName));
 
-        
+
         BrowserContext.StorageStateOptions storageStateOptions = new BrowserContext.StorageStateOptions();
         newBc.storageState(storageStateOptions.setPath(Paths.get("emma-working-directory/browser-context-storage/state.json")));
-     
+
         newBc.setDefaultNavigationTimeout(120000);
 
         return newBc;
     }
 
-    public static BrowserContext getSystemBc(String browserType, List<Map<String, String>> cookies, List<String> extension, String fileName) {
-        BrowserContext newBc = getSystemBrowserByType(browserType,cookies,extension,fileName);
+    public static BrowserContext getSystemBc(String browserType, List<Map<String, String>> cookies, List<String> extension, String fileName, String browserPath) {
+        BrowserContext newBc = getSystemBrowserByType(browserType,cookies,extension,fileName,browserPath);
         return newBc;
     }
 

@@ -8,8 +8,10 @@ import com.microsoft.playwright.Request;
 import com.microsoft.playwright.TimeoutError;
 import com.microsoft.playwright.options.LoadState;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,12 @@ public class ComplianceTestSuite {
     URLDataProcessing urlDataProcessing;
     @Autowired
     ObjectWriter jsonWriter;
+
+    @Autowired
+    private CommonBrowserUtil browserUtil;
+
+    @Value("${browserPath}")
+    private String browserPath;
 
     private static String windscribeLogin = "xpath=//button[text()='Login']";
     private static String windscribeUsername = "xpath=//input[@name='username']";
@@ -45,7 +53,8 @@ public class ComplianceTestSuite {
 
     public String getTestResults(ComplianceTestCriteria testData) throws InterruptedException {
 
-        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(),null);
+        String fileName=browserUtil.getFileNameForHar();
+        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(),fileName, browserPath);
         browserContext.clearCookies();
 
         //list of arrays initialization
