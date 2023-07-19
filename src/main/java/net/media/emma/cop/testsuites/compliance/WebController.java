@@ -53,7 +53,7 @@ public class WebController {
             //mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
             mav.addObject("message", complianceTestSuite.getTestResults(yamlTc));
 
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException | InterruptedException e) {
             log.error("YAML Processing Error", e);
             mav.addObject("message", e.getMessage());
         }

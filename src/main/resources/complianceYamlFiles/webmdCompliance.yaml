@@ -1,5 +1,55 @@
 environment: hbx.media.net
-cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
 location: paris
+
+networkCallsPositive: {
+  bidExchange: "https://hbx.media.net/bidexchange.js?cid=8CU66J63J",
+  PRLog: "https://hblg.media.net/log?logid=prlog",
+  APLog: "https://hblg.media.net/log?logid=aplog",
+  AWLog: "https://hblg.media.net/log?logid=awlog",
+  RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  Checksync: "https://hbx.media.net/checksync.php",
+  # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+}
+
+keysToVerifyPositive: {
+  PRLog: {
+    tcf_cmp: ["28"],
+    tcf_status: ["loaded"],
+    tcf_prp: ["1111--1"],
+    tcf_api: ["1"],
+    gdpr: ["1"],
+    gdprconsent:["1"],
+  },
+  APLog: {
+    tcf_cmp: ["28"],
+    tcf_status: ["loaded"],
+    tcf_prp: ["1111--1"],
+    tcf_api: ["1"],
+    gdpr: ["1"],
+    gdprconsent:["1"],
+  },
+  RTBSCall:{
+    gdpr: ["1"],
+    gdprconsent:["1"],
+    gdprstring: [""],
+  },
+  Checksync:{
+    gdpr: ["1"],
+    gdprconsent:["1"],
+    gdprstring:[""],
+  },
+}
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: {
+  prlog: {
+    cc: ["FR", "DE"],
+    ct:["PARIS","FRANKFURT"]},
+  aplog: { cc: ["FR", "DE"],
+           ct:["PARIS","FRANKFURT"]},
+  RTBSCall: {isRefresh: ["0", "1"] },
+}
+

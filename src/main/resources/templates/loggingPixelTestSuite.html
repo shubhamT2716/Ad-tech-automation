@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Logging Pixel Test Suite - Emma</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <style>
+
+
+
+        .error {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
+
+        #submitButton {
+            display: block;
+            width: 150px;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #or {
+            text-align: left;
+            align-content: normal;
+            display: block;
+            font-weight: bold;
+        }
+
+        #submitButton:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            $('#yamlInput').on('input', function () {
+                var yamlValue = $(this).val();
+                var isValidYaml = true;
+                $('.error').hide();
+
+                try {
+                    jsyaml.load(yamlValue);
+                } catch (error) {
+                    isValidYaml = false;
+                    $('.error').show();
+                }
+
+                if (isValidYaml && yamlValue.trim() !== '') {
+                    $('#submitButton').prop('disabled', false);
+                } else {
+                    $('#submitButton').prop('disabled', true);
+                }
+            });
+
+            $('#file-dropdown').change(function () {
+                var selectedFile = $(this).val();
+                if (selectedFile !== '') {
+                    $.ajax({
+                        url: './fileContent', // URL mapped by the Spring Boot controller
+                        method: 'POST',
+                        contentType: 'text/plain',
+                        data: selectedFile,
+                        success: function (response) {
+                            $('#yamlInput').val(response);
+                            $('#submitButton').prop('disabled', false);
+                            $('.error').hide();
+                        }
+                    });
+                } else {
+                    $('#yamlInput').val('');
+                    $('#submitButton').prop('disabled', true);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="container my-5">
+    <h1>Logging Pixel Test Suite</h1>
+    <form id="testForm" method="POST" target="_blank" style="width: 100%;">
+        <label for="file-dropdown">Select Yaml File: </label>
+        <select class="form-control" id="file-dropdown">
+            <option value="">-- Select --</option>
+            <!-- <option value="forbes.yaml">forbes.yaml</option>
+            <option value="nutritionix.yaml">nutritionix.yaml</option>
+            <option value="webmd.yaml">webmd.yaml</option> -->
+            <option th:each="fileName : ${files}" th:value="${fileName}" th:text="${fileName}"></option>
+        </select>
+        <br>
+        <div id="or"> OR</div>
+        <br>
+        <label for="yamlInput">Enter YAML:</label>
+        <textarea class="form-control" rows="20" id="yamlInput" name="yaml"></textarea>
+        <p class="error">Invalid YAML format</p>
+        <input class="form-control" id="submitButton" type="submit" value="Execute Tests" disabled>
+    </form>
+    <pre th:text="${message}"></pre>
+</div>
+</body>
+</html>

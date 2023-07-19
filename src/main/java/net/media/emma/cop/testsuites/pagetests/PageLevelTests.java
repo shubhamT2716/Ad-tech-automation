@@ -20,6 +20,7 @@ import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.Request;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 
 /*  ***************************************************************************************************
@@ -41,8 +42,6 @@ import net.media.emma.utils.URLDataProcessing;
 public class PageLevelTests {
 
     @Autowired
-    BrowserFactory browserFactory;
-    @Autowired
     URLDataProcessing urlDataProcessing;
 
     @Autowired ObjectMapper jsonReader;
@@ -60,7 +59,11 @@ public class PageLevelTests {
 
     public List<JsonNode> getPageLevelTestsData(TestCriteria yaml) {
 
-        Page page = browserFactory.getPageWithNewContext(yaml.getUserAgent(), Arrays.asList());
+
+
+    public String getPageLevelTestsData(String url) {
+
+        Page page = browserFactory.getPageWithNewContext("Chrome.Desktop.Mac", Arrays.asList());
 
         // list of arrays initialization
         List<Request> urlsFromNetworkTab = new ArrayList<>();
