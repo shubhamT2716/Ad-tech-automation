@@ -23,82 +23,100 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.utils.FileOperations;
 
-@Controller("pageLevelTestsController") @RequestMapping("/pageLevelTests/") @Slf4j
+@Controller("pageLevelTestsController")
+@RequestMapping("/pageLevelTests/")
+@Slf4j
 public class WebController {
 
-    @Autowired PageLevelTests pageLevelTests;
-    @Autowired ObjectMapper mapper;
-    @Autowired FileOperations fileOperations;
+	@Autowired
+	PageLevelTests pageLevelTests;
+	@Autowired
+	ObjectMapper mapper;
+	@Autowired
+	FileOperations fileOperations;
 
-    // @GetMapping("/domInject")
-    // public String domINject() {
+	// @GetMapping("/domInject")
+	// public String domINject() {
 
-    //     return "welcome2";
-      
-    // }
+	// return "welcome2";
 
-    // @PostMapping("/welcome2")
-    // public void openAndDOMINject(@RequestParam String url,
-    //                                 @RequestParam String xPath,
-    //                                 @RequestParam String htmlElement,
-    //                                 @RequestParam Boolean append) {
-    //     String forceHtmlElement = "src/main/resources/templates/random.html";
-    //     System.out.println("Calling Dom Inject");
-    //     browserRemote.injectDom(url, xPath, forceHtmlElement, append);
-        
-    // }
-    private static final Map<String,String> listOfTestSuites = new LinkedHashMap<>() {
-        {
-            put("YAML Config Based Tests (Simple)", "/yamlTestSuite/");
-            put("YAML Config Based Tests (TestNG)", "/testDataInput");
-            put("Page Level Checks - Test Suite", "/pageLevelTests/");
-            put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
-            put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "testSuite4");
-        }};
+	// }
 
-    @GetMapping
-    public ModelAndView openIndex() {
+	// @PostMapping("/welcome2")
+	// public void openAndDOMINject(@RequestParam String url,
+	// @RequestParam String xPath,
+	// @RequestParam String htmlElement,
+	// @RequestParam Boolean append) {
+	// String forceHtmlElement = "src/main/resources/templates/random.html";
+	// System.out.println("Calling Dom Inject");
+	// browserRemote.injectDom(url, xPath, forceHtmlElement, append);
 
-        ModelAndView mav = new ModelAndView("pageLevelTests");
-        mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/pageLevelTestsYaml/"));//  Arrays.asList(null, "testCriteria.yaml", "testCriteria2.yaml"));
-        mav.addObject("testSuites", listOfTestSuites);
-        return mav;
-    }
-    
-    @PostMapping
-    public ModelAndView getPageLevelTestsResult(@RequestParam String yaml){
+	// }
+	private static final Map<String, String> listOfTestSuites = new LinkedHashMap<>() {
+		{
+			put("YAML Config Based Tests (Simple)", "/yamlTestSuite/");
+			put("YAML Config Based Tests (TestNG)", "/testDataInput");
+			put("Page Level Checks - Test Suite", "/pageLevelTests/");
+			put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
+			put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "testSuite4");
+		}
+	};
 
-        ModelAndView modelAndView = new ModelAndView("pageLevelTestsDataReport");
+	@GetMapping
+	public ModelAndView openIndex() {
 
-        try{
+		ModelAndView mav = new ModelAndView("pageLevelTests");
+		mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/pageLevelTestsYaml/"));// Arrays.asList(null,
+																													// "testCriteria.yaml",
+																													// "testCriteria2.yaml"));
+		mav.addObject("testSuites", listOfTestSuites);
+		return mav;
+	}
 
-            ObjectMapper mapper = new YAMLMapper();
-            TestCriteria yamlTc = mapper.readValue(yaml, TestCriteria.class);
-            // mav.addObject("message", yamlTc.getEnvironment());
-            //mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
-            // modelAndView.addObject("message", );
-            modelAndView.addObject("message1", pageLevelTests.getPageLevelTestsData(yamlTc));
+	@PostMapping
+	public ModelAndView getPageLevelTestsResult(@RequestParam String yaml) {
 
-        }catch( JsonProcessingException  e){
-            log.error("YAML Processing Error", e);;
-            modelAndView.addObject("message", e.getMessage());
-        }
-        return modelAndView;
-    }
+		ModelAndView modelAndView = new ModelAndView("pageLevelTestsDataReport");
 
-    @PostMapping("fileContent")
-    @ResponseBody
-    public String getFileContent(@RequestBody String fileName){
+		try {
 
-        if(fileName.length() > 0){
+			ObjectMapper mapper = new YAMLMapper();
+			TestCriteria yamlTc = mapper.readValue(yaml, TestCriteria.class);
+			// mav.addObject("message", yamlTc.getEnvironment());
+			// mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
+			// modelAndView.addObject("message", );
 
-            try {
-                return new String( Files.readAllBytes(Paths.get("src/main/resources/pageLevelTestsYaml/" + fileName)));
-            } catch (IOException e) {
-                log.error("File Read Error", e);
-                return e.getMessage();
-            }
-        }
-        return "Input File Name Empty";
-    }
+			try {
+				// String s = pageLevelTests.getPageLevelTestsData(yamlTc);
+				// System.err.println("new Report = " + s);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			modelAndView.addObject("message1", pageLevelTests.getPageLevelTestsData(yamlTc));
+
+		} catch (JsonProcessingException e) {
+			log.error("YAML Processing Error", e);
+			;
+			modelAndView.addObject("message", e.getMessage());
+		}
+		return modelAndView;
+	}
+
+	@PostMapping("fileContent")
+	@ResponseBody
+	public String getFileContent(@RequestBody String fileName) {
+
+		if (fileName.length() > 0) {
+
+			try {
+				return new String(Files.readAllBytes(Paths.get("src/main/resources/pageLevelTestsYaml/" + fileName)));
+			} catch (IOException e) {
+				log.error("File Read Error", e);
+				return e.getMessage();
+			}
+		}
+		return "Input File Name Empty";
+	}
 }
