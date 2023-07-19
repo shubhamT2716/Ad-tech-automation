@@ -2,12 +2,8 @@ package net.media.emma.cop.testsuites.pagetests;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter

@@ -1,4 +1,4 @@
-package net.media.emma.cop.testsuites.pagetests;
+package net.media.emma.cop.testsuites.pagetests.bidders;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
@@ -7,14 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.HashSet;
 import java.util.Set;
 @Builder @Slf4j
-public class YHBUtil {
+public class YHBUtil  extends AbstractBidder {
 
         JsonNode yhbPostData;
         private Set<String> sizes;
         String adUnitPath;
 
 
-        public Set<String> getSizeYHB(){
+        private Set<String> getSizeYHB(){
 
             if(sizes == null){
 
@@ -35,6 +35,30 @@ public class YHBUtil {
             }
 
             return sizes;
+        }
+
+
+
+        @Override
+        public String getAdUnitPath() {
+            
+            if(adUnitPath == null){
+
+               // JsonNode adUnitPath = ypbjsPostData.at("/imp/0/ext/dfp_ad_unit_code");
+            }
+
+            return "testing";
+        }
+
+
+
+        @Override
+        public Set<String> getSizes() {
+           if(null == sizes){
+            sizes = getSizeYHB();
+           }
+
+           return sizes;
         }
 
 //    public String getSamplePath(){

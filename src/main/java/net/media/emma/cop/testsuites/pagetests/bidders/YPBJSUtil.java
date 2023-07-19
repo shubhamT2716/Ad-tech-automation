@@ -1,4 +1,4 @@
-package net.media.emma.cop.testsuites.pagetests;
+package net.media.emma.cop.testsuites.pagetests.bidders;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Builder @Slf4j
-public class YPBJSUtil {
+public class YPBJSUtil extends AbstractBidder {
 
     JsonNode ypbjsPostData;
     private Set<String> sizes;

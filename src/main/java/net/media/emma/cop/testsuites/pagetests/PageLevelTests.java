@@ -25,6 +25,9 @@ import net.media.emma.cop.testsuites.pagetests.TestReport.TempClass;
 import net.media.emma.cop.testsuites.pagetests.TestReport.TestData;
 import net.media.emma.cop.testsuites.pagetests.TestReport.TestMetaData;
 import net.media.emma.cop.testsuites.pagetests.TestReport.TestStatus;
+import net.media.emma.cop.testsuites.pagetests.bidders.AbstractBidder;
+import net.media.emma.cop.testsuites.pagetests.bidders.YHBUtil;
+import net.media.emma.cop.testsuites.pagetests.bidders.YPBJSUtil;
 import net.media.emma.utils.URLDataProcessing;
 
 /*  ***************************************************************************************************
@@ -86,10 +89,34 @@ public class PageLevelTests {
 
 		page.close();
 
-        
+		Map<String, List<? extends AbstractBidder>> bidderData = new HashMap<>();
+
+		//merge all bidder data into one map
+		bidderData.putAll(getBidderUtils(urlsFromNetworkTab, "YPBJS"));
+		bidderData.putAll(getBidderUtils(urlsFromNetworkTab, "YHBcall"));
+
 
 		TempClass testResult = verifyYPBJSCallData(slotsData, urlsFromNetworkTab);
 		String testResult2 = getYHBCallData(slotsData, urlsFromNetworkTab);
+
+		TestReportV2 testReport = TestReportV2.builder().testMetaData(TestReportV2.TestMetaData.builder().testName("Pagelevel Test Suite").environment(yaml.getEnvironment())
+				.publisherUrl(yaml.getPublisherUrl()).userAgent(yaml.getUserAgent()).build()).build();
+
+		for (Slots slots : slotsData) {
+
+			TestReportV2.Slot slot = TestReportV2.Slot.builder().slotName("Slot Name").build();
+
+			for (Map.Entry<String, List<? extends AbstractBidder>> bidder : bidderData.entrySet()) {
+
+				TestReportV2.Bidder bidderReport = TestReportV2.Bidder.builder().bidderName(bidder.getKey()).build();
+
+				//check for test cases here;
+
+				slot.getBidders().add(bidderReport);
+			}
+
+			testReport.getSlots().add(slot);
+		}
 
 		Map<String, String> map = new HashMap<>();
 
@@ -191,13 +218,32 @@ public class PageLevelTests {
 
 	private YHBUtil getSizesYHB(Slots slotData, List<YHBUtil> yhbCalls) {
 		for (YHBUtil yhbData : yhbCalls) {
-			if (slotData.getSetOfSizes().equals(yhbData.getSizeYHB())) {
+			if (slotData.getSetOfSizes().equals(yhbData.getSizes())) {
 				log.info("Inside IF, sizes matched " + slotData.getSetOfSizes().toString() + " and "
-						+ yhbData.getSizeYHB().toString());
+						+ yhbData.getSizes().toString());
 				return yhbData;
 			}
 		}
 		return null;
+	}
+
+	private Map<String, List< ? extends AbstractBidder>> getBidderUtils(List<Request> urlsFromNetworkTab, String bidderName){
+
+		List<YPBJSUtil> ypbjsCallData = filterRequestsByTypeAndReturnPostData(knownBidderCallPatterns.get(bidderName),
+											urlsFromNetworkTab).stream().map(data -> {
+												try {
+
+													return YPBJSUtil.builder().ypbjsPostData(jsonReader.readValue(data, JsonNode.class)).build();
+
+												} catch (JsonProcessingException e) {
+													log.error("Error while converting YPBJS call data to JsonNode: " + data);
+													return null;
+												}
+											}).filter(data -> data != null).collect(Collectors.toList());
+
+		Map<String, List< ? extends AbstractBidder>> map = new HashMap<>(){{put("YPBJS", ypbjsCallData);}};
+
+		return map;
 	}
 
 	private TempClass verifyYPBJSCallData(List<Slots> slotsData, List<Request> urlsFromNetworkTab) {
@@ -279,7 +325,7 @@ public class PageLevelTests {
 
 		log.info("count of YHB calls: " + yhbCallData.size());
 
-		System.err.println("Yhb Data: " + yhbCallData.get(0).getSizeYHB());
+		System.err.println("Yhb Data: " + yhbCallData.get(0).getSizes());
 
 		for (Slots slot : slotsData) {
 
