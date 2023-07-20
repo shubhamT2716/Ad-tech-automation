@@ -1,18 +1,12 @@
-package net.media.emma.cop.testsuites.yaml;
+package net.media.emma.cop.testsuites.compliance;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.*;
 
 @Getter @Setter @Builder
 public class URLChecks {
@@ -82,7 +76,7 @@ public class URLChecks {
         });
     }
 
-    public void updateNetworkCallErrors(TestCriteriaBo testData ){
+    public void updateNetworkCallErrors(ComplianceTestCriteria testData ){
 
         testData.getNetworkCallsPositive().forEach((key, value) -> {
             if(!positiveUrlChecks.containsKey(key)){
@@ -95,13 +89,13 @@ public class URLChecks {
             }
         });
 
-        testData.getNetworkCallsNegative().forEach((key, value) -> {
+       /* testData.getNetworkCallsNegative().forEach((key, value) -> {
             if(!negativeUrlChecks.containsKey(key)){
                 negativeUrlChecks.put(key,  NegativeURLChecks.builder().label(key).urlPattern(value).build());
             }else{
                 negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
             }
-        });
+        });*/
     }
 
     public void verifyPositiveKeyValChecks(){

@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Getter @Setter
 public class ComplianceTestCriteria {
@@ -14,5 +15,10 @@ public class ComplianceTestCriteria {
     String environment;
     String userAgent;
     List<Map<String, String>> cookies;
+    Map<String, String> networkCallsPositive;
+
+    Map<String, Map<String, Set<String>>> keysToVerifyPositive;
+    Map<String, Map<String, Set<String>>> keysToVerifyNegative;
+    Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
     
 }
