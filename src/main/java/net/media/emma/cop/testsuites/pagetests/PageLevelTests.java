@@ -147,10 +147,10 @@ public class PageLevelTests {
 
 				if (!slotData.getSizes().equals(bidder.getSizes())) {
 					log.info("Bidder size = " + bidder.getSizes());
-					bidderReport.getTestMessages().add("Slot Sizes (" + slotData.getSizes()
-							+ ") mismatched with bidder sizes (" + bidder.getSizes() + ")");
+					bidderReport.getTestMessages().add("Slot Sizes " + slotData.getSizes()
+							+ " mismatched with bidder sizes " + bidder.getSizes() + "");
 				} else {
-					bidderReport.getTestMessages().add("Sizes matched (" + slotData.getSizes() + ")");
+					bidderReport.getTestMessages().add("Sizes matched " + slotData.getSizes() + "");
 				}
 
 				slotReport.getBidders().add(bidderReport);
