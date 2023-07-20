@@ -24,6 +24,7 @@ import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.pagetests.bidders.AbstractBidder;
 import net.media.emma.cop.testsuites.pagetests.bidders.YHBUtil;
 import net.media.emma.cop.testsuites.pagetests.bidders.YPBJSUtil;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 
 /*  ***************************************************************************************************
@@ -76,7 +77,9 @@ public class PageLevelTests {
 
 	public JsonNode getPageLevelTestsData(TestCriteria yaml) {
 
-		Page page = browserFactory.getPageWithNewContext(yaml.getUserAgent(), Arrays.asList());
+		String harFilePath = CommonBrowserUtil.getFileNameForHar();
+
+		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), Arrays.asList(), harFilePath);
 
 		// list of arrays initialization
 		List<Request> urlsFromNetworkTab = new ArrayList<>();
@@ -112,7 +115,7 @@ public class PageLevelTests {
 		TestReportV2 testReport = TestReportV2.builder()
 				.testMetaData(TestReportV2.TestMetaData.builder().testName("Pagelevel Test Suite")
 						.environment(yaml.getEnvironment()).publisherUrl(yaml.getPublisherUrl())
-						.userAgent(yaml.getUserAgent()).build())
+						.userAgent(yaml.getUserAgent()).harFileDownloadLink("harDownload/" + harFilePath).build())
 				.build();
 
 		for (Slots slotData : slotsData) {
@@ -135,6 +138,7 @@ public class PageLevelTests {
 				}
 
 				if (!slotData.getSizes().equals(bidder.getSizes())) {
+					log.info("Bidder size = " + bidder.getSizes());
 					bidderReport.getTestMessages().add("Slot Sizes (" + slotData.getSizes()
 							+ ") mismatched with bidder sizes (" + bidder.getSizes() + ")");
 				} else {
