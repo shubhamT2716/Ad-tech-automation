@@ -7,8 +7,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +40,9 @@ public class WebController {
 	ObjectMapper mapper;
 	@Autowired
 	FileOperations fileOperations;
+
+	@Value("${harFileBasePath}")
+	private String harFileBasePath;
 
 	// @GetMapping("/domInject")
 	// public String domINject() {
@@ -110,5 +119,20 @@ public class WebController {
 			}
 		}
 		return "Input File Name Empty";
+	}
+
+	@GetMapping("harDownload/{fileName}")
+	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
+
+		// add a new function in FileOperations.java to get the file as a resource
+		Resource resource = fileOperations.loadFileAsResource(harFileBasePath + fileName);
+
+		if (resource == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
 	}
 }

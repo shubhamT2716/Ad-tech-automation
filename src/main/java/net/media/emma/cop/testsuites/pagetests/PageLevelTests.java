@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,6 +57,11 @@ public class PageLevelTests {
 	@Autowired
 	ObjectMapper jsonReader;
 
+
+
+	@Value("${harFileBasePath}")
+	private String harFileBasePath;
+
 	List<String> jsExtraction = new ArrayList<>();
 	// List of urls to scrape the data from, basically bidder calls
 	HashMap<String, String> knownBidderCallPatterns = new HashMap<>() {
@@ -79,7 +85,8 @@ public class PageLevelTests {
 
 		String harFilePath = CommonBrowserUtil.getFileNameForHar();
 
-		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), Arrays.asList(), harFilePath);
+		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), yaml.getCoockies(),
+				harFileBasePath + harFilePath);
 
 		// list of arrays initialization
 		List<Request> urlsFromNetworkTab = new ArrayList<>();
@@ -90,6 +97,7 @@ public class PageLevelTests {
 		});
 		List<Slots> slotsData = extractSlotsDataFromPage2(page, yaml.getPublisherUrl());
 		page.close();
+        page.context().close();
 
 		Map<String, List<? extends AbstractBidder>> bidderData = new HashMap<>();
 
