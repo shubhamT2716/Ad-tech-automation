@@ -20,7 +20,7 @@ public class Slots {
     Set<Size> sizes;
     Map<String, List<String>> targetting;
 
-    public Set<String> getSetOfSizes(){
+    public Set<String> getSizes(){
         log.info("Set of sizes " + sizes);
         return sizes.stream().map(size -> size.getWidth() + "x" + size.getHeight()).collect(Collectors.toSet());
         // [ "300x250", "300x600"]

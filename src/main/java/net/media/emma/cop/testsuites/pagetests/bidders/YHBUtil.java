@@ -1,20 +1,18 @@
-package net.media.emma.cop.testsuites.pagetests;
+package net.media.emma.cop.testsuites.pagetests.bidders;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.HashSet;
 import java.util.Set;
-@Builder @Slf4j
-public class YHBUtil {
 
-        JsonNode yhbPostData;
+@SuperBuilder @Slf4j
+public class YHBUtil  extends AbstractBidder {
+
         private Set<String> sizes;
         String adUnitPath;
 
-
-        public Set<String> getSizeYHB(){
+        private Set<String> getSizeYHB(){
 
             if(sizes == null){
 
@@ -35,6 +33,34 @@ public class YHBUtil {
             }
 
             return sizes;
+        }
+
+        @Override
+        public String getAdUnitPath() {
+            
+            if(this.adUnitPath == null){
+
+               JsonNode adUnitPath = getYhbPostData().at("/imp/0/ext/dfp_ad_unit_code");
+
+               if(!adUnitPath.isMissingNode()) {
+                   log.info("Adunit Path found: " + adUnitPath.asText());
+                   this.adUnitPath = adUnitPath.asText();
+                }else{
+                     this.adUnitPath = "";
+                }
+            }
+
+            return this.adUnitPath;
+        }
+
+
+        @Override
+        public Set<String> getSizes() {
+           if(null == sizes){
+            sizes = getSizeYHB();
+           }
+
+           return sizes;
         }
 
 //    public String getSamplePath(){
