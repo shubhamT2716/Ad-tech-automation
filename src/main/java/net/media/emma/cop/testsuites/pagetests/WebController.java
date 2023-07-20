@@ -86,14 +86,6 @@ public class WebController {
 			// mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
 			// modelAndView.addObject("message", );
 
-			try {
-				// String s = pageLevelTests.getPageLevelTestsData(yamlTc);
-				// System.err.println("new Report = " + s);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
 			modelAndView.addObject("message1", pageLevelTests.getPageLevelTestsData(yamlTc));
 
 		} catch (JsonProcessingException e) {
