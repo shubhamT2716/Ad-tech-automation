@@ -1,5 +1,8 @@
 package net.media.emma.cop.testsuites.yaml;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +23,20 @@ public class TestReportModel {
         String environment;
         String userAgent;
         String harFileDownloadLink;
+    }
+
+    @Getter @Setter @Builder
+    public static class BidExController{
+
+        String actualUrlFired;
+        String totalSizeDownloaded;
+        String totalResponseTime;
+        @Builder.Default
+        List<String> testMessages = new ArrayList<>();
+        //List of checks neededd
+        //Non 200 response
+        //js errors arising from this controller
+    
     }
 
     @Getter @Setter @Builder

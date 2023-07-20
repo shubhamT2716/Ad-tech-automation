@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.BidExController;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.TestMetaData;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
@@ -119,6 +120,7 @@ public class TestSuite implements GenericTestSuite {
 
 		} 
 
+
 		browserContext.close();
 	
 		// return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
@@ -145,6 +147,26 @@ public class TestSuite implements GenericTestSuite {
 			return "Error while converting test report to json";
 		}
 	}
+
+
+	private BidExController getBidExData(List<Request> listOfPwRequestObjects){
+
+		//get bidex url's Request object from listOfPwRequestObjects
+		//assumer the pattern like this
+		// /**hbx.media.net|warp.media.net|hb.yahoo.net|contextual.media.net**bidexchange.js|clienttag.js**
+		//from pw req object will have actual url filed, size, time taken to load
+		//js errors arising from this controller
+
+		BidExController bidexReport =  BidExController.builder().actualUrlFired("actual url fired")
+										.totalResponseTime("")
+										.totalSizeDownloaded("total size downloaded")
+										.build();
+
+		bidexReport.getTestMessages().add("JS errors if any");
+
+		return bidexReport;
+
+	} 
 
 	private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, TestCriteriaBo testData) {
 
