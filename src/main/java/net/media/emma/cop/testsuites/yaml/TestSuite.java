@@ -148,6 +148,28 @@ public class TestSuite implements GenericTestSuite {
 		}
 	}
 
+	private List<Request> getBidExRequestObjects(List<Request> listOfPwRequestObjects){
+
+		//get bidex url's Request object from listOfPwRequestObjects
+		//assumer the pattern like this
+		// /**hbx.media.net|warp.media.net|hb.yahoo.net|contextual.media.net**bidexchange.js|clienttag.js**
+		//from pw req object will have actual url filed, size, time taken to load
+		//js errors arising from this controller
+
+		List<Request> bidExRequestObjects = new ArrayList<>();
+
+		for (Request  pwReq : listOfPwRequestObjects) {
+
+			//URL GLOBAL MATCHING
+			if (pwReq.url().matches("bidexchange.js|clienttag.js")) {
+
+				bidExRequestObjects.add(pwReq);
+			}
+		}
+
+		return bidExRequestObjects;
+
+	}
 
 	private BidExController getBidExData(List<Request> listOfPwRequestObjects){
 
@@ -157,10 +179,16 @@ public class TestSuite implements GenericTestSuite {
 		//from pw req object will have actual url filed, size, time taken to load
 		//js errors arising from this controller
 
-		BidExController bidexReport =  BidExController.builder().actualUrlFired("actual url fired")
-										.totalResponseTime("")
-										.totalSizeDownloaded("total size downloaded")
-										.build();
+		BidExController bidexReport =  BidExController.builder().build();
+		List<Request> bidExRequestObjects = getBidExRequestObjects(listOfPwRequestObjects);
+
+		if(bidExRequestObjects.size() == 0){
+			bidexReport.getTestMessages().add("No bidex request found");
+		}
+
+		if(bidExRequestObjects.size() > 1){
+			bidexReport.getTestMessages().add("Multiple bidex request found");
+		}
 
 		bidexReport.getTestMessages().add("JS errors if any");
 
