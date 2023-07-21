@@ -12,7 +12,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
@@ -21,7 +20,6 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
 import com.microsoft.playwright.options.Timing;
-
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
@@ -54,7 +52,7 @@ public class TestSuite implements GenericTestSuite {
 	// List of strings "1", "2"
 	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
 			"hbx-stage.media.net");
-	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
+	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");//, "catchpoint_content.js", "topics.js");
 
 	private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
 
@@ -114,9 +112,9 @@ public class TestSuite implements GenericTestSuite {
 
 			browserContext.setDefaultTimeout(90000); // 90 seconds
 			Page page = browserContext.newPage();
-			page.navigate(testData.getPublisherUrl());
 			consoleMessage = getConsoleErrors(page);
-
+			page.navigate(testData.getPublisherUrl());
+	
 			// page.waitForLoadState(LoadState.NETWORKIDLE,new
 			// Page.WaitForLoadStateOptions().setTimeout(5000));
 			// page.waitForFunction("() => performance.getEntriesByType('resource').length >
@@ -181,16 +179,29 @@ public class TestSuite implements GenericTestSuite {
 		}
 
 		return bidExRequestObjects;
-
 	}
 
 	private List<String> getConsoleErrors(Page page) {
 		List<String> consoleErrors = new ArrayList<>();
 
-		String controllerRegex = "**/" + bidExControlers + "/**";
+		// String bidExControllerRegex = "**/" + String.join("|", bidExControlers) + "/**";
+		String bidexRegex = "(bidexchange)|(clienttag)|(catchpoint_content)|(topics)";
+
+		String mainString = "bidexchange.js";
+
+		if(mainString.matches(bidexRegex)){
+			log.info("Matcching:", mainString.matches(bidexRegex));
+		}else{
+			log.info("Not Matcching:", mainString.matches(bidexRegex));
+		}
+
+
+
+		log.info("console error messages: Controllers: " + bidexRegex);
 
 		page.onConsoleMessage(consoleMessage -> {
-			if (consoleMessage.type().equals("error") && consoleMessage.location().matches(controllerRegex)) {
+
+			if (consoleMessage.type().equals("error") && consoleMessage.location().matches(bidexRegex)) {
 				consoleErrors.add(consoleMessage.text());
 			}
 		});
@@ -214,11 +225,15 @@ public class TestSuite implements GenericTestSuite {
 
 			Timing timing = request.timing();
 
-			Date date = new Date((long) (timing.responseEnd - timing.responseStart));
+			if(null != timing){
+				Date date = new Date((long) (timing.responseEnd - timing.responseStart));
+				bidexReport.setTotalResponseTime(date.getTime() + "ms");
+			}else
+			{
+				bidexReport.setTotalResponseTime("Not Available");	
+			}
 
-			bidexReport.setTotalResponseTime(date.getTime() + "ms");
 			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "kb");
-
 		}
 
 		if (bidExRequestObjects.size() == 0) {
