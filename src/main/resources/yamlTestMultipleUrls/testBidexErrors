@@ -1,0 +1,7 @@
+environment: hbx.media.net
+browserType: Chrome.Desktop.Mac
+userAgent: Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/114.0.5735.50 Mobile/15E148 Safari/604.1
+publisherUrl: https://www.techinvestornews.com/Amazon/Amazon-Bloggers/top-5-apple-deals-on-amazon-ahead-of-prime-day
+
+bidExchangeUrl: https://hbx.media.net/bidexchange.js?cid=8CU2C156D
+cookies: []
