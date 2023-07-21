@@ -466,7 +466,7 @@ public class TestSuite implements GenericTestSuite {
 
 		return browserContext;
 	}
-}
+
 // public List<String> getURLAnalyticsFor(Page page, YamlTestCriteria testData){
 
 // //list of arrays initialization
@@ -498,3 +498,4 @@ public class TestSuite implements GenericTestSuite {
 
 // tbo.toString();
 // }
+}
