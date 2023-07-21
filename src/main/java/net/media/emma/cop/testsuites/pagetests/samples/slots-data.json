@@ -1,0 +1,193 @@
+[
+    {
+      "path": "/22888152279/us/eng/main/dt/us_eng_main_dt_top_center",
+      "sizes": [
+        {
+          "width": 728,
+          "height": 90
+        },
+        {
+          "width": 970,
+          "height": 250
+        }
+      ],
+      "targetting": {
+        "loc": [
+          "top_center"
+        ],
+        "y_pgid": [
+          "1"
+        ],
+        "y_cc": [
+          "IN"
+        ],
+        "y_cv": [
+          "1"
+        ],
+        "y_ugd": [
+          "4"
+        ],
+        "y_cid": [
+          "8YHBL12EX"
+        ],
+        "y_abt": [
+          "yhb"
+        ],
+        "y_dnb": [
+          "1"
+        ]
+      }
+    },
+    {
+      "path": "/22888152279/us/eng/main/dt/us_eng_main_dt_btm_center",
+      "sizes": [
+        {
+          "width": 728,
+          "height": 90
+        },
+        {
+          "width": 970,
+          "height": 250
+        }
+      ],
+      "targetting": {
+        "loc": [
+          "btm_center"
+        ],
+        "y_pgid": [
+          "2"
+        ],
+        "y_cc": [
+          "IN"
+        ],
+        "y_cv": [
+          "1"
+        ],
+        "y_ugd": [
+          "4"
+        ],
+        "y_cid": [
+          "8YHBL12EX"
+        ],
+        "y_abt": [
+          "yhb"
+        ],
+        "y_dnb": [
+          "1"
+        ]
+      }
+    },
+    {
+      "path": "/22888152279/us/eng/main/dt/us_eng_main_dt_top_right",
+      "sizes": [
+        {
+          "width": 300,
+          "height": 250
+        }
+      ],
+      "targetting": {
+        "loc": [
+          "top_right"
+        ],
+        "y_pgid": [
+          "3"
+        ],
+        "y_cc": [
+          "IN"
+        ],
+        "y_cv": [
+          "1"
+        ],
+        "y_ugd": [
+          "4"
+        ],
+        "y_cid": [
+          "8YHBL12EX"
+        ],
+        "y_abt": [
+          "yhb"
+        ],
+        "y_dnb": [
+          "1"
+        ]
+      }
+    },
+    {
+      "path": "/22888152279/us/eng/main/dt/us_eng_main_dt_mid_right",
+      "sizes": [
+        {
+          "width": 300,
+          "height": 250
+        },
+        {
+          "width": 300,
+          "height": 600
+        }
+      ],
+      "targetting": {
+        "loc": [
+          "mid_right"
+        ],
+        "y_pgid": [
+          "4"
+        ],
+        "y_cc": [
+          "IN"
+        ],
+        "y_cv": [
+          "1"
+        ],
+        "y_ugd": [
+          "4"
+        ],
+        "y_cid": [
+          "8YHBL12EX"
+        ],
+        "y_abt": [
+          "yhb"
+        ],
+        "y_dnb": [
+          "1"
+        ]
+      }
+    },
+    {
+      "path": "/22888152279/us/eng/main/dt/us_eng_main_dt_mid_right",
+      "sizes": [
+        {
+          "width": 300,
+          "height": 250
+        },
+        {
+          "width": 300,
+          "height": 600
+        }
+      ],
+      "targetting": {
+        "loc": [
+          "mid_right_2"
+        ],
+        "y_pgid": [
+          "5"
+        ],
+        "y_cc": [
+          "IN"
+        ],
+        "y_cv": [
+          "1"
+        ],
+        "y_ugd": [
+          "4"
+        ],
+        "y_cid": [
+          "8YHBL12EX"
+        ],
+        "y_abt": [
+          "yhb"
+        ],
+        "y_dnb": [
+          "1"
+        ]
+      }
+    }
+  ]
