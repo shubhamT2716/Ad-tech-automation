@@ -52,7 +52,8 @@ public class TestSuite implements GenericTestSuite {
 	private String harFileBasePath;
 
 	// List of strings "1", "2"
-	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
+	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
+			"hbx-stage.media.net");
 	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
 
 	private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
@@ -107,11 +108,14 @@ public class TestSuite implements GenericTestSuite {
 		// log.info(urlFromNetworkTab.toString());
 		// return urlFromNetworkTab;
 
+		List<String> consoleMessage = new ArrayList<>();
+
 		try {
 
 			browserContext.setDefaultTimeout(90000); // 90 seconds
 			Page page = browserContext.newPage();
 			page.navigate(testData.getPublisherUrl());
+			consoleMessage = getConsoleErrors(page);
 
 			// page.waitForLoadState(LoadState.NETWORKIDLE,new
 			// Page.WaitForLoadStateOptions().setTimeout(5000));
@@ -124,12 +128,12 @@ public class TestSuite implements GenericTestSuite {
 			log.error("Error while navigating to publisher url: {}", e.getMessage());
 
 		}
-		browserContext.close();
 
 		// return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
 		// return getNetworkCallAssertions(requestList, testData);
 
-		BidExController bidExController = getBidExData(requestList);
+		BidExController bidExController = getBidExData(requestList, testData);
+		bidExController.setTestMessages(consoleMessage);
 
 		TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
 				.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).testName("YAML Test Suite")
@@ -141,6 +145,7 @@ public class TestSuite implements GenericTestSuite {
 		testReport.setBidExController(bidExController);
 		testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab, testData));
 
+		browserContext.close();
 		try {
 
 			return jsonWriter.writeValueAsString(testReport);
@@ -152,7 +157,7 @@ public class TestSuite implements GenericTestSuite {
 		}
 	}
 
-	private List<Request> getBidExRequestObjects(List<Request> listOfPwRequestObjects) {
+	private List<Request> getBidExRequestObjects(List<Request> listOfPwRequestObjects, String environmentHost) {
 
 		// get bidex url's Request object from listOfPwRequestObjects
 		// assumer the pattern like this
@@ -160,13 +165,15 @@ public class TestSuite implements GenericTestSuite {
 		// from pw req object will have actual url filed, size, time taken to load
 		// js errors arising from this controller
 
+		String regEx = "https?://(?:" + String.join("|", bidExHosts) + "|" + environmentHost + ")/(?:"
+				+ String.join("|", bidExControlers) + ").*";
+
 		List<Request> bidExRequestObjects = new ArrayList<>();
 
 		for (Request pwReq : listOfPwRequestObjects) {
 
 			// URL GLOBAL MATCHING
-			if (pwReq.url().matches("https?://(?:" + String.join("|", bidExHosts) + ")/(?:"
-					+ String.join("|", bidExControlers) + ").*")) {
+			if (pwReq.url().matches(regEx)) {
 
 				bidExRequestObjects.add(pwReq);
 			}
@@ -177,7 +184,20 @@ public class TestSuite implements GenericTestSuite {
 
 	}
 
-	private BidExController getBidExData(List<Request> listOfPwRequestObjects) {
+	private List<String> getConsoleErrors(Page page) {
+		List<String> consoleErrors = new ArrayList<>();
+
+		String controllerRegex = "**/" + bidExControlers + "/**";
+
+		page.onConsoleMessage(consoleMessage -> {
+			if (consoleMessage.type().equals("error") && consoleMessage.location().matches(controllerRegex)) {
+				consoleErrors.add(consoleMessage.text());
+			}
+		});
+		return consoleErrors;
+	}
+
+	private BidExController getBidExData(List<Request> listOfPwRequestObjects, TestCriteriaBo testData) {
 
 		// get bidex url's Request object from listOfPwRequestObjects
 		// assumer the pattern like this
@@ -186,7 +206,7 @@ public class TestSuite implements GenericTestSuite {
 		// js errors arising from this controller
 
 		BidExController bidexReport = BidExController.builder().build();
-		List<Request> bidExRequestObjects = getBidExRequestObjects(listOfPwRequestObjects);
+		List<Request> bidExRequestObjects = getBidExRequestObjects(listOfPwRequestObjects, testData.getEnvironment());
 
 		// get matching urls
 		for (Request request : bidExRequestObjects) {
@@ -197,7 +217,7 @@ public class TestSuite implements GenericTestSuite {
 			Date date = new Date((long) (timing.responseEnd - timing.responseStart));
 
 			bidexReport.setTotalResponseTime(date.getTime() + "ms");
-			// bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + " bytes");
+			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "kb");
 
 		}
 
@@ -207,14 +227,6 @@ public class TestSuite implements GenericTestSuite {
 
 		if (bidExRequestObjects.size() > 1) {
 			bidexReport.getTestMessages().add("Multiple bidex request found");
-		}
-
-		// get javascript errors
-		for (Request request : bidExRequestObjects) {
-			String jsHandle = request.failure();
-			if (jsHandle != null) {
-				bidexReport.getTestMessages().add(jsHandle);
-			}
 		}
 
 		return bidexReport;
@@ -453,36 +465,35 @@ public class TestSuite implements GenericTestSuite {
 
 		return browserContext;
 	}
-
-	// public List<String> getURLAnalyticsFor(Page page, YamlTestCriteria testData){
-
-	// //list of arrays initialization
-	// List<String> urlFromNetworkTab = new ArrayList<>();
-
-	// page.onRequest(request -> {
-
-	// urlFromNetworkTab.add(request.url());
-	// });
-
-	// page.navigate(testData.getPublisherUrl());
-	// // log.info(urlFromNetworkTab.toString());
-	// // return urlFromNetworkTab;
-
-	// return urlFromNetworkTab;
-	// }
-
-	// private void buildTestReport(List<String> networkCalls, TestCriteriaBo
-	// testData) {
-
-	// TestReportBo tbo = TestReportBo.builder().build();
-
-	// tbo.setTestMetaData(TestReportBo.TestData.builder().environment(testData.getEnvironment())
-	// .publisherUrl(testData.getPublisherUrl()).userAgent(testData.getUserAgent()).build());
-
-	// for (String networkcall : networkCalls) {
-
-	// }
-
-	// tbo.toString();
-	// }
 }
+// public List<String> getURLAnalyticsFor(Page page, YamlTestCriteria testData){
+
+// //list of arrays initialization
+// List<String> urlFromNetworkTab = new ArrayList<>();
+
+// page.onRequest(request -> {
+
+// urlFromNetworkTab.add(request.url());
+// });
+
+// page.navigate(testData.getPublisherUrl());
+// // log.info(urlFromNetworkTab.toString());
+// // return urlFromNetworkTab;
+
+// return urlFromNetworkTab;
+// }
+
+// private void buildTestReport(List<String> networkCalls, TestCriteriaBo
+// testData) {
+
+// TestReportBo tbo = TestReportBo.builder().build();
+
+// tbo.setTestMetaData(TestReportBo.TestData.builder().environment(testData.getEnvironment())
+// .publisherUrl(testData.getPublisherUrl()).userAgent(testData.getUserAgent()).build());
+
+// for (String networkcall : networkCalls) {
+
+// }
+
+// tbo.toString();
+// }
