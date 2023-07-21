@@ -2,10 +2,7 @@ package net.media.emma.cop.testsuites.yaml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.microsoft.playwright.BrowserContext;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Request;
-import com.microsoft.playwright.Route;
+import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
@@ -36,37 +33,40 @@ public class MulUrlsTestSuite {
 
     public String getTestResults(TestCriteriaConsoleError testData) throws InterruptedException {
 
-        String fileName=browserUtil.getFileNameForHar();
-        BrowserContext browserContext = BrowserFactory.getBcWithUserAgent(testData.getBrowserType(),testData.getUserAgent(), testData.getCookies(), fileName);
+        String fileName = browserUtil.getFileNameForHar();
+        BrowserContext browserContext = BrowserFactory.getBcWithUserAgent(testData.getBrowserType(), testData.getUserAgent(), testData.getCookies(), fileName);
         browserContext.clearCookies();
         browserContext = replaceBidExUrl(browserContext, testData);
         //list of arrays initialization
-        HashMap<String,String> responseDetails = new HashMap<>();
+        HashMap<String, String> responseDetails = new HashMap<>();
 
         Page page = browserContext.newPage();
-        page = browserContext.newPage();
 
-        browserContext.onResponse(response -> {
-            if(response.request().url().contains(testData.getBidExchangeUrl())){
-                responseDetails.put("url",response.request().url());
-                responseDetails.put("size",Integer.toString(response.request().sizes().responseBodySize));
-                responseDetails.put("time",Double.toString(response.request().timing().responseEnd-response.request().timing().requestStart));
+        browserContext.onRequest(request -> {
+            if (request.url().contains(testData.getBidExchangeUrl())) {
+                responseDetails.put("url", request.url());
+                responseDetails.put("size", Integer.toString(request.sizes().responseBodySize));
+                responseDetails.put("time", Double.toString(request.timing().responseEnd-request.timing().requestStart));
             }
         });
 
         List<String> consoleErrors = getConsoleErrors(page);
-
-        page.navigate(testData.getPublisherUrl());
-        page.waitForLoadState(LoadState.LOAD);
+        try {
+            page.setDefaultTimeout(60000);
+            page.navigate(testData.getPublisherUrl());
+            page.waitForLoadState();
+        }catch (Exception e) {
+            logger.error("Error in loading page",e);
+        }
         Thread.sleep(1000);
 
         page.close();
         browserContext.close();
 
-        return getNetworkCallAssertions3(responseDetails, consoleErrors,testData);
+        return getNetworkCallAssertions3(responseDetails, consoleErrors, testData);
     }
 
-    private String getNetworkCallAssertions3(HashMap<String,String> responseDetails,List<String> consoleErrors, TestCriteriaConsoleError testData) {
+    private String getNetworkCallAssertions3(HashMap<String, String> responseDetails, List<String> consoleErrors, TestCriteriaConsoleError testData) {
 
         ConsoleErrorURLChecksReportModel urlChecks = ConsoleErrorURLChecksReportModel.builder().build();
 
@@ -100,7 +100,6 @@ public class MulUrlsTestSuite {
 
         for (String currentHost : bidExHosts) {
             for (String currentController : bidExControlers) {
-
                 browserContext.route("**/" + currentHost + "/" + currentController + "*", route -> {
 
                     String replacedURL = "";
