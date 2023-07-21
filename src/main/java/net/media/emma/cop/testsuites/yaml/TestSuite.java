@@ -107,6 +107,7 @@ public class TestSuite implements GenericTestSuite {
 			browserContext.setDefaultTimeout(90000); // 90 seconds
 			Page page = browserContext.newPage();
 			page.navigate(testData.getPublisherUrl());
+			List<String> consoleErrors = getConsoleErrors(page);
 			// page.waitForLoadState(LoadState.NETWORKIDLE,new
 			// Page.WaitForLoadStateOptions().setTimeout(5000));
 			// page.waitForFunction("() => performance.getEntriesByType('resource').length >
@@ -145,6 +146,16 @@ public class TestSuite implements GenericTestSuite {
 			return "Error while converting test report to json";
 		}
 	}
+
+	private List<String> getConsoleErrors(Page page) {
+        List<String> consoleErrors = new ArrayList<>();
+        page.onConsoleMessage(consoleMessage -> {
+            if (consoleMessage.type().equals("error") && consoleMessage.location().contains("bidexchange.js")) {
+                consoleErrors.add(consoleMessage.text());
+            }
+        });
+        return consoleErrors;
+    }
 
 	private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, TestCriteriaBo testData) {
 
