@@ -24,8 +24,10 @@ public class YHBUtil  extends AbstractBidder {
 
                     for (JsonNode jsonNode : listOfSizes) {
 
-                        if(jsonNode.get("w") != null && jsonNode.get("h") != null){
+                        if(listOfSizes !=null ){
                             sizes.add(jsonNode.get("w").asText() + "x" + jsonNode.get("h").asText());
+                            log.info("sizes added: " + sizes);
+                            log.info("List of Sizes " + listOfSizes.toString());
                         }
 
                     }
@@ -35,23 +37,23 @@ public class YHBUtil  extends AbstractBidder {
             return sizes;
         }
 
-        @Override
-        public String getAdUnitPath() {
+        // @Override
+        // public String getAdUnitPath() {
             
-            if(this.adUnitPath == null){
+        //     if(this.adUnitPath == null){
 
-               JsonNode adUnitPath = getYhbPostData().at("/imp/0/ext/dfp_ad_unit_code");
+        //        JsonNode adUnitPath = getYhbPostData().at("/imp/0/ext/dfp_ad_unit_code");
 
-               if(!adUnitPath.isMissingNode()) {
-                   log.info("Adunit Path found: " + adUnitPath.asText());
-                   this.adUnitPath = adUnitPath.asText();
-                }else{
-                     this.adUnitPath = "";
-                }
-            }
+        //        if(!adUnitPath.isMissingNode()) {
+        //            log.info("Adunit Path found: " + adUnitPath.asText());
+        //            this.adUnitPath = adUnitPath.asText();
+        //         }else{
+        //              this.adUnitPath = "";
+        //         }
+        //     }
 
-            return this.adUnitPath;
-        }
+        //     return this.adUnitPath;
+        // }
 
 
         @Override
@@ -61,6 +63,12 @@ public class YHBUtil  extends AbstractBidder {
            }
 
            return sizes;
+        }
+
+        @Override
+        public String getAdUnitPath() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'getAdUnitPath'");
         }
 
 //    public String getSamplePath(){
