@@ -188,7 +188,7 @@ public class TestSuite implements GenericTestSuite {
 		List<String> consoleErrors = new ArrayList<>();
 
 		// String controllerRegex = "**/" + bidExControlers + "/**";
-		String controllerRegex = ".*/(bidexchange\\.js|clienttag\\.js).*";
+		String controllerRegex = ".*/(bidexchange\\.js|clienttag\\.js|wf-core-1.63.3-modern\\.js).*";
 
 		page.onConsoleMessage(consoleMessage -> {
 			if (consoleMessage.type().equals("error") && consoleMessage.location().matches(controllerRegex)) {
