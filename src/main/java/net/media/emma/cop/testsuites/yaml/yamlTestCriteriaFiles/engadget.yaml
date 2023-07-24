@@ -1,7 +1,7 @@
 environment: hb.yahoo.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://www.engadget.com/?headerbidding=1"
+publisherUrl: "https://www.engadget.com/?headerbidding=1&mnet_test=1"
 
 networkCallsPositive: {
           bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHBL12EX",
@@ -20,14 +20,14 @@ networkCallsNegative: {
 keysToVerifyPositive: {
 
   PRLog: {
-    pvid: ["X"],
+    pvid: ["-3","25014"],
     cid: ["8YHBL12EX"],
-    svr: ["060106_3473_060106_1067_ssp"],
+    svr: ["2023072110_140_072113_693_072113_656_ssp"],
     ugd: ["4"],
   },
   
   APLog: {
-    svr: ["060106_3473_060106_1067_ssp"],
+    svr: ["2023072110_140_072113_693_072113_656_ssp"],
     ugd: ["4"],
   },
 }
