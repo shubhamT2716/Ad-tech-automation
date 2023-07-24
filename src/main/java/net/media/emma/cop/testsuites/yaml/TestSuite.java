@@ -190,7 +190,7 @@ public class TestSuite implements GenericTestSuite {
 		List<String> consoleErrors = new ArrayList<>();
 
 		// String controllerRegex = "**/" + bidExControlers + "/**";
-		String controllerRegex = ".*/(bidexchange\\.js|clienttag\\.js).*";
+		String controllerRegex =  ".*/(" + String.join("|", bidExControlers) + ").*";
 		
 
 
