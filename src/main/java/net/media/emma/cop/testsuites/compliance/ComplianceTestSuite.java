@@ -83,11 +83,11 @@ public class ComplianceTestSuite {
         Thread.sleep(1000);
 
         List<Cookie> allCookies = browserContext.cookies();
-//        for (Cookie cookie : allCookies) {
-//            logger.info("Cookie Name: " + cookie.name);
-//            logger.info("Cookie Value: " + cookie.value);
-//            logger.info("------------------------");
-//        }
+        for (Cookie cookie : allCookies) {
+            logger.info("Cookie Name: " + cookie.name);
+            logger.info("Cookie Value: " + cookie.value);
+            logger.info("------------------------");
+        }
         verifyCookies(allCookies,testData.getCookiesToVerify());
         HashMap<String, String> tcfResponse = getTcfApiResponse(page);
         String gdprString = tcfResponse.get("tcString");
@@ -120,7 +120,7 @@ public class ComplianceTestSuite {
                     logger.info("YAML COOKIE NAME: "+cookieName);
                     logger.info("BROWSER COOKIE NAME: "+cookie.name);
 
-                    if (cookie.name.equalsIgnoreCase(cookieName))
+                    if (cookie.name.equals(cookieName))
                     {
                         Assert.notNull(cookie.value, "cookie value should not be null");
                         logger.info("cookie present: " + cookieName); //TODO: Add SUCCESS to report/result class
