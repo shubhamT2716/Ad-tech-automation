@@ -165,7 +165,10 @@ public class TestSuite implements GenericTestSuite {
 		// from pw req object will have actual url filed, size, time taken to load
 		// js errors arising from this controller
 
-		String regEx = "https?://(?:" + String.join("|", bidExHosts) + "|" + environmentHost + ")/(?:"
+//		String regEx = "https?://(?:" + String.join("|", bidExHosts) + "|" + environmentHost + ")/(?:"
+//				+ String.join("|", bidExControlers) + ").*";
+
+		String regEx = ".*/(" + String.join("|", bidExHosts) + "|" + environmentHost + ")/("
 				+ String.join("|", bidExControlers) + ").*";
 
 		List<Request> bidExRequestObjects = new ArrayList<>();
