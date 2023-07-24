@@ -71,13 +71,6 @@ public class ComplianceTestSuite {
         page = browserContext.newPage();
         page.navigate(testData.getPublisherUrl());
 
-        List<Cookie> allCookies = browserContext.cookies();
-//        for (Cookie cookie : allCookies) {
-//            logger.info("Cookie Name: " + cookie.name);
-//            logger.info("Cookie Value: " + cookie.value);
-//            logger.info("------------------------");
-//        }
-        verifyCookies(allCookies,testData.getCookiesToVerify());
 
         browserContext.onRequest(request -> {
 
@@ -88,6 +81,14 @@ public class ComplianceTestSuite {
         page.locator(acceptAllBtn).click();
         page.waitForLoadState(LoadState.NETWORKIDLE);
         Thread.sleep(1000);
+
+        List<Cookie> allCookies = browserContext.cookies();
+//        for (Cookie cookie : allCookies) {
+//            logger.info("Cookie Name: " + cookie.name);
+//            logger.info("Cookie Value: " + cookie.value);
+//            logger.info("------------------------");
+//        }
+        verifyCookies(allCookies,testData.getCookiesToVerify());
         HashMap<String, String> tcfResponse = getTcfApiResponse(page);
         String gdprString = tcfResponse.get("tcString");
 
@@ -116,18 +117,18 @@ public class ComplianceTestSuite {
             {
                 for (Cookie cookie : allCookies)
                 {
-//                    logger.info("YAML COOKIE NAME: "+cookieName);
-//                    logger.info("BROWSER COOKIE NAME: "+cookie.name);
+                    logger.info("YAML COOKIE NAME: "+cookieName);
+                    logger.info("BROWSER COOKIE NAME: "+cookie.name);
 
-                    if (cookie.name.equals(cookieName))
+                    if (cookie.name.equalsIgnoreCase(cookieName))
                     {
                         Assert.notNull(cookie.value, "cookie value should not be null");
-                        logger.info("cookie present: " + cookie.name); //TODO: Add SUCCESS to report/result class
+                        logger.info("cookie present: " + cookieName); //TODO: Add SUCCESS to report/result class
                         break;
                     }
                     else
                     {
-                        logger.info("cookie absent: " + cookie.name); //TODO: Add FAILURE to report/result class
+                        logger.info("cookie absent: " + cookieName); //TODO: Add FAILURE to report/result class
                     }
                 }
             }
