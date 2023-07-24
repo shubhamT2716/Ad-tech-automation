@@ -25,8 +25,7 @@ public class ModelMapperConfig {
     }
 
     @Bean
-    public ObjectMapper objectMapper(){
+    public ObjectMapper jsonReader(){
         return new ObjectMapper();
     }
-
 }
