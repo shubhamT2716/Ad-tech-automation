@@ -8,8 +8,10 @@ import com.microsoft.playwright.Request;
 import com.microsoft.playwright.TimeoutError;
 import com.microsoft.playwright.options.LoadState;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,15 @@ public class ComplianceTestSuite {
     URLDataProcessing urlDataProcessing;
     @Autowired
     ObjectWriter jsonWriter;
+
+    // @Autowired
+    // private CommonBrowserUtil browserUtil;
+
+    @Value("${harFileBasePath}")
+	private String harFileBasePath;
+
+    @Value("${browserPath}")
+    private String browserPath;
 
     private static String windscribeLogin = "xpath=//button[text()='Login']";
     private static String windscribeUsername = "xpath=//input[@name='username']";
@@ -45,7 +56,8 @@ public class ComplianceTestSuite {
 
     public String getTestResults(ComplianceTestCriteria testData) throws InterruptedException {
 
-        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(),null);
+        String harFileName = harFileBasePath + CommonBrowserUtil.getFileNameForHar();
+        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(), harFileName, browserPath);
         browserContext.clearCookies();
 
         //list of arrays initialization
@@ -79,11 +91,14 @@ public class ComplianceTestSuite {
         pubsRefresh(page);
         page.waitForLoadState(LoadState.NETWORKIDLE);
 
+        updateTestCriteriaGdprString(testData,gdprString);
+
+        String results = getNetworkCallAssertions3(urlFromNetworkTab, testData);
+
         page.close();
         browserContext.close();
 
-        updateTestCriteriaGdprString(testData,gdprString);
-        return getNetworkCallAssertions3(urlFromNetworkTab, testData);
+        return results;
     }
 
     public List<String> getExtensionList() {

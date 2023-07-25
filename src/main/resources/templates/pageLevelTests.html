@@ -4,32 +4,111 @@
 <head>
     <meta charset="UTF-8">
     <title>Page Level Tests - Emma</title>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/railscasts.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <link rel="stylesheet" href="/path/to/styles/default.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <script src="/path/to/highlight.min.js"></script>
+    <link rel="stylesheet" href="/highlight/styles/default.min.css">
+    <script src="/highlight/highlight.min.js"></script>
     <script>
         hljs.highlightAll();
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <style>
+
+        .error {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
+
+        #submitButton {
+            display: block;
+            width: 150px;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #or {
+            text-align: left;
+            align-content: normal;
+            display: block;
+            font-weight: bold;
+        }
+
+        #submitButton:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            $('#yamlInput').on('input', function () {
+                var yamlValue = $(this).val();
+                var isValidYaml = true;
+                $('.error').hide();
+
+                try {
+                    jsyaml.load(yamlValue);
+                } catch (error) {
+                    isValidYaml = false;
+                    $('.error').show();
+                }
+
+                if (isValidYaml && yamlValue.trim() !== '') {
+                    $('#submitButton').prop('disabled', false);
+                } else {
+                    $('#submitButton').prop('disabled', true);
+                }
+            });
+
+            $('#file-dropdown').change(function () {
+                var selectedFile = $(this).val();
+                if (selectedFile !== '') {
+                    $.ajax({
+                        url: './fileContent', // URL mapped by the Spring Boot controller
+                        method: 'POST',
+                        contentType: 'text/plain',
+                        data: selectedFile,
+                        success: function (response) {
+                            $('#yamlInput').val(response);
+                            $('#submitButton').prop('disabled', false);
+                            $('.error').hide();
+                        }
+                    });
+                } else {
+                    $('#yamlInput').val('');
+                    $('#submitButton').prop('disabled', true);
+                }
+            });
+        });
     </script>
 </head>
 
 <body>
     <div class="container my-5">
         <h1>Page Level Tests</h1>
-        <div class="col-lg-12 px-0">
-            <form method="post" target="_blank">
-                <input class="form-group w-50" type="text" name="url" placeholder="Enter Publisher URL">
-                <button type="submit" onclick="changeText()" value="submit" class="btn btn-primary mb-2">Submit</button>
-            </form>
-            <div id="app">
-                <pre>
-                    <code id="msg" th:text="${message}"></code>
-                </pre>
-            </div>
-
-
-        </div>
+        <form id="testForm" method="POST" target="_blank" style="width: 100%;">
+            <label for="file-dropdown">Select Yaml File: </label>
+            <select class="form-control" id="file-dropdown">
+                <option value="">-- Select --</option>
+                <!-- <option value="forbes.yaml">forbes.yaml</option>
+                <option value="nutritionix.yaml">nutritionix.yaml</option>
+                <option value="webmd.yaml">webmd.yaml</option> -->
+                <option th:each="fileName : ${files}" th:value="${fileName}" th:text="${fileName}"></option>
+            </select>
+            <br>
+            <div id="or"> OR</div>
+            <br>
+            <label for="yamlInput">Enter YAML:</label>
+            <textarea class="form-control" rows="20" id="yamlInput" name="yaml"></textarea>
+            <p class="error">Invalid YAML format</p>
+            <input class="form-control" id="submitButton" type="submit" value="Execute Tests" disabled>
+        </form>
+        
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
