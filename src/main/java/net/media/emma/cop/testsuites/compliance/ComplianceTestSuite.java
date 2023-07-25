@@ -8,17 +8,14 @@ import com.microsoft.playwright.Request;
 import com.microsoft.playwright.TimeoutError;
 import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
-import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
+import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
-import net.media.emma.cop.components.BrowserFactory;
-import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -83,12 +80,6 @@ public class ComplianceTestSuite {
         Thread.sleep(1000);
 
         List<Cookie> allCookies = browserContext.cookies();
-        for (Cookie cookie : allCookies) {
-            logger.info("Cookie Name: " + cookie.name);
-            logger.info("Cookie Value: " + cookie.value);
-            logger.info("------------------------");
-        }
-        verifyCookies(allCookies,testData.getCookiesToVerify());
         HashMap<String, String> tcfResponse = getTcfApiResponse(page);
         String gdprString = tcfResponse.get("tcString");
 
@@ -105,30 +96,7 @@ public class ComplianceTestSuite {
         browserContext.close();
 
         updateTestCriteriaGdprString(testData,gdprString);
-        return getNetworkCallAssertions3(urlFromNetworkTab, testData);
-    }
-
-    public void verifyCookies(List<Cookie> allCookies, List<Map<String, String>> cookiesToVerify)
-    {
-        for (Map<String, String> cookieToVerify : cookiesToVerify)
-        {
-            Set<String> allcookieName = cookieToVerify.keySet();
-            for (String cookieName : allcookieName)
-            {
-                for (Cookie cookie : allCookies)
-                {
-                    if (cookie.name.equals(cookieName))
-                    {
-                        Assert.notNull(cookie.value, "cookie value should not be null");
-                        break;
-                    }
-                    else
-                    {
-                        logger.info("cookie absent: " + cookieName); //TODO: Add FAILURE to report/result class
-                    }
-                }
-            }
-        }
+        return getNetworkCallAssertions3(allCookies,urlFromNetworkTab, testData);
     }
 
     public List<String> getExtensionList() {
@@ -159,7 +127,7 @@ public class ComplianceTestSuite {
         page.close();
     }
 
-    private String getNetworkCallAssertions3(List<String> requestList, ComplianceTestCriteria testData) {
+    private String getNetworkCallAssertions3(List<Cookie> allCookies,List<String> requestList, ComplianceTestCriteria testData) {
 
         ComplianceURLChecksReportModel urlChecks = ComplianceURLChecksReportModel.builder().build();
 
@@ -209,6 +177,7 @@ public class ComplianceTestSuite {
         urlChecks.updateMatchingUrlsCount();
         urlChecks.updateNetworkCallErrors(testData);
         urlChecks.verifyPositiveKeyValChecks();
+        urlChecks.verifyCookies(allCookies,testData.cookiesToVerify);
 
         try {
             return jsonWriter.writeValueAsString(urlChecks);

@@ -2,10 +2,12 @@ package net.media.emma.cop.testsuites.compliance;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.microsoft.playwright.options.Cookie;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
+import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -162,5 +164,36 @@ public class ComplianceURLChecksReportModel {
 				});
 		});
 
+	}
+
+	public void verifyCookies(List<Cookie> allCookies, List<Map<String, String>> cookiesToVerify)
+	{
+		List<HashMap<String, String>> cookiesCheckTotal = new ArrayList<>();
+		HashMap<String,String> cookieCheckIndividual = new HashMap<>();
+		for (Map<String, String> cookieToVerify : cookiesToVerify)
+		{
+			Set<String> allcookieName = cookieToVerify.keySet();
+			for (String cookieName : allcookieName)
+			{
+				for (Cookie cookie : allCookies)
+				{
+					if (cookie.name.equals(cookieName))
+					{
+						Assert.notNull(cookie.value, "cookie value should not be null");
+						cookieCheckIndividual.put(cookieName,"PRESENT");
+						cookiesCheckTotal.add(cookieCheckIndividual);
+						System.out.println("cookie present: " + cookieName); //TODO: Add FAILURE to report/result class
+						break;
+					}
+					else
+					{
+						cookieCheckIndividual.put(cookieName,"ABSENT");
+						cookiesCheckTotal.add(cookieCheckIndividual);
+						System.out.println("cookie absent: " + cookieName); //TODO: Add FAILURE to report/result class
+					}
+					setCookiesCheck(cookiesCheckTotal);
+				}
+			}
+		}
 	}
 }
