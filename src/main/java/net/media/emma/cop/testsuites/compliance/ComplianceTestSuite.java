@@ -29,8 +29,11 @@ public class ComplianceTestSuite {
     @Autowired
     ObjectWriter jsonWriter;
 
-    @Autowired
-    private CommonBrowserUtil browserUtil;
+    // @Autowired
+    // private CommonBrowserUtil browserUtil;
+
+    @Value("${harFileBasePath}")
+	private String harFileBasePath;
 
     @Value("${browserPath}")
     private String browserPath;
@@ -54,8 +57,8 @@ public class ComplianceTestSuite {
 
     public String getTestResults(ComplianceTestCriteria testData) throws InterruptedException {
 
-        String fileName=browserUtil.getFileNameForHar();
-        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(),fileName, browserPath);
+        String harFileName = harFileBasePath + CommonBrowserUtil.getFileNameForHar();
+        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(), harFileName, browserPath);
         browserContext.clearCookies();
 
         //list of arrays initialization
@@ -92,11 +95,14 @@ public class ComplianceTestSuite {
         pubsRefresh(page);
         page.waitForLoadState(LoadState.NETWORKIDLE);
 
+        updateTestCriteriaGdprString(testData,gdprString);
+
+        String results = getNetworkCallAssertions3(allCookies,urlFromNetworkTab, testData);
+
         page.close();
         browserContext.close();
 
-        updateTestCriteriaGdprString(testData,gdprString);
-        return getNetworkCallAssertions3(allCookies,urlFromNetworkTab, testData);
+        return results;
     }
 
     public List<String> getExtensionList() {
