@@ -63,4 +63,16 @@ public class FileOperations {
 
 		return null;
 	}
+
+	public String readFileAsString(String fileName) {
+		try {
+			return new String(Files.readAllBytes(Paths.get(fileName)));
+		} catch (IOException e) {
+			loggers.standardLogger().error("YAML Read Failed", e);
+			return null;
+		}
+	}
+
+	
+	
 }

@@ -1,7 +1,6 @@
 package net.media.emma.cop.testsuites.pagetests;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +56,6 @@ public class PageLevelTests {
 	@Autowired
 	ObjectMapper jsonReader;
 
-
-
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
 
@@ -97,7 +94,7 @@ public class PageLevelTests {
 		});
 		List<Slots> slotsData = extractSlotsDataFromPage2(page, yaml.getPublisherUrl());
 		page.close();
-        page.context().close();
+		page.context().close();
 
 		Map<String, List<? extends AbstractBidder>> bidderData = new HashMap<>();
 
@@ -228,7 +225,7 @@ public class PageLevelTests {
 	// if (slotData.getSizes().equals(yhbData.getSizes())) {
 	// log.info("Inside IF, sizes matched " + slotData.getSizes().toString() + " and
 	// "
-	// + yhbData.getSizes().toString());
+	// + yhbData.getSizes().toStxring());
 	// return yhbData;
 	// }
 	// }
