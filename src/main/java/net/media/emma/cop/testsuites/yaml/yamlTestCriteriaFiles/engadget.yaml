@@ -4,13 +4,13 @@ userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.engadget.com/?headerbidding=1&mnet_test=1"
 
 networkCallsPositive: {
-          bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHBL12EX",
-          checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
-          PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
-          APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
-          AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
-          #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-          GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+   bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHBL12EX",
+   checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
+   PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+   APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+   AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 }
 
 networkCallsNegative: {
@@ -28,7 +28,6 @@ keysToVerifyPositive: {
   },
 
   PRLog: {
-    pvid: ["-3","25014"],
     cid: ["8YHBL12EX"],
     svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
@@ -50,7 +49,7 @@ keysToVerifyNegative: {
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
   prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { nbr : [ "45","3","69","0","1","99" ]},
+  aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
 }
 
 # ------------------------------ignore the lines below--rats---------------------
