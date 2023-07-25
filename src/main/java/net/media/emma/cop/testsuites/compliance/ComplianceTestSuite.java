@@ -117,13 +117,9 @@ public class ComplianceTestSuite {
             {
                 for (Cookie cookie : allCookies)
                 {
-                    logger.info("YAML COOKIE NAME: "+cookieName);
-                    logger.info("BROWSER COOKIE NAME: "+cookie.name);
-
                     if (cookie.name.equals(cookieName))
                     {
                         Assert.notNull(cookie.value, "cookie value should not be null");
-                        logger.info("cookie present: " + cookieName); //TODO: Add SUCCESS to report/result class
                         break;
                     }
                     else
@@ -165,7 +161,7 @@ public class ComplianceTestSuite {
 
     private String getNetworkCallAssertions3(List<String> requestList, ComplianceTestCriteria testData) {
 
-        URLChecks urlChecks = URLChecks.builder().build();
+        ComplianceURLChecksReportModel urlChecks = ComplianceURLChecksReportModel.builder().build();
 
         for (String requestUrl : requestList) {
 
@@ -173,11 +169,11 @@ public class ComplianceTestSuite {
 
             if (urlData != null) {
 
-                URLChecks.PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
+                ComplianceURLChecksReportModel.PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
 
                 if (labelExists == null) {
 
-                    URLChecks.PositiveURLChecks puc = URLChecks.PositiveURLChecks.builder().label(urlData.getKey())
+                    ComplianceURLChecksReportModel.PositiveURLChecks puc = ComplianceURLChecksReportModel.PositiveURLChecks.builder().label(urlData.getKey())
                             .urlPattern(urlData.getValue())
                             .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
                             .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
