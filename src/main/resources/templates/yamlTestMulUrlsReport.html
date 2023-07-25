@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Emma - COP Test Automation Tool</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="/highlight/styles/default.min.css">
+    <script src="/highlight/highlight.min.js"></script>
+</head>
+<body>
+    <div class="container my-5">
+        <h1>YAML Test Suite Report</h1>
+    </div>
+
+    <div class="container my-5">
+      <button onClick="display('FAIL')" type="button" class="btn btn-danger">Show Errors</button> <button onClick="display('PASS')" type="button" class="btn btn-success">Show Success</button> <button onClick="displayRaw()" type="button" class="btn btn-secondary">Show Raw Data</button>
+    </div>
+
+    <div class="container my-5">
+      <div id="testReport" />
+    </div>
+		
+
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+         var reportData = /*[[${message1}]]*/ 'User Name';
+       /*]]>*/
+  </script> 
+
+    <script type="text/javascript">
+	
+  function printObj(obj) {
+
+    const h4 = document.createElement("h4");
+    h4.innerHTML = obj.label;
+
+    const p = document.createElement("span");
+    p.innerHTML =  obj.urlPattern + " " + obj.countOfMatchingUrls + " Urls Matched.<br/>";
+
+    const bold = document.createElement("b");
+    bold.innerHTML = "Messages:";
+   
+    const ul = document.createElement("ul");
+
+      if(obj.hasOwnProperty('testMessages'))
+      obj.testMessages.forEach(element => {
+
+        li = document.createElement("li");
+        li.innerHTML = element;
+
+        ul.appendChild(li);
+       
+      });
+     
+      const para = document.createElement("p");
+      para.appendChild(h4);
+      para.appendChild(p);
+      para.appendChild(bold);
+      para.appendChild(ul);
+
+
+      return para;
+  }
+
+  function displayRaw() {
+
+    const pre = document.createElement("pre");
+    const code = document.createElement("code");
+    code.classList.add("language-json");
+    code.innerHTML = JSON.stringify(reportData, null, 2);
+    pre.appendChild(code);
+    document.getElementById("testReport").innerHTML = "";
+    document.getElementById("testReport").appendChild(pre);
+    hljs.highlightAll();
+  }
+
+  function display(status) {
+
+    // console.log(status);
+
+    document.getElementById("testReport").innerHTML = "";
+
+    for (var key in reportData.urlChecks.positiveUrlChecks) 
+      if (reportData.urlChecks.positiveUrlChecks.hasOwnProperty(key))
+        if(reportData.urlChecks.positiveUrlChecks[key].testResult == status){
+          document.getElementById("testReport").append(printObj(reportData.urlChecks.positiveUrlChecks[key]))
+        }
+          
+  }
+
+  displayRaw();
+        
+</script>
+
+
+
+</body>
+</html>

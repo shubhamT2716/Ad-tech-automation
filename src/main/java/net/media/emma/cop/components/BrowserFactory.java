@@ -144,6 +144,12 @@ public class BrowserFactory {
 		return newBc;
 	}
 
+	public static BrowserContext getBcWithUserAgent(String browserType, String userAgent, List<Map<String, String>> cookies, String harFileName) {
+		BrowserContext newBc =  getBrowserByType(browserType).newContext(
+				getCommonBrowserContext(userAgent, browserType.contains("Mobile"), harFileName));
+		return newBc;
+	}
+
 	public static BrowserContext getSystemBc(String browserType, List<Map<String, String>> cookies,
 			List<String> extension, String fileName, String browserPath) {
 		BrowserContext newBc = getSystemBrowserByType(browserType, cookies, extension, fileName, browserPath);
