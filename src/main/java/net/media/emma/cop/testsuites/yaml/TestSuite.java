@@ -162,12 +162,9 @@ public class TestSuite implements GenericTestSuite {
 	private Map.Entry<String, String> negativeURLPatternExists(String currentUrl, TestCriteriaBo testData) {
 
 		for (Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()) {
-			String pattern="*.media.net.*";
 
-			if (currentUrl.matches(pattern)) {
-				return ;
-			}
-			else {
+			if (currentUrl.startsWith(urlData.getValue())) {
+
 				return urlData;
 			}
 		}
