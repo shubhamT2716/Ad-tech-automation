@@ -8,30 +8,37 @@ userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://mail.yahoo.com/?headerbidding=1"
 
 networkCallsPositive: {
-          bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHBL12EX",
+          bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHB7Y738",
+          checksync: "https://hb.yahoo.net/checksync.php?cid=8YHB7Y738",
           PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
           APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
           AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
           #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-          # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+          GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 }
 
 networkCallsNegative: {
   nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
   Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
+  mnetcall: "*hb.media.net*"
 }
 
 keysToVerifyPositive: {
 
+  checksync: {
+    #gdpr: ["0"],
+    gpp: ["DBAA"],
+    gpp_sid: ["-1"]
+  },
+
   PRLog: {
-    pvid: ["X"],
-    cid: ["8YHBL12EX"],
-    svr: ["060106_3473_060106_1067_ssp"],
+    cid: ["8YHB7Y738"],
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
   },
   
   APLog: {
-    svr: ["060106_3473_060106_1067_ssp"],
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
   },
 }
@@ -45,7 +52,7 @@ keysToVerifyNegative: {
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  prlog: { nbr : [ "45","3","69","0","1","99" ]},
+  prlog: { nbr : [ "45","3","69","0","1","99" ], pvid: ["-3", "25014","25016"],},
   aplog: { nbr : [ "45","3","69","0","1","99" ]},
 }
 

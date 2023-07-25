@@ -5,29 +5,37 @@ publisherUrl: "https://www.engadget.com/?headerbidding=1&mnet_test=1"
 
 networkCallsPositive: {
           bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHBL12EX",
+          checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
           PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
           APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
           AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
           #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-          # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+          GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 }
 
 networkCallsNegative: {
   nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
   Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
+  mnetcall: "*hb.media.net*"
 }
 
 keysToVerifyPositive: {
 
+  checksync: {
+    #gdpr: ["0"],
+    gpp: ["DBAA"],
+    gpp_sid: ["-1"]
+  },
+
   PRLog: {
     pvid: ["-3","25014"],
     cid: ["8YHBL12EX"],
-    svr: ["2023072110_140_072113_693_072113_656_ssp"],
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
   },
   
   APLog: {
-    svr: ["2023072110_140_072113_693_072113_656_ssp"],
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
   },
 }

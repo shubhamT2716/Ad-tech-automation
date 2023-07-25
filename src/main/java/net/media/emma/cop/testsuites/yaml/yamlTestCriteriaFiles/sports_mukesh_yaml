@@ -15,15 +15,15 @@ networkCallsPositive: {
     GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
     ucreative: "https://hb.yahoo.net/ucreative.php?cv=1",
     tcb: "https://contextual.media.net/tcb.js?&cb=window.advBidxc.nativetemplatefetch&v=1",
-    Yahoomnetcall: "*.hb.yahoo.net/*"
+    #Yahoomnetcall: "*.hb.yahoo.net*"
  }
 
 networkCallsNegative: {
     nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
     Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
     BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog",
-    
- }     
+    mnetcall: "*hb.media.net*"
+}     
 
 keysToVerifyPositive: {
 
