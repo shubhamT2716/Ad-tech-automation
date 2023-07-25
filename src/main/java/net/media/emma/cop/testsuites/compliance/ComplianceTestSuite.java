@@ -6,27 +6,23 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.TimeoutError;
-import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
-import org.springframework.util.Assert;
 
 import java.util.*;
 
 @Service
 @Slf4j
 public class ComplianceTestSuite {
-    @Autowired
-    Logger logger;
+
     @Autowired
     URLDataProcessing urlDataProcessing;
     @Autowired
@@ -71,7 +67,6 @@ public class ComplianceTestSuite {
         page = browserContext.newPage();
         page.navigate(testData.getPublisherUrl());
 
-
         browserContext.onRequest(request -> {
 
             urlFromNetworkTab.add(request.url());
@@ -81,14 +76,6 @@ public class ComplianceTestSuite {
         page.locator(acceptAllBtn).click();
         page.waitForLoadState(LoadState.NETWORKIDLE);
         Thread.sleep(1000);
-
-        List<Cookie> allCookies = browserContext.cookies();
-        for (Cookie cookie : allCookies) {
-            logger.info("Cookie Name: " + cookie.name);
-            logger.info("Cookie Value: " + cookie.value);
-            logger.info("------------------------");
-        }
-        verifyCookies(allCookies,testData.getCookiesToVerify());
         HashMap<String, String> tcfResponse = getTcfApiResponse(page);
         String gdprString = tcfResponse.get("tcString");
 
@@ -106,29 +93,6 @@ public class ComplianceTestSuite {
 
         updateTestCriteriaGdprString(testData,gdprString);
         return getNetworkCallAssertions3(urlFromNetworkTab, testData);
-    }
-
-    public void verifyCookies(List<Cookie> allCookies, List<Map<String, String>> cookiesToVerify)
-    {
-        for (Map<String, String> cookieToVerify : cookiesToVerify)
-        {
-            Set<String> allcookieName = cookieToVerify.keySet();
-            for (String cookieName : allcookieName)
-            {
-                for (Cookie cookie : allCookies)
-                {
-                    if (cookie.name.equals(cookieName))
-                    {
-                        Assert.notNull(cookie.value, "cookie value should not be null");
-                        break;
-                    }
-                    else
-                    {
-                        logger.info("cookie absent: " + cookieName); //TODO: Add FAILURE to report/result class
-                    }
-                }
-            }
-        }
     }
 
     public List<String> getExtensionList() {
@@ -161,7 +125,7 @@ public class ComplianceTestSuite {
 
     private String getNetworkCallAssertions3(List<String> requestList, ComplianceTestCriteria testData) {
 
-        ComplianceURLChecksReportModel urlChecks = ComplianceURLChecksReportModel.builder().build();
+        URLChecks urlChecks = URLChecks.builder().build();
 
         for (String requestUrl : requestList) {
 
@@ -169,11 +133,11 @@ public class ComplianceTestSuite {
 
             if (urlData != null) {
 
-                ComplianceURLChecksReportModel.PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
+                URLChecks.PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
 
                 if (labelExists == null) {
 
-                    ComplianceURLChecksReportModel.PositiveURLChecks puc = ComplianceURLChecksReportModel.PositiveURLChecks.builder().label(urlData.getKey())
+                    URLChecks.PositiveURLChecks puc = URLChecks.PositiveURLChecks.builder().label(urlData.getKey())
                             .urlPattern(urlData.getValue())
                             .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
                             .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))

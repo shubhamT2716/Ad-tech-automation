@@ -15,7 +15,6 @@ public class ComplianceTestCriteria {
     String environment;
     String userAgent;
     List<Map<String, String>> cookies;
-    List<Map<String, String>> cookiesToVerify;
     Map<String, String> networkCallsPositive;
 
     Map<String, Map<String, Set<String>>> keysToVerifyPositive;
