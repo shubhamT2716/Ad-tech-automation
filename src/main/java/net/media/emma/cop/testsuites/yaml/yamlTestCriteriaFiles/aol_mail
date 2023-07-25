@@ -9,7 +9,6 @@ publisherUrl: "https://mail.aol.com/d/folders/1/messages/AEoMXfZePC7lZK17dwttyJx
 
 
 networkCallsPositive: {
-    bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHB8EU59",
     checksync: "https://hb.yahoo.net/checksync.php?cid=8YHB8EU59",
     PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
     APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",

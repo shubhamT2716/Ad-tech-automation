@@ -4,7 +4,6 @@ userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.techinvestornews.com/Amazon/Amazon-Bloggers/top-5-apple-deals-on-amazon-ahead-of-prime-day"
 
 networkCallsPositive: {
-      bidExchange: "https://hbx.media.net/bidexchange.js?cid=8CU2C156D",
       PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
       APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
       AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",

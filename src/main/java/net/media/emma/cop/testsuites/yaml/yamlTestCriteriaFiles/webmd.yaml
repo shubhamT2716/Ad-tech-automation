@@ -4,7 +4,6 @@ userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
 
 networkCallsPositive: {
-      bidExchange: "https://hbx.media.net/bidexchange.js?cid=8CULM0U5B",
       PRLog: "https://hblg.media.net/log?logid=prlog",
       APLog: "https://hblg.media.net/log?logid=aplog",
       AWLog: "https://hblg.media.net/log?logid=awlog",

@@ -4,7 +4,6 @@ userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://247wallst.com/investing/2023/04/07/bitcoin-passed-its-first-major-liquidity-stress-test-report/?mnet_test=1"
 
 networkCallsPositive: {
-          bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8CUYL308C",
           PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
           APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
           AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",

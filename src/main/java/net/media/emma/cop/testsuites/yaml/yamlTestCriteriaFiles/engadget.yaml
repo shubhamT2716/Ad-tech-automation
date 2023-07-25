@@ -4,7 +4,6 @@ userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.engadget.com/?headerbidding=1&mnet_test=1"
 
 networkCallsPositive: {
-   bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHBL12EX",
    checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
    PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
    APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",

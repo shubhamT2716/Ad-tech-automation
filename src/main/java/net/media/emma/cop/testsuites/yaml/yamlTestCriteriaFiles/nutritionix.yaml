@@ -8,7 +8,6 @@ networkCallsPositive: {
  prlogs: "https://hblg.media.net/log?logid=prlog",
  awlogs: "https://hblg.media.net/log?logid=awlog",
  checksync: "https://hbx.media.net/checksync.php",
- bidexchange: "https://hbx.media.net/bidexchange.js"
 }
 
 networkCallsNegative: {

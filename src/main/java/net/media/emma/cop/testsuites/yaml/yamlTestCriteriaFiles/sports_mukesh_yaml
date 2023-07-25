@@ -6,7 +6,6 @@ publisherUrl: "https://sports.yahoo.com/?headerbidding=1"
 
 
 networkCallsPositive: {
-    bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHBN4BN8",
     checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBN4BN8",
     PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
     APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
