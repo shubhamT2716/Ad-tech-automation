@@ -38,27 +38,27 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
 
     public void openMultiBrowser(String url1, String url2) {
 
-        browserPool.get("chrome.desktop").newPage().navigate(url1);
-        browserPool.get("firefox.desktop").newPage().navigate(url2);
+        // browserPool.get("chrome.desktop").newPage().navigate(url1);
+        // browserPool.get("firefox.desktop").newPage().navigate(url2);
     }
 
     @PostConstruct
     public void loadBrowsers() {
 
-        browserPool.put("chrome.desktop", launchBrowserWithContext("chrome.desktop"));
-        browserPool.put("firefox.desktop", launchBrowserWithContext("firefox.desktop"));
+        // browserPool.put("chrome.desktop", launchBrowserWithContext("chrome.desktop"));
+        // browserPool.put("firefox.desktop", launchBrowserWithContext("firefox.desktop"));
     }
 
-    private Browser launchBrowserWithContext(String context) {
+    // private Browser launchBrowserWithContext(String context) {
 
-        if (context.equals("chrome.desktop"))
-            return Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+    //     if (context.equals("chrome.desktop"))
+    //         return Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
 
-        if (context.equals("firefox.desktop"))
-            return Playwright.create().firefox().launch(new BrowserType.LaunchOptions().setHeadless(false));
+    //     if (context.equals("firefox.desktop"))
+    //         return Playwright.create().firefox().launch(new BrowserType.LaunchOptions().setHeadless(false));
 
-        return null;
-    }
+    //     return null;
+    // }
 
     @Override
     public boolean mockRequest(String urlPattern, String replaceHostName, Set<String> bidExHosts) {
