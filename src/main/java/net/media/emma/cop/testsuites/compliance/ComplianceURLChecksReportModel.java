@@ -6,8 +6,6 @@ import com.microsoft.playwright.options.Cookie;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
-import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -19,7 +17,7 @@ public class ComplianceURLChecksReportModel {
 	@Builder.Default
 	Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
 	@Builder.Default
-	List<HashMap<String,String>> cookiesCheck = new ArrayList<>();
+	List<HashMap<String, String>> cookiesCheck = new ArrayList<>();
 
 
 	enum TestResult {
@@ -165,35 +163,44 @@ public class ComplianceURLChecksReportModel {
 		});
 
 	}
-
-	public void verifyCookies(List<Cookie> allCookies, List<Map<String, String>> cookiesToVerify)
-	{
+	public void verifyCookies(List<Cookie> allCookies, List<Map<String, String>> cookiesToVerify) {
 		List<HashMap<String, String>> cookiesCheckTotal = new ArrayList<>();
-		HashMap<String,String> cookieCheckIndividual = new HashMap<>();
-		for (Map<String, String> cookieToVerify : cookiesToVerify)
-		{
+
+		for (Map<String, String> cookieToVerify : cookiesToVerify) {
+			HashMap<String, String> cookieCheckIndividual = new HashMap<>();
 			Set<String> allcookieName = cookieToVerify.keySet();
-			for (String cookieName : allcookieName)
-			{
-				for (Cookie cookie : allCookies)
-				{
-					if (cookie.name.equals(cookieName))
-					{
-						Assert.notNull(cookie.value, "cookie value should not be null");
-						cookieCheckIndividual.put(cookieName,"PRESENT");
-						cookiesCheckTotal.add(cookieCheckIndividual);
-						System.out.println("cookie present: " + cookieName); //TODO: Add FAILURE to report/result class
+
+			for (String cookieName : allcookieName) {
+				boolean foundCookie = false;
+				String expectedValue = cookieToVerify.get(cookieName);
+
+				for (Cookie cookie : allCookies) {
+					if (cookie.name.equals(cookieName)) {
+						foundCookie = true;
+
+						if ("notnull".equalsIgnoreCase(expectedValue)) {
+							cookieCheckIndividual.put(cookieName, "VERIFIED");
+						} else {
+							if (cookie.value != null && !cookie.value.isEmpty() && cookie.value.equals(expectedValue)) {
+								cookieCheckIndividual.put(cookieName, "VERIFIED");
+							} else {
+								cookieCheckIndividual.put(cookieName, "VALUE MISMATCH");
+								cookieCheckIndividual.put(cookieName + "_ExpectedValue", expectedValue);
+								cookieCheckIndividual.put(cookieName + "_ActualValue", (cookie.value != null) ? cookie.value : "null");
+							}
+						}
+
 						break;
 					}
-					else
-					{
-						cookieCheckIndividual.put(cookieName,"ABSENT");
-						cookiesCheckTotal.add(cookieCheckIndividual);
-						System.out.println("cookie absent: " + cookieName); //TODO: Add FAILURE to report/result class
-					}
-					setCookiesCheck(cookiesCheckTotal);
+				}
+
+				if (!foundCookie) {
+					cookieCheckIndividual.put(cookieName, "ABSENT");
 				}
 			}
+
+			cookiesCheckTotal.add(cookieCheckIndividual);
 		}
+		setCookiesCheck(cookiesCheckTotal);
 	}
 }

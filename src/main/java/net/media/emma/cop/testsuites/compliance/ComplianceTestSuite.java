@@ -183,7 +183,7 @@ public class ComplianceTestSuite {
         urlChecks.updateMatchingUrlsCount();
         urlChecks.updateNetworkCallErrors(testData);
         urlChecks.verifyPositiveKeyValChecks();
-        urlChecks.verifyCookies(allCookies,testData.cookiesToVerify);
+        urlChecks.verifyCookies(allCookies,testData.getCookiesToVerify());
 
         try {
             return jsonWriter.writeValueAsString(urlChecks);
