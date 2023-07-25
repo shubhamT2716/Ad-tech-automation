@@ -55,7 +55,7 @@ public class YHBUtil extends AbstractBidder {
       if (this.adUnitPath == null) {
 
          JsonNode adUnitPath = getYhbPostData().at("/imp/0/ext/dfp_ad_unit_code");
-
+        
          if (!adUnitPath.isMissingNode()) {
             log.info("Adunit Path found: " + adUnitPath.asText());
             this.adUnitPath = adUnitPath.asText();
