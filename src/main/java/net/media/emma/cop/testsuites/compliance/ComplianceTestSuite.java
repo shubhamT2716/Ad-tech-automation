@@ -112,25 +112,34 @@ public class ComplianceTestSuite {
         return ext;
     }
 
-    public void openWindscribe(Page page) {
+    public void openWindscribe(Page page)
+    {
         page.navigate(url);
-        try {
-            page.locator(windscribeLogin).click();
-            page.locator(windscribeUsername).click();
-            page.locator(windscribeUsername).fill(username);
-            page.locator(windscribepassword).click();
-            page.locator(windscribepassword).fill(password);
-            page.locator(windscribeLogin).click();
-            page.locator(windscribeSkip).click();
-        } catch (TimeoutError e) {
-            log.error("Element not found ", e);
+        if (page.locator(windscribeLogin).isVisible() && page.locator(windscribeLogin).isEnabled())
+        {
+            try
+            {
+                page.locator(windscribeLogin).click();
+                page.locator(windscribeUsername).click();
+                page.locator(windscribeUsername).fill(username);
+                page.locator(windscribepassword).click();
+                page.locator(windscribepassword).fill(password);
+                page.locator(windscribeLogin).click();
+                page.locator(windscribeSkip).click();
+            } catch (TimeoutError e)
+            {
+                log.error("Element not found ", e);
+            }
         }
-        page.locator(windscribeLocations).click();
-        page.locator(windscribeSearchLocation).click();
-        page.locator(windscribeSearchbox).click();
-        page.locator(windscribeSearchbox).fill(locationParis);
-        page.locator(windscribeParisLoc).click();
-        page.close();
+        else
+        {
+            page.locator(windscribeLocations).click();
+            page.locator(windscribeSearchLocation).click();
+            page.locator(windscribeSearchbox).click();
+            page.locator(windscribeSearchbox).fill(locationParis);
+            page.locator(windscribeParisLoc).click();
+            page.close();
+        }
     }
 
     private String getNetworkCallAssertions3(List<Cookie> allCookies,List<String> requestList, ComplianceTestCriteria testData) {
