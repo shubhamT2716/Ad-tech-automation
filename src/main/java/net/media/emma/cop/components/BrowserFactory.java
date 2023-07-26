@@ -34,6 +34,18 @@ public class BrowserFactory {
 			put("Webkit.Tablet.iPad",
 					"Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148");
 			put("rubbish", "Googlebot/2.1 (+http://www.google.com/bot.html)");
+			put("Chrome.Desktop.hw","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36");
+			put("Chrome.Desktop.lw","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36");
+			put("Chrome.Desktop.stage.lw","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36");
+			put("Chrome.Mobile.hw","Mozilla/5.0 (Linux; Android 11; Pixel 3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.96 Mobile Safari/537.36");
+			put("Chrome.Mobile.lw","Mozilla/5.0 (Linux; Android 13; SM-G930F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Mobile Safari/537.36");
+			put("Chrome.Mobile.stage.lw","Mozilla/5.0 (Linux; Android 7.1.2; Sony Xperia 5 IV) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36");
+			put("Firefox.Desktop.hw","Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:62.0) Gecko/20100101 Firefox/62.0");
+			put("Firefox.Desktop.lw","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0");
+			put("Firefox.Desktop.stage.lw","Mozilla/5.0 (Macintosh; Intel Mac OS X 13_0; rv:115.0) Gecko/20100101 Firefox/115.0");
+			put("Safari.Desktop.hw","Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Version/7.0 Safari/537.36");
+			put("Safari.Desktop.lw","Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/605.1.15");
+			put("Safari.Desktop.stage.lw","Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1");
 		}
 	};
 
