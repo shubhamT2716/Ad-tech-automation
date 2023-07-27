@@ -38,7 +38,7 @@ public class YamlTestSuiteScheduling {
 	@Autowired
 	private ObjectMapper mapper;
 
-	@Scheduled(cron = "0 */3 * * * *") // runs every 24 hours
+	@Scheduled(cron = "0 0 */24 * * *") // runs every 24 hours
 	public ModelAndView getAutoTest() {
 
 		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
