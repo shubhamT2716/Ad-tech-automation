@@ -133,7 +133,7 @@ public class TestSuite implements GenericTestSuite {
 		// return getNetworkCallAssertions(requestList, testData);
 
 		BidExController bidExController = getBidExData(requestList, testData);
-		bidExController.setTestMessages(consoleMessage);
+		bidExController.setConsoleMessages(consoleMessage);
 
 		TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
 				.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).testName("YAML Test Suite")
@@ -165,8 +165,6 @@ public class TestSuite implements GenericTestSuite {
 		// from pw req object will have actual url filed, size, time taken to load
 		// js errors arising from this controller
 
-
-
 		String regEx = ".*/(" + String.join("|", bidExHosts) + "|" + environmentHost + ")/("
 				+ String.join("|", bidExControlers) + ").*";
 
@@ -190,9 +188,7 @@ public class TestSuite implements GenericTestSuite {
 		List<String> consoleErrors = new ArrayList<>();
 
 		// String controllerRegex = "**/" + bidExControlers + "/**";
-		String controllerRegex =  ".*/(" + String.join("|", bidExControlers) + ").*";
-		
-
+		String controllerRegex = ".*/(" + String.join("|", bidExControlers) + ").*";
 
 		page.onConsoleMessage(consoleMessage -> {
 			if (consoleMessage.type().equals("error") && consoleMessage.location().matches(controllerRegex)) {
@@ -227,11 +223,11 @@ public class TestSuite implements GenericTestSuite {
 		}
 
 		if (bidExRequestObjects.size() == 0) {
-			bidexReport.getTestMessages().add("No bidex request found");
+			bidexReport.getConsoleMessages().add("No bidex request found");
 		}
 
 		if (bidExRequestObjects.size() > 1) {
-			bidexReport.getTestMessages().add("Multiple bidex request found");
+			bidexReport.getConsoleMessages().add("Multiple bidex request found");
 		}
 
 		return bidexReport;

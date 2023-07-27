@@ -2,9 +2,7 @@ package net.media.emma.cop.testsuites.yaml;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,11 +50,9 @@ public class WebController {
 	private String yamlTestCriteriaFilesPath;
 
 	@GetMapping("/autoTest")
-	public ModelAndView getAutoTest(Model model) {
+	public ModelAndView getAutoTest() {
 
 		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
-
-		List<String> listOfYamlResult = new ArrayList<>();
 
 		Map<String, JsonNode> result = new HashMap<>();
 
@@ -72,16 +67,10 @@ public class WebController {
 				thread.start();
 				// thread.join();
 
-//				log.info("yaml content " + yamlContent);
-
 				ObjectMapper objectMapper = new YAMLMapper();
 				TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
 
-//				log.info("TestCriteria" + testCriteria);
-
 				String message = yamlTestSuite.getTestResults(testCriteria);
-
-				listOfYamlResult.add(message);
 
 				result.put(yaml, mapper.readTree(message));
 			}
@@ -91,15 +80,17 @@ public class WebController {
 			mav.addObject("message", e.getMessage());
 		}
 
-		// set resdult into jsonNode
-
-		String TestResult = listOfYamlResult.toString();
-
-		model.addAttribute("result", result);
-
 		log.info("Result = " + result);
 
 		return mav;
+	}
+
+	@Autowired
+	private YamlTestSuiteScheduling scheduling;
+
+	@GetMapping("/schedulerReport")
+	public ModelAndView generatedReportFromScheduling() {
+		return this.scheduling.getAutoTest();
 	}
 
 	@GetMapping

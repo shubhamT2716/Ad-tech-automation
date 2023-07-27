@@ -1,7 +1,6 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 import lombok.Builder;
@@ -40,7 +39,7 @@ public class TestReportModel {
 		String totalSizeDownloaded;
 		String totalResponseTime;
 		@Builder.Default
-		List<String> testMessages = new ArrayList<>();
+		List<String> consoleMessages = new ArrayList<>();
 		// List of checks neededd
 		// Non 200 response
 		// js errors arising from this controller
