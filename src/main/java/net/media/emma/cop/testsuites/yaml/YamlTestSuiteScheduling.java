@@ -1,77 +1,77 @@
-//package net.media.emma.cop.testsuites.yaml;
-//
-//import java.util.HashMap;
-//import java.util.Map;
-//import java.util.Set;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.context.annotation.ComponentScan;
-//import org.springframework.scheduling.annotation.EnableScheduling;
-//import org.springframework.scheduling.annotation.Scheduled;
-//import org.springframework.stereotype.Component;
-//import org.springframework.web.servlet.ModelAndView;
-//
-//import com.fasterxml.jackson.databind.JsonNode;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-//
-//import lombok.extern.slf4j.Slf4j;
-//import net.media.emma.service.GenericTestSuite;
-//import net.media.emma.utils.FileOperations;
-//
-//@Slf4j
-//@Component
-//@ComponentScan
-//@EnableScheduling
-//public class YamlTestSuiteScheduling {
-//
-//	@Autowired
-//	private FileOperations fileOperations;
-//
-//	@Autowired
-//	private GenericTestSuite yamlTestSuite;
-//
-//	@Value("${yamlTestCriteriaFilesPath}")
-//	private String yamlTestCriteriaFilesPath;
-//
-//	@Autowired
-//	private ObjectMapper mapper;
-//
-//	@Scheduled(cron = "0 */3 * * * *") // runs every 24 hours
-//	public ModelAndView getAutoTest() {
-//
-//		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
-//
-//		Map<String, JsonNode> result = new HashMap<>();
-//
-//		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
-//
-//		try {
-//			for (String yaml : listOfYaml) {
-//
-//				String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
-//
-//				Thread thread = new Thread(yamlContent);
-//				thread.start();
-//				// thread.join();
-//
-//				ObjectMapper objectMapper = new YAMLMapper();
-//				TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
-//
-//				String message = yamlTestSuite.getTestResults(testCriteria);
-//
-//				result.put(yaml, mapper.readTree(message));
-//			}
-//			mav.addObject("message1", result);
-//		} catch (Exception e) {
-//			log.error("Error reading file.", e);
-//			mav.addObject("message", e.getMessage());
-//		}
-//
-//		log.info("Result = " + result);
-//
-//		return mav;
-//	}
-//
-//}
+package net.media.emma.cop.testsuites.yaml;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import net.media.emma.service.GenericTestSuite;
+import net.media.emma.utils.FileOperations;
+
+@Slf4j
+@Component
+@ComponentScan
+@EnableScheduling
+public class YamlTestSuiteScheduling {
+
+	@Autowired
+	private FileOperations fileOperations;
+
+	@Autowired
+	private GenericTestSuite yamlTestSuite;
+
+	@Value("${yamlTestCriteriaFilesPath}")
+	private String yamlTestCriteriaFilesPath;
+
+	@Autowired
+	private ObjectMapper mapper;
+
+	@Scheduled(cron = "0 */3 * * * *") // runs every 24 hours
+	public ModelAndView getAutoTest() {
+
+		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
+
+		Map<String, JsonNode> result = new HashMap<>();
+
+		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
+
+		try {
+			for (String yaml : listOfYaml) {
+
+				String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
+
+				Thread thread = new Thread(yamlContent);
+				thread.start();
+				// thread.join();
+
+				ObjectMapper objectMapper = new YAMLMapper();
+				TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
+
+				String message = yamlTestSuite.getTestResults(testCriteria);
+
+				result.put(yaml, mapper.readTree(message));
+			}
+			mav.addObject("message1", result);
+		} catch (Exception e) {
+			log.error("Error reading file.", e);
+			mav.addObject("message", e.getMessage());
+		}
+
+		log.info("Result = " + result);
+
+		return mav;
+	}
+
+}
