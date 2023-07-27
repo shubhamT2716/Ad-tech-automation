@@ -85,13 +85,13 @@ public class WebController {
 		return mav;
 	}
 
-	@Autowired
-	private YamlTestSuiteScheduling scheduling;
-
-	@GetMapping("/schedulerReport")
-	public ModelAndView generatedReportFromScheduling() {
-		return this.scheduling.getAutoTest();
-	}
+//	@Autowired
+//	private YamlTestSuiteScheduling scheduling;
+//
+//	@GetMapping("/schedulerReport")
+//	public ModelAndView generatedReportFromScheduling() {
+//		return this.scheduling.getAutoTest();
+//	}
 
 	@GetMapping
 	public ModelAndView yamlTestSuite() {
