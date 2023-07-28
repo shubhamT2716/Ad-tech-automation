@@ -11,12 +11,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import net.media.emma.mailConfig.MailServiceImpl;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
 
@@ -38,32 +41,46 @@ public class YamlTestSuiteScheduling {
 	@Autowired
 	private ObjectMapper mapper;
 
-	@Scheduled(cron = "0 0 */24 * * *") // runs every 24 hours
-	public ModelAndView getAutoTest() {
+	@Autowired
+	private MailServiceImpl mailServiceImpl;
+
+	@Autowired
+	private TemplateEngine engine;
+
+//	@Scheduled(cron = "0 0 */24 * * *") // runs every 24 hours
+	@Scheduled(cron = "0 */3 * * * *")
+	public void getAutoTest() {
 
 		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
 
 		Map<String, JsonNode> result = new HashMap<>();
+
+		int i = 0;
 
 		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
 
 		try {
 			for (String yaml : listOfYaml) {
 
-				String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
+				if (i < 2) {
+					String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
 
-				Thread thread = new Thread(yamlContent);
-				thread.start();
-				// thread.join();
+					Thread thread = new Thread(yamlContent);
+					thread.start();
+					// thread.join();
 
-				ObjectMapper objectMapper = new YAMLMapper();
-				TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
+					ObjectMapper objectMapper = new YAMLMapper();
+					TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
 
-				String message = yamlTestSuite.getTestResults(testCriteria);
+					String message = yamlTestSuite.getTestResults(testCriteria);
 
-				result.put(yaml, mapper.readTree(message));
+					result.put(yaml, mapper.readTree(message));
+				}
+
+				i++;
 			}
 			mav.addObject("message1", result);
+
 		} catch (Exception e) {
 			log.error("Error reading file.", e);
 			mav.addObject("message", e.getMessage());
@@ -71,7 +88,16 @@ public class YamlTestSuiteScheduling {
 
 		log.info("Result = " + result);
 
-		return mav;
+		this.mailServiceImpl.sendMail("vedant.a@media.net", "DailyYamlAutoTestResult",
+				templateLoder("vedant.a@media.net", result));
+
+	}
+
+	public String templateLoder(String user, Map<String, JsonNode> result) {
+		Context context = new Context();
+		context.setVariable("name", user);
+		context.setVariable("result", result);
+		return this.engine.process("SchedulerReport", context);
 	}
 
 }
