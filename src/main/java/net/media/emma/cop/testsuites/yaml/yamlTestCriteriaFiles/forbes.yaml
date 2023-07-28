@@ -14,7 +14,7 @@ networkCallsPositive: {
 networkCallsNegative: {
  nerrPing: "https://hblg.media.net/nerrping.php?",
  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
- medianetcalls: "patterns: .*media.net.*",
+ medianetcalls: "pattern: .*media.net.*",
  }
 
 keysToVerifyPositive: {
