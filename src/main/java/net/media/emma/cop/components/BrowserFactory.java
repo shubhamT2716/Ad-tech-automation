@@ -104,7 +104,11 @@ public class BrowserFactory {
 			return getPlaywrightObj().chromium().launch(getBrowserLaunchOptions("msedge"));
 		}
 
-		return getPlaywrightObj().webkit().launch();
+		if(browserType.contains("Safari")){ //webkit is equal to safari (as per playwright documentation
+			return getPlaywrightObj().webkit().launch(getBrowserLaunchOptions(""));
+		}
+
+		return getPlaywrightObj().webkit().launch(); 
 	}
 
 	private static BrowserContext getSystemBrowserByType(String browserType, List<Map<String, String>> cookies,
