@@ -15,6 +15,7 @@ networkCallsPositive: {
 networkCallsNegative: {
   nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
   Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
+  Pattern: ".*media\.net.*"
 }
 
 keysToVerifyPositive: {
