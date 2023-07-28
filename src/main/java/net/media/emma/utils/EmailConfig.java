@@ -1,4 +1,4 @@
-package net.media.emma.mailConfig;
+package net.media.emma.utils;
 
 import java.util.Properties;
 

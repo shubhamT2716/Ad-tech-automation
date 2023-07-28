@@ -19,9 +19,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import net.media.emma.mailConfig.MailServiceImpl;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
+import net.media.emma.utils.MailServiceImpl;
 
 @Slf4j
 @Component
