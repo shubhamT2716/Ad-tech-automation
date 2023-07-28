@@ -1,7 +1,7 @@
 environment: hbx.media.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://www.forbes.com/advisor/business/leave-of-absence/"
+publisherUrl: "https://forbes.com/health/body/fat-burning-heart-rate/?mnet_test=1"
 
 networkCallsPositive: {
     bidExchange: "https://hbx.media.net/bidexchange.js?cid=8CU25AH4U",
