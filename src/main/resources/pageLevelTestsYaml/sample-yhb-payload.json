@@ -1,0 +1,64 @@
+{
+  "site": {
+    "domain": "www.forbes.com",
+    "page": "https://www.forbes.com/advisor/taxes/taxes-federal-income-tax-bracket/?mnet_test=1",
+    "ref": "",
+    "topMostLocation": "https://www.forbes.com/advisor/taxes/taxes-federal-income-tax-bracket/?mnet_test=1",
+    "isTop": true
+  },
+  "ext": {
+    "abte": "SSP_CLIENT",
+    "customer_id": "8YHB22N96",
+    "prebid_version": 1,
+    "gdpr_applies": false,
+    "usp_applies": true,
+    "usp_consent_string": "1-N-",
+    "coppa_applies": false,
+    "screen": {
+      "w": 2048,
+      "h": 1042
+    },
+    "user_id": {},
+    "fl_algo": "exploitation",
+    "pvid_exc": [
+      "25008",
+      "25011"
+    ],
+    "sd": 2
+  },
+  "id": "159054740017019841688721420548",
+  "ortb2": {
+    "regs": {
+      "gpp": "",
+      "gpp_sid": []
+    }
+  },
+  "imp": [
+    {
+      "id": "82721917845021251688721420565",
+      "ext": {
+        "dfp_id": "137275322",
+        "visibility": 0,
+        "channel": "",
+        "section": "",
+        "mnrf": 0,
+        "mnrfc": 0,
+        "mniv": 0
+      },
+      "all": {
+        "cid": "8YHB22N96",
+        "crid": "137275322"
+      },
+      "cacid": "70722336330514071688721420565",
+      "transactionId": "22516424071046461688721420547",
+      "banner": [
+        {
+          "w": 300,
+          "h": 250
+        }
+      ],
+      "tagid": "137275322"
+    }
+  ],
+  "tmax": 1400
+}

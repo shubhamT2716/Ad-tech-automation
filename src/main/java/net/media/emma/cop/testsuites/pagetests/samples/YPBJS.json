@@ -1,0 +1,83 @@
+{
+    "id": "80e04efe-d92b-4352-97eb-92b9de61e55d",
+    "cur": [
+      "USD"
+    ],
+    "imp": [
+      {
+        "id": "71909983977420491689062435487",
+        "secure": 1,
+        "banner": {
+          "mimes": [
+            "text/html",
+            "text/javascript",
+            "application/javascript",
+            "image/jpg"
+          ],
+          "format": [
+            {
+              "w": 300,
+              "h": 250
+            },
+            {
+              "w": 320,
+              "h": 50
+            }
+          ]
+        },
+        "ext": {
+          "dfp_ad_unit_code": "us_eng_ros_mw_mid_center",
+          "kvs": {
+            "cobrand": "none",
+            "lang": "en-US"
+          },
+          "pos": "us_eng_ros_mw_mid_center"
+        },
+        "tagid": "us_eng_ros_mw_mid_center"
+      }
+    ],
+    "site": {
+      "page": "https://www.engadget.com/metas-threads-is-already-showing-conversations-on-the-web-120453471.html?headerbidding=1",
+      "id": "8a9694a10187874cb8228063a3770094",
+      "publisher": {
+        "ext": {
+          "publisherblob": "lu:0;pct:story;pd:;pt:content;site:engadget;ver:carbon||1197802877||1sno7pdiaq31j",
+          "bucket": "eng-nl-hp-dis,privacy-footer"
+        }
+      }
+    },
+    "device": {
+      "dnt": 0,
+      "ua": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36",
+      "w": 400,
+      "h": 474
+    },
+    "regs": {
+      "ext": {
+        "us_privacy": "1YNN",
+        "gdpr": 0,
+        "gpp": "DBABLA~BVRqAAAAAgA.QA",
+        "gpp_sid": [
+          7
+        ]
+      }
+    },
+    "source": {
+      "ext": {
+        "hb": 1,
+        "adapterver": "1.0.2",
+        "prebidver": "7.2.0",
+        "integration": {
+          "name": "prebid.js",
+          "ver": "7.2.0"
+        }
+      },
+      "fd": 1
+    },
+    "user": {
+      "ext": {
+        "consent": "",
+        "eids": []
+      }
+    }
+  }

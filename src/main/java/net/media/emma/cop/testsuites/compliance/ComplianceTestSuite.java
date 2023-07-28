@@ -6,25 +6,37 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.TimeoutError;
+import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
-import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
-import net.media.emma.utils.URLDataProcessing;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
+import net.media.emma.utils.CommonBrowserUtil;
+import net.media.emma.utils.URLDataProcessing;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 @Slf4j
 public class ComplianceTestSuite {
-
+    @Autowired
+    Logger logger;
     @Autowired
     URLDataProcessing urlDataProcessing;
     @Autowired
     ObjectWriter jsonWriter;
+
+    // @Autowired
+    // private CommonBrowserUtil browserUtil;
+
+    @Value("${harFileBasePath}")
+	private String harFileBasePath;
+
+    @Value("${browserPath}")
+    private String browserPath;
 
     private static String windscribeLogin = "xpath=//button[text()='Login']";
     private static String windscribeUsername = "xpath=//input[@name='username']";
@@ -45,7 +57,8 @@ public class ComplianceTestSuite {
 
     public String getTestResults(ComplianceTestCriteria testData) throws InterruptedException {
 
-        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(),null);
+        String harFileName = harFileBasePath + CommonBrowserUtil.getFileNameForHar();
+        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(), harFileName, browserPath);
         browserContext.clearCookies();
 
         //list of arrays initialization
@@ -58,6 +71,7 @@ public class ComplianceTestSuite {
         page = browserContext.newPage();
         page.navigate(testData.getPublisherUrl());
 
+
         browserContext.onRequest(request -> {
 
             urlFromNetworkTab.add(request.url());
@@ -67,6 +81,8 @@ public class ComplianceTestSuite {
         page.locator(acceptAllBtn).click();
         page.waitForLoadState(LoadState.NETWORKIDLE);
         Thread.sleep(1000);
+
+        List<Cookie> allCookies = browserContext.cookies();
         HashMap<String, String> tcfResponse = getTcfApiResponse(page);
         String gdprString = tcfResponse.get("tcString");
 
@@ -79,11 +95,14 @@ public class ComplianceTestSuite {
         pubsRefresh(page);
         page.waitForLoadState(LoadState.NETWORKIDLE);
 
+        updateTestCriteriaGdprString(testData,gdprString);
+
+        String results = getNetworkCallAssertions3(allCookies,urlFromNetworkTab, testData);
+
         page.close();
         browserContext.close();
 
-        updateTestCriteriaGdprString(testData,gdprString);
-        return getNetworkCallAssertions3(urlFromNetworkTab, testData);
+        return results;
     }
 
     public List<String> getExtensionList() {
@@ -93,30 +112,39 @@ public class ComplianceTestSuite {
         return ext;
     }
 
-    public void openWindscribe(Page page) {
+    public void openWindscribe(Page page)
+    {
         page.navigate(url);
-        try {
-            page.locator(windscribeLogin).click();
-            page.locator(windscribeUsername).click();
-            page.locator(windscribeUsername).fill(username);
-            page.locator(windscribepassword).click();
-            page.locator(windscribepassword).fill(password);
-            page.locator(windscribeLogin).click();
-            page.locator(windscribeSkip).click();
-        } catch (TimeoutError e) {
-            log.error("Element not found ", e);
+        if (page.locator(windscribeLogin).isVisible() && page.locator(windscribeLogin).isEnabled())
+        {
+            try
+            {
+                page.locator(windscribeLogin).click();
+                page.locator(windscribeUsername).click();
+                page.locator(windscribeUsername).fill(username);
+                page.locator(windscribepassword).click();
+                page.locator(windscribepassword).fill(password);
+                page.locator(windscribeLogin).click();
+                page.locator(windscribeSkip).click();
+            } catch (TimeoutError e)
+            {
+                log.error("Element not found ", e);
+            }
         }
-        page.locator(windscribeLocations).click();
-        page.locator(windscribeSearchLocation).click();
-        page.locator(windscribeSearchbox).click();
-        page.locator(windscribeSearchbox).fill(locationParis);
-        page.locator(windscribeParisLoc).click();
-        page.close();
+        else
+        {
+            page.locator(windscribeLocations).click();
+            page.locator(windscribeSearchLocation).click();
+            page.locator(windscribeSearchbox).click();
+            page.locator(windscribeSearchbox).fill(locationParis);
+            page.locator(windscribeParisLoc).click();
+            page.close();
+        }
     }
 
-    private String getNetworkCallAssertions3(List<String> requestList, ComplianceTestCriteria testData) {
+    private String getNetworkCallAssertions3(List<Cookie> allCookies,List<String> requestList, ComplianceTestCriteria testData) {
 
-        URLChecks urlChecks = URLChecks.builder().build();
+        ComplianceURLChecksReportModel urlChecks = ComplianceURLChecksReportModel.builder().build();
 
         for (String requestUrl : requestList) {
 
@@ -124,11 +152,11 @@ public class ComplianceTestSuite {
 
             if (urlData != null) {
 
-                URLChecks.PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
+                ComplianceURLChecksReportModel.PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
 
                 if (labelExists == null) {
 
-                    URLChecks.PositiveURLChecks puc = URLChecks.PositiveURLChecks.builder().label(urlData.getKey())
+                    ComplianceURLChecksReportModel.PositiveURLChecks puc = ComplianceURLChecksReportModel.PositiveURLChecks.builder().label(urlData.getKey())
                             .urlPattern(urlData.getValue())
                             .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
                             .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
@@ -164,6 +192,7 @@ public class ComplianceTestSuite {
         urlChecks.updateMatchingUrlsCount();
         urlChecks.updateNetworkCallErrors(testData);
         urlChecks.verifyPositiveKeyValChecks();
+        urlChecks.verifyCookies(allCookies,testData.getCookiesToVerify());
 
         try {
             return jsonWriter.writeValueAsString(urlChecks);
