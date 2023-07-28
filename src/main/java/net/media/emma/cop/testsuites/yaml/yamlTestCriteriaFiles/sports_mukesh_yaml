@@ -1,7 +1,7 @@
 environment: hb.yahoo,net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://sports.yahoo.com/?headerbidding=1"
+publisherUrl: "https://sports.yahoo.com/?headerbidding=1&force_hbtest=all"
 #location: "New York Empire"
 
 
@@ -10,18 +10,17 @@ networkCallsPositive: {
     PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
     APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
     AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
-    #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
     GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
     ucreative: "https://hb.yahoo.net/ucreative.php?cv=1",
-    tcb: "https://contextual.media.net/tcb.js?&cb=window.advBidxc.nativetemplatefetch&v=1",
+    tcb: "https://contextual.media.net/tcb.js?&cb=window.advBidxc.nativetemplatefetch&v=1"
     #Yahoomnetcall: "*.hb.yahoo.net*"
- }
+}
 
 networkCallsNegative: {
     nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
     Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
     BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog",
-    mnetcall: "*hb.media.net*"
+    mnetcall: "pattern: .*media.net.*"
 }     
 
 keysToVerifyPositive: {
@@ -47,7 +46,7 @@ keysToVerifyPositive: {
         cid: ["8YHBN4BN8"],
         ugd: ["4"]
     }
- }
+}
 
 #to_check_negative_keys
 keysToVerifyNegative: {
@@ -55,13 +54,13 @@ keysToVerifyNegative: {
     aplog: { nbr: ["13"]},
     awlog: { ogbdp : ["0","-1","-2"]},
     belog: { name : ["DFS_PERF","NO_DOMINANT_BID_ERROR","DFST","ADS_DISABLED"]}
- }
+}
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
     prlog: { nbr : [ "45","3","69","0","1","99" ]},
     aplog: { nbr : [ "45","3","69","0","1","99" ], snm : ["success", "response_after_auction", "nobid","error"], pvid : ["-3","25014","25015","25016"]}
- }
+}
 
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []

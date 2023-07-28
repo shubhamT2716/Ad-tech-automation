@@ -1,19 +1,21 @@
-environment: hbx.media.net
+environment: ssp-stage-yahoo.ad.tech
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://www.forbes.com/advisor/business/leave-of-absence/"
+publisherUrl: "https://www.forbes.com/health/body/fat-burning-heart-rate/"
 
 networkCallsPositive: {
-    PRLog: "https://hblg.media.net/log?logid=prlog",
-    APLog: "https://hblg.media.net/log?logid=aplog",
+    PRLog: "https://lg1.yhb.media.net/log?logid=prlog",
+    APLog: "https://lg1.yhb.media.net/log?logid=aplog",
     AWLog: "https://hblg.media.net/log?logid=awlog",
     RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+    GPTSLog: "https://lg1.yhb.media.net/log?logid=kfk&evtid=gptslog"
     # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
-}
+ }
 
 networkCallsNegative: {
  nerrPing: "https://hblg.media.net/nerrping.php?",
  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+ mnetcall: ".*hb.media.net.*",
  }
 
 keysToVerifyPositive: {

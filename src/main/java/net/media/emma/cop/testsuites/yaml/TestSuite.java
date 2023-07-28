@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -264,12 +265,17 @@ public class TestSuite implements GenericTestSuite {
 	private Map.Entry<String, String> negativeURLPatternExists(String currentUrl, TestCriteriaBo testData) {
 
 		for (Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()) {
+			
+			if (urlData.getKey().startsWith("pattern: ")) {
+				if (currentUrl.matches(urlData.getValue().substring(8))){
+					return urlData;
+				}
 
-			if (currentUrl.startsWith(urlData.getValue())) {
-
-				return urlData;
+				
 			}
 		}
+
+		
 
 		return null;
 	}

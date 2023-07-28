@@ -1,14 +1,14 @@
-environment: hb.yahoo.net
+environment: ssp-stage-yahoo.ad.tech
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://sports.yahoo.com/?headerbidding=1"
+publisherUrl: "https://sports.yahoo.com/?headerbidding=1&force_hbtest=all"
 
 networkCallsPositive: {
     PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
     APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
     AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
     #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-    # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+    GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
  }
 
 networkCallsNegative: {
@@ -17,6 +17,9 @@ networkCallsNegative: {
  }
 
 keysToVerifyPositive: {
+    GAMAPADCall: {
+        pd: ["non-modal"],
+    },
 
     PRLog: {
         pvid: ["X"],
@@ -27,6 +30,7 @@ keysToVerifyPositive: {
     },
 
     APLog: {
+        k39: ["sports"],
         svr: ["060106_3473_060106_1067_ssp"],
         ugd: ["4"],
     },
@@ -43,7 +47,7 @@ keysToVerifyNegative: {
 keysToVerifyAnyOneOf: {
     prlog: { nbr : [ "45","3","69","0","1","99" ]},
     aplog: { nbr : [ "45","3","69","0","1","99" ]},
-}
+ }
 
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []

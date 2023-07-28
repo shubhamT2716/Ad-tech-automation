@@ -1,4 +1,4 @@
-environment: hb.yahoo.net
+environment: ssp-stage-yahoo.ad.tech
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.engadget.com/?headerbidding=1&mnet_test=1"
@@ -27,12 +27,12 @@ keysToVerifyPositive: {
 
   PRLog: {
     cid: ["8YHBL12EX"],
-    svr: ["2023072110_140_072412_696_072412_658_ssp"],
+    svr: ["2023072510_167_072510_697_072510_659_ssp"],
     ugd: ["4"],
   },
   
   APLog: {
-    svr: ["2023072110_140_072412_696_072412_658_ssp"],
+    svr: ["2023072510_167_072510_697_072510_659_ssp"],
     ugd: ["4"],
   },
 }
