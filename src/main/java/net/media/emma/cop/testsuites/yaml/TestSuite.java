@@ -265,8 +265,8 @@ public class TestSuite implements GenericTestSuite {
 
 		for (Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()) {
 
-			if(urlData.getKey().startsWith("pattern")){ // pattern: .*\.media\.net.*
-				if(currentUrl.matches(urlData.getValue())) { //substring
+			if(urlData.getKey().startsWith("pattern: ")){ // pattern: .*\.media\.net.*
+				if(currentUrl.matches(urlData.getValue().substring(9))) { //substring
 					return urlData;
 				}
 			}
