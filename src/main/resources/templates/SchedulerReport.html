@@ -42,25 +42,31 @@
 		<p>
 			Dear <b th:text="${name}">User</b>,
 		</p>
+	</div>
+	<div>	
 		<p>
 			Please checkout the attached report for the daily scheduler.
-			<table>
+			<table border="10", style="width: 100%;" align="left">
+				<tr>
+					<td>Publisher</td>
+					<td>Report</td>
+				</tr>
 			<tr th:each="entry : ${result}">
 				<td>
 					<h4 th:text="${entry.key}" />
 				</td>
-				<td>
+				<td style="height: 250px" >
 					<h4 th:text="${entry.value}" />
 				</td>
 			</tr>
 			</table>
 		</p>
 		<p>
-			Please do not reply to this email.
+			This is an autogenerate  mail please do not reply to this email.
 		</p>
 
 		<p class="footer">
-			<br>
+			Regards,<br>
 			The Emma Team
 		</p>
 	</div>

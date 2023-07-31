@@ -1,15 +1,22 @@
-package net.media.emma.utils;
+package net.media.emma.config;
 
 import java.util.Properties;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+
+import net.media.emma.utils.MailServiceImpl;
 
 @Configuration
 public class EmailConfig {
+
+	@Autowired
+	SpringTemplateEngine thymeleaf;
 
 	@Value("${spring.mail.host}")
 	private String host;
@@ -33,7 +40,7 @@ public class EmailConfig {
 		javaMailSender.setUsername(userName);
 		javaMailSender.setPassword(password);
 
-		Properties properties = System.getProperties();
+		Properties properties = javaMailSender.getJavaMailProperties();
 		properties.put("mail.smtp.host", host);
 		properties.put("mail.smtp.port", port);
 		properties.put("mail.smtp.ssl.enable", "true");
@@ -43,9 +50,12 @@ public class EmailConfig {
 		properties.put("mail.smtp.starttls.enable", "true");
 		properties.put("mail.debug", "true");
 
-		javaMailSender.setJavaMailProperties(properties);
-
 		return javaMailSender;
+	}
+
+	@Bean(name = "mnetSender")
+	public MailServiceImpl mailServiceImpl() {
+		return new MailServiceImpl(javaMailSender(), thymeleaf);
 	}
 
 }

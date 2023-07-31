@@ -55,29 +55,24 @@ public class YamlTestSuiteScheduling {
 
 		Map<String, JsonNode> result = new HashMap<>();
 
-		int i = 0;
-
 		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
 
 		try {
 			for (String yaml : listOfYaml) {
 
-				if (i < 2) {
-					String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
+				String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
 
-					Thread thread = new Thread(yamlContent);
-					thread.start();
-					// thread.join();
+				Thread thread = new Thread(yamlContent);
+				thread.start();
+				// thread.join();
 
-					ObjectMapper objectMapper = new YAMLMapper();
-					TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
+				ObjectMapper objectMapper = new YAMLMapper();
+				TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
 
-					String message = yamlTestSuite.getTestResults(testCriteria);
+				String message = yamlTestSuite.getTestResults(testCriteria);
 
-					result.put(yaml, mapper.readTree(message));
-				}
+				result.put(yaml, mapper.readTree(message));
 
-				i++;
 			}
 			mav.addObject("message1", result);
 
@@ -88,8 +83,7 @@ public class YamlTestSuiteScheduling {
 
 		log.info("Result = " + result);
 
-		this.mailServiceImpl.sendMail("vedant.a@media.net", "DailyYamlAutoTestResult",
-				templateLoder("vedant.a@media.net", result));
+		this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", result);
 
 	}
 
