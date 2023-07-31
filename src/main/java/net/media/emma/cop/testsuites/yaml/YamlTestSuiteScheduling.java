@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,10 +52,7 @@ public class YamlTestSuiteScheduling {
 	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
 	public void getAutoTest() {
 
-		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
-		log.info("List of yaml = " + listOfYaml);
-
-		// ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
+		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath).stream().filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(4).collect(Collectors.toSet());
 
 
 		for (String yaml : listOfYaml) {
@@ -78,14 +76,9 @@ public class YamlTestSuiteScheduling {
 
 		try {
 
-
-			String yamlContent = fileOperations.readFileAsString(fileName);
-
-			log.info(yamlContent);
-
 			ObjectMapper yamlMapper = new YAMLMapper();
 
-			return yamlMapper.readValue(yamlContent, TestCriteriaBo.class);
+			return yamlMapper.readValue(fileOperations.readFileAsInputStream(fileName) , TestCriteriaBo.class);
 
 		} catch (StreamReadException | DatabindException e) {
 			log.error("Error while reading yaml file: " + fileName, e);
