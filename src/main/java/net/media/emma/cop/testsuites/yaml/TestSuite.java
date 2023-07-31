@@ -189,7 +189,7 @@ public class TestSuite implements GenericTestSuite {
 
 		page.onConsoleMessage(consoleMessage -> {
 
-			if (consoleMessage.type().equals("error") && consoleMessage.location().matches(bidexRegex)) {
+			if (consoleMessage.type().equals("error") && consoleMessage.location().matches(controllerRegex)) {
 				consoleErrors.add(consoleMessage.text());
 			}
 		});
