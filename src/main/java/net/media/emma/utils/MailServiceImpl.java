@@ -12,7 +12,10 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class MailServiceImpl {
 
 	private JavaMailSender javaMailSender;
@@ -23,8 +26,11 @@ public class MailServiceImpl {
 		this.thymeleaf = thymeleaf;
 	}
 
-	@Async(value = "browserPool")
+	@Async
 	public void sendMail(String to, String templateName, Map<String, JsonNode> templateModel) {
+		Thread t = Thread.currentThread();
+
+		log.info("Is active " + t.isAlive());
 
 		String templateText = templateLoder(templateName, templateModel);
 		MimeMessagePreparator message = prepareMessage(to, templateText);

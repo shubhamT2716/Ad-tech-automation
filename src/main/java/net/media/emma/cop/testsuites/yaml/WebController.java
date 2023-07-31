@@ -58,21 +58,25 @@ public class WebController {
 
 		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
 
+		int i = 0;
 		try {
 			for (String yaml : listOfYaml) {
 
-				String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
+				if (i < 2) {
+					String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
 
-				Thread thread = new Thread(yamlContent);
-				thread.start();
-				// thread.join();
+					Thread thread = new Thread(yamlContent);
+					thread.start();
+					// thread.join();
 
-				ObjectMapper objectMapper = new YAMLMapper();
-				TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
+					ObjectMapper objectMapper = new YAMLMapper();
+					TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
 
-				String message = yamlTestSuite.getTestResults(testCriteria);
+					String message = yamlTestSuite.getTestResults(testCriteria);
 
-				result.put(yaml, mapper.readTree(message));
+					result.put(yaml, mapper.readTree(message));
+				}
+				i++;
 			}
 			mav.addObject("message1", result);
 		} catch (Exception e) {
