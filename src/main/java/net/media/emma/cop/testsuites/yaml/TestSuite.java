@@ -8,11 +8,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
@@ -75,11 +77,18 @@ public class TestSuite implements GenericTestSuite {
 		return bc;
 	}
 
-	
+	//async with future string
 	@Async("yamlTestSuitePool")
-	public void getTestResultsThreadPool(TestCriteriaBo testData){
-		getTestResults(testData);
+	public CompletableFuture<String> getTestResultsThreadPool(TestCriteriaBo testData){
+
+		CompletableFuture<String> future = new CompletableFuture<>();
+
+		future.complete(getTestResults(testData));
+
+		return future;
+		
 	}
+
 
 	@Override
 	public String getTestResults(TestCriteriaBo testData) {
