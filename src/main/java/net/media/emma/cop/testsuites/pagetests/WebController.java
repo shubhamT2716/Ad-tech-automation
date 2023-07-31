@@ -37,7 +37,7 @@ public class WebController {
 	@Autowired
 	PageLevelTests pageLevelTests;
 	@Autowired
-	ObjectMapper mapper;
+	ObjectMapper genericObjectMapper;
 	@Autowired
 	FileOperations fileOperations;
 

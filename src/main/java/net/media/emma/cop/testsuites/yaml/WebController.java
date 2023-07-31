@@ -1,10 +1,12 @@
 package net.media.emma.cop.testsuites.yaml;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,13 +43,26 @@ public class WebController {
 	@Autowired
 	FileOperations fileOperations;
 	@Autowired
-	ObjectMapper mapper;
+	ObjectMapper yamlMapper;
 
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
 
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
+
+	@Autowired YamlTestSuiteScheduling yamlTestSuiteScheduling;
+
+	@GetMapping("/threadPoolTest")
+	public ModelAndView runThreadPoolTest() {
+
+		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
+
+		yamlTestSuiteScheduling.getAutoTest();
+		
+		return mav;
+
+	}
 
 	@GetMapping("/autoTest")
 	public ModelAndView getAutoTest() {
@@ -74,7 +89,7 @@ public class WebController {
 
 					String message = yamlTestSuite.getTestResults(testCriteria);
 
-					result.put(yaml, mapper.readTree(message));
+					result.put(yaml, yamlMapper.readTree(message));
 				}
 				i++;
 			}

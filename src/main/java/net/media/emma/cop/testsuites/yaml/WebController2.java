@@ -29,7 +29,7 @@ public class WebController2 {
 	@Autowired
 	FileOperations fileOperations;
 	@Autowired
-	ObjectMapper mapper;
+	ObjectMapper genericObjectMapper;
 
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;

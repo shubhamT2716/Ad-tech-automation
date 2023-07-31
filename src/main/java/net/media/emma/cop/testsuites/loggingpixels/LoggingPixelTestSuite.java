@@ -2,7 +2,6 @@ package net.media.emma.cop.testsuites.loggingpixels;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleAbstractTypeResolver;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
@@ -29,7 +28,7 @@ public class LoggingPixelTestSuite
     URLDataProcessing urlUtil;
 
     @Autowired
-    ObjectMapper objectMapper;
+    ObjectMapper genericObjectMapper;
 
     @Value("${harFileBasePath}")
     private String harFileBasePath;
@@ -78,7 +77,7 @@ public class LoggingPixelTestSuite
             testReportV2.getNetworkCalls().put(url, verifyKeyDetails(urlParams, testData));
         }
 
-        return objectMapper.valueToTree(testReportV2);
+        return genericObjectMapper.valueToTree(testReportV2);
     }
     
     private boolean dataTypeCheck(String val, String dataType)

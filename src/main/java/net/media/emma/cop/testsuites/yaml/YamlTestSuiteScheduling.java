@@ -1,5 +1,6 @@
 package net.media.emma.cop.testsuites.yaml;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,10 +11,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
@@ -24,7 +28,7 @@ import net.media.emma.utils.FileOperations;
 import net.media.emma.utils.MailServiceImpl;
 
 @Slf4j
-@Component
+@Service
 @ComponentScan
 @EnableScheduling
 public class YamlTestSuiteScheduling {
@@ -39,55 +43,56 @@ public class YamlTestSuiteScheduling {
 	private String yamlTestCriteriaFilesPath;
 
 	@Autowired
-	private ObjectMapper mapper;
-
-	@Autowired
 	private MailServiceImpl mailServiceImpl;
 
 	@Autowired
 	private TemplateEngine engine;
 
-//	@Scheduled(cron = "0 0 */24 * * *") // runs every 24 hours
-
-	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
 	public void getAutoTest() {
 
 		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
-
-		Map<String, JsonNode> result = new HashMap<>();
-
 		log.info("List of yaml = " + listOfYaml);
 
-		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
+		// ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
 
-		try {
-			for (String yaml : listOfYaml) {
 
-				String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
+		for (String yaml : listOfYaml) {
 
-				Thread thread = new Thread(yamlContent);
-				thread.start();
-				// thread.join();
+			TestCriteriaBo testCriteriaBo = getYamlObject(yamlTestCriteriaFilesPath + yaml);
 
-				ObjectMapper objectMapper = new YAMLMapper();
-				TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
-
-				String message = yamlTestSuite.getTestResults(testCriteria);
-
-				result.put(yaml, mapper.readTree(message));
-
+			if( null == testCriteriaBo ) {
+				log.error("Error while reading yaml file");
+				continue;
 			}
-			mav.addObject("message1", result);
 
-		} catch (Exception e) {
-			log.error("Error reading file.", e);
-			mav.addObject("message", e.getMessage());
+			yamlTestSuite.getTestResultsThreadPool(testCriteriaBo);
+	
 		}
 
-		log.info("Result = " + result);
+		// this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", result);
 
-		this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", result);
+	}
 
+	private TestCriteriaBo getYamlObject(String fileName){
+
+		try {
+
+
+			String yamlContent = fileOperations.readFileAsString(fileName);
+
+			log.info(yamlContent);
+
+			ObjectMapper yamlMapper = new YAMLMapper();
+
+			return yamlMapper.readValue(yamlContent, TestCriteriaBo.class);
+
+		} catch (StreamReadException | DatabindException e) {
+			log.error("Error while reading yaml file: " + fileName, e);
+		} catch (IOException e) {
+			log.error("Error while reading yaml file", e);
+		}
+		return null;
 	}
 
 	public String templateLoder(String user, Map<String, JsonNode> result) {

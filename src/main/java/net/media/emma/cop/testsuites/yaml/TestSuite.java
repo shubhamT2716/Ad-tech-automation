@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -74,6 +75,12 @@ public class TestSuite implements GenericTestSuite {
 		return bc;
 	}
 
+	
+	@Async("yamlTestSuitePool")
+	public void getTestResultsThreadPool(TestCriteriaBo testData){
+		getTestResults(testData);
+	}
+
 	@Override
 	public String getTestResults(TestCriteriaBo testData) {
 
@@ -90,7 +97,7 @@ public class TestSuite implements GenericTestSuite {
 
 		browserContext = replaceBidExUrl(browserContext, testData);
 		browserContext = attachResponseMocking(browserContext, testData);
-		browserContext = injectDOM(browserContext, testData);
+		// browserContext = injectDOM(browserContext, testData);
 
 		// list of arrays initialization
 		List<String> urlFromNetworkTab = new ArrayList<>();
