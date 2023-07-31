@@ -142,11 +142,14 @@ public class PageLevelTests {
 					continue;
 				}
 
-				if (!slotData.getSizes().equals(bidder.getSizes())) {
-					log.info("Bidder size = " + bidder.getSizes());
+                
+				AbstractBidder bidderSizes = getMatchingDataByAdUnitYHB(slotData, bidderList.getValue());
+
+				if(bidderSizes == null){
+                    log.info("Bidder size = " + bidder.getSizes());
 					bidderReport.getTestMessages().add("Slot Sizes " + slotData.getSizes()
 							+ " mismatched with bidder sizes " + bidder.getSizes() + "");
-				} else {
+                } else {
 					bidderReport.getTestMessages().add("Sizes matched " + slotData.getSizes() + "");
 				}
 
@@ -205,11 +208,15 @@ public class PageLevelTests {
 	// }
 
 	private AbstractBidder getMatchingDataByAdUnit(Slots slotData, List<? extends AbstractBidder> bidderCallData) {
+        
 
 		for (AbstractBidder bidderUtil : bidderCallData) {
 
 			log.info(
 					"Slot Ad Unit Path: " + slotData.getPath() + " Bidder Ad Unit Path: " + bidderUtil.getAdUnitPath());
+                    if(bidderUtil.getAdUnitPath() == null) {
+                        return bidderUtil;
+                    }
 
 			if (slotData.getAdUnitPath().contains(bidderUtil.getAdUnitPath())) {
 
@@ -219,7 +226,25 @@ public class PageLevelTests {
 
 		return null;
 	}
+private AbstractBidder getMatchingDataByAdUnitYHB(Slots slotData, List<? extends AbstractBidder> bidderCallData) {
+    
 
+
+		for (AbstractBidder bidderUtil : bidderCallData) {
+
+            if(slotData.getAdUnitPath().contains(bidderUtil.getAdUnitPath())) {
+			log.info(
+					"Slot Sizes: " + slotData.getSizes() + " Bidder Sizes: " + bidderUtil.getSizes());
+
+			if (slotData.getSizes().equals(bidderUtil.getSizes())) {
+
+				return bidderUtil;
+			}
+		}
+    }
+
+		return null;
+	}
 	// private YHBUtil getSizesYHB(Slots slotData, List<YHBUtil> yhbCalls) {
 	// for (YHBUtil yhbData : yhbCalls) {
 	// if (slotData.getSizes().equals(yhbData.getSizes())) {
