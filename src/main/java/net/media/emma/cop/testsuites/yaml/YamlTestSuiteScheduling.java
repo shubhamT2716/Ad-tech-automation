@@ -48,12 +48,15 @@ public class YamlTestSuiteScheduling {
 	private TemplateEngine engine;
 
 //	@Scheduled(cron = "0 0 */24 * * *") // runs every 24 hours
-	@Scheduled(cron = "0 */3 * * * *")
+
+	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
 	public void getAutoTest() {
 
 		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
 
 		Map<String, JsonNode> result = new HashMap<>();
+
+		log.info("List of yaml = " + listOfYaml);
 
 		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
 
