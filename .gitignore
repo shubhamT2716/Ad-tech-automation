@@ -28,4 +28,6 @@ src/main/resources/Test-Automation-Report.html
 src/main/resources/yaml/TestData.yaml
 test-output/*
 *.DS_Store
-emma-working-directory/har-files/*
+emma-working-directory/har-files/
+emma-working-directory/temp/
+emma-working-directory/temp/BrowserMetrics-spare.pma

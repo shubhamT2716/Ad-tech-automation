@@ -1,0 +1,71 @@
+loginUrl: "https://login.aol.com/"
+userName: "adtechtest@yahoo.com"
+password : "QWEasd!@#123"
+
+environment: hb.yahoo.net
+cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://mail.aol.com/d/folders/1/messages/AEoMXfZePC7lZK17dwttyJx1e1k"
+
+
+networkCallsPositive: {
+    checksync: "https://hb.yahoo.net/checksync.php?cid=8YHB8EU59",
+    PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+    APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+    AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+    RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+    GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+    ucreative: "https://hb.yahoo.net/ucreative.php?cv=1",
+    tcb: "https://contextual.media.net/tcb.js?&cb=window.advBidxc.nativetemplatefetch&v=1",
+    #location: "New York Empire"
+ }
+
+networkCallsNegative: {
+    nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+    Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
+    BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog"
+ }
+
+keysToVerifyPositive: {
+
+    bidexchange: {
+        size: ["150-200"]
+    },
+
+    checksync: {
+        #gdpr: ["0"],
+        gpp: ["DBAA"],
+        gpp_sid: ["-1"]
+    },
+
+    PRLog: {
+        pvid: ["-3","25014"],
+        cid: ["8YHB8EU59"],
+        svr: ["2023072013_134_072012_692_072012_655_ssp"],
+        ugd: ["4"]
+    },
+
+    APLog: {
+        svr: ["2023072013_134_072012_692_072012_655_ssp"],
+        cid: ["8YHB8EU59"],
+        ugd: ["4"]
+    }
+ }
+
+#to_check_negative_keys
+keysToVerifyNegative: {
+    prlog: { snm : ["removed"], nbr : ["13"]},
+    aplog: { nbr: ["13"]},
+    awlog: { ogbdp : ["0","-1","-2"]},
+    belog: { name : ["DFS_PERF","NO_DOMINANT_BID_ERROR","DFST","ADS_DISABLED"]}
+ }
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: {
+    prlog: { nbr : [ "45","3","69","0","1","99" ]},
+    aplog: { nbr : [ "45","3","69","0","1","99" ], snm : ["success", "response_after_auction", "nobid","error"]}
+ }
+
+# ------------------------------ignore the lines below--rats---------------------
+responseSimulate: []
+domInject: []
