@@ -23,7 +23,7 @@ public class MailServiceImpl {
 		this.thymeleaf = thymeleaf;
 	}
 
-	@Async
+	@Async(value = "browserPool")
 	public void sendMail(String to, String templateName, Map<String, JsonNode> templateModel) {
 
 		String templateText = templateLoder(templateName, templateModel);
