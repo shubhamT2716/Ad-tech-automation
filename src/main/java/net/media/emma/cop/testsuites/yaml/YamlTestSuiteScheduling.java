@@ -1,9 +1,9 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -49,11 +47,10 @@ public class YamlTestSuiteScheduling {
 	@Autowired
 	private TemplateEngine engine;
 
-	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
-	public void getAutoTest() {
+	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+	public String getAutoTest() {
 
 		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath).stream().filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(4).collect(Collectors.toSet());
-
 
 		for (String yaml : listOfYaml) {
 
@@ -64,9 +61,11 @@ public class YamlTestSuiteScheduling {
 				continue;
 			}
 
-			yamlTestSuite.getTestResultsThreadPool(testCriteriaBo);
+			CompletableFuture<String> result = yamlTestSuite.getTestResultsThreadPool(testCriteriaBo);
 	
 		}
+
+		return "adsf";
 
 		// this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", result);
 
