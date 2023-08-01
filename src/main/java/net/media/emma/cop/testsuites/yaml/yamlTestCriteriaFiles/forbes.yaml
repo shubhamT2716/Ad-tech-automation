@@ -12,7 +12,7 @@ networkCallsPositive: {
 }
 
 networkCallsNegative: {
- nerrPing: "https://hblg.media.net/nerrping.php?",
+ nerrPing: "https://hblg.media.net/nerrping.(php|js)?", #pattern: .*nerrping.(php|js).*
  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
  medianetcalls: "pattern: .*media.net.*",
  }
