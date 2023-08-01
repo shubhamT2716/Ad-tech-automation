@@ -52,10 +52,18 @@ public class WebController {
 	@Autowired
 	YamlTestSuiteScheduling yamlTestSuiteScheduling;
 
-	@GetMapping("/threadPoolTest")
+	@GetMapping("/smokeTestSuite")
+	public ModelAndView threadPoolTestForm() {
+
+		return new ModelAndView("smokeTestSuite");
+
+	}
+
+
+	@PostMapping("/smokeTestSuite")
 	public ModelAndView runThreadPoolTest() {
 
-		ModelAndView mav = new ModelAndView("YamlAutoTest");
+		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
 		Map<String, JsonNode> result = yamlTestSuiteScheduling.getAutoTest();
 
@@ -70,6 +78,7 @@ public class WebController {
 		return mav;
 
 	}
+
 
 	@GetMapping("/autoTest")
 	public ModelAndView getAutoTest() {
