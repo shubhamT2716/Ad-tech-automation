@@ -1,12 +1,10 @@
 package net.media.emma.cop.testsuites.yaml;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,15 +49,24 @@ public class WebController {
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
 
-	@Autowired YamlTestSuiteScheduling yamlTestSuiteScheduling;
+	@Autowired
+	YamlTestSuiteScheduling yamlTestSuiteScheduling;
 
 	@GetMapping("/threadPoolTest")
 	public ModelAndView runThreadPoolTest() {
 
-		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
+		ModelAndView mav = new ModelAndView("YamlAutoTest");
 
-		yamlTestSuiteScheduling.getAutoTest();
-		
+		Map<String, JsonNode> result = yamlTestSuiteScheduling.getAutoTest();
+
+		try {
+			mav.addObject("message1", result);
+			log.info("Result = " + result);
+		} catch (Exception e) {
+			log.info("Error reading file.", e);
+			mav.addObject("message", e.getMessage());
+		}
+
 		return mav;
 
 	}

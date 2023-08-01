@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -49,32 +48,40 @@ public class YamlTestSuiteScheduling {
 	@Autowired
 	private TemplateEngine engine;
 
+	@Autowired
+	private ObjectMapper yamlMapper;
+
 	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
-	public String getAutoTest() {
+	public Map<String,JsonNode> getAutoTest() {
 
 		Map<String, CompletableFuture<String>> map = new HashMap<>();
 
-		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath).stream().filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(4).collect(Collectors.toSet());
+		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath).stream()
+				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(4)
+				.collect(Collectors.toSet());
 
 		for (String yaml : listOfYaml) {
 
 			TestCriteriaBo testCriteriaBo = getYamlObject(yamlTestCriteriaFilesPath + yaml);
 
-			if( null == testCriteriaBo ) {
+			if (null == testCriteriaBo) {
 				log.error("Error while reading yaml file");
 				continue;
 			}
 
-			map.put(yaml, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));	
+			map.put(yaml, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
 		}
 
-				//get values of Map into CompeletableFuture
-		CompletableFuture<Void> allFutures = CompletableFuture.allOf(map.values().toArray(new CompletableFuture[map.size()]));
+		// get values of Map into CompeletableFuture
+		CompletableFuture<Void> allFutures = CompletableFuture
+				.allOf(map.values().toArray(new CompletableFuture[map.size()]));
 
 		allFutures.join();
 
-		if(allFutures.isDone()){
-			//Map<String, CompletableFuture<String>> to Map<String, String>
+		Map<String, JsonNode> finalResultJson=null;
+		if (allFutures.isDone()) {
+			// Map<String, CompletableFuture<String>> to Map<String, String>
+
 			Map<String, String> finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
 				try {
 					return e.getValue().get();
@@ -83,21 +90,32 @@ public class YamlTestSuiteScheduling {
 				}
 				return null;
 			}));
+
+			
+			 finalResultJson = finalResult.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
+				try {
+					return yamlMapper.readTree(e.getValue());
+				} catch (IOException e1) {
+					log.error("Error while converting String to JsonNode", e1);
+				}
+				return null;
+			}));
 		}
 
-		return "adsf";
+		return finalResultJson;
 
-		// this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", result);
+		// this.mailServiceImpl.sendMail("rathnakar.ko@media.net",
+		// "rathnakar.ko@media.net", result);
 
 	}
 
-	private TestCriteriaBo getYamlObject(String fileName){
+	private TestCriteriaBo getYamlObject(String fileName) {
 
 		try {
 
 			ObjectMapper yamlMapper = new YAMLMapper();
 
-			return yamlMapper.readValue(fileOperations.readFileAsInputStream(fileName) , TestCriteriaBo.class);
+			return yamlMapper.readValue(fileOperations.readFileAsInputStream(fileName), TestCriteriaBo.class);
 
 		} catch (StreamReadException | DatabindException e) {
 			log.error("Error while reading yaml file: " + fileName, e);

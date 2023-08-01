@@ -84,7 +84,6 @@ public class TestSuite implements GenericTestSuite {
 		CompletableFuture<String> future = new CompletableFuture<>();
 
 		future.complete(getTestResults(testData));
-
 		return future;
 		
 	}
