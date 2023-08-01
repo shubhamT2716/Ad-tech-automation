@@ -1,4 +1,4 @@
-environment: ssp-stage-hb.media.net
+environment: hbx.media.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
@@ -21,13 +21,13 @@ keysToVerifyPositive: {
   PRLog: {
     pvid: ["99", "23", "79", "29", "3012", "251", "450", "441", "178", "3", "345", "203", "126", "237", "326", "117", "107", "327", "208", "109", "96", "97", "54"],
     cid: ["8CULM0U5B", "8CU66J63J"],
-    svr: ["2023072110_141_072113_693_072113_656_ssp"],
+    svr: ["2023072110_141_072810_700_072810_662_ssp"],
     ugd: ["4"],
   #usp_ldf: ["0","1"],
    },
 
   APLog: {
-    svr: ["2023072110_141_072113_693_072113_656_ssp"],
+    svr: ["2023072110_141_072810_700_072810_662_ssp"],
     ugd: ["4"],
   #usp_ldf: ["0","1"],
    },

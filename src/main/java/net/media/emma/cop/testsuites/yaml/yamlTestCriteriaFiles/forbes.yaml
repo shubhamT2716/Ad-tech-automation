@@ -1,4 +1,4 @@
-environment: ssp-stage-yahoo.ad.tech
+environment: yhb.media.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.forbes.com/health/body/fat-burning-heart-rate/"
@@ -15,14 +15,14 @@ networkCallsPositive: {
 networkCallsNegative: {
  nerrPing: "https://hblg.media.net/nerrping.php?",
  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
- mnetcall: ".*hb.media.net.*",
+ pattern: ".*hb.media.net.*",
  }
 
 keysToVerifyPositive: {
 
     PRLog: {
     pvid: ["26","43","80","203","214","222","229","236","246","251","261","326","345","450","3012","10000"],
-    cid: ["8CU25AH4U"],
+    cid: ["8YHB22N96"],
     svr: ["053011_653_053011_615_ssp"],
     },
 
