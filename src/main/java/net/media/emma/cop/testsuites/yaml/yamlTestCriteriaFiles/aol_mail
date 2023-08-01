@@ -5,7 +5,7 @@ password : "QWEasd!@#123"
 environment: hb.yahoo.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://mail.aol.com/d/folders/1/messages/AEoMXfZePC7lZK17dwttyJx1e1k"
+publisherUrl: "https://mail.aol.com/d/folders/1"
 
 
 networkCallsPositive: {
@@ -29,7 +29,7 @@ networkCallsNegative: {
 keysToVerifyPositive: {
 
     bidexchange: {
-        size: ["150-200"]
+        size: [<200]
     },
 
     checksync: {
@@ -56,8 +56,9 @@ keysToVerifyPositive: {
 keysToVerifyNegative: {
     prlog: { snm : ["removed"], nbr : ["13"]},
     aplog: { nbr: ["13"]},
-    awlog: { ogbdp : ["0","-1","-2"]},
-    belog: { name : ["DFS_PERF","NO_DOMINANT_BID_ERROR","DFST","ADS_DISABLED"]}
+    awlog: { ogbdp : ["0","-1","-2"], aucTic: [<1]},
+    belog: { name : ["DFS_PERF","NO_DOMINANT_BID_ERROR","DFST","ADS_DISABLED"]},
+    
  }
 
 #to_check_any_keys_among_these
