@@ -33,6 +33,8 @@ public class BrowserFactory {
 					"Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
 			put("Webkit.Tablet.iPad",
 					"Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148");
+			put("Edge.Desktop.Mac",
+					"Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188");
 			put("rubbish", "Googlebot/2.1 (+http://www.google.com/bot.html)");
 			put("Chrome.Desktop.hw","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36");
 			put("Chrome.Desktop.newhw","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36");
@@ -97,7 +99,7 @@ public class BrowserFactory {
 		}
 
 		if (browserType.contains("Firefox")) {
-			return getPlaywrightObj().firefox().launch();
+			return getPlaywrightObj().firefox().launch(getBrowserLaunchOptions(""));
 		}
 
 		if (browserType.contains("Edge")) {
