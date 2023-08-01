@@ -49,10 +49,8 @@ public class YamlTestSuiteScheduling {
 	@Autowired
 	private TemplateEngine engine;
 
-	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
 	public String getAutoTest() {
-
-	
 
 		Map<String, CompletableFuture<String>> map = new HashMap<>();
 
@@ -67,31 +65,24 @@ public class YamlTestSuiteScheduling {
 				continue;
 			}
 
+			map.put(yaml, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));	
+		}
 
-			// futures.add(new  yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+				//get values of Map into CompeletableFuture
+		CompletableFuture<Void> allFutures = CompletableFuture.allOf(map.values().toArray(new CompletableFuture[map.size()]));
 
-			//map of yaml file name and its result
-			// new HashMap<>().put(yaml, listOfYaml)
-			map.put(yaml, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-		
-			
+		allFutures.join();
 
-			// CompletableFuture<Void> allFutures = CompletableFuture.allOf(   futures.toArray(new CompletableFuture[futures.size()]));
-
-			//get values of Map into CompeletableFuture
-			CompletableFuture<Void> allFutures = CompletableFuture.allOf(map.values().toArray(new CompletableFuture[map.size()]));
-
-			try {
-				allFutures.get();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-	
+		if(allFutures.isDone()){
+			//Map<String, CompletableFuture<String>> to Map<String, String>
+			Map<String, String> finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
+				try {
+					return e.getValue().get();
+				} catch (InterruptedException | ExecutionException e1) {
+					log.error("Error while getting result from CompletableFuture", e1);
+				}
+				return null;
+			}));
 		}
 
 		return "adsf";
