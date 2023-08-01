@@ -1,9 +1,11 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,10 @@ public class YamlTestSuiteScheduling {
 	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
 	public String getAutoTest() {
 
+	
+
+		Map<String, CompletableFuture<String>> map = new HashMap<>();
+
 		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath).stream().filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(4).collect(Collectors.toSet());
 
 		for (String yaml : listOfYaml) {
@@ -61,7 +67,30 @@ public class YamlTestSuiteScheduling {
 				continue;
 			}
 
-			CompletableFuture<String> result = yamlTestSuite.getTestResultsThreadPool(testCriteriaBo);
+
+			// futures.add(new  yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+
+			//map of yaml file name and its result
+			// new HashMap<>().put(yaml, listOfYaml)
+			map.put(yaml, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+		
+			
+
+			// CompletableFuture<Void> allFutures = CompletableFuture.allOf(   futures.toArray(new CompletableFuture[futures.size()]));
+
+			//get values of Map into CompeletableFuture
+			CompletableFuture<Void> allFutures = CompletableFuture.allOf(map.values().toArray(new CompletableFuture[map.size()]));
+
+			try {
+				allFutures.get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 	
 		}
 
