@@ -1,5 +1,5 @@
 environment: hbx.media.net
-cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [VisitorId : "46b33136-b36c-48db-af4d-ab8e21639bc5" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.muscleandfitness.com/"
 
@@ -9,6 +9,8 @@ networkCallsPositive: {
       AWLog: "https://hblg.media.net/log?logid=awlog",
       RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
       checksync: "https://hbx.media.net/checksync.php?cid=8CUNHS8LY",
+      ucreative: "https://hbx.media.net/__media__/js/ucreative.js?cv=1",
+      tcb: "https://contextual.media.net/tcb.js?",
       #GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
  }
 
