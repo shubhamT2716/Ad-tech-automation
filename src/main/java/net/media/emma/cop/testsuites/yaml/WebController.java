@@ -2,6 +2,9 @@ package net.media.emma.cop.testsuites.yaml;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
@@ -37,13 +41,83 @@ public class WebController {
 	@Autowired
 	FileOperations fileOperations;
 	@Autowired
-	ObjectMapper mapper;
+	ObjectMapper yamlMapper;
 
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
 
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
+
+	@Autowired
+	YamlTestSuiteScheduling yamlTestSuiteScheduling;
+
+	@GetMapping("/threadPoolTest")
+	public ModelAndView runThreadPoolTest() {
+
+		ModelAndView mav = new ModelAndView("YamlAutoTest");
+
+		Map<String, JsonNode> result = yamlTestSuiteScheduling.getAutoTest();
+
+		try {
+			mav.addObject("message1", result);
+			log.info("Result = " + result);
+		} catch (Exception e) {
+			log.info("Error reading file.", e);
+			mav.addObject("message", e.getMessage());
+		}
+
+		return mav;
+
+	}
+
+	@GetMapping("/autoTest")
+	public ModelAndView getAutoTest() {
+
+		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
+
+		Map<String, JsonNode> result = new HashMap<>();
+
+		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
+
+		int i = 0;
+		try {
+			for (String yaml : listOfYaml) {
+
+				if (i < 2) {
+					String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
+
+					Thread thread = new Thread(yamlContent);
+					thread.start();
+					// thread.join();
+
+					ObjectMapper objectMapper = new YAMLMapper();
+					TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
+
+					String message = yamlTestSuite.getTestResults(testCriteria);
+
+					result.put(yaml, yamlMapper.readTree(message));
+				}
+				i++;
+			}
+			mav.addObject("message1", result);
+		} catch (Exception e) {
+			log.error("Error reading file.", e);
+			mav.addObject("message", e.getMessage());
+		}
+
+		log.info("Result = " + result);
+
+		return mav;
+	}
+
+//	@Autowired
+//	private YamlTestSuiteScheduling scheduling;
+//
+//	@GetMapping("/schedulerReport")
+//	public ModelAndView generatedReportFromScheduling() {
+//		return this.scheduling.getAutoTest();
+//	}
 
 	@GetMapping
 	public ModelAndView yamlTestSuite() {

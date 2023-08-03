@@ -8,10 +8,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
@@ -74,6 +77,18 @@ public class TestSuite implements GenericTestSuite {
 		return bc;
 	}
 
+	//async with future string
+	@Async("yamlTestSuitePool")
+	public CompletableFuture<String> getTestResultsThreadPool(TestCriteriaBo testData){
+
+		CompletableFuture<String> future = new CompletableFuture<>();
+
+		future.complete(getTestResults(testData));
+		return future;
+		
+	}
+
+
 	@Override
 	public String getTestResults(TestCriteriaBo testData) {
 
@@ -90,7 +105,7 @@ public class TestSuite implements GenericTestSuite {
 
 		browserContext = replaceBidExUrl(browserContext, testData);
 		browserContext = attachResponseMocking(browserContext, testData);
-		browserContext = injectDOM(browserContext, testData);
+		// browserContext = injectDOM(browserContext, testData);
 
 		// list of arrays initialization
 		List<String> urlFromNetworkTab = new ArrayList<>();
@@ -131,7 +146,7 @@ public class TestSuite implements GenericTestSuite {
 		// return getNetworkCallAssertions(requestList, testData);
 
 		BidExController bidExController = getBidExData(requestList, testData);
-		bidExController.setTestMessages(consoleMessage);
+		bidExController.setConsoleMessages(consoleMessage);
 
 		TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
 				.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).testName("YAML Test Suite")
@@ -163,7 +178,7 @@ public class TestSuite implements GenericTestSuite {
 		// from pw req object will have actual url filed, size, time taken to load
 		// js errors arising from this controller
 
-		String regEx = "https?://(?:" + String.join("|", bidExHosts) + "|" + environmentHost + ")/(?:"
+		String regEx = ".*/(" + String.join("|", bidExHosts) + "|" + environmentHost + ")/("
 				+ String.join("|", bidExControlers) + ").*";
 
 		List<Request> bidExRequestObjects = new ArrayList<>();
@@ -184,24 +199,12 @@ public class TestSuite implements GenericTestSuite {
 	private List<String> getConsoleErrors(Page page) {
 		List<String> consoleErrors = new ArrayList<>();
 
-		// String bidExControllerRegex = "**/" + String.join("|", bidExControlers) + "/**";
-		String bidexRegex = "(bidexchange)|(clienttag)|(catchpoint_content)|(topics)";
-
-		String mainString = "bidexchange.js";
-
-		if(mainString.matches(bidexRegex)){
-			log.info("Matcching:", mainString.matches(bidexRegex));
-		}else{
-			log.info("Not Matcching:", mainString.matches(bidexRegex));
-		}
-
-
-
-		log.info("console error messages: Controllers: " + bidexRegex);
+		// String controllerRegex = "**/" + bidExControlers + "/**";
+		String controllerRegex = ".*/(" + String.join("|", bidExControlers) + ").*";
 
 		page.onConsoleMessage(consoleMessage -> {
 
-			if (consoleMessage.type().equals("error") && consoleMessage.location().matches(bidexRegex)) {
+			if (consoleMessage.type().equals("error") && consoleMessage.location().matches(controllerRegex)) {
 				consoleErrors.add(consoleMessage.text());
 			}
 		});
@@ -237,11 +240,11 @@ public class TestSuite implements GenericTestSuite {
 		}
 
 		if (bidExRequestObjects.size() == 0) {
-			bidexReport.getTestMessages().add("No bidex request found");
+			bidexReport.getConsoleMessages().add("No bidex request found");
 		}
 
 		if (bidExRequestObjects.size() > 1) {
-			bidexReport.getTestMessages().add("Multiple bidex request found");
+			bidexReport.getConsoleMessages().add("Multiple bidex request found");
 		}
 
 		return bidexReport;
@@ -486,7 +489,7 @@ public class TestSuite implements GenericTestSuite {
 
 		return browserContext;
 	}
-}
+
 // public List<String> getURLAnalyticsFor(Page page, YamlTestCriteria testData){
 
 // //list of arrays initialization
@@ -518,3 +521,4 @@ public class TestSuite implements GenericTestSuite {
 
 // tbo.toString();
 // }
+}
