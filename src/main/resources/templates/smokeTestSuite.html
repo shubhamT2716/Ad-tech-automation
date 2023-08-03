@@ -10,15 +10,15 @@
 <div class="container my-5">
     <h1>Smoke Test Suite</h1>
   
-    <form method="post">
+    <form action="/yamlTestSuite/smokeTestSuite" method="post">
         <div class="form-group">
           <label for="env">Server Environment:</label>
-          <input type="email" class="form-control" id="env" aria-describedby="emailHelp" placeholder="hbx-stage.media.net">
+          <input type="text" class="form-control" id="env" name="env" aria-describedby="emailHelp" placeholder="hbx-stage.media.net">
           <small id="emailHelp" class="form-text text-muted">Pls enter Host Name of the stage, istage or live.</small>
         </div>
         <div class="form-group">
             <label for="ua">User Agent:</label>
-            <input type="email" class="form-control" id="ua" aria-describedby="emailHelp" placeholder="Desktop.Mac">
+            <input type="text" class="form-control" id="ua" name="ua" aria-describedby="emailHelp" placeholder="Desktop.Mac">
             <small id="emailHelp" class="form-text text-muted">User Agent identifier</small>
           </div>
         <button type="submit" class="btn btn-primary">Submit</button>

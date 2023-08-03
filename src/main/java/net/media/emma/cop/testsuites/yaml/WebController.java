@@ -61,11 +61,11 @@ public class WebController {
 
 
 	@PostMapping("/smokeTestSuite")
-	public ModelAndView runThreadPoolTest() {
+	public ModelAndView runThreadPoolTest(@RequestParam("env") String environment, @RequestParam("ua") String userAgent) {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		Map<String, JsonNode> result = yamlTestSuiteScheduling.getAutoTest();
+		Map<String, JsonNode> result = yamlTestSuiteScheduling.getAutoTest(environment,userAgent);
 
 		try {
 			mav.addObject("message1", result);

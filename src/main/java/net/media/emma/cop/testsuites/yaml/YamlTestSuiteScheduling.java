@@ -52,27 +52,38 @@ public class YamlTestSuiteScheduling {
 	private ObjectMapper yamlMapper;
 
 	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
-	public Map<String,JsonNode> getAutoTest() {
+	public Map<String,JsonNode> getAutoTest(String environment, String userAgent) {
 
 		Map<String, CompletableFuture<String>> map = new HashMap<>();
 
 		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath).stream()
-				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(4)
+				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(1)
 				.collect(Collectors.toSet());
 
-		for (String yaml : listOfYaml) {
+        String[] environments = environment.split(",");
+        String[] userAgents = userAgent.split(",");
 
-			TestCriteriaBo testCriteriaBo = getYamlObject(yamlTestCriteriaFilesPath + yaml);
+        for (String yaml : listOfYaml) {
 
-			if (null == testCriteriaBo) {
-				log.error("Error while reading yaml file");
-				continue;
-			}
+            for (String env : environments) {
+                for (String agent : userAgents) {
+                    TestCriteriaBo testCriteriaBo = getYamlObject(yamlTestCriteriaFilesPath + yaml);
 
-			map.put(yaml, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-		}
+                    if (null == testCriteriaBo) {
+                        log.error("Error while reading yaml file");
+                        continue;
+                    }
 
-		// get values of Map into CompeletableFuture
+                    // Update the environment and userAgent parameters in TestCriteriaBo
+                    testCriteriaBo.setEnvironment(env);
+                    testCriteriaBo.setUserAgent(agent);
+
+                    map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+                }
+            }
+        }
+
+        // get values of Map into CompeletableFuture
 		CompletableFuture<Void> allFutures = CompletableFuture
 				.allOf(map.values().toArray(new CompletableFuture[map.size()]));
 
@@ -91,7 +102,7 @@ public class YamlTestSuiteScheduling {
 				return null;
 			}));
 
-			
+
 			 finalResultJson = finalResult.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
 				try {
 					return yamlMapper.readTree(e.getValue());
