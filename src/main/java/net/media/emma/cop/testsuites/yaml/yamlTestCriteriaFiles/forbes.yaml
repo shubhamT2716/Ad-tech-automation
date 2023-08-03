@@ -1,7 +1,7 @@
 environment: yhb.media.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://www.forbes.com/health/body/fat-burning-heart-rate/"
+publisherUrl: "https://www.forbes.com/health/body/fat-burning-heart-rate/?mnet_test=1"
 
 networkCallsPositive: {
     PRLog: "https://lg1.yhb.media.net/log?logid=prlog",
@@ -13,9 +13,9 @@ networkCallsPositive: {
  }
 
 networkCallsNegative: {
- nerrPing: "https://hblg.media.net/nerrping.php?",
+ nerrPing: "https://hblg.media.net/nerrping.(php|js)?", #pattern: .*nerrping.(php|js).*
  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
- pattern: ".*hb.media.net.*",
+ medianetcalls: "pattern: .*media.net.*",
  }
 
 keysToVerifyPositive: {

@@ -1,6 +1,7 @@
 package net.media.emma.utils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonParser;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,4 +66,25 @@ public class FileOperations {
 
 		return null;
 	}
+
+	public String readFileAsString(String fileName) {
+		try {
+			return new String(Files.readAllBytes(Paths.get(fileName)));
+		} catch (IOException e) {
+			loggers.standardLogger().error("YAML Read Failed", e);
+			return null;
+		}
+	}
+
+    public InputStream readFileAsInputStream(String string) {
+        try {
+			return Files.newInputStream(Paths.get(string));
+		} catch (IOException e) {
+			loggers.standardLogger().error("YAML Read Failed", e);
+			return null;
+		}
+    }
+
+	
+	
 }

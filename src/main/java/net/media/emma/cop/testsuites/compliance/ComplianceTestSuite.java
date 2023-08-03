@@ -6,23 +6,24 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.TimeoutError;
+import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
-import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
+import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
-import net.media.emma.cop.components.BrowserFactory;
 
 import java.util.*;
 
 @Service
 @Slf4j
 public class ComplianceTestSuite {
-
+    @Autowired
+    Logger logger;
     @Autowired
     URLDataProcessing urlDataProcessing;
     @Autowired
@@ -70,6 +71,7 @@ public class ComplianceTestSuite {
         page = browserContext.newPage();
         page.navigate(testData.getPublisherUrl());
 
+
         browserContext.onRequest(request -> {
 
             urlFromNetworkTab.add(request.url());
@@ -79,6 +81,8 @@ public class ComplianceTestSuite {
         page.locator(acceptAllBtn).click();
         page.waitForLoadState(LoadState.NETWORKIDLE);
         Thread.sleep(1000);
+
+        List<Cookie> allCookies = browserContext.cookies();
         HashMap<String, String> tcfResponse = getTcfApiResponse(page);
         String gdprString = tcfResponse.get("tcString");
 
@@ -93,7 +97,7 @@ public class ComplianceTestSuite {
 
         updateTestCriteriaGdprString(testData,gdprString);
 
-        String results = getNetworkCallAssertions3(urlFromNetworkTab, testData);
+        String results = getNetworkCallAssertions3(allCookies,urlFromNetworkTab, testData);
 
         page.close();
         browserContext.close();
@@ -108,19 +112,40 @@ public class ComplianceTestSuite {
         return ext;
     }
 
-    public void openWindscribe(Page page) {
+    public void openWindscribe(Page page) throws InterruptedException
+    {
         page.navigate(url);
-        try {
-            page.locator(windscribeLogin).click();
-            page.locator(windscribeUsername).click();
-            page.locator(windscribeUsername).fill(username);
-            page.locator(windscribepassword).click();
-            page.locator(windscribepassword).fill(password);
-            page.locator(windscribeLogin).click();
-            page.locator(windscribeSkip).click();
-        } catch (TimeoutError e) {
-            log.error("Element not found ", e);
+        page.waitForTimeout(2000);
+        if (page.isVisible(windscribeLogin))
+        {
+            try
+            {
+                loginToWindscribe(page);
+                setLocationInWindscribe(page);
+            } catch (TimeoutError e)
+            {
+                log.error("Element not found ", e);
+            }
         }
+        else
+        {
+            setLocationInWindscribe(page);
+        }
+    }
+
+    private static void loginToWindscribe(Page page)
+    {
+        page.locator(windscribeLogin).click();
+        page.locator(windscribeUsername).click();
+        page.locator(windscribeUsername).fill(username);
+        page.locator(windscribepassword).click();
+        page.locator(windscribepassword).fill(password);
+        page.locator(windscribeLogin).click();
+        //page.locator(windscribeSkip).click();
+    }
+
+    private static void setLocationInWindscribe(Page page)
+    {
         page.locator(windscribeLocations).click();
         page.locator(windscribeSearchLocation).click();
         page.locator(windscribeSearchbox).click();
@@ -129,9 +154,9 @@ public class ComplianceTestSuite {
         page.close();
     }
 
-    private String getNetworkCallAssertions3(List<String> requestList, ComplianceTestCriteria testData) {
+    private String getNetworkCallAssertions3(List<Cookie> allCookies,List<String> requestList, ComplianceTestCriteria testData) {
 
-        URLChecks urlChecks = URLChecks.builder().build();
+        ComplianceURLChecksReportModel urlChecks = ComplianceURLChecksReportModel.builder().build();
 
         for (String requestUrl : requestList) {
 
@@ -139,11 +164,11 @@ public class ComplianceTestSuite {
 
             if (urlData != null) {
 
-                URLChecks.PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
+                ComplianceURLChecksReportModel.PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
 
                 if (labelExists == null) {
 
-                    URLChecks.PositiveURLChecks puc = URLChecks.PositiveURLChecks.builder().label(urlData.getKey())
+                    ComplianceURLChecksReportModel.PositiveURLChecks puc = ComplianceURLChecksReportModel.PositiveURLChecks.builder().label(urlData.getKey())
                             .urlPattern(urlData.getValue())
                             .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
                             .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
@@ -179,6 +204,7 @@ public class ComplianceTestSuite {
         urlChecks.updateMatchingUrlsCount();
         urlChecks.updateNetworkCallErrors(testData);
         urlChecks.verifyPositiveKeyValChecks();
+        urlChecks.verifyCookies(allCookies,testData.getCookiesToVerify());
 
         try {
             return jsonWriter.writeValueAsString(urlChecks);
