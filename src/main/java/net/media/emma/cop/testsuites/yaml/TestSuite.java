@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.BrowserContext;
@@ -23,6 +22,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
 import com.microsoft.playwright.options.Timing;
+
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
@@ -55,7 +55,8 @@ public class TestSuite implements GenericTestSuite {
 	// List of strings "1", "2"
 	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
 			"hbx-stage.media.net");
-	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");//, "catchpoint_content.js", "topics.js");
+	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");// , "catchpoint_content.js",
+																					// "topics.js");
 
 	private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
 
@@ -77,20 +78,19 @@ public class TestSuite implements GenericTestSuite {
 		return bc;
 	}
 
-	//async with future string
+	// async with future string
 	@Async("yamlTestSuitePool")
-	public CompletableFuture<String> getTestResultsThreadPool(TestCriteriaBo testData){
+	public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData) {
 
-		CompletableFuture<String> future = new CompletableFuture<>();
+		CompletableFuture<TestReportModel> future = new CompletableFuture<>();
 
 		future.complete(getTestResults(testData));
 		return future;
-		
+
 	}
 
-
 	@Override
-	public String getTestResults(TestCriteriaBo testData) {
+	public TestReportModel getTestResults(TestCriteriaBo testData) {
 
 		String harFilePath = CommonBrowserUtil.getFileNameForHar();
 
@@ -129,7 +129,7 @@ public class TestSuite implements GenericTestSuite {
 			Page page = browserContext.newPage();
 			consoleMessage = getConsoleErrors(page);
 			page.navigate(testData.getPublisherUrl());
-	
+
 			// page.waitForLoadState(LoadState.NETWORKIDLE,new
 			// Page.WaitForLoadStateOptions().setTimeout(5000));
 			// page.waitForFunction("() => performance.getEntriesByType('resource').length >
@@ -159,15 +159,17 @@ public class TestSuite implements GenericTestSuite {
 		testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab, testData));
 
 		browserContext.close();
-		try {
+//		try {
+//
+//			return jsonWriter.writeValueAsString(testReport);
+//
+//		} catch (JsonProcessingException e) {
+//
+//			log.error("Error while converting test report to json: {}", e.getMessage());
+//			return "Error while converting test report to json";
+//		}
 
-			return jsonWriter.writeValueAsString(testReport);
-
-		} catch (JsonProcessingException e) {
-
-			log.error("Error while converting test report to json: {}", e.getMessage());
-			return "Error while converting test report to json";
-		}
+		return testReport;
 	}
 
 	private List<Request> getBidExRequestObjects(List<Request> listOfPwRequestObjects, String environmentHost) {
@@ -228,12 +230,11 @@ public class TestSuite implements GenericTestSuite {
 
 			Timing timing = request.timing();
 
-			if(null != timing){
+			if (null != timing) {
 				Date date = new Date((long) (timing.responseEnd - timing.responseStart));
 				bidexReport.setTotalResponseTime(date.getTime() + "ms");
-			}else
-			{
-				bidexReport.setTotalResponseTime("Not Available");	
+			} else {
+				bidexReport.setTotalResponseTime("Not Available");
 			}
 
 			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "kb");

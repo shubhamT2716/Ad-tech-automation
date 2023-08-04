@@ -1,6 +1,7 @@
 package net.media.emma.utils;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -10,9 +11,8 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.testsuites.yaml.TestReportModel;
 
 @Component
 @Slf4j
@@ -27,7 +27,7 @@ public class MailServiceImpl {
 	}
 
 	@Async
-	public void sendMail(String to, String templateName, Map<String, JsonNode> templateModel) {
+	public void sendMail(String to, String templateName, List<TestReportModel> templateModel) {
 		Thread t = Thread.currentThread();
 
 		log.info("Is active " + t.isAlive());
@@ -38,12 +38,28 @@ public class MailServiceImpl {
 
 	}
 
-	public String templateLoder(String user, Map<String, JsonNode> result) {
+	public String templateLoder(String user, List<TestReportModel> result) {
 
 		Context context = new Context();
-		context.setVariable("name", user);
-		context.setVariable("result", result);
-		return thymeleaf.process("SchedulerReport", context);
+		List<Context> contextList = new ArrayList<>();
+
+		for (TestReportModel model : result) {
+
+			Context modelContext = new Context();
+			modelContext.setVariable("PublisherUrl", model.getTestMetaData().getPublisherUrl());
+			modelContext.setVariable("harDownloadLink", model.getTestMetaData().getHarFileDownloadLink());
+			modelContext.setVariable("dateTime", model.getTestMetaData().getDateTime());
+			modelContext.setVariable("bidexSize", model.getBidExController().getTotalSizeDownloaded());
+			modelContext.setVariable("bidexTime", model.getBidExController().getTotalResponseTime());
+			modelContext.setVariable("ConsoleMessage", model.getBidExController().getConsoleMessages());
+			contextList.add(modelContext);
+
+		}
+
+		context.setVariable("contextList", contextList);
+
+		return thymeleaf.process("smokeTest", context);
+
 	}
 
 	private MimeMessagePreparator prepareMessage(String to, String templateText) {

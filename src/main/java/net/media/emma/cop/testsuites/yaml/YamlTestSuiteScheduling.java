@@ -1,7 +1,9 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -23,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.testsuites.yaml.SmokeTestSummeryDto.Testdata;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
 import net.media.emma.utils.MailServiceImpl;
@@ -51,10 +54,14 @@ public class YamlTestSuiteScheduling {
 	@Autowired
 	private ObjectMapper yamlMapper;
 
-	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
-	public Map<String,JsonNode> getAutoTest() {
+//	@Autowired
+//	private Testdata testdata;
 
-		Map<String, CompletableFuture<String>> map = new HashMap<>();
+	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+
+	public SmokeTestSummeryDto getAutoTest() {
+
+		Map<String, CompletableFuture<TestReportModel>> map = new HashMap<>();
 
 		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath).stream()
 				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(4)
@@ -78,11 +85,12 @@ public class YamlTestSuiteScheduling {
 
 		allFutures.join();
 
-		Map<String, JsonNode> finalResultJson=null;
+		Map<String, JsonNode> finalResultJson = null;
+		Map<String, TestReportModel> finalResult = new HashMap<>();
 		if (allFutures.isDone()) {
 			// Map<String, CompletableFuture<String>> to Map<String, String>
 
-			Map<String, String> finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
+			finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
 				try {
 					return e.getValue().get();
 				} catch (InterruptedException | ExecutionException e1) {
@@ -90,22 +98,39 @@ public class YamlTestSuiteScheduling {
 				}
 				return null;
 			}));
-
-			
-			 finalResultJson = finalResult.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
-				try {
-					return yamlMapper.readTree(e.getValue());
-				} catch (IOException e1) {
-					log.error("Error while converting String to JsonNode", e1);
-				}
-				return null;
-			}));
 		}
 
-		return finalResultJson;
+		List<TestReportModel> testReportModelList = new ArrayList<>();
 
-		// this.mailServiceImpl.sendMail("rathnakar.ko@media.net",
-		// "rathnakar.ko@media.net", result);
+		SmokeTestSummeryDto dto = new SmokeTestSummeryDto();
+
+		List<Testdata> testdataResult = new ArrayList<>();
+
+		for (String yaml : listOfYaml) {
+			Testdata testdata = new SmokeTestSummeryDto().new Testdata();
+			TestReportModel reportModel = finalResult.get(yaml);
+			testReportModelList.add(reportModel);
+
+			testdata.setEnvironment(reportModel.getTestMetaData().getEnvironment());
+			testdata.setUserAgent(reportModel.getTestMetaData().getUserAgent());
+			testdata.setBidExFileSize(reportModel.getBidExController().getTotalSizeDownloaded());
+			testdata.setBidExTime(reportModel.getBidExController().getTotalResponseTime());
+			testdata.setDateTime(reportModel.getTestMetaData().getDateTime());
+			testdata.setHarFileDownloadLink(reportModel.getTestMetaData().getHarFileDownloadLink());
+			testdata.setPublisherUrl(reportModel.getTestMetaData().getPublisherUrl());
+			testdata.setMatchingUrls(reportModel.getBidExController().getMatchingUrls());
+
+			testdataResult.add(testdata);
+
+		}
+//		this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList,
+//				listOfYaml);
+
+//		this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", testReportModelList);
+
+		dto.setTestdatas(testdataResult);
+
+		return dto;
 
 	}
 

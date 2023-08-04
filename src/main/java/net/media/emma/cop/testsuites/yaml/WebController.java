@@ -59,13 +59,14 @@ public class WebController {
 
 	}
 
-
 	@PostMapping("/smokeTestSuite")
 	public ModelAndView runThreadPoolTest() {
 
+		// action="/smokeTestSuite" @RequestBody SmokeTestSummeryData data
+
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		Map<String, JsonNode> result = yamlTestSuiteScheduling.getAutoTest();
+		SmokeTestSummeryDto result = yamlTestSuiteScheduling.getAutoTest();
 
 		try {
 			mav.addObject("message1", result);
@@ -78,7 +79,6 @@ public class WebController {
 		return mav;
 
 	}
-
 
 	@GetMapping("/autoTest")
 	public ModelAndView getAutoTest() {
@@ -103,9 +103,11 @@ public class WebController {
 					ObjectMapper objectMapper = new YAMLMapper();
 					TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
 
-					String message = yamlTestSuite.getTestResults(testCriteria);
+					TestReportModel message = yamlTestSuite.getTestResults(testCriteria);
 
-					result.put(yaml, yamlMapper.readTree(message));
+					JsonNode jsonNode = yamlMapper.convertValue(message, JsonNode.class);
+
+					result.put(yaml, jsonNode);
 				}
 				i++;
 			}
@@ -149,10 +151,13 @@ public class WebController {
 			ObjectMapper mapper = new YAMLMapper();
 			TestCriteriaBo yamlTc = mapper.readValue(yaml, TestCriteriaBo.class);
 
-			String message = yamlTestSuite.getTestResults(yamlTc);
+			TestReportModel message = yamlTestSuite.getTestResults(yamlTc);
 
 			// mav. addObject("message2", message);
-			mav.addObject("message1", mapper.readTree(message));
+
+			JsonNode jsonNode = yamlMapper.convertValue(message, JsonNode.class);
+
+			mav.addObject("message1", jsonNode);
 
 		} catch (JsonProcessingException e) {
 			log.error("YAML Processing Error", e);
