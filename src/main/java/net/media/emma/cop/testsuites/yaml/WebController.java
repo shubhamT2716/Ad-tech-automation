@@ -47,6 +47,9 @@ public class WebController {
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
 
+	@Value("${yamlSmokeTestSuiteFilesPath}")
+	private String yamlSmokeTestSuiteFilesPath;
+
 	@Autowired
 	YamlTestSuiteScheduling yamlTestSuiteScheduling;
 
@@ -54,7 +57,7 @@ public class WebController {
 	public ModelAndView threadPoolTestForm() {
 
         ModelAndView mav = new ModelAndView("smokeTestSuite");
-        mav.addObject("fileNames", new ArrayList<>(getFileNames()));
+        mav.addObject("fileNames", new ArrayList<>(getFileNamesForSmokeTest()));
         return mav;
 
     }
@@ -210,9 +213,9 @@ public class WebController {
 				.body(resource);
 	}
 
-    private Set<String> getFileNames() {
+    private Set<String> getFileNamesForSmokeTest() {
         // Fetch the list of YAML file names from the directory
-        Set<String> fileNames = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
+        Set<String> fileNames = fileOperations.listFilesUsingFilesList(yamlSmokeTestSuiteFilesPath);
         // Add additional filtering logic if needed (e.g., exclude specific files)
         return fileNames;
     }

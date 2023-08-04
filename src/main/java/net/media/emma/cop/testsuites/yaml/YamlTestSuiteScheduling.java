@@ -43,6 +43,9 @@ public class YamlTestSuiteScheduling {
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
 
+	@Value("${yamlSmokeTestSuiteFilesPath}")
+	private String yamlSmokeTestSuiteFilesPath;
+
 	@Autowired
 	private MailServiceImpl mailServiceImpl;
 
@@ -62,7 +65,7 @@ public class YamlTestSuiteScheduling {
 		Map<String, CompletableFuture<String>> map = new HashMap<>();
 
 		Set<String> listOfYaml = selectedFiles.stream()
-				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(1)
+				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(2)
 				.collect(Collectors.toSet());
 
         String[] environments = environment.split(",");
@@ -72,7 +75,7 @@ public class YamlTestSuiteScheduling {
 
             for (String env : environments) {
                 for (String agent : userAgents) {
-                    TestCriteriaBo testCriteriaBo = getYamlObject(yamlTestCriteriaFilesPath + yaml);
+                    TestCriteriaBo testCriteriaBo = getYamlObject(yamlSmokeTestSuiteFilesPath + yaml);
 
                     if (null == testCriteriaBo) {
                         log.error("Error while reading yaml file");

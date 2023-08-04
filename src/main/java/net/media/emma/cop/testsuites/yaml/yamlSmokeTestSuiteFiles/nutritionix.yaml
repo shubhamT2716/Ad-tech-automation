@@ -1,0 +1,32 @@
+environment: hbx.media.net
+cookies: [visitor-id : 3249269632710602062V1 ,  data-o : f88043f8-7631-0195-18cf-d9b1ff3a7344~~1]
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://www.nutritionix.com/brands/restaurant?mnet_test=1"
+
+networkCallsPositive: {
+ aplogs: "https://hblg.media.net/log?logid=aplog",
+ prlogs: "https://hblg.media.net/log?logid=prlog",
+ awlogs: "https://hblg.media.net/log?logid=awlog",
+ checksync: "https://hbx.media.net/checksync.php",
+}
+
+networkCallsNegative: {
+ nerrPing: "https://hblg.media.net/nerrping.php"
+ }
+
+keysToVerifyPositive: {
+  prlogs: {pvid: ["55", "26", "3012", "251", "141", "175", "222", "3007", "3", "246", "214", "236", "203", "237", "229", "108", "9799"],cid: ["8CUB9W7X6"]},
+  aplogs: {pvid: ["55", "26", "3012", "251", "141", "175", "222", "3007", "3", "246", "214", "236", "203", "237", "229", "108", "9799","0","3017"]}
+ }
+
+keysToVerifyNegative: {}
+keysToVerifyAnyOneOf: {}
+
+responseSimulate: [
+ {urlPattern: "**//hb-pb.media.net/**", jsonPath: "$.ext.csUrl[1].url", overrideValue: "MYSESSINID"}
+ ]
+
+domInject: [
+ { domSelector: "#ContentPane29", content: "TestReport/NewContent/file1.txt", append: "true" },
+ { domSelector: "#ContentPane29", content: "TestReport/NewContent/file2.txt", append: "false" }
+ ]
