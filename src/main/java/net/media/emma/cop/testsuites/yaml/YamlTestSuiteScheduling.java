@@ -2,6 +2,7 @@ package net.media.emma.cop.testsuites.yaml;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -52,11 +53,15 @@ public class YamlTestSuiteScheduling {
 	private ObjectMapper yamlMapper;
 
 	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
-	public Map<String,JsonNode> getAutoTest(String environment, String userAgent) {
+	public Map<String,JsonNode> getAutoTest(String environment, String userAgent, List<String> selectedFiles) {
+
+		if (selectedFiles == null || selectedFiles.isEmpty()) {
+			return new HashMap<>();
+		}
 
 		Map<String, CompletableFuture<String>> map = new HashMap<>();
 
-		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath).stream()
+		Set<String> listOfYaml = selectedFiles.stream()
 				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(1)
 				.collect(Collectors.toSet());
 

@@ -9,21 +9,53 @@
 <body>
 <div class="container my-5">
     <h1>Smoke Test Suite</h1>
-  
-    <form action="/yamlTestSuite/smokeTestSuite" method="post">
+
+    <form action="/yamlTestSuite/smokeTestSuite" method="post" onsubmit="return validateForm()">
         <div class="form-group">
-          <label for="env">Server Environment:</label>
-          <input type="text" class="form-control" id="env" name="env" aria-describedby="emailHelp" placeholder="hbx-stage.media.net">
-          <small id="emailHelp" class="form-text text-muted">Pls enter Host Name of the stage, istage or live.</small>
+            <label for="env">Server Environment:</label>
+            <input type="text" class="form-control" id="env" name="env" aria-describedby="emailHelp" placeholder="hbx-stage.media.net">
+            <small id="emailHelp" class="form-text text-muted">Please enter the Host Name of the stage, istage, or live.</small>
         </div>
         <div class="form-group">
             <label for="ua">User Agent:</label>
             <input type="text" class="form-control" id="ua" name="ua" aria-describedby="emailHelp" placeholder="Desktop.Mac">
             <small id="emailHelp" class="form-text text-muted">User Agent identifier</small>
-          </div>
+        </div>
+        <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+        <label>Select YAML files to execute:</label>
+        <div class="form-check">
+            <label class="form-check-label" for="selectAll">Select All</label>
+            <input class="form-check-input" type="checkbox" id="selectAll" onchange="toggleCheckboxes(this)">
+        </div>
+        <div class="form-check" th:each="fileName : ${fileNames}">
+            <label class="form-check-label" th:text="${fileName}"></label>
+            <input class="form-check-input" type="checkbox" name="selectedFiles" th:value="${fileName}">
+        </div>
         <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
+    </form>
     <pre th:text="${message}"></pre>
 </div>
+
+<script>
+    function validateForm() {
+        const selectedFiles = document.querySelectorAll('input[name="selectedFiles"]:checked');
+        const errorMessage = document.getElementById('error-message');
+        if (selectedFiles.length === 0) {
+            errorMessage.textContent = 'Please select at least one YAML file to execute.';
+            errorMessage.style.display = 'block';
+            return false; // Prevent form submission
+        }
+        errorMessage.style.display = 'none';
+        return true; // Allow form submission
+    }
+
+
+    // JavaScript function to toggle all checkboxes
+    function toggleCheckboxes(selectAllCheckbox) {
+        const checkboxes = document.querySelectorAll('input[name="selectedFiles"]');
+        checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+    }
+</script>
+
 </body>
 </html>

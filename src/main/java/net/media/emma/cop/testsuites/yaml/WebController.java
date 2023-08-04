@@ -2,9 +2,7 @@ package net.media.emma.cop.testsuites.yaml;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,17 +53,27 @@ public class WebController {
 	@GetMapping("/smokeTestSuite")
 	public ModelAndView threadPoolTestForm() {
 
-		return new ModelAndView("smokeTestSuite");
+        ModelAndView mav = new ModelAndView("smokeTestSuite");
+        mav.addObject("fileNames", new ArrayList<>(getFileNames()));
+        return mav;
 
-	}
-
+    }
 
 	@PostMapping("/smokeTestSuite")
-	public ModelAndView runThreadPoolTest(@RequestParam("env") String environment, @RequestParam("ua") String userAgent) {
+	public ModelAndView runThreadPoolTest(@RequestParam("env") String environment, @RequestParam("ua") String userAgent, @RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles) {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		Map<String, JsonNode> result = yamlTestSuiteScheduling.getAutoTest(environment,userAgent);
+		/*System.out.println(selectedFiles + " -- Selected files -- ");
+		if (selectedFiles == null || selectedFiles.isEmpty()) {
+			ModelAndView mav1 = new ModelAndView("smokeTestSuite");
+			mav1.addObject("fileNames", new ArrayList<>(getFileNames()));
+			mav1.addObject("message", "Please select at least one file to execute.");
+			return mav1;
+		}*/
+
+
+		Map<String, JsonNode> result = yamlTestSuiteScheduling.getAutoTest(environment,userAgent, selectedFiles);
 
 		try {
 			mav.addObject("message1", result);
@@ -201,4 +209,12 @@ public class WebController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
 	}
+
+    private Set<String> getFileNames() {
+        // Fetch the list of YAML file names from the directory
+        Set<String> fileNames = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
+        // Add additional filtering logic if needed (e.g., exclude specific files)
+        return fileNames;
+    }
+
 }
