@@ -3,6 +3,7 @@ package net.media.emma.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -18,12 +19,12 @@ public class CommonBrowserUtil {
 		return "generated-har-file-" + timeStamp + "-" + random + ".har";
 	}
 
-//	public static String getFileNameForZip(){
-//		String timeStamp=new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(new Date());
+	public static String getFileNameForZip() {
+		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(new Date());
 //		String random=Sting 
-//	
-//	// smoke test report	
-//	}
+		return null;
+		// smoke test report
+	}
 
 	public static void createZipFile(String rawData) {
 		File file = new File("");
