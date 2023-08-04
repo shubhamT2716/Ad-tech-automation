@@ -27,6 +27,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.yaml.SmokeTestSummeryDto.Testdata;
 import net.media.emma.service.GenericTestSuite;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.FileOperations;
 import net.media.emma.utils.MailServiceImpl;
 
@@ -53,6 +54,9 @@ public class YamlTestSuiteScheduling {
 
 	@Autowired
 	private ObjectMapper yamlMapper;
+
+	@Value("${zipFileBasePath}")
+	private String zipFilePath;
 
 //	@Autowired
 //	private Testdata testdata;
@@ -105,6 +109,8 @@ public class YamlTestSuiteScheduling {
 		SmokeTestSummeryDto dto = new SmokeTestSummeryDto();
 
 		List<Testdata> testdataResult = new ArrayList<>();
+
+		CommonBrowserUtil.createZipFile(zipFilePath, finalResult.toString());
 
 		for (String yaml : listOfYaml) {
 			Testdata testdata = new SmokeTestSummeryDto().new Testdata();

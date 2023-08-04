@@ -70,7 +70,7 @@ public class WebController {
 
 		try {
 			mav.addObject("message1", result);
-			log.info("Result = " + result);
+
 		} catch (Exception e) {
 			log.info("Error reading file.", e);
 			mav.addObject("message", e.getMessage());

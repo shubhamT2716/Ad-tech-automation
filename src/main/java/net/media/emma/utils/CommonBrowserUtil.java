@@ -21,13 +21,16 @@ public class CommonBrowserUtil {
 
 	public static String getFileNameForZip() {
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(new Date());
-//		String random=Sting 
-		return null;
+		String random = String.valueOf((int) (Math.random() * 10000));
+		return "smokeTest-report-" + timeStamp + "-" + random + ".zip";
 		// smoke test report
 	}
 
-	public static void createZipFile(String rawData) {
-		File file = new File("");
+	public static void createZipFile(String zipFilePath, String rawData) {
+		File file = new File(zipFilePath + getFileNameForZip());
+
+		System.err.println("Zip file creation ");
+
 		try {
 			ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file));
 			ZipEntry entry = new ZipEntry("RawData.txt");
