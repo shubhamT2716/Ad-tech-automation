@@ -78,7 +78,8 @@ public class WebController {
 		SmokeTestSummeryDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles);
 
 		try {
-			mav.addObject("message1", result);
+			mav.addObject("message2", result);
+			mav.addObject("message1", result.getRawDataLink());
 
 		} catch (Exception e) {
 			log.info("Error reading file.", e);
