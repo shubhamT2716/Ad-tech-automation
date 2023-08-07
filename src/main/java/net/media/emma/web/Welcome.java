@@ -24,6 +24,7 @@ public class Welcome {
             put("Page Level Checks - Test Suite", "/pageLevelTests/");
             put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
             put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "/privacyComplianceTestSuite/");
+            put("Bidex And Feature Tests", "/bidexAndFeatureTests/");
         }};
 
     @GetMapping("/welcome")
