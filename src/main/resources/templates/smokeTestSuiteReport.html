@@ -10,15 +10,17 @@
 </head>
 <body>
     <div class="container my-5">
-        <h1>YAML Test Suite Report</h1>
+        <h1>Smoke Test Report</h1>
     </div>
 
     <div class="container my-5">
-      <button onClick="display('FAIL')" type="button" class="btn btn-danger">Show Errors</button> <button onClick="display('PASS')" type="button" class="btn btn-success">Show Success</button> <button onClick="displayRaw()" type="button" class="btn btn-secondary">Show Raw Data</button>
+     
+      <button onClick="displayBasicReport()" type="button" class="btn btn-success">Show Basic Report</button> 
+      <button onClick="displayRaw()" type="button" class="btn btn-secondary">Show Raw Data</button>
     </div>
 
     <div class="container my-5">
-      <div id="testReport" />
+      <div id="testReport" >
     </div>
 		
 
@@ -27,6 +29,12 @@
          var reportData = /*[[${message1}]]*/ 'User Name';
        /*]]>*/
   </script> 
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+     var displayReport = /*[[${message2}]]*/ 'Users';
+   /*]]>*/
+</script> 
 
     <script type="text/javascript">
 	
@@ -75,21 +83,33 @@
     hljs.highlightAll();
   }
 
-  function display(status) {
-
-    // console.log(status);
-
+   function displayBasicReport() {
+    const pre = document.createElement("pre");
+    const code = document.createElement("code");
+    code.classList.add("language-json");
+    code.innerHTML = JSON.stringify(displayReport, null, 2);
+    pre.appendChild(code);
     document.getElementById("testReport").innerHTML = "";
+    document.getElementById("testReport").appendChild(pre);
+    hljs.highlightAll();
+   }
 
-    for (var key in reportData.urlChecks.positiveUrlChecks) 
-      if (reportData.urlChecks.positiveUrlChecks.hasOwnProperty(key))
-        if(reportData.urlChecks.positiveUrlChecks[key].testResult == status){
-          document.getElementById("testReport").append(printObj(reportData.urlChecks.positiveUrlChecks[key]))
-        }
+  // function display(status) {
+
+  //   // console.log(status);
+
+  //   document.getElementById("testReport").innerHTML = "";
+
+  //   for (var key in reportData.urlChecks.positiveUrlChecks) 
+  //     if (reportData.urlChecks.positiveUrlChecks.hasOwnProperty(key))
+  //       if(reportData.urlChecks.positiveUrlChecks[key].testResult == status){
+  //         document.getElementById("testReport").append(printObj(reportData.urlChecks.positiveUrlChecks[key]))
+  //       }
           
-  }
+  // }
 
   displayRaw();
+  displayBasicReport();
         
 </script>
 
