@@ -14,8 +14,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter @Setter @Builder
+@Getter
+@Setter
+@Builder
+@ToString
 public class URLChecksReportModel {
 
 	@Builder.Default
@@ -27,7 +31,10 @@ public class URLChecksReportModel {
 		PASS, FAIL, NA
 	}
 
-	@Getter @Setter @Builder
+	@Getter
+	@Setter
+	@Builder
+	@ToString
 	public static class PositiveURLChecks {
 		String label;
 		String urlPattern;
@@ -58,8 +65,11 @@ public class URLChecksReportModel {
 		Map<String, Set<String>> anyOneOfKeyValChecks = new HashMap<String, Set<String>>();
 	}
 
-	@Getter @Setter @Builder
+	@Getter
+	@Setter
+	@Builder
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ToString
 	public static class NegativeURLChecks {
 		String label;
 		String urlPattern;
