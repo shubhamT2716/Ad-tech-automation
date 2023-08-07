@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -46,6 +47,9 @@ public class YamlTestSuiteScheduling {
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
 
+	@Value("${yamlSmokeTestSuiteFilesPath}")
+	private String yamlSmokeTestSuiteFilesPath;
+
 	@Autowired
 	private MailServiceImpl mailServiceImpl;
 
@@ -58,29 +62,45 @@ public class YamlTestSuiteScheduling {
 	@Value("${zipFileBasePath}")
 	private String zipFilePath;
 
-//	@Autowired
-//	private Testdata testdata;
-
 	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
 
-	public SmokeTestSummeryDto getAutoTest() {
+	public SmokeTestSummeryDto getAutoTest(String environment, String userAgent, List<String> selectedFiles) {
+
+		// if (selectedFiles == null || selectedFiles.isEmpty()) {
+		// return new HashMap<>();
+		// }
 
 		Map<String, CompletableFuture<TestReportModel>> map = new HashMap<>();
+		List<String> listOfYamlEnv = new ArrayList<>();
 
-		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath).stream()
-				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(4)
+		Set<String> listOfYaml = selectedFiles.stream()
+				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(2)
 				.collect(Collectors.toSet());
+
+		String[] environments = environment.split(",");
+		String[] userAgents = userAgent.split(",");
 
 		for (String yaml : listOfYaml) {
 
-			TestCriteriaBo testCriteriaBo = getYamlObject(yamlTestCriteriaFilesPath + yaml);
+			for (String env : environments) {
+				for (String agent : userAgents) {
+					TestCriteriaBo testCriteriaBo = getYamlObject(yamlSmokeTestSuiteFilesPath + yaml);
 
-			if (null == testCriteriaBo) {
-				log.error("Error while reading yaml file");
-				continue;
+					if (null == testCriteriaBo) {
+						log.error("Error while reading yaml file");
+						continue;
+					}
+
+					// Update the environment and userAgent parameters in TestCriteriaBo
+					testCriteriaBo.setEnvironment(env);
+					testCriteriaBo.setUserAgent(agent);
+
+//					map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+
+					map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+					listOfYamlEnv.add(yaml + "_" + env + "_" + agent);
+				}
 			}
-
-			map.put(yaml, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
 		}
 
 		// get values of Map into CompeletableFuture
@@ -89,10 +109,8 @@ public class YamlTestSuiteScheduling {
 
 		allFutures.join();
 
-		Map<String, JsonNode> finalResultJson = null;
 		Map<String, TestReportModel> finalResult = new HashMap<>();
 		if (allFutures.isDone()) {
-			// Map<String, CompletableFuture<String>> to Map<String, String>
 
 			finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
 				try {
@@ -110,11 +128,13 @@ public class YamlTestSuiteScheduling {
 
 		List<Testdata> testdataResult = new ArrayList<>();
 
-		CommonBrowserUtil.createZipFile(zipFilePath, finalResult.toString());
+		TestReportModel reportModel = new TestReportModel();
 
-		for (String yaml : listOfYaml) {
+		for (String yaml : listOfYamlEnv) {
 			Testdata testdata = new SmokeTestSummeryDto().new Testdata();
-			TestReportModel reportModel = finalResult.get(yaml);
+
+			reportModel = finalResult.get(yaml);
+
 			testReportModelList.add(reportModel);
 
 			testdata.setEnvironment(reportModel.getTestMetaData().getEnvironment());
@@ -129,11 +149,19 @@ public class YamlTestSuiteScheduling {
 			testdataResult.add(testdata);
 
 		}
+
+		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
+		mav.addObject("message1", finalResult);
+
+		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
 //		this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList,
 //				listOfYaml);
 
 //		this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", testReportModelList);
 
+//		String zipFile = CommonBrowserUtil.getFileNameForZip();
+
+		dto.setRawDataLink("zipDownload/" + zipFile);
 		dto.setTestdatas(testdataResult);
 
 		return dto;

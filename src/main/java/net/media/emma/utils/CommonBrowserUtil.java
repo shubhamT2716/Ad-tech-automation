@@ -4,12 +4,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.testsuites.yaml.TestReportModel;
+
 @Component
+@Slf4j
 public class CommonBrowserUtil {
 
 	public static String getFileNameForHar() {
@@ -26,26 +31,42 @@ public class CommonBrowserUtil {
 		// smoke test report
 	}
 
-	public static void createZipFile(String zipFilePath, String rawData) {
-		File file = new File(zipFilePath + getFileNameForZip());
+	public static String createZipFile(String zipFilePath, Map<String, TestReportModel> rawData) {
 
-		System.err.println("Zip file creation ");
+		String fileName = getFileNameForZip();
+
+		File file = new File(zipFilePath + fileName);
 
 		try {
 			ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(file));
 			ZipEntry entry = new ZipEntry("RawData.txt");
 			zos.putNextEntry(entry);
 
-			byte[] data = rawData.getBytes();
+			for (Map.Entry<String, TestReportModel> model : rawData.entrySet()) {
 
-			zos.write(data, 0, data.length);
+//				String dataRaw = model.getKey() + "-" + model.getValue().getTestMetaData() + " "
+//						+ model.getValue().getBidExController() + " " + model.getValue().getNetworkAnalytics() + " "
+//						+ model.getValue().getTestMetaData() + " " + model.getValue().getUrlChecks();
 
+				String dataRaw = model.getKey() + " " + model.getValue().toString();
+
+				log.info("dataRaw = " + dataRaw);
+
+				byte[] data = dataRaw.getBytes();
+
+				zos.write(data, 0, data.length);
+
+			}
 			zos.closeEntry();
 
 			zos.close();
 
+			return fileName;
+
 		} catch (Exception e) {
 			e.printStackTrace();
+
+			return null;
 
 		}
 

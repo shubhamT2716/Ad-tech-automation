@@ -237,7 +237,7 @@ public class TestSuite implements GenericTestSuite {
 				bidexReport.setTotalResponseTime("Not Available");
 			}
 
-			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "kb");
+			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "b");
 		}
 
 		if (bidExRequestObjects.size() == 0) {

@@ -2,7 +2,9 @@ package net.media.emma.cop.testsuites.yaml;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,24 +51,31 @@ public class WebController {
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
 
+	@Value("${yamlSmokeTestSuiteFilesPath}")
+	private String yamlSmokeTestSuiteFilesPath;
+
+	@Value("${zipFileBasePath}")
+	private String zipFilePath;
+
 	@Autowired
 	YamlTestSuiteScheduling yamlTestSuiteScheduling;
 
 	@GetMapping("/smokeTestSuite")
 	public ModelAndView threadPoolTestForm() {
 
-		return new ModelAndView("smokeTestSuite");
+		ModelAndView mav = new ModelAndView("smokeTestSuite");
+		mav.addObject("fileNames", new ArrayList<>(getFileNamesForSmokeTest()));
+		return mav;
 
 	}
 
 	@PostMapping("/smokeTestSuite")
-	public ModelAndView runThreadPoolTest() {
-
-		// action="/smokeTestSuite" @RequestBody SmokeTestSummeryData data
+	public ModelAndView runThreadPoolTest(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
+			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles) {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestSummeryDto result = yamlTestSuiteScheduling.getAutoTest();
+		SmokeTestSummeryDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles);
 
 		try {
 			mav.addObject("message1", result);
@@ -206,4 +215,26 @@ public class WebController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
 	}
+
+	@GetMapping("zipDownload/{fileName}")
+	public ResponseEntity<?> showZipContent(@PathVariable String fileName) {
+		Resource resource = fileOperations.loadFileAsResource(zipFilePath + fileName);
+
+		if (resource == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
+
+	}
+
+	private Set<String> getFileNamesForSmokeTest() {
+		// Fetch the list of YAML file names from the directory
+		Set<String> fileNames = fileOperations.listFilesUsingFilesList(yamlSmokeTestSuiteFilesPath);
+		// Add additional filtering logic if needed (e.g., exclude specific files)
+		return fileNames;
+	}
+
 }
