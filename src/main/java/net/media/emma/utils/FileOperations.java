@@ -78,7 +78,10 @@ public class FileOperations {
 
     public InputStream readFileAsInputStream(String string) {
         try {
-			return Files.newInputStream(Paths.get(string));
+
+			//open file in read only mode
+			return Files.newInputStream(Paths.get(string), java.nio.file.StandardOpenOption.READ);
+
 		} catch (IOException e) {
 			loggers.standardLogger().error("YAML Read Failed", e);
 			return null;

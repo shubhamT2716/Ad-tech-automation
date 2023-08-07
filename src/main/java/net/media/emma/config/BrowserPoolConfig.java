@@ -26,9 +26,9 @@ public class BrowserPoolConfig {
     public Executor yamlTestSuitePool() {
 
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(3);
-        executor.setMaxPoolSize(3);
-        executor.setQueueCapacity(20);
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(200);
         executor.setThreadNamePrefix("YamlTestSuite-AsynchThread-");
         executor.initialize();
         return executor;
