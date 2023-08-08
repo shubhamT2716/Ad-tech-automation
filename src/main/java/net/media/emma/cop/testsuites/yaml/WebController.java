@@ -75,7 +75,7 @@ public class WebController {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles, false);
 
 		try {
 			mav.addObject("message2", result.getSmokeReport());

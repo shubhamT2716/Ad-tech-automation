@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -61,9 +62,27 @@ public class YamlTestSuiteScheduling {
 	@Value("${zipFileBasePath}")
 	private String zipFilePath;
 
-	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+	@Value("${yamlSmokeTestSuiteFilesPath}")
+	private String smokeTestYamlPath;
 
-	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles) {
+	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+	public void smokeTestScheduling() {
+
+		String environment = "hbx.media.net";
+
+		String userAgent = "Chrome.Desktop.Mac";
+
+		List<String> list = this.fileOperations.listFilesUsingFilesList(smokeTestYamlPath).stream()
+				.filter(x -> !x.contains("techinvestor") && !x.contains("247")).collect(Collectors.toList());
+
+		boolean flagForMail = true;
+
+		getAutoTest(environment, userAgent, list, flagForMail);
+
+	}
+
+	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
+			boolean flagForMail) {
 
 		// if (selectedFiles == null || selectedFiles.isEmpty()) {
 		// return new HashMap<>();
@@ -157,7 +176,10 @@ public class YamlTestSuiteScheduling {
 //		this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList,
 //				listOfYaml);
 
-		this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", testReportModelList);
+		if (flagForMail == true) {
+			this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com",
+					testReportModelList);
+		}
 
 //		String zipFile = CommonBrowserUtil.getFileNameForZip();
 

@@ -30,8 +30,6 @@ public class MailServiceImpl {
 	public void sendMail(String to, String templateName, List<TestReportModel> templateModel) {
 		Thread t = Thread.currentThread();
 
-		log.info("Is active " + t.isAlive());
-
 		String templateText = templateLoder(templateName, templateModel);
 		MimeMessagePreparator message = prepareMessage(to, templateText);
 		javaMailSender.send(message);
@@ -73,7 +71,7 @@ public class MailServiceImpl {
 				MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 				message.setFrom("shubham.t@media.net");
 				message.setTo(to);
-				message.setSubject("Daily Scheduler Report");
+				message.setSubject("Smoke Test Report");
 				// message.setText( templateText + "my text <img src='cid:myLogo'>", true);
 				message.setText(templateText, true);
 
