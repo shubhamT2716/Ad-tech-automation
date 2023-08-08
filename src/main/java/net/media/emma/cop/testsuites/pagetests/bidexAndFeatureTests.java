@@ -45,9 +45,9 @@ public class bidexAndFeatureTests {
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
 
-    public JsonNode TestFunc(TestCriteria yaml) throws JsonMappingException, JsonProcessingException{
+    public JsonNode bidexTests(TestCriteria yaml) throws JsonMappingException, JsonProcessingException{
 
-		Map<String,JsonNode> getCrids;
+		Map<String,String> getCrids;
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath);
 		try {
 		page.onResponse(response -> {
@@ -105,8 +105,7 @@ public class bidexAndFeatureTests {
 			log.info("Converting to json error");
 		}
 
-		getCrids = getCridsByXpath(replaced);
-
+		
 		// log.info("get Crids " + getCrids);
 
 		
@@ -115,8 +114,8 @@ public class bidexAndFeatureTests {
     }
 
 
-	private Map<String,JsonNode> getCridsByXpath(JsonNode replaced){
-		Map<String, JsonNode> cridToDfpPath = new HashMap<String, JsonNode>();
+	private Map<String,String> getCridsByXpath(JsonNode replaced){
+		Map<String, String> cridToDfpPath = new HashMap<String, String>();
 		List<String> crids = new ArrayList<String>();
 		log.info("Here");
 		JsonNode parent = replaced.get("DfpPlacements");
@@ -132,9 +131,10 @@ public class bidexAndFeatureTests {
             e.printStackTrace();
         }
 		for (String cridList : crids) {
-				String id = cridList;
-				JsonNode cridNode = parent.get(id).get("targ").get(0).get("value");
-				cridToDfpPath.put(id, cridNode);
+				// String id = cridList;
+				JsonNode cridNode = parent.get(cridList).get("targ").get(0).get("value");
+				String adUnitPathTrimmed = cridNode.toString().substring(cridNode.toString().lastIndexOf("/") + 1).replace('"', ' ').trim();
+				cridToDfpPath.put(cridList, adUnitPathTrimmed);
 				// log.info("Crid is " + id + " and Dfp Path is" + cridNode);
 			}
 			log.info("Crid and DfpPath " + cridToDfpPath);

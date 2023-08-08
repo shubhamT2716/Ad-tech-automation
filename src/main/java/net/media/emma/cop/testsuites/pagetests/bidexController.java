@@ -96,7 +96,7 @@ public class bidexController {
 			// mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
 			// modelAndView.addObject("message", );
 
-			modelAndView.addObject("message1", bidexAndFeatureTests.TestFunc(yamlTc));
+			modelAndView.addObject("message1", bidexAndFeatureTests.bidexTests(yamlTc));
 
 		} catch (JsonProcessingException e) {
 			log.error("YAML Processing Error", e);
