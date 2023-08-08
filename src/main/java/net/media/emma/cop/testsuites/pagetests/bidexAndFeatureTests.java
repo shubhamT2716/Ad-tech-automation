@@ -1,4 +1,9 @@
 package net.media.emma.cop.testsuites.pagetests;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -42,6 +47,7 @@ public class bidexAndFeatureTests {
 
     public JsonNode TestFunc(TestCriteria yaml) throws JsonMappingException, JsonProcessingException{
 
+		Map<String,JsonNode> getCrids;
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath);
 		try {
 		page.onResponse(response -> {
@@ -99,9 +105,40 @@ public class bidexAndFeatureTests {
 			log.info("Converting to json error");
 		}
 
+		getCrids = getCridsByXpath(replaced);
+
+		// log.info("get Crids " + getCrids);
+
 		
 		page.close();
 		return replaced;
     }
+
+
+	private Map<String,JsonNode> getCridsByXpath(JsonNode replaced){
+		Map<String, JsonNode> cridToDfpPath = new HashMap<String, JsonNode>();
+		List<String> crids = new ArrayList<String>();
+		log.info("Here");
+		JsonNode parent = replaced.get("DfpPlacements");
+		try {
+            JsonNode rootNode = mapper.readTree(parent.toString());
+            // log.info("rootNode: " + rootNode);
+            rootNode.fields().forEachRemaining(entry -> {
+                crids.add(entry.getKey());
+                // log.info("Object ID: " + crids);
+            });
+			
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		for (String cridList : crids) {
+				String id = cridList;
+				JsonNode cridNode = parent.get(id).get("targ").get(0).get("value");
+				cridToDfpPath.put(id, cridNode);
+				// log.info("Crid is " + id + " and Dfp Path is" + cridNode);
+			}
+			log.info("Crid and DfpPath " + cridToDfpPath);
+		return cridToDfpPath;
+	}
     
 }
