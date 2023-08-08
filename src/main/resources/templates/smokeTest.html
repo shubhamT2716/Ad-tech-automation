@@ -9,28 +9,21 @@
 <body>
 <div class="container">
     <h1>Smoke Test Suite Summary</h1>
-    <ul>
-        <li>
-            Environment: <span th:text="${env}"></span>
-        </li>
-        <li>
-            User Agent: <span th:text="${ua}"></span>
-        </li>
-        <li>
-            <a href="${rawReportDownloadLink}">Raw Report Download</a>
-        </li>
-    </ul>
-
-  
-        <div class="container">
+            <div class="container">
              <div th:each="context : ${contextList}">
                 <p>
-                    <span th:text="${context.PublisherUrl}"><small>Publisher URL</small></span> <br>
-                    <span th:text="${context.harDownloadLink}"><a href="adf">har-generated.xxx.har</a></span>
+                    Publisher Url :<span th:text="${context.PublisherUrl}"><small>Publisher URL</small></span> <br>
+                   Hardownload Link:  <span th:text="${context.harDownloadLink}"><a href="adf">har-generated.xxx.har</a></span>
                     <span ><a href="/yamlTestSuite/"th:text="${context.harDownloadLink}">harLink</a></span>
                     
                 </p>
                 <ul>
+					<li>
+						Env: <span th:text="${context.Env}"></span>
+					</li>
+					<li>
+						UserAgent: <span th:text="${context.UserAgent}"></span>
+					</li>
                     <li>
                         Date Time: <span th:text="${context.dateTime}"></span>
                     </li>

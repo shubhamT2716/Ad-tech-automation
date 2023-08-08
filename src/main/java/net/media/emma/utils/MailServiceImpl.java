@@ -52,6 +52,8 @@ public class MailServiceImpl {
 			modelContext.setVariable("bidexSize", model.getBidExController().getTotalSizeDownloaded());
 			modelContext.setVariable("bidexTime", model.getBidExController().getTotalResponseTime());
 			modelContext.setVariable("ConsoleMessage", model.getBidExController().getConsoleMessages());
+			modelContext.setVariable("Env", model.getTestMetaData().getEnvironment());
+			modelContext.setVariable("UserAgent", model.getTestMetaData().getUserAgent());
 			contextList.add(modelContext);
 
 		}

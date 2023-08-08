@@ -75,7 +75,8 @@ public class YamlTestSuiteScheduling {
 		List<String> listOfYamlEnv = new ArrayList<>();
 
 		Set<String> listOfYaml = selectedFiles.stream()
-				//.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(2)
+				// .filter(x -> !x.contains("aol") && !x.contains("tech") &&
+				// !x.contains("webmd")).limit(2)
 				.collect(Collectors.toSet());
 
 		String[] environments = environment.split(",");
@@ -156,7 +157,7 @@ public class YamlTestSuiteScheduling {
 //		this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList,
 //				listOfYaml);
 
-//		this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", testReportModelList);
+		this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", testReportModelList);
 
 //		String zipFile = CommonBrowserUtil.getFileNameForZip();
 
