@@ -78,8 +78,8 @@ public class YamlTestSuiteScheduling {
 				//.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(2)
 				.collect(Collectors.toSet());
 
-		String[] environments = environment.split(",");
-		String[] userAgents = userAgent.split(",");
+		String[] environments = environment.trim().split(",");
+		String[] userAgents = userAgent.trim().split(",");
 
 		for (String yaml : listOfYaml) {
 
