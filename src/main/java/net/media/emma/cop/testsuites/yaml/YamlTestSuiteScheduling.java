@@ -75,7 +75,7 @@ public class YamlTestSuiteScheduling {
 		List<String> listOfYamlEnv = new ArrayList<>();
 
 		Set<String> listOfYaml = selectedFiles.stream()
-				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(2)
+				//.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(2)
 				.collect(Collectors.toSet());
 
 		String[] environments = environment.split(",");
@@ -85,6 +85,7 @@ public class YamlTestSuiteScheduling {
 
 			for (String env : environments) {
 				for (String agent : userAgents) {
+
 					TestCriteriaBo testCriteriaBo = getYamlObject(yamlSmokeTestSuiteFilesPath + yaml);
 
 					if (null == testCriteriaBo) {
