@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -64,11 +63,13 @@ public class YamlTestSuiteScheduling {
 
 	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
 
-	public SmokeTestSummeryDto getAutoTest(String environment, String userAgent, List<String> selectedFiles) {
+	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles) {
 
 		// if (selectedFiles == null || selectedFiles.isEmpty()) {
 		// return new HashMap<>();
 		// }
+
+		SmokeTestRawDataDto rawDataDto = new SmokeTestRawDataDto();
 
 		Map<String, CompletableFuture<TestReportModel>> map = new HashMap<>();
 		List<String> listOfYamlEnv = new ArrayList<>();
@@ -150,9 +151,6 @@ public class YamlTestSuiteScheduling {
 
 		}
 
-		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
-		mav.addObject("message1", finalResult);
-
 		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
 //		this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList,
 //				listOfYaml);
@@ -164,7 +162,10 @@ public class YamlTestSuiteScheduling {
 		dto.setRawDataLink("zipDownload/" + zipFile);
 		dto.setTestdatas(testdataResult);
 
-		return dto;
+		rawDataDto.setRawData(finalResult);
+		rawDataDto.setSmokeReport(dto);
+
+		return rawDataDto;
 
 	}
 

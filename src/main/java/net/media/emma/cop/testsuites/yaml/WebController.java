@@ -75,11 +75,11 @@ public class WebController {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestSummeryDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles);
 
 		try {
-			mav.addObject("message2", result);
-			mav.addObject("message1", result.getRawDataLink());
+			mav.addObject("message2", result.getSmokeReport());
+			mav.addObject("message1", result.getRawData());
 
 		} catch (Exception e) {
 			log.info("Error reading file.", e);
