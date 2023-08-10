@@ -175,7 +175,7 @@ public class YamlTestSuiteScheduling {
 		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
 
 		if (flagForMail == true) {
-			this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", testReportModelList,
+			this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList,
 					zipFile);
 
 		}

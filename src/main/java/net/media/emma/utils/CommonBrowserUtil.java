@@ -90,7 +90,7 @@ public class CommonBrowserUtil {
 
 			ObjectMapper mapper = new YAMLMapper();
 
-			JsonNode model = mapper.convertValue(inputStream, JsonNode.class);
+			JsonNode model = mapper.readValue(inputStream, JsonNode.class);
 
 			return model;
 
