@@ -95,12 +95,10 @@ public class WebController {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		System.err.println("fileName -- " + fileName);
-
 		JsonNode resultData = yamlTestSuiteScheduling.readDataFromZip(fileName);
 
 		try {
-			mav.addObject("message1", resultData);
+			mav.addObject("message2", resultData);
 		} catch (Exception e) {
 			log.info("Error in reading zip = " + e);
 			mav.addObject("message", e.getMessage());

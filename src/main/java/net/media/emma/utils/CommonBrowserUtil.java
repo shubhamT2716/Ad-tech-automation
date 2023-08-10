@@ -58,12 +58,22 @@ public class CommonBrowserUtil {
 				String dataRaw = model.getKey() + " " + model.getValue().toString();
 
 				log.info("dataRaw = " + dataRaw);
-
 				byte[] data = dataRaw.getBytes();
 
 				zos.write(data, 0, data.length);
 
 			}
+
+//			ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+//
+//			ObjectOutputStream objectOutputStream = new ObjectOutputStream(arrayOutputStream);
+//
+//			objectOutputStream.writeObject(rawData);
+//
+//			byte[] data = arrayOutputStream.toByteArray();
+//
+//			zos.write(data, 0, data.length);
+
 			zos.closeEntry();
 
 			zos.close();
@@ -90,7 +100,7 @@ public class CommonBrowserUtil {
 
 			ObjectMapper mapper = new YAMLMapper();
 
-			JsonNode model = mapper.readValue(inputStream, JsonNode.class);
+			JsonNode model = mapper.readTree(inputStream);
 
 			return model;
 
