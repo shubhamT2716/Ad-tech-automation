@@ -175,7 +175,8 @@ public class YamlTestSuiteScheduling {
 		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
 
 		if (flagForMail == true) {
-			this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList);
+			this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", testReportModelList,
+					zipFile);
 
 		}
 
@@ -210,6 +211,16 @@ public class YamlTestSuiteScheduling {
 		context.setVariable("name", user);
 		context.setVariable("result", result);
 		return this.engine.process("SchedulerReport", context);
+	}
+
+	public JsonNode readDataFromZip(String fileName) {
+
+		String filePath = zipFilePath + fileName;
+
+		JsonNode resultData = CommonBrowserUtil.readDataFromZip(filePath);
+
+		return resultData;
+
 	}
 
 }

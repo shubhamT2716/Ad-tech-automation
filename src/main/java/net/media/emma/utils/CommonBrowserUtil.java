@@ -2,13 +2,20 @@ package net.media.emma.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.yaml.TestReportModel;
@@ -68,6 +75,30 @@ public class CommonBrowserUtil {
 
 			return null;
 
+		}
+
+	}
+
+	public static JsonNode readDataFromZip(String fileName) {
+
+		try {
+			ZipFile file = new ZipFile(fileName);
+
+			ZipEntry entry = file.entries().nextElement();
+
+			InputStream inputStream = file.getInputStream(entry);
+
+			ObjectMapper mapper = new YAMLMapper();
+
+			JsonNode model = mapper.convertValue(inputStream, JsonNode.class);
+
+			return model;
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+			return null;
 		}
 
 	}

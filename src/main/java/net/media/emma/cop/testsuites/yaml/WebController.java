@@ -90,6 +90,26 @@ public class WebController {
 
 	}
 
+	@GetMapping("/smokeTestSuite/{fileName}")
+	public ModelAndView runReortForEmail(@PathVariable("fileName") String fileName) {
+
+		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
+
+		System.err.println("fileName -- " + fileName);
+
+		JsonNode resultData = yamlTestSuiteScheduling.readDataFromZip(fileName);
+
+		try {
+			mav.addObject("message1", resultData);
+		} catch (Exception e) {
+			log.info("Error in reading zip = " + e);
+			mav.addObject("message", e.getMessage());
+		}
+
+		return mav;
+
+	}
+
 	@GetMapping("/autoTest")
 	public ModelAndView getAutoTest() {
 
