@@ -228,6 +228,11 @@ public class TestSuite implements GenericTestSuite {
 		for (Request request : bidExRequestObjects) {
 			bidexReport.getMatchingUrls().add(request.url());
 
+			if(null != request.failure()){
+				bidexReport.getConsoleMessages().add("Request has failed. " + request.failure().toString());
+				continue;
+			}
+
 			Timing timing = request.timing();
 
 			if (null != timing) {
