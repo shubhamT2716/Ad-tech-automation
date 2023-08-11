@@ -19,6 +19,8 @@ import com.microsoft.playwright.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.utils.URLDataProcessing;
+import java.util.regex.Pattern;
+
 
 
 @Service
@@ -78,22 +80,24 @@ public class bidexAndFeatureTests {
 		}
 
 
-		// String startTarget  =  ".loadConfig";
-		// String endTarget = "}abtest(e,t)";
-		// int startIndex=0;
-		// int endIndex=0;
+		String startTarget  =  ".loadConfig";
+		String endTarget = "})}abtest(e,t)";
+		int startIndex=0;
+		int endIndex=0;
 
-		// if(bidexResp.contains(startTarget)){
-		// 	 startIndex  = bidexResp.indexOf(startTarget);
-		// 	log.info("Start Index : " + startIndex);
-		// }
-		// if(bidexResp.contains(endTarget)){
-		// 	endIndex  = bidexResp.indexOf(endTarget);
-		// 	log.info("End Index : " + endIndex);
-		// }
+		if(bidexResp.contains(startTarget)){
+			 startIndex  = bidexResp.indexOf(startTarget);
+			startIndex+=12;
+			log.info("Start Index : " + startIndex);
+		}
+		if(bidexResp.contains(endTarget)){
+			endIndex  = bidexResp.indexOf(endTarget);
+			endIndex+=3;
+			log.info("End Index : " + endIndex);
+		}
 
 
-		finalConfig = bidexResp.substring(66959, 98446);
+		finalConfig = bidexResp.substring(startIndex, endIndex);
 
 		// finalConfig = finalConfig.replaceAll("\""	, "");
 
@@ -105,7 +109,8 @@ public class bidexAndFeatureTests {
 			log.info("Converting to json error");
 		}
 
-		
+		getCrids = getCridsByXpath(replaced);
+	
 		// log.info("get Crids " + getCrids);
 
 		
@@ -117,6 +122,7 @@ public class bidexAndFeatureTests {
 	private Map<String,String> getCridsByXpath(JsonNode replaced){
 		Map<String, String> cridToDfpPath = new HashMap<String, String>();
 		List<String> crids = new ArrayList<String>();
+		Map<String, String> getDcn;
 		log.info("Here");
 		JsonNode parent = replaced.get("DfpPlacements");
 		try {
@@ -138,7 +144,51 @@ public class bidexAndFeatureTests {
 				// log.info("Crid is " + id + " and Dfp Path is" + cridNode);
 			}
 			log.info("Crid and DfpPath " + cridToDfpPath);
+
+			getDcn = getDcnForCrid(replaced, crids);
+
+
 		return cridToDfpPath;
 	}
-    
+
+
+
+	private Map<String, String> getDcnForCrid(JsonNode replaced, List<String> crids){
+		Map<String, String> dcnToCridMap = new HashMap<String, String>();
+				
+				try {
+		
+					JsonNode bidderParamsConfigNode = replaced.get("BidderParamsConfig");
+					if (bidderParamsConfigNode != null && bidderParamsConfigNode.isObject()) {
+
+						bidderParamsConfigNode.fields().forEachRemaining(entry -> {
+							String fieldKey = entry.getKey();
+							JsonNode fieldNode = entry.getValue();
+		
+
+							JsonNode placementParamsNode = fieldNode.get("placementParams");
+							if (placementParamsNode != null && placementParamsNode.isObject()) {
+
+								placementParamsNode.fields().forEachRemaining(ppEntry -> {
+									String dcn = ppEntry.getKey();
+
+									String dcnVal = placementParamsNode.get(dcn).get("dcn").toString();
+									dcnToCridMap.put(dcn, dcnVal);
+
+									
+								});
+							}
+						});
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				
+				// log.info("Crid is " + id + " and Dfp Path is" + cridNode);
+				
+
+			}
+			log.info("DCN mapped for crids " + dcnToCridMap);
+
+			return dcnToCridMap;
+	}
 }
