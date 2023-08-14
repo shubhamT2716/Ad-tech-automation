@@ -1,130 +1,32 @@
----
 environment: hbx.media.net
-cookies:
- - VisitorId: 295a8052-83a4-4bc7-06bd-b840f17d88f7
- - data-a: ""
+cookies: [visitor-id : 3249269632710602062V1 ,  data-o : f88043f8-7631-0195-18cf-d9b1ff3a7344~~1]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: https://www.nutritionix.com/brands/restaurant?mnet_test=1
-networkCallsPositive:
- PRLog: https://hblg.media.net/log?logid=prlog
- APLog: https://hblg.media.net/log?logid=aplog
- AWLog: https://hblg.media.net/log?logid=awlog
- ADPLog: https://hblg.media.net/log?logid=kfk&evtid=adplog&itype=HB
- GPTSLog: https://hblg.media.net/log?logid=kfk&evtid=gptslog
- ADXLog: https://hblg.media.net/log?logid=kfk&evtid=adx
- BELog: https://hblg.media.net/log?logid=kfk&evtid=belog
- RELog: https://hblg.media.net/log?logid=kfk&evtid=relog
- ARLog :"https://hblg.media.net/log?logid=kfk&evtid=arlog": null
- CHECKSYNCLog: https://hbx.media.net/checksync.php?
- RTBSCall: https://xch.media.net/AdExchange/rtbsspub?
- PREBIADAPTER :"https://hb-pb.media.net/rtb/hb?cid=8CU66J63J": null
- GAMAPADCall: https://securepubads.g.doubleclick.net/gampad/ads?
- Flog: https://hblg.media.net/log?logid=kfk&evtid=flog
-networkCallsNegative:
- nerrPing: https://hblg.media.net/nerrping.php?
-keysToVerifyPositive:
- PRLog:
-  pvid:
-   - "99"
-   - "23"
-   - "79"
-   - "29"
-   - "3012"
-   - "251"
-   - "450"
-   - "441"
-   - "178"
-   - "3"
-   - "345"
-   - "203"
-   - "126"
-   - "237"
-   - "326"
-   - "117"
-   - "107"
-   - "327"
-   - "208"
-   - "109"
-   - "96"
-   - "97"
-   - "54"
-  cid:
-   - 8CUB9W7X6
-  svr:
-   - 2023072110_141_072113_693_072113_656_ssp
-  ugd:
-   - "4"
-   - "3"
-  usp_ldf:
-   - "0"
-   - "1"
- APLog:
-  svr:
-   - 2023072110_141_072113_693_072113_656_ssp
-  ugd:
-   - "4"
-   - "3"
-  usp_ldf:
-   - "0"
-   - "1"
-  cid: []
-  crid: []
-  pvid: []
-  snm: []
-  nbr: []
-  size: []
-  type: []
-  ttl: []
-  ogbdp: []
-  acid: []
-  iwb: []
-  ldf: []
- BELog:
-  name: []
-  stack: []
-  cid: []
-  svr: []
-keysToVerifyNegative:
- prlog:
-  snm:
-   - removed
-   - error
-  nbr:
-   - "13"
-  usp_ldf:
-   - ""
- aplog:
-  nbr:
-   - "13"
-   - "1202"
-  snm: []
-  size: []
-  type: []
-  ttl: []
-  ogbdp: []
-  acid: []
-  iwb: []
- awlog:
-  ogbdp:
-   - "0"
-   - "-1"
-   - "-2"
-keysToVerifyAnyOneOf:
- prlog:
-  nbr:
-   - "45"
-   - "3"
-   - "69"
-   - "0"
-   - "1"
-   - "99"
- aplog:
-  nbr:
-   - "45"
-   - "3"
-   - "69"
-   - "0"
-   - "1"
-   - "99"
-responseSimulate: []
-domInject: []
+publisherUrl: "https://www.nutritionix.com/brands/restaurant?mnet_test=1"
+
+networkCallsPositive: {
+ aplogs: "https://hblg.media.net/log?logid=aplog",
+ prlogs: "https://hblg.media.net/log?logid=prlog",
+ awlogs: "https://hblg.media.net/log?logid=awlog",
+ checksync: "https://hbx.media.net/checksync.php",
+}
+
+networkCallsNegative: {
+ nerrPing: "https://hblg.media.net/nerrping.php"
+ }
+
+keysToVerifyPositive: {
+  prlogs: {pvid: ["55", "26", "3012", "251", "141", "175", "222", "3007", "3", "246", "214", "236", "203", "237", "229", "108", "9799"],cid: ["8CUB9W7X6"]},
+  aplogs: {pvid: ["55", "26", "3012", "251", "141", "175", "222", "3007", "3", "246", "214", "236", "203", "237", "229", "108", "9799","0","3017"]}
+ }
+
+keysToVerifyNegative: {}
+keysToVerifyAnyOneOf: {}
+
+responseSimulate: [
+ {urlPattern: "**//hb-pb.media.net/**", jsonPath: "$.ext.csUrl[1].url", overrideValue: "MYSESSINID"}
+ ]
+
+domInject: [
+ { domSelector: "#ContentPane29", content: "TestReport/NewContent/file1.txt", append: "true" },
+ { domSelector: "#ContentPane29", content: "TestReport/NewContent/file2.txt", append: "false" }
+ ]

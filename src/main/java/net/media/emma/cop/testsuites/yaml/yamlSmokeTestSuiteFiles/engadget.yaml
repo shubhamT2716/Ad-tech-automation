@@ -1,108 +1,55 @@
----
-environment: sg.hb.yahoo.net
-cookies:
-  - VisitorId: 295a8052-83a4-4bc7-06bd-b840f17d88f7
-  - data-a: ""
+environment: hb.yahoo.net
+cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: https://www.engadget.com/?headerbidding=1
-networkCallsPositive:
-  PRLog: https://lg1.hb.yahoo.net/log?logid=prlog
-  APLog: https://lg1.hb.yahoo.net/log?logid=aplog
-  AWLog: https://lg1.hb.yahoo.net/log?logid=awlog
-  ADPLog: https://lg1.hb.yahoo.net/log?logid=kfk&evtid=adplog
-  GPTSLog: https://lg1.hb.yahoo.net/log?logid=kfk&evtid=gptslog
-  BELog: https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog
-  RELog: https://lg1.hb.yahoo.net/log?logid=kfk&evtid=relog
-  ARLog :"https://lg1.hb.yahoo.net/log?logid=kfk&evtid=arlog": null
-  BRQLog: https://lg1.hb.yahoo.net/log?logid=kfk&evtid=brqlog
-  CHECKSYNCLog: https://hb.yahoo.net/checksync.php?cid=8YHBL12EX&cs=1&cv=37&hb=1&prvid=25014&vsSync=1&refUrl=&gdpr=1&gdprconsent=1&gdprstring=CPu2HEAPu2HEAAOACBENDQCoAP_AAEfAACiQJVtB9G7WTXNnMXp_YPsUeYUX1VBp4uAhBgCBA-ABzBsUIIwGVmEzJEyIJigCGAIAoEJBIEFtGAlAAFAAYIAFABHICEAAJAAAIGAAECAAAgBACBBIEwAAAAAQIUBVEhQAkAdAQFoIQYhAlgAgAQIAICAEgIhAAgQAEAAgQABIAEAAgggAggAAAAIAAAAEAFAIGQBQBgFCAIJIgAkGpUQBNgAGBNIGEUKIEQVBABQKAAAACBAgAATBgUIIwCVGASAECIAAgAAAIAoAIBAAABAAhAAEAAYIAAABAIAAAAIAAAACAAEAAAAAAAAAAIAQAAAAAAIQBEAAQAgAEAABAAQQAAEAAgAAAAACAEAIhAAAAAAAAgAAAAAEAAAgAAgAAAAAIAAAAAAAAIEABABgBhoAMAAQTFEQAYAAgmKKgAwABBMU&usp_status=0&usp_consent=1&coppa=0&ckdel=0&gpp=&gpp_sid=
-  UCREATIVE: https://hb.yahoo.net/ucreative.php?cv=1
-  YAHOOPREBIADAPTERLog :"https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS": null
-  MEDIAPrebidAdaptorCall: https://warp.media.net/ss/nes/force/prebid?cid=8YHBL12EX&cpm=15&mtypepref=banner%2Cnative%2Cvideo&ogHost=m.hb.yahoo.net&ogPath=%2Frtb%2Fyhb
-  GAMAPADCall: https://securepubads.g.doubleclick.net/gampad/ads?
-  Flog: https://hb.yahoo.net/log?logid=kfk&evtid=flog
-networkCallsNegative:
-  nerrPing: https://hb.yahoo.net/nerrping.php?
-keysToVerifyPositive:
-  PRLog:
-    pvid:
-      - "25014"
-      - "-3"
-    cid:
-      - 8YHBL12EX
-    svr:
-      - 2023072110_141_072113_693_072113_656_ssp
-    ugd:
-      - "4"
-      - "3"
-    usp_ldf:
-      - "0"
-      - "1"
-  APLog:
-    svr:
-      - 2023072110_141_072113_693_072113_656_ssp
-    ugd:
-      - "4"
-      - "3"
-    usp_ldf: []
-    cid: []
-    crid: []
-    pvid: []
-    snm: []
-    nbr: []
-    size: []
-    type: []
-    ttl: []
-    ogbdp: []
-    acid: []
-    iwb: []
-    ldf: []
-  BELog:
-    name: []
-    stack: []
-    cid: []
-    svr: []
-keysToVerifyNegative:
-  prlog:
-    snm:
-      - removed
-      - error
-    nbr:
-      - "13"
-    usp_ldf:
-      - ""
-  aplog:
-    nbr:
-      - "13"
-      - "1202"
-    snm: []
-    size: []
-    type: []
-    ttl: []
-    ogbdp: []
-    acid: []
-    iwb: []
-  awlog:
-    ogbdp:
-      - "0"
-      - "-1"
-      - "-2"
-keysToVerifyAnyOneOf:
-  prlog:
-    nbr:
-      - "45"
-      - "3"
-      - "69"
-      - "0"
-      - "1"
-      - "99"
-  aplog:
-    nbr:
-      - "45"
-      - "3"
-      - "69"
-      - "0"
-      - "1"
-      - "99"
+publisherUrl: "https://www.engadget.com/?headerbidding=1&mnet_test=1"
+
+networkCallsPositive: {
+   checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
+   PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+   APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+   AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+}
+
+networkCallsNegative: {
+  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+}
+
+keysToVerifyPositive: {
+
+  checksync: {
+    #gdpr: ["0"],
+    gpp: ["DBAA"],
+    gpp_sid: ["-1"]
+  },
+
+  PRLog: {
+    cid: ["8YHBL12EX"],
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
+    ugd: ["4"],
+  },
+  
+  APLog: {
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
+    ugd: ["4"],
+  },
+}
+
+#to_check_negative_keys
+keysToVerifyNegative: {
+  prlog: { snm : ["removed","error",], nbr : ["13"]},
+  aplog: { nbr: ["13"]},
+  awlog: { ogbdp : ["0","-1","-2"]},
+}
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: {
+  prlog: { nbr : [ "45","3","69","0","1","99" ]},
+  aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+}
+
+# ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []
 domInject: []
