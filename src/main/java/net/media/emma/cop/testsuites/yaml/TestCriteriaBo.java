@@ -26,6 +26,10 @@ public class TestCriteriaBo {
     Map<String, Map<String, Set<String>>> keysToVerifyNegative;
     Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
 
+    // New fields
+    Map<String, String> bidderDataUrls;
+    Map<String, List<DataAssertionParams>> bidderDataAssertions;
+
     List<ResponseSimulateParams> responseSimulate;
     List<DomInjectParams> domInject;
 
@@ -41,5 +45,27 @@ public class TestCriteriaBo {
         String domSelector;
         String content;
         Boolean append;
-    }   
+    }
+
+    @Getter
+    @Setter
+    public static class DataAssertionParams {
+        MatchingJsonPath matchingJsonPath;
+        List<DataPathValue> requestData;
+        List<DataPathValue> responseData;
+    }
+
+    @Getter
+    @Setter
+    public static class MatchingJsonPath {
+        String jsonPath;
+        String expectedValue;
+    }
+
+    @Getter
+    @Setter
+    public static class DataPathValue {
+        String jsonPath;
+        String value;
+    }
 }

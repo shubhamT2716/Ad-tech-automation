@@ -11,6 +11,10 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.microsoft.playwright.Request;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +30,10 @@ public class URLChecksReportModel {
 	Map<String, PositiveURLChecks> positiveUrlChecks = new HashMap<String, PositiveURLChecks>();
 	@Builder.Default
 	Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
+
+	Map<String, BidderDataAssertionsCheck> bidderDataAssertionsChecks = new HashMap<>();
+
+	Configuration jsonModelMapper;
 
 	enum TestResult {
 		PASS, FAIL, NA
@@ -82,6 +90,63 @@ public class URLChecksReportModel {
 		@Builder.Default
 		Integer countOfMatchingUrls = 0;
 	}
+
+	@Getter
+	@Setter
+	@Builder
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ToString
+	public static class BidderDataAssertionsCheck {
+		String label;
+		String urlPattern;
+		@Builder.Default
+		TestResult testResult = TestResult.PASS;
+
+		@Builder.Default
+		List<String> matchingUrls = new ArrayList<>();
+
+		@Builder.Default
+		Integer countOfMatchingUrls = 0;
+
+		@Builder.Default
+		List<String> testMessages = new ArrayList<>();
+
+		// New field to store assertion details
+		@Builder.Default
+		List<DataAssertion> dataAssertions = new ArrayList<>();
+	}
+
+
+	// New class to represent data assertions
+	@Getter
+	@Setter
+	@Builder
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ToString
+	public static class DataAssertion {
+		MatchingJsonPath matchingJsonPath;
+		List<DataPathValue> requestData;
+		List<DataPathValue> responseData;
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	@ToString
+	public static class MatchingJsonPath {
+		String jsonPath;
+		String expectedValue;
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	@ToString
+	public static class DataPathValue {
+		String jsonPath;
+		String value;
+	}
+
 
 	public void updateMatchingUrlsCount() {
 		positiveUrlChecks.forEach((key, value) -> {
@@ -176,4 +241,64 @@ public class URLChecksReportModel {
 		});
 
 	}
+	public void verifyBidderDataValuesComparisons(List<Request> requestList, TestCriteriaBo testData) {
+		Map<String, Map<String, List<DataAssertion>>> bidderDataAssertions = testData.getBidderDataAssertions();
+
+		bidderDataAssertions.forEach((bidder, assertionMap) -> {
+			BidderDataAssertionsCheck bidderDataAssertionsCheck = BidderDataAssertionsCheck.builder()
+					.label(bidder)
+					.urlPattern(testData.getBidderDataUrls().get(bidder))
+					.build();
+
+			List<DataAssertion> assertions = assertionMap.get(bidder);
+
+			for (Request request : requestList) {
+				String requestBody = request.postData();
+				boolean allAssertionMatched = true;
+
+				for (DataAssertion assertion : assertions) {
+					MatchingJsonPath matchingJsonPath = assertion.getMatchingJsonPath();
+					String matchingJsonPathValue = matchingJsonPath.getJsonPath();
+					String matchingJsonPathExpectedValue = matchingJsonPath.getExpectedValue();
+
+					JsonNode matchingJsonNode = JsonPath.using(jsonModelMapper).parse(requestBody).read(matchingJsonPathValue);
+
+					if (matchingJsonNode.isTextual() && matchingJsonPathExpectedValue.equals(matchingJsonNode.textValue())) {
+						List<DataPathValue> requestDataAssertions = assertion.getRequestData();
+
+						for (DataPathValue requestData : requestDataAssertions) {
+							String requestDataJsonPath = requestData.getJsonPath();
+							String requestDataExpectedValue = requestData.getValue();
+
+							JsonNode requestDataNode = JsonPath.using(jsonModelMapper).parse(requestBody).read(requestDataJsonPath);
+
+							if (!requestDataNode.isTextual() || !requestDataExpectedValue.equals(requestDataNode.textValue())) {
+								allAssertionMatched = false;
+								break;
+							}
+						}
+					} else {
+						allAssertionMatched = false;
+					}
+
+					if (!allAssertionMatched) {
+						break;
+					}
+				}
+
+				if (allAssertionMatched) {
+					bidderDataAssertionsCheck.setTestResult(TestResult.PASS);
+					bidderDataAssertionsCheck.getMatchingUrls().add(request.url());
+					break; // Found a matching request, no need to check others
+				}
+			}
+
+			if (!bidderDataAssertionsCheck.getMatchingUrls().isEmpty()) {
+				bidderDataAssertionsChecks.put(bidder, bidderDataAssertionsCheck);
+			}
+		});
+	}
+
+
+
 }
