@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -65,7 +64,7 @@ public class YamlTestSuiteScheduling {
 	@Value("${yamlSmokeTestSuiteFilesPath}")
 	private String smokeTestYamlPath;
 
-	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+//	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
 	public void smokeTestScheduling() {
 
 		String environment = "hbx.media.net";
@@ -218,6 +217,8 @@ public class YamlTestSuiteScheduling {
 		String filePath = zipFilePath + fileName;
 
 		JsonNode resultData = CommonBrowserUtil.readDataFromZip(filePath);
+
+		log.info("Result Data " + resultData);
 
 		return resultData;
 

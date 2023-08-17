@@ -49,20 +49,25 @@ public class CommonBrowserUtil {
 			ZipEntry entry = new ZipEntry("RawData.txt");
 			zos.putNextEntry(entry);
 
-			for (Map.Entry<String, TestReportModel> model : rawData.entrySet()) {
+//			for (Map.Entry<String, TestReportModel> model : rawData.entrySet()) {
+//
+////				String dataRaw = model.getKey() + "-" + model.getValue().getTestMetaData() + " "
+////						+ model.getValue().getBidExController() + " " + model.getValue().getNetworkAnalytics() + " "
+////						+ model.getValue().getTestMetaData() + " " + model.getValue().getUrlChecks();
+//
+//				String dataRaw = model.getKey() + " " + model.getValue().toString();
+//
+//				byte[] data = dataRaw.getBytes();
+//
+//				zos.write(data, 0, data.length);
+//
+//			}
 
-//				String dataRaw = model.getKey() + "-" + model.getValue().getTestMetaData() + " "
-//						+ model.getValue().getBidExController() + " " + model.getValue().getNetworkAnalytics() + " "
-//						+ model.getValue().getTestMetaData() + " " + model.getValue().getUrlChecks();
+			String result = rawData.toString();
 
-				String dataRaw = model.getKey() + " " + model.getValue().toString();
+			byte[] data = result.getBytes();
 
-				log.info("dataRaw = " + dataRaw);
-				byte[] data = dataRaw.getBytes();
-
-				zos.write(data, 0, data.length);
-
-			}
+			zos.write(data, 0, data.length);
 
 //			ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
 //
@@ -100,6 +105,14 @@ public class CommonBrowserUtil {
 
 			ObjectMapper mapper = new YAMLMapper();
 
+//			JsonNode model = mapper.readTree(inputStream);
+
+//			Map<String, TestReportModel> model = new HashMap<>();
+
+//			readValue = mapper.readValue(inputStream, Map.class);
+//			Map<String, List<TestReportModel>> model2 = readValue;
+//			Map<String, TestReportModel> model = new HashMap<>();
+//
 			JsonNode model = mapper.readTree(inputStream);
 
 			return model;
