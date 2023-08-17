@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.jayway.jsonpath.JsonPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -327,10 +329,73 @@ public class TestSuite implements GenericTestSuite {
 		urlChecks.updateMatchingUrlsCount();
 		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
-		urlChecks.verifyBidderDataValuesComparisons(requests,testData);
+		verifyBidderDataValuesComparisons(urlChecks,requests,testData);
 
 		return urlChecks;
 	}
+
+	private void verifyBidderDataValuesComparisons(URLChecksReportModel urlChecks, List<Request> requestList, TestCriteriaBo testData) {
+		Map<String, Map<String, List<URLChecksReportModel.DataAssertion>>> bidderDataAssertions = testData.getBidderDataAssertions();
+
+		for (Map.Entry<String, Map<String, List<URLChecksReportModel.DataAssertion>>> entry : bidderDataAssertions.entrySet()) {
+			String bidder = entry.getKey();
+			Map<String, List<URLChecksReportModel.DataAssertion>> assertionMap = entry.getValue();
+
+			URLChecksReportModel.BidderDataAssertionsCheck bidderDataAssertionsCheck = URLChecksReportModel.BidderDataAssertionsCheck.builder()
+					.label(bidder)
+					.urlPattern(testData.getBidderDataUrls().get(bidder))
+					.build();
+
+			for (Request request : requestList) {
+				String requestBody = request.postData();
+				boolean allAssertionMatched = true;
+
+				List<URLChecksReportModel.DataAssertion> assertions = assertionMap.get(bidder);
+
+				for (URLChecksReportModel.DataAssertion assertion : assertions) {
+					URLChecksReportModel.MatchingJsonPath matchingJsonPath = assertion.getMatchingJsonPath();
+					String matchingJsonPathValue = matchingJsonPath.getJsonPath();
+					String matchingJsonPathExpectedValue = matchingJsonPath.getExpectedValue();
+
+					JsonNode matchingJsonNode = domUtils.getJsonNode(requestBody,matchingJsonPathValue);
+
+					if (domUtils.verifyJsonNodeValue(matchingJsonNode,matchingJsonPathExpectedValue)) {
+						List<URLChecksReportModel.DataPathValue> requestDataAssertions = assertion.getRequestData();
+
+						for (URLChecksReportModel.DataPathValue requestData : requestDataAssertions) {
+							String requestDataJsonPath = requestData.getJsonPath();
+							String requestDataExpectedValue = requestData.getValue();
+
+							JsonNode requestDataNode = domUtils.getJsonNode(requestBody,requestDataJsonPath);
+
+							if (!domUtils.verifyJsonNodeValue(requestDataNode,requestDataExpectedValue)) {
+								allAssertionMatched = false;
+								break;
+							}
+						}
+					} else {
+						allAssertionMatched = false;
+					}
+
+					if (!allAssertionMatched) {
+						bidderDataAssertionsCheck.getTestMessages().add("Assertion failed for " + matchingJsonPathValue + " " + matchingJsonPathExpectedValue);
+						break;
+					}
+				}
+
+				if (allAssertionMatched) {
+					bidderDataAssertionsCheck.setTestResult(URLChecksReportModel.TestResult.PASS);
+					bidderDataAssertionsCheck.getMatchingUrls().add(request.url());
+					break; // Found a matching request, no need to check others
+				}
+			}
+
+			if (!bidderDataAssertionsCheck.getMatchingUrls().isEmpty()) {
+				urlChecks.getBidderDataAssertionsChecks().put(bidder, bidderDataAssertionsCheck);
+			}
+		}
+	}
+
 
 	// private String getNetworkCallAssertions2(List<String> requestList,
 	// TestCriteriaBo testData){
