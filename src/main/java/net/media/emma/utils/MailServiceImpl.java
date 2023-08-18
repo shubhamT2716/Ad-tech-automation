@@ -29,16 +29,17 @@ public class MailServiceImpl {
 	}
 
 	@Async
-	public void sendMail(String to, String templateName, List<TestReportModel> templateModel, String zipFile) {
+	public void sendMail(String to, String templateName, List<TestReportModel> templateModel, String zipFile,
+			String testResult) {
 		Thread t = Thread.currentThread();
 
-		String templateText = templateLoder(templateName, templateModel, zipFile);
+		String templateText = templateLoder(templateName, templateModel, zipFile, testResult);
 		MimeMessagePreparator message = prepareMessage(to, templateText);
 		javaMailSender.send(message);
 
 	}
 
-	public String templateLoder(String user, List<TestReportModel> result, String zipFile) {
+	public String templateLoder(String user, List<TestReportModel> result, String zipFile, String testResult) {
 
 		Context context = new Context();
 		List<Context> contextList = new ArrayList<>();
@@ -60,6 +61,7 @@ public class MailServiceImpl {
 
 		context.setVariable("contextList", contextList);
 		context.setVariable("ZipFile", zipFile);
+		context.setVariable("testResult", testResult);
 
 //		return thymeleaf.process("smokeTest", context);
 //		return thymeleaf.process("smokeTestEmail", context);

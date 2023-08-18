@@ -81,6 +81,12 @@ public class YamlTestSuiteScheduling {
 
 	}
 
+	public String getTestResult() {
+		// here we have to add some condition based requirement to handle result
+
+		return "fail";
+	}
+
 	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
 			boolean flagForMail) {
 
@@ -174,9 +180,11 @@ public class YamlTestSuiteScheduling {
 
 		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
 
+		String testResult = getTestResult();
+
 		if (flagForMail == true) {
 			this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList,
-					zipFile);
+					zipFile, testResult);
 
 		}
 

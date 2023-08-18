@@ -332,18 +332,20 @@
 											<p>This is a Smoke Test General Report  Test Data.  click the below button To view the full report,</p>
 											<table role="presentation" cellpadding="0" cellspacing="0" border="0" class="btn btn-primary">
 												<tbody>
-													<p>Test Result:
+													<p> 
 														
                                                                 
                                                                     <span th:if="${testResult == 'pass'}">
-                                                                        <a style="background-color: green; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px;">PASS</a>
+                                                                        <a style="background-color: green; color: white; padding: 5px 5px; text-decoration: none; border-radius: 2.5px;"><b>Test Result:</b> PASS</a>
                                                                     </span>
                                                                     <span th:if="${testResult == 'fail'}">
-                                                                        <a style="background-color: red; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px;">FAIL</a>
+                                                                        <a style="background-color: red; color: white; padding: 5px 5px; text-decoration: none; border-radius: 5px;"><b>Test Result:</b> FAIL</a>
                                                                     </span>
                                                                     <span th:if="${testResult == 'warning' or testResult == null}">
-                                                                        <a  style="background-color: rgb(170, 175, 22); color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px;">WARNING </a>
+                                                                        <a  style="background-color: rgb(170, 175, 22); color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px;"><b>Test Result:</b> WARNING </a>
                                                                     </span>
+
+                                                                 
                                                            
 													</p>
 													<tr>
