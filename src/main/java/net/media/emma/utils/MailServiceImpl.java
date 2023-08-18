@@ -1,6 +1,8 @@
 package net.media.emma.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.mail.javamail.JavaMailSender;
@@ -60,7 +62,8 @@ public class MailServiceImpl {
 		context.setVariable("ZipFile", zipFile);
 
 //		return thymeleaf.process("smokeTest", context);
-		return thymeleaf.process("smokeTestEmail", context);
+//		return thymeleaf.process("smokeTestEmail", context);
+		return thymeleaf.process("smokeTestSchedulerReport", context);
 
 	}
 
@@ -70,10 +73,12 @@ public class MailServiceImpl {
 
 			public void prepare(jakarta.mail.internet.MimeMessage mimeMessage) throws jakarta.mail.MessagingException {
 
+				String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm").format(new Date());
+
 				MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 				message.setFrom("shubham.t@media.net");
 				message.setTo(to);
-				message.setSubject("Smoke Test Report");
+				message.setSubject("Smoke Test Report- " + timeStamp);
 				// message.setText( templateText + "my text <img src='cid:myLogo'>", true);
 				message.setText(templateText, true);
 
