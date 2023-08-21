@@ -15,8 +15,11 @@
 
     <div class="container my-5">
      
-      <button onClick="displayBasicReport()" type="button" class="btn btn-success">Show Basic Report</button> 
+      
       <button onClick="displayRaw()" type="button" class="btn btn-secondary">Show Raw Data</button>
+      <button onClick="displayBidexReport()" type="button" class="btn btn-secondary">Show BidEx Report</button>
+      <button onclick="displayErrorMessage()" type="button" class="btn btn-secondary">Show Error Messages</button>
+      <button onClick="displayBasicReport()" type="button" class="btn btn-success">Show Basic Report</button> 
     </div>
 
     <div class="container my-5">
@@ -35,6 +38,18 @@
      var displayReport = /*[[${message2}]]*/ 'Users';
    /*]]>*/
 </script> 
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+var displayBidex = /*[[${message3}]]*/ 'bidEx';
+   /*]]>*/
+</script>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+var errorMessage = /*[[${message4}]]*/ 'errorMessage';
+   /*]]>*/
+</script>
 
     <script type="text/javascript">
 	
@@ -94,6 +109,28 @@
     hljs.highlightAll();
    }
 
+   function  displayBidexReport(){
+    const pre= document.createElement("pre");
+    const code = document.createElement("code");
+    code.classList.add("language-json");
+    code.innerHTML=JSON.stringify(displayBidex,null,2);
+    pre.appendChild(code);
+    document.getElementById("testReport").innerHTML="";
+    document.getElementById("testReport").appendChild(pre);
+    hljs.highlightAll();
+   }
+
+   function displayErrorMessage(){
+    const pre=document.createElement("pre");
+    const code=document.createElement("code");
+    code.classList.add("language-json");
+    code.innerHTML=JSON.stringify(errorMessage,null,2);  
+    pre.appendChild(code);
+    document.getElementById("testReport").innerHTML="";
+    document.getElementById("testReport").appendChild(pre);
+    hljs.highlightAll();
+   }
+
   // function display(status) {
 
   //   // console.log(status);
@@ -108,6 +145,10 @@
           
   // }
 
+  
+ 
+  displayBidexReport();
+  displayErrorMessage();
   displayRaw();
   displayBasicReport();
         

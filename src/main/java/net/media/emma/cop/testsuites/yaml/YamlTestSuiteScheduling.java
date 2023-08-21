@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -27,6 +26,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.yaml.SmokeTestSummeryDto.Testdata;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.BidExController;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.FileOperations;
@@ -65,7 +66,7 @@ public class YamlTestSuiteScheduling {
 	@Value("${yamlSmokeTestSuiteFilesPath}")
 	private String smokeTestYamlPath;
 
-	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+//	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
 	public void smokeTestScheduling() {
 
 		String environment = "hbx.media.net";
@@ -158,12 +159,36 @@ public class YamlTestSuiteScheduling {
 
 		TestReportModel reportModel = new TestReportModel();
 
+		Map<String, BidExController> bidExReport = new HashMap<>();
+
+		Map<String, List<String>> errorMessage = new HashMap<>();
+
+		Map<String, Map<String, List<String>>> error = new HashMap<>();
+
 		for (String yaml : listOfYamlEnv) {
 			Testdata testdata = new SmokeTestSummeryDto().new Testdata();
 
 			reportModel = finalResult.get(yaml);
 
 			testReportModelList.add(reportModel);
+
+			bidExReport.put(yaml, reportModel.getBidExController());
+
+			Map<String, PositiveURLChecks> model = reportModel.getUrlChecks().getPositiveUrlChecks();
+
+			errorMessage = model.entrySet().stream()
+					.filter(n -> n.getValue().getTestMessages() != null && !n.getValue().getTestMessages().isEmpty())
+					.collect(Collectors.toMap(Map.Entry::getKey, e -> {
+						try {
+							return e.getValue().getTestMessages();
+						} catch (Exception e2) {
+							log.info("Error While read error message from testReport Data" + e);
+						}
+						return null;
+
+					}));
+
+			error.put(yaml, errorMessage);
 
 			testdata.setEnvironment(reportModel.getTestMetaData().getEnvironment());
 			testdata.setUserAgent(reportModel.getTestMetaData().getUserAgent());
@@ -193,6 +218,8 @@ public class YamlTestSuiteScheduling {
 
 		rawDataDto.setRawData(finalResult);
 		rawDataDto.setSmokeReport(dto);
+		rawDataDto.setBidExReport(bidExReport);
+		rawDataDto.setErrorMessage(error);
 
 		return rawDataDto;
 

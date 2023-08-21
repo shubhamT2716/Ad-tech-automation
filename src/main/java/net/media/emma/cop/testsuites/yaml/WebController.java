@@ -80,6 +80,8 @@ public class WebController {
 		try {
 			mav.addObject("message2", result.getSmokeReport());
 			mav.addObject("message1", result.getRawData());
+			mav.addObject("message3", result.getBidExReport());
+			mav.addObject("message4", result.getErrorMessage());
 
 		} catch (Exception e) {
 			log.info("Error reading file.", e);

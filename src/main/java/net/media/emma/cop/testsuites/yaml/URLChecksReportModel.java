@@ -11,8 +11,10 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -20,6 +22,8 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class URLChecksReportModel {
 
 	@Builder.Default
@@ -35,6 +39,8 @@ public class URLChecksReportModel {
 	@Setter
 	@Builder
 	@ToString
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class PositiveURLChecks {
 		String label;
 		String urlPattern;
@@ -70,6 +76,8 @@ public class URLChecksReportModel {
 	@Builder
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ToString
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class NegativeURLChecks {
 		String label;
 		String urlPattern;
