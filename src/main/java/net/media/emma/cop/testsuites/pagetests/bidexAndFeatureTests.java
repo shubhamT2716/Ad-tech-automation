@@ -17,6 +17,7 @@ import com.microsoft.playwright.Page;
 
 
 import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.utils.URLDataProcessing;
 import java.util.regex.Pattern;
@@ -26,6 +27,8 @@ import java.util.regex.Pattern;
 @Service
 @Slf4j
 public class bidexAndFeatureTests {
+
+	BidExConfig bidExConfig = BidExConfig.builder().build();
 
 	String finalConfig = "";
 	String bidexResp = "";
@@ -98,6 +101,12 @@ public class bidexAndFeatureTests {
 
 
 		finalConfig = bidexResp.substring(startIndex, endIndex);
+
+
+		bidExConfig.loadBidExConfig(finalConfig);
+
+		// bidExConfig.getSlotById("164457376").getSizes();
+
 
 		// finalConfig = finalConfig.replaceAll("\""	, "");
 
