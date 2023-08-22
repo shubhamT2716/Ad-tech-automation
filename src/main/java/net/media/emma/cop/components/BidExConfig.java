@@ -1,6 +1,7 @@
 package net.media.emma.cop.components;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -102,10 +103,54 @@ public class BidExConfig {
 
     @Getter @Setter @Builder
     public static class SlotsData{
-            public String crid;
-            public String dcn;
-            public String adunitPath;
-            public List<String> sizes; //[ 300x250, 300x600 ] 
+
+        public String crid;
+        public String dcn;
+        public String adunitPath;
+
+        
+        @Builder.Default
+        public List<ProvidersData> providersData = new ArrayList<ProvidersData>();
+
+        public ProvidersData getProviderById(int id){
+            for (ProvidersData provider : providersData) {
+                if(provider.pvid == id){
+                    return provider;
+                }
+            }
+            return null;
+        }
+
+        public List<String> getSizes(){
+            List<String> sizes = new ArrayList<String>();
+            for (ProvidersData provider : providersData) {
+                for (ProvidersData.Sizes size : provider.sizes) {
+                    sizes.add(size.sz);
+                }
+            }
+            return sizes;
+        }
+
+    }
+
+    @Getter @Setter @Builder
+    public static class ProvidersData{
+
+        int pvid;
+        String  br;
+        String  ecc;
+        String  hb;
+        String  prf;
+        String  id;
+        List<Sizes> sizes;
+
+        @Getter @Setter @Builder
+        public static class Sizes{
+            String epc;
+            String sz;
+            String mediaType;
+        }
+       
     }
 
 

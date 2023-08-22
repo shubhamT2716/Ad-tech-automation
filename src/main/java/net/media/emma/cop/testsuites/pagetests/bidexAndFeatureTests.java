@@ -1,5 +1,6 @@
 package net.media.emma.cop.testsuites.pagetests;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +14,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.introspect.AccessorNamingStrategy.Provider;
 import com.microsoft.playwright.Page;
 
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
+import net.media.emma.cop.components.BidExConfig.ProvidersData;
+import net.media.emma.cop.components.BidExConfig.ProvidersData.Sizes;
 import net.media.emma.utils.URLDataProcessing;
 import java.util.regex.Pattern;
 
@@ -104,6 +108,17 @@ public class bidexAndFeatureTests {
 
 
 		bidExConfig.loadBidExConfig(finalConfig);
+
+		bidExConfig.getSlotById("164457376").getProvidersData().add(
+								ProvidersData.builder()
+									.pvid(123123)
+									.ecc("asdf")
+									.sizes(Arrays.asList( Sizes.builder().epc("asdfa").sz("300x250").mediaType("0").build()))
+									.build());
+
+		// bidExConfig.getSlotById("164457376").getProvidersData().get(0).getSizes()
+		// bidExConfig.getSlotById("asdf").getProviderById(233).getEcc();
+		// bidExConfig.getSlotById("asdf").getSizes();
 
 		// bidExConfig.getSlotById("164457376").getSizes();
 
