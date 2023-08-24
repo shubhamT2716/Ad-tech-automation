@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -274,11 +275,19 @@ public class TestSuite implements GenericTestSuite {
 
 		for (Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()) {
 
-			if (currentUrl.startsWith(urlData.getValue())) {
+			if(urlData.getValue().startsWith("pattern: ")){ // pattern: .*\.media\.net.*
+				if(currentUrl.matches(urlData.getValue().substring(9))) { //substring
+					return urlData;
+				}
+			}
+
+			else if(currentUrl.startsWith(urlData.getValue())) {
 
 				return urlData;
 			}
 		}
+
+		
 
 		return null;
 	}
