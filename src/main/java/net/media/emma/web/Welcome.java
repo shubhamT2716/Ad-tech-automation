@@ -19,8 +19,8 @@ public class Welcome {
 
     private static final Map<String,String> listOfTestSuites = new LinkedHashMap<>() {
         {
-            put("YAML Config Based Tests (Simple)", "/yamlTestSuite/");
-            put("YAML Config Based Tests (Batched)", "/yamlTestSuite/smokeTestSuite");
+            put("YAML Rules Test Suite", "/yamlTestSuite/");
+            put("Smoke Test Suite", "/yamlTestSuite/smokeTestSuite");
             put("Page Level Checks - Test Suite", "/pageLevelTests/");
             put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
             put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "/privacyComplianceTestSuite/");

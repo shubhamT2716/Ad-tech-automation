@@ -9,12 +9,13 @@ networkCallsPositive: {
           APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
           AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
           #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-          # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+          GAMPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 }
 
 networkCallsNegative: {
   nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
   Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
+  Pattern: ".*media\.net.*"
 }
 
 keysToVerifyPositive: {

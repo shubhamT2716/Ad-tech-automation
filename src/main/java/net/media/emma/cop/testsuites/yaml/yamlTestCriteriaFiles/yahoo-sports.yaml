@@ -1,14 +1,15 @@
 environment: hb.yahoo.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://sports.yahoo.com/?headerbidding=1"
+publisherUrl: "https://sports.yahoo.com/?headerbidding=1&force_hbtest=all"
 
 networkCallsPositive: {
     PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
     APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
     AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
     #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-    # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+    GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+    checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBN4BN8",
  }
 
 networkCallsNegative: {
@@ -17,17 +18,25 @@ networkCallsNegative: {
  }
 
 keysToVerifyPositive: {
+    GAMAPADCall: {
+        pd: ["non-modal"],
+    },
+
+    checksync: {
+        gpp: ["DBAA"],
+        gpp_sid: ["-1"],
+    },
 
     PRLog: {
-        pvid: ["X"],
         cid: ["8YHBN4BN8"],
-        svr: ["060106_3473_060106_1067_ssp"],
+        svr: ["2023072709_174_080214_705_080214_668_ssp"],
         ugd: ["4"],
         #usp_ldf: ["0","1"],
     },
 
     APLog: {
-        svr: ["060106_3473_060106_1067_ssp"],
+        k39: ["sports"],
+        svr: ["2023072709_174_080214_705_080214_668_ssp"],
         ugd: ["4"],
     },
  }
@@ -41,9 +50,9 @@ keysToVerifyNegative: {
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-    prlog: { nbr : [ "45","3","69","0","1","99" ]},
-    aplog: { nbr : [ "45","3","69","0","1","99" ]},
-}
+    prlog: { nbr : [ "45","3","69","0","1","99"]},
+    aplog: { nbr : [ "45","3","69","0","1","99"], pvid: ["-3", "25014","25016", "25015"]},
+ }
 
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []
