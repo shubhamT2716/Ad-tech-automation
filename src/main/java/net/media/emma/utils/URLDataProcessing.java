@@ -81,8 +81,6 @@ public class URLDataProcessing {
 
 		String[] queryStringParts = queryString.split("\\&");
 
-		log.info("queryStringPats = " + queryStringParts.toString());
-
 		for (String queryStringPart : queryStringParts) {
 
 			String[] queryStringPartParts = queryStringPart.split("\\="); // "auctionId="
