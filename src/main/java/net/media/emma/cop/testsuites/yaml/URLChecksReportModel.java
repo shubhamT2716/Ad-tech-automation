@@ -150,14 +150,32 @@ public class URLChecksReportModel {
 
 					callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
 						if (qsMapFromNetworkCall.containsKey(qsParam)) {
+
 							actualValues.add(qsMapFromNetworkCall.get(qsParam));
+
 						}
+
 					});
 
-					if (actualValues.retainAll(listOfValues)) {
-						callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
-								+ ". Found negative matches: " + actualValues);
-						callData.setTestResult(TestResult.FAIL);
+//					if (actualValues.retainAll(listOfValues) == false && actualValues.isEmpty()) {
+//						callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
+//								+ ". Found negative matches: " + actualValues);
+//						callData.setTestResult(TestResult.FAIL);
+//					}
+
+					if (qsParam.equals("nbr")) {
+						if (actualValues.equals(listOfValues)) {
+							callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
+									+ ". Found negative matches: " + actualValues);
+							callData.setTestResult(TestResult.FAIL);
+						}
+					} else {
+						if (!actualValues.equals(listOfValues)) {
+
+							callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
+									+ ". Found negative matches: " + actualValues);
+							callData.setTestResult(TestResult.FAIL);
+						}
 					}
 
 				});

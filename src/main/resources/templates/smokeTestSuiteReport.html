@@ -15,11 +15,11 @@
 
     <div class="container my-5">
      
-      
+      <button onClick="displayBasicReport()" type="button" class="btn btn-primary">Show Basic Report</button> 
       <button onClick="displayRaw()" type="button" class="btn btn-secondary">Show Raw Data</button>
       <button onClick="displayBidexReport()" type="button" class="btn btn-secondary">Show BidEx Report</button>
-      <button onclick="displayErrorMessage()" type="button" class="btn btn-secondary">Show Error Messages</button>
-      <button onClick="displayBasicReport()" type="button" class="btn btn-success">Show Basic Report</button> 
+      <button onclick="displayErrorMessage()" type="button" class="btn btn-danger">Show Error Messages</button>
+      
     </div>
 
     <div class="container my-5">
@@ -29,13 +29,13 @@
 
     <script th:inline="javascript">
       /*<![CDATA[*/
-         var reportData = /*[[${message1}]]*/ 'User Name';
+         var reportData = /*[[${message1}]]*/ 'rawData';
        /*]]>*/
   </script> 
 
 <script th:inline="javascript">
   /*<![CDATA[*/
-     var displayReport = /*[[${message2}]]*/ 'Users';
+     var displayReport = /*[[${message2}]]*/ 'basicReport';
    /*]]>*/
 </script> 
 

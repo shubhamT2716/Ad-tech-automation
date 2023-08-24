@@ -39,9 +39,9 @@ keysToVerifyPositive: {
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  prlog: { snm : ["removed","error",], nbr : ["13"]},
-  aplog: { nbr: ["13"]},
-  awlog: { ogbdp : ["0","-1","-2"]},
+  PRLog: { snm : ["removed","error",], nbr : ["13"]},
+  APLog: { nbr: ["13","",null], mpvid: [], abs: []},
+  AWLog: { ogbdp : ["0","-1","-2"]},
 }
 
 #to_check_any_keys_among_these

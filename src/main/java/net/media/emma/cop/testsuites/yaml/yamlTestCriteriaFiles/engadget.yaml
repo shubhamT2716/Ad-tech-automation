@@ -40,7 +40,7 @@ keysToVerifyPositive: {
 #to_check_negative_keys
 keysToVerifyNegative: {
   prlog: { snm : ["removed","error",], nbr : ["13"]},
-  aplog: { nbr: ["13"]},
+  aplog: { nbr: ["13"], abc : []},
   awlog: { ogbdp : ["0","-1","-2"]},
 }
 
