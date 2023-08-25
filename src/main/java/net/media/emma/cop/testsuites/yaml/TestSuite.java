@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -275,19 +275,17 @@ public class TestSuite implements GenericTestSuite {
 
 		for (Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()) {
 
-			if(urlData.getValue().startsWith("pattern: ")){ // pattern: .*\.media\.net.*
-				if(currentUrl.matches(urlData.getValue().substring(9))) { //substring
+			if (urlData.getValue().startsWith("pattern: ")) { // pattern: .*\.media\.net.*
+				if (currentUrl.matches(urlData.getValue().substring(9))) { // substring
 					return urlData;
 				}
 			}
 
-			else if(currentUrl.startsWith(urlData.getValue())) {
+			else if (currentUrl.startsWith(urlData.getValue())) {
 
 				return urlData;
 			}
 		}
-
-		
 
 		return null;
 	}
@@ -450,6 +448,17 @@ public class TestSuite implements GenericTestSuite {
 							break;
 						}
 					}
+
+					for (Entry<String, String> entry : testData.bidexReplaceString.entrySet()) {
+
+						if (originalURl.contains(entry.getKey())) {
+							replacedURL = replacedURL.replace(entry.getKey(), entry.getValue());
+						}
+					}
+
+					replacedURL = replacedURL.concat(testData.getBidexAppendString());
+
+					log.info("replace Url  =  " + replacedURL);
 					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
 				});
 			}
