@@ -134,7 +134,7 @@ public class BrowserFactory {
 		}
 
 		if (browserType.contains("Edge")) {
-			return getPlaywrightObj().chromium().launch(getBrowserLaunchOptions(""));
+			return getPlaywrightObj().chromium().launch(getBrowserLaunchOptions("msedge"));
 		}
 
 		if (browserType.contains("Safari")) { // webkit is equal to safari (as per playwright documentation
