@@ -2,6 +2,8 @@ environment: hb.yahoo.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.engadget.com/?headerbidding=1&mnet_test=1"
+bidexAppendString: "&hb_test=1"
+bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
 
 networkCallsPositive: {
    checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
