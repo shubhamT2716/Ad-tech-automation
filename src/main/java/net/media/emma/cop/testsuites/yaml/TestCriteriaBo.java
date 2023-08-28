@@ -26,9 +26,8 @@ public class TestCriteriaBo {
     Map<String, Map<String, Set<String>>> keysToVerifyNegative;
     Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
 
-    // New fields
     Map<String, String> bidderDataUrls;
-    Map<String, List<DataAssertionParams>> bidderDataAssertions;
+    Map<String, List<BidderDataAssertions>> bidderDataAssertions;
 
     List<ResponseSimulateParams> responseSimulate;
     List<DomInjectParams> domInject;
@@ -47,24 +46,27 @@ public class TestCriteriaBo {
         Boolean append;
     }
 
-    @Getter
-    @Setter
-    public static class DataAssertionParams {
+    @Getter @Setter
+    public static class BidderDataAssertions {
         MatchingJsonPath matchingJsonPath;
-        List<DataPathValue> requestData;
-        List<DataPathValue> responseData;
+        List<RequestData> requestData;
+        List<ResponseData> responseData;
     }
 
-    @Getter
-    @Setter
+    @Getter @Setter
     public static class MatchingJsonPath {
         String jsonPath;
         String expectedValue;
     }
 
-    @Getter
-    @Setter
-    public static class DataPathValue {
+    @Getter @Setter
+    public static class RequestData {
+        String jsonPath;
+        String value;
+    }
+
+    @Getter @Setter
+    public static class ResponseData {
         String jsonPath;
         String value;
     }

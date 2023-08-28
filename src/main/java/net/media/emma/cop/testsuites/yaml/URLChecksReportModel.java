@@ -30,10 +30,9 @@ public class URLChecksReportModel {
 	Map<String, PositiveURLChecks> positiveUrlChecks = new HashMap<String, PositiveURLChecks>();
 	@Builder.Default
 	Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
+	@Builder.Default
+	Map<String, BidderDataAssertion> bidderDataAssertions = new HashMap<>();
 
-	Map<String, BidderDataAssertionsCheck> bidderDataAssertionsChecks = new HashMap<>();
-
-	Configuration jsonModelMapper;
 
 	enum TestResult {
 		PASS, FAIL, NA
@@ -94,57 +93,14 @@ public class URLChecksReportModel {
 	@Getter
 	@Setter
 	@Builder
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@ToString
-	public static class BidderDataAssertionsCheck {
-		String label;
-		String urlPattern;
-		@Builder.Default
-		TestResult testResult = TestResult.PASS;
+	public static class BidderDataAssertion {
+		String message;
+		TestResult testResult;
+		String url;
+		String matchingJson;
 
-		@Builder.Default
-		List<String> matchingUrls = new ArrayList<>();
-
-		@Builder.Default
-		Integer countOfMatchingUrls = 0;
-
-		@Builder.Default
-		List<String> testMessages = new ArrayList<>();
-
-		// New field to store assertion details
-		@Builder.Default
-		List<DataAssertion> dataAssertions = new ArrayList<>();
-	}
-
-
-	// New class to represent data assertions
-	@Getter
-	@Setter
-	@Builder
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	@ToString
-	public static class DataAssertion {
-		MatchingJsonPath matchingJsonPath;
-		List<DataPathValue> requestData;
-		List<DataPathValue> responseData;
-	}
-
-	@Getter
-	@Setter
-	@Builder
-	@ToString
-	public static class MatchingJsonPath {
-		String jsonPath;
-		String expectedValue;
-	}
-
-	@Getter
-	@Setter
-	@Builder
-	@ToString
-	public static class DataPathValue {
-		String jsonPath;
-		String value;
+		// ... any other fields you may require
 	}
 
 

@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.jsonpath.JsonPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -50,6 +48,8 @@ public class TestSuite implements GenericTestSuite {
 	ObjectWriter jsonWriter;
 	@Autowired
 	URLDataProcessing urlDataProcessing;
+	@Autowired
+	PlAssestion payloadAsserstions;
 
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
@@ -329,12 +329,12 @@ public class TestSuite implements GenericTestSuite {
 		urlChecks.updateMatchingUrlsCount();
 		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
-		verifyBidderDataValuesComparisons(urlChecks,requests,testData);
+		payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
 
 		return urlChecks;
 	}
 
-	private void verifyBidderDataValuesComparisons(URLChecksReportModel urlChecks, List<Request> requestList, TestCriteriaBo testData) {
+	/*private void verifyBidderDataValuesComparisons(URLChecksReportModel urlChecks, List<Request> requestList, TestCriteriaBo testData) {
 		Map<String, Map<String, List<URLChecksReportModel.DataAssertion>>> bidderDataAssertions = testData.getBidderDataAssertions();
 
 		for (Map.Entry<String, Map<String, List<URLChecksReportModel.DataAssertion>>> entry : bidderDataAssertions.entrySet()) {
@@ -394,7 +394,7 @@ public class TestSuite implements GenericTestSuite {
 				urlChecks.getBidderDataAssertionsChecks().put(bidder, bidderDataAssertionsCheck);
 			}
 		}
-	}
+	}*/
 
 
 	// private String getNetworkCallAssertions2(List<String> requestList,

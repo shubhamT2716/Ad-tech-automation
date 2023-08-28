@@ -67,20 +67,4 @@ public class DomJsonUtils {
             return pageContent;
         }
     }
-
-    public JsonNode getJsonNode(String json, String jsonPath) {
-        try {
-            return JsonPath.using(jsonModelMapper).parse(json).read(jsonPath);
-        } catch (JsonPathException e) {
-            return null; // Return null in case of parsing failure
-        }
-    }
-
-    public Boolean verifyJsonNodeValue(JsonNode jsonNode, String value) {
-        if (jsonNode.isTextual() && value.equals(jsonNode.textValue())) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 }
