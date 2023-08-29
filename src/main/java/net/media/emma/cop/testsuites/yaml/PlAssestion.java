@@ -157,7 +157,7 @@
 
         private List<Request> filterMatchingRequests(List<Request> requestList, String bidderUrl) {
             return requestList.stream()
-                    .filter(request -> request.url().equals(bidderUrl))
+                    .filter(request -> request.url().contains(bidderUrl))
                     .collect(Collectors.toList());
         }
 
@@ -190,13 +190,13 @@
             TestCriteriaBo.MatchingJsonPath matchingJsonPath = assertion.getMatchingJsonPath();
             String matchingJsonPathValue = matchingJsonPath.getJsonPath();
             String matchingJsonPathExpectedValue = matchingJsonPath.getExpectedValue();
-            JsonNode matchingJsonNode = parsedRequestBody.at(JsonPointer.valueOf(jsonPath.toJsonPointer(matchingJsonPathValue)));
+            JsonNode matchingJsonNode = parsedRequestBody.at(JsonPointer.valueOf(matchingJsonPathValue));
             return jsonPath.verifyJsonNodeValue(matchingJsonNode, matchingJsonPathExpectedValue);
         }
 
         private boolean checkRequestDataAssertions(List<TestCriteriaBo.RequestData> requestDataList, JsonNode parsedRequestBody) {
             for (TestCriteriaBo.RequestData requestData : requestDataList) {
-                if (!verifyDataAssertion(requestData.getJsonPath(), requestData.getValue(), parsedRequestBody)) {
+                if (!jsonPath.verifyDataAssertion(requestData.getJsonPath(), requestData.getValue(), parsedRequestBody)) {
                     return false;
                 }
             }
@@ -205,17 +205,13 @@
 
         private boolean checkResponseDataAssertions(List<TestCriteriaBo.ResponseData> responseDataList, JsonNode parsedResponseBody) {
             for (TestCriteriaBo.ResponseData responseData : responseDataList) {
-                if (!verifyDataAssertion(responseData.getJsonPath(), responseData.getValue(), parsedResponseBody)) {
+                if (!jsonPath.verifyDataAssertion(responseData.getJsonPath(), responseData.getValue(), parsedResponseBody)) {
                     return false;
                 }
             }
             return true;
         }
 
-        private boolean verifyDataAssertion(String jsonPathString, String expectedValue, JsonNode parsedJson) {
-            JsonNode node = parsedJson.at(JsonPointer.valueOf(jsonPath.toJsonPointer(jsonPathString)));
-            return jsonPath.verifyJsonNodeValue(node, expectedValue);
-        }
 
         private void createReport(URLChecksReportModel urlChecksReportModel, String bidder, String url, String message, URLChecksReportModel.TestResult result) {
             URLChecksReportModel.BidderDataAssertion assertionReport = URLChecksReportModel.BidderDataAssertion.builder()
