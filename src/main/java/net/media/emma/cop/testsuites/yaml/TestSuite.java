@@ -432,32 +432,17 @@ public class TestSuite implements GenericTestSuite {
 	// return "json error";
 	// }
 
-//	private String getIStageParamForBidEx(String url, String environmentStringFromYaml){
-//		 if(environmentStringFromYaml.matches(".*.hbistage.internal.ad.tech.*")){
-//		 String[] arr=environmentStringFromYaml.split("\\.");
-//		 String ad_username = arr[0];
-//		 //return "&ad_username=abhijeet-ko";
-//		 String param = "&ad_username="; //&chost=hb.yahoo.net&itype=YHB&https=1
-//		 String ad_username_param = param + ad_username;
-//		 String x = url+ad_username_param;
-//		 //String x = "https://abhijeet-ko.hbistage.internal.ad.tech/bidexchange.js?cid=8YHBL12EX&dn=www.engadget.com&version=9.1&https=1&ad_username=abhijeet-ko&chost=hb.yahoo.net&itype=YHB";
-//		 //String x = url.replace("&ysec=main&yr=US&ylang=en-US&ys=engadget&ydt=desktop",ad_username_param);
-//		 return x;
-//		 }
-//		 return url;
-//		 }
-
-	private String getIStageParam(String url, String environment) {
-		if (environment.matches(".*.hbistage.internal.ad.tech.*")) {
-			String a[] = environment.split("\\.");
-			String username = a[0];
-			String addToUrl = "&username=" + username;
-			String replaceUrl = url.concat(addToUrl);
-
-			return replaceUrl;
-		}
-		return url;
-	}
+//	private String getIStageParam(String url, String environment) {
+//		if (environment.matches(".*.hbistage.internal.ad.tech.*")) {
+//			String a[] = environment.split("\\.");
+//			String username = a[0];
+//			String addToUrl = "&username=" + username;
+//			String replaceUrl = url.concat(addToUrl);
+//
+//			return replaceUrl;
+//		}
+//		return url;
+//	}
 
 	private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteriaBo testData) {
 
