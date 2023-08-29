@@ -190,7 +190,7 @@
             TestCriteriaBo.MatchingJsonPath matchingJsonPath = assertion.getMatchingJsonPath();
             String matchingJsonPathValue = matchingJsonPath.getJsonPath();
             String matchingJsonPathExpectedValue = matchingJsonPath.getExpectedValue();
-            JsonNode matchingJsonNode = parsedRequestBody.at(JsonPointer.valueOf(matchingJsonPathValue));
+            JsonNode matchingJsonNode = parsedRequestBody.at(JsonPointer.valueOf(jsonPath.toJsonPointer(matchingJsonPathValue)));
             return jsonPath.verifyJsonNodeValue(matchingJsonNode, matchingJsonPathExpectedValue);
         }
 
