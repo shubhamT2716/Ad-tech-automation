@@ -170,7 +170,7 @@ public class URLChecksReportModel {
 							callData.setTestResult(TestResult.FAIL);
 						}
 					} else {
-						if (!actualValues.equals(listOfValues)) {
+						if (actualValues.retainAll(listOfValues)) {
 
 							callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
 									+ ". Found negative matches: " + actualValues);
