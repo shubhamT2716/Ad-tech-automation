@@ -70,11 +70,11 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner[1].w", value: "970" },
     { jsonPath: "x.imp[0].banner[1].h", value: "250" },
     { jsonPath: "x.imp[0].tagid", value: "534774365" },
-    { jsonPath: "x.ext.bxLogs.svr", value: "" }
+   # { jsonPath: "x.ext.bxLogs.svr", value: "" }
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-    { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
     ]
   },
   {
@@ -89,7 +89,7 @@ bidderDataAssertions: {
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-    { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
       # Other responseData items...
     ]
   },

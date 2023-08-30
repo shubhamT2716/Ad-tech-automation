@@ -31,7 +31,7 @@ public class URLChecksReportModel {
 	@Builder.Default
 	Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
 	@Builder.Default
-	Map<String, BidderDataAssertion> bidderDataAssertions = new HashMap<>();
+	Map<String, List<BidderDataAssertion>> bidderDataAssertions = new HashMap<>();
 
 
 	enum TestResult {
