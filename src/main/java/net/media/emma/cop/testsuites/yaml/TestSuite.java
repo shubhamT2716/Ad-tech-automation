@@ -460,7 +460,7 @@ public class TestSuite implements GenericTestSuite {
 							break;
 						}
 					}
-					log.info("Url before replace - " + replacedURL);
+
 					for (Entry<String, String> entry : testData.bidexReplaceString.entrySet()) {
 
 						if (originalURl.contains(entry.getKey())) {
