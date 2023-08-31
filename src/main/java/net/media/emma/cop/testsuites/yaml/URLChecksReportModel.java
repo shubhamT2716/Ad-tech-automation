@@ -163,20 +163,13 @@ public class URLChecksReportModel {
 //						callData.setTestResult(TestResult.FAIL);
 //					}
 
-					if (qsParam.equals("nbr") || qsParam.equals("name")) {
-						if (actualValues.equals(listOfValues)) {
-							callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
-									+ ". Found negative matches: " + actualValues);
-							callData.setTestResult(TestResult.FAIL);
-						}
-					} else {
-						if (actualValues.retainAll(listOfValues)) {
-
-							callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
-									+ ". Found negative matches: " + actualValues);
-							callData.setTestResult(TestResult.FAIL);
-						}
+					// get if listOfValues contains any of actualValues
+					if (!actualValues.retainAll(listOfValues)) {
+						callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
+								+ ". Found negative matches: " + actualValues);
+						callData.setTestResult(TestResult.FAIL);
 					}
+//				}
 
 				});
 

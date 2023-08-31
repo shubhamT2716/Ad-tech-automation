@@ -90,9 +90,9 @@ public class URLDataProcessing {
 				// queryStringMap.put(queryStringPartParts[0], ""); --rats
 				// queryStringMap.put(queryStringPartParts[0], null); --rats
 			}
-			if (queryStringPartParts.length == 1) {
-				queryStringMap.put(queryStringPartParts[0], "");
-			}
+//			if (queryStringPartParts.length == 1) {
+//				queryStringMap.put(queryStringPartParts[0], "");
+//			}
 
 //			if (queryStringPartParts.length == 2 || queryStringPartParts.length == 1) {
 //
