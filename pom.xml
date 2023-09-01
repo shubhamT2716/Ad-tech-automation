@@ -116,14 +116,7 @@
 
 
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/java/net/media/emma/cop/testsuites/yaml/yamlTestCriteriaFiles</directory>
-				<includes>
-					<include>**/*.yaml</include>
-				</includes>
-			</resource>
-		</resources>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
