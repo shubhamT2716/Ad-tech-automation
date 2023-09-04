@@ -11,10 +11,6 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
-import com.microsoft.playwright.Request;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +27,7 @@ public class URLChecksReportModel {
 	@Builder.Default
 	Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
 	@Builder.Default
-	Map<String, List<BidderDataAssertion>> bidderDataAssertions = new HashMap<>();
+	Map<String, BidderDataAssertion> bidderDataAssertions = new HashMap<>();
 
 
 	enum TestResult {
@@ -101,6 +97,15 @@ public class URLChecksReportModel {
 		String matchingJson;
 
 		// ... any other fields you may require
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	@ToString
+	public static class MatchingJsonPath {
+		String jsonPath;
+		String Value;
 	}
 
 
