@@ -1,14 +1,12 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import com.microsoft.playwright.Request;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.testng.internal.collections.Pair;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -53,7 +51,6 @@ public class PlAssestion {
             }
 
             List<TestCriteriaBo.BidderDataAssertions> assertionsList = entry.getValue();
-            boolean setFailed = true;
 
             for (TestCriteriaBo.BidderDataAssertions assertion : assertionsList) {
                 boolean passedForOneImpObject = false;
@@ -77,16 +74,11 @@ public class PlAssestion {
                 }
 
                 if (passedForOneImpObject) {
-                    setFailed = false;
-                    createReport(urlChecksReportModel, bidder, bidderUrl, "All assertions passed", URLChecksReportModel.TestResult.PASS);
-                    break;
+                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, "All assertions passed", URLChecksReportModel.TestResult.PASS);
+                } else {
+                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, "Failed assertions", URLChecksReportModel.TestResult.FAIL);
                 }
             }
-
-            if (setFailed) {
-                createReport(urlChecksReportModel, bidder, bidderUrl, "Failed assertions", URLChecksReportModel.TestResult.FAIL);
-            }
-
         }
     }
 
@@ -102,33 +94,47 @@ public class PlAssestion {
     }
 
     private boolean verifyDataAssertionsRequest(List<TestCriteriaBo.RequestData> dataAssertionList, String parsedData) {
+        boolean passForAllRequest = true;
         for (TestCriteriaBo.RequestData dataAssertion : dataAssertionList) {
             String path = dataAssertion.getJsonPath().replaceFirst("x", Matcher.quoteReplacement("$"));
             String expectedValue = dataAssertion.getValue();
-            return jsonPath.compareValueInJson(parsedData, removeJsonPathIndexForImp(path), expectedValue);
+            if(!jsonPath.compareValueInJson(parsedData, removeJsonPathIndexForImp(path), expectedValue)) {
+                passForAllRequest = false;
+                break;
+            }
         }
-        return true;
+        return passForAllRequest;
     }
 
     private boolean verifyDataAssertionsResponse(List<TestCriteriaBo.ResponseData> dataAssertionList, String parsedData) {
+        boolean passForAllResponse = true;
         for (TestCriteriaBo.ResponseData dataAssertion : dataAssertionList) {
             String path = dataAssertion.getJsonPath().replaceFirst("x", Matcher.quoteReplacement("$"));
             String expectedValue = dataAssertion.getValue();
-            return jsonPath.compareValueInJson(parsedData, removeJsonPathIndexForImp(path), expectedValue);
+            if(!jsonPath.compareValueInJson(parsedData, removeJsonPathIndexForImp(path), expectedValue)) {
+                passForAllResponse = false;
+                break;
+            }
         }
-        return true;
+        return passForAllResponse;
 
     }
 
-    private void createReport(URLChecksReportModel urlChecksReportModel, String bidder, String url, String message, URLChecksReportModel.TestResult result) {
+    private void createReport(URLChecksReportModel urlChecksReportModel, TestCriteriaBo.BidderDataAssertions bidderDataAssertions , String bidder, String url, String message, URLChecksReportModel.TestResult result) {
+        System.out.println("Creating Report -- ");
         URLChecksReportModel.BidderDataAssertion assertionReport = URLChecksReportModel.BidderDataAssertion.builder()
                 .message(message)
                 .testResult(result)
-                .url(url)
-                .build();
+                .url(url).matchingJson(URLChecksReportModel.MatchingJsonPath.builder()
+                        .jsonPath(bidderDataAssertions.getMatchingJsonPath().getJsonPath())
+                        .Value(bidderDataAssertions.getMatchingJsonPath().getExpectedValue())
+                        .build()).build();
 
-        // Put it back into the map
-        urlChecksReportModel.getBidderDataAssertions().put(bidder, assertionReport);
+        // Get the existing list or create a new one
+        List<URLChecksReportModel.BidderDataAssertion> existingReports = urlChecksReportModel.getBidderDataAssertions().getOrDefault(bidder, new ArrayList<>());
+        // Add the new report to the list
+        existingReports.add(assertionReport);
+        urlChecksReportModel.getBidderDataAssertions().put(bidder, existingReports);
     }
 
     public String removeJsonPathIndexForImp(String jsonPath) {
