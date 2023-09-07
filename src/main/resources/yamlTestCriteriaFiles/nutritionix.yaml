@@ -22,6 +22,12 @@ keysToVerifyPositive: {
 keysToVerifyNegative: {}
 keysToVerifyAnyOneOf: {}
 
+bidderDataUrls: {
+}
+
+bidderDataAssertions: {
+}
+
 responseSimulate: [
  {urlPattern: "**//hb-pb.media.net/**", jsonPath: "$.ext.csUrl[1].url", overrideValue: "MYSESSINID"}
  ]

@@ -66,6 +66,12 @@ keysToVerifyAnyOneOf: {
     aplog: { pvid: ["-3", "25014", "25015", "25016"], svr: ["2023072709_174_080108_34_080108_46_ssp", "2023072709_174_080112_702_080112_665_ssp"], nbr : [ "45","3","69","0","1","99" ], snm : ["success", "response_after_auction", "nobid","error"]}
  }
 
+bidderDataUrls: {
+}
+
+bidderDataAssertions: {
+}
+
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []
 domInject: []

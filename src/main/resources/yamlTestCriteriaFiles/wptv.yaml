@@ -35,6 +35,13 @@ keysToVerifyAnyOneOf: {
   prlog: { nbr : [ "45","3","69","0","1","99" ]},
 }
 
+bidderDataUrls: {
+}
+
+bidderDataAssertions: {
+}
+
+
 #--------------------------
 responseSimulate: []
 domInject: []

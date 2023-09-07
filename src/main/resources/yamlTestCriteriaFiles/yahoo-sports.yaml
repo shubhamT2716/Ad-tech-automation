@@ -56,6 +56,12 @@ keysToVerifyAnyOneOf: {
     aplog: { nbr : [ "45","3","69","0","1","99"], pvid: ["-3", "25014","25016", "25015"]},
  }
 
+bidderDataUrls: {
+}
+
+bidderDataAssertions: {
+}
+
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []
 domInject: []
