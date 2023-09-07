@@ -29,8 +29,11 @@ public class TestCriteriaBo {
 	Map<String, Map<String, Set<String>>> keysToVerifyNegative;
 	Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
 
-	List<ResponseSimulateParams> responseSimulate;
-	List<DomInjectParams> domInject;
+    Map<String, String> bidderDataUrls;
+    Map<String, List<BidderDataAssertions>> bidderDataAssertions;
+
+    List<ResponseSimulateParams> responseSimulate;
+    List<DomInjectParams> domInject;
 
 	@Getter
 	@Setter
@@ -40,11 +43,35 @@ public class TestCriteriaBo {
 		String overrideValue;
 	}
 
-	@Getter
-	@Setter
-	public static class DomInjectParams {
-		String domSelector;
-		String content;
-		Boolean append;
-	}
+    @Getter @Setter
+    public static class DomInjectParams{
+        String domSelector;
+        String content;
+        Boolean append;
+    }
+
+    @Getter @Setter
+    public static class BidderDataAssertions {
+        MatchingJsonPath matchingJsonPath;
+        List<RequestData> requestData;
+        List<ResponseData> responseData;
+    }
+
+    @Getter @Setter
+    public static class MatchingJsonPath {
+        String jsonPath;
+        String expectedValue;
+    }
+
+    @Getter @Setter
+    public static class RequestData {
+        String jsonPath;
+        String value;
+    }
+
+    @Getter @Setter
+    public static class ResponseData {
+        String jsonPath;
+        String value;
+    }
 }

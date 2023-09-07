@@ -30,6 +30,10 @@ public class URLChecksReportModel {
 	Map<String, PositiveURLChecks> positiveUrlChecks = new HashMap<String, PositiveURLChecks>();
 	@Builder.Default
 	Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
+	@Builder.Default
+	Map<String, List<BidderDataAssertion>> bidderDataAssertions = new HashMap<>();
+
+
 
 	enum TestResult {
 		PASS, FAIL, NA
@@ -90,6 +94,29 @@ public class URLChecksReportModel {
 		@Builder.Default
 		Integer countOfMatchingUrls = 0;
 	}
+
+	@Getter
+	@Setter
+	@Builder
+	@ToString
+	public static class BidderDataAssertion {
+		String message;
+		TestResult testResult;
+		String url;
+		MatchingJsonPath matchingJson;
+
+		// ... any other fields you may require
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	@ToString
+	public static class MatchingJsonPath {
+		String jsonPath;
+		String Value;
+	}
+
 
 	public void updateMatchingUrlsCount() {
 		positiveUrlChecks.forEach((key, value) -> {
@@ -193,4 +220,5 @@ public class URLChecksReportModel {
 		});
 
 	}
+
 }

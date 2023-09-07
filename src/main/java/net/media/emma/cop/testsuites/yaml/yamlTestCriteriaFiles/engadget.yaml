@@ -52,6 +52,53 @@ keysToVerifyAnyOneOf: {
   aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
 }
 
+bidderDataUrls: {
+  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBL12EX",
+  YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
+}
+
+bidderDataAssertions: {
+  YHB: [
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+      expectedValue: "LB-MULTI_ATF"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].all.cid", value: "8YHBL12EX" },
+    { jsonPath: "x.imp[0].all.crid", value: "534774365" },
+    { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+    { jsonPath: "x.imp[0].tagid", value: "534774365" },
+   # { jsonPath: "x.ext.bxLogs.svr", value: "" }
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+    #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[1].ortb2Imp.ext.data.divId",
+      expectedValue: "LB-MULTI_BTF"
+    },
+    requestData: [
+    { jsonPath: "x.imp[1].all.cid", value: "8YHBL12EX" },
+    { jsonPath: "x.imp[1].all.crid", value: "888157941" },
+      # Other requestData items...
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+    #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      # Other responseData items...
+    ]
+  },
+    # Other assertions...
+  ],
+}
+
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []
 domInject: []

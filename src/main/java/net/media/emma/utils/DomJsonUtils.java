@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import com.jayway.jsonpath.JsonPathException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -20,19 +21,21 @@ import com.jayway.jsonpath.PathNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 
-@Component @Slf4j
+@Component
+@Slf4j
 public class DomJsonUtils {
 
-    @Autowired Configuration jsonModelMapper;
+    @Autowired
+    Configuration jsonModelMapper;
 
-    public String replaceInJson(String jsonBody, String jsonPath, String overrideValue){
+    public String replaceInJson(String jsonBody, String jsonPath, String overrideValue) {
 
         ObjectMapper mapper = new ObjectMapper();
         String newResponseBody = null;
 
         try {
             JsonNode jsonNode = JsonPath.using(jsonModelMapper).parse(jsonBody)
-                                .set(jsonPath, overrideValue).json();
+                    .set(jsonPath, overrideValue).json();
             newResponseBody = mapper.writeValueAsString(jsonNode);
             return newResponseBody;
 
@@ -44,17 +47,16 @@ public class DomJsonUtils {
         return jsonBody;
     }
 
-    public String domManipulate(String pageContent, DomInjectParams domInject){
+    public String domManipulate(String pageContent, DomInjectParams domInject) {
 
-        try
-        {
+        try {
             Document document = Jsoup.parse(pageContent);
             String fileContent = new String(Files.readAllBytes(Paths.get(domInject.getContent())));
             Elements domElement = document.select(domInject.getDomSelector());
 
-            if(domInject.getAppend()){
+            if (domInject.getAppend()) {
                 domElement.append(fileContent);
-            } else{
+            } else {
                 domElement.html(fileContent);
             }
 

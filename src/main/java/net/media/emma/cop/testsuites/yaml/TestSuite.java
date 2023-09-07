@@ -49,6 +49,8 @@ public class TestSuite implements GenericTestSuite {
 	ObjectWriter jsonWriter;
 	@Autowired
 	URLDataProcessing urlDataProcessing;
+	@Autowired
+	PlAssestion payloadAsserstions;
 
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
@@ -157,7 +159,7 @@ public class TestSuite implements GenericTestSuite {
 				.harFileDownloadLink("harDownload/" + harFilePath).build()).build();
 
 		testReport.setBidExController(bidExController);
-		testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab, testData));
+		testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab,requestList, testData));
 
 		browserContext.close();
 //		try {
@@ -290,7 +292,7 @@ public class TestSuite implements GenericTestSuite {
 		return null;
 	}
 
-	private URLChecksReportModel getUrlAssertionsData(List<String> requestList, TestCriteriaBo testData) {
+	private URLChecksReportModel getUrlAssertionsData(List<String> requestList,List<Request> requests, TestCriteriaBo testData) {
 
 		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
 
@@ -339,9 +341,73 @@ public class TestSuite implements GenericTestSuite {
 		urlChecks.updateMatchingUrlsCount();
 		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
+		payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
 
 		return urlChecks;
 	}
+
+	/*private void verifyBidderDataValuesComparisons(URLChecksReportModel urlChecks, List<Request> requestList, TestCriteriaBo testData) {
+		Map<String, Map<String, List<URLChecksReportModel.DataAssertion>>> bidderDataAssertions = testData.getBidderDataAssertions();
+
+		for (Map.Entry<String, Map<String, List<URLChecksReportModel.DataAssertion>>> entry : bidderDataAssertions.entrySet()) {
+			String bidder = entry.getKey();
+			Map<String, List<URLChecksReportModel.DataAssertion>> assertionMap = entry.getValue();
+
+			URLChecksReportModel.BidderDataAssertionsCheck bidderDataAssertionsCheck = URLChecksReportModel.BidderDataAssertionsCheck.builder()
+					.label(bidder)
+					.urlPattern(testData.getBidderDataUrls().get(bidder))
+					.build();
+
+			for (Request request : requestList) {
+				String requestBody = request.postData();
+				boolean allAssertionMatched = true;
+
+				List<URLChecksReportModel.DataAssertion> assertions = assertionMap.get(bidder);
+
+				for (URLChecksReportModel.DataAssertion assertion : assertions) {
+					URLChecksReportModel.MatchingJsonPath matchingJsonPath = assertion.getMatchingJsonPath();
+					String matchingJsonPathValue = matchingJsonPath.getJsonPath();
+					String matchingJsonPathExpectedValue = matchingJsonPath.getExpectedValue();
+
+					JsonNode matchingJsonNode = domUtils.getJsonNode(requestBody,matchingJsonPathValue);
+
+					if (domUtils.verifyJsonNodeValue(matchingJsonNode,matchingJsonPathExpectedValue)) {
+						List<URLChecksReportModel.DataPathValue> requestDataAssertions = assertion.getRequestData();
+
+						for (URLChecksReportModel.DataPathValue requestData : requestDataAssertions) {
+							String requestDataJsonPath = requestData.getJsonPath();
+							String requestDataExpectedValue = requestData.getValue();
+
+							JsonNode requestDataNode = domUtils.getJsonNode(requestBody,requestDataJsonPath);
+
+							if (!domUtils.verifyJsonNodeValue(requestDataNode,requestDataExpectedValue)) {
+								allAssertionMatched = false;
+								break;
+							}
+						}
+					} else {
+						allAssertionMatched = false;
+					}
+
+					if (!allAssertionMatched) {
+						bidderDataAssertionsCheck.getTestMessages().add("Assertion failed for " + matchingJsonPathValue + " " + matchingJsonPathExpectedValue);
+						break;
+					}
+				}
+
+				if (allAssertionMatched) {
+					bidderDataAssertionsCheck.setTestResult(URLChecksReportModel.TestResult.PASS);
+					bidderDataAssertionsCheck.getMatchingUrls().add(request.url());
+					break; // Found a matching request, no need to check others
+				}
+			}
+
+			if (!bidderDataAssertionsCheck.getMatchingUrls().isEmpty()) {
+				urlChecks.getBidderDataAssertionsChecks().put(bidder, bidderDataAssertionsCheck);
+			}
+		}
+	}*/
+
 
 	// private String getNetworkCallAssertions2(List<String> requestList,
 	// TestCriteriaBo testData){
