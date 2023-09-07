@@ -47,6 +47,12 @@ keysToVerifyNegative: {
 keysToVerifyAnyOneOf: {
 }
 
+bidderDataUrls: {
+}
+
+bidderDataAssertions: {
+}
+
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []
 domInject: []

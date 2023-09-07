@@ -88,6 +88,14 @@ keysToVerifyAnyOneOf: {
   aplog: { nbr : [ "45","3","69","0","1","99" ]},
 }
 
+bidderDataUrls: {
+
+}
+
+bidderDataAssertions: {
+
+}
+
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []
 domInject: []
