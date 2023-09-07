@@ -5,14 +5,18 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -50,6 +54,23 @@ public class FileOperations {
 			return new java.util.HashSet<String>();
 		}
 	}
+
+
+	public Set<String> listYamlFiles(String dir)
+	{
+		Set<String> yamlFiles = new HashSet<String>();
+		try {
+			ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+			Resource[] resources = resolver.getResources("yamlTestCriteriaFiles" + "/*.yaml");
+			for (Resource resource : resources) {
+				yamlFiles.add(resource.getFilename());
+			}
+		} catch (IOException e) {
+			loggers.standardLogger().error("YAML List Failed", e);
+		}
+
+		return yamlFiles;
+	}	
 
 	// loadFileAsResource
 	public Resource loadFileAsResource(String fileName) {

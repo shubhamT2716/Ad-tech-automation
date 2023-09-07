@@ -1,0 +1,90 @@
+environment: hbx.media.net
+cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-a: ""]
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://www.techinvestornews.com/Amazon/Amazon-Bloggers/top-5-apple-deals-on-amazon-ahead-of-prime-day?mnet_test=1"
+
+networkCallsPositive: {
+  PRLog: "https://hblg.media.net/log?logid=prlog",
+  APLog: "https://hblg.media.net/log?logid=aplog",
+  AWLog: "https://hblg.media.net/log?logid=awlog",
+  ADPLog: "https://hblg.media.net/log?logid=kfk&evtid=adplog&itype=HB",
+  GPTSLog: "https://hblg.media.net/log?logid=kfk&evtid=gptslog",
+  ADXLog: "https://hblg.media.net/log?logid=kfk&evtid=adx",
+  BELog: "https://hblg.media.net/log?logid=kfk&evtid=belog",
+  RELog: "https://hblg.media.net/log?logid=kfk&evtid=relog",
+  ARLog: "https://hblg.media.net/log?logid=kfk&evtid=arlog",
+  CHECKSYNCLog: "https://hbx.media.net/checksync.php?",
+  RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  PREBIADAPTER: "https://hb-pb.media.net/rtb/hb?cid=8CU66J63J",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog"
+
+}
+
+networkCallsNegative: {
+  nerrPing: "https://hblg.media.net/nerrping.php?"
+}
+
+keysToVerifyPositive: {
+
+  PRLog: {
+    pvid: ["99", "23", "79", "29", "3012", "251", "450", "441", "178", "3", "345", "203", "126", "237", "326", "117", "107", "327", "208", "109", "96", "97", "54"],
+    cid: ["8CU2C156D"],
+    svr: ["2023072110_141_072113_693_072113_656_ssp"],
+    ugd: ["4","3"],
+    usp_ldf: ["0","1"],
+  },
+
+  APLog: {
+    svr: ["2023072110_141_072113_693_072113_656_ssp"],
+    ugd: ["4","3"],
+    usp_ldf: ["0","1"],
+    cid: [],
+    crid: [],
+    pvid: [],
+    snm: [],
+    nbr: [],
+    size: [],
+    type: [],
+    ttl: [],
+    ogbdp: [],
+    acid: [],
+    iwb: [],
+    ldf: []
+  },
+  BELog: {
+    name: [],
+    stack: [],
+    cid: [],
+    svr: []
+  }
+}
+
+
+keysToVerifyNegative: {
+  prlog: {
+    snm: ["removed","error",],
+    nbr: ["13"],
+    usp_ldf: [""]},
+  aplog: {
+    nbr: ["13", "1202"],
+    snm: [],
+    size: [],
+    type: [],
+    ttl: [],
+    ogbdp: [],
+    acid: [],
+    iwb: []
+  },
+  awlog: { ogbdp: ["0","-1","-2"]},
+}
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: {
+  prlog: { nbr: [ "45","3","69","0","1","99" ]},
+  aplog: { nbr: [ "45","3","69","0","1","99" ]},
+}
+
+# ------------------------------ignore the lines below--rats---------------------
+responseSimulate: []
+domInject: []

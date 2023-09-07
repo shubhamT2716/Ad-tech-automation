@@ -1,20 +1,28 @@
 package net.media.emma.cop.testsuites.yaml;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -164,7 +172,7 @@ public class WebController {
 	public ModelAndView yamlTestSuite() {
 
 		ModelAndView mav = new ModelAndView("yamlTestSuite");
-		mav.addObject("files", fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath));// Arrays.asList(null,
+		mav.addObject("files", fileOperations.listYamlFiles(yamlTestCriteriaFilesPath));// Arrays.asList(null,
 		// "testCriteria.yaml",
 		// "testCriteria2.yaml"));
 
@@ -191,7 +199,6 @@ public class WebController {
 
 		} catch (JsonProcessingException e) {
 			log.error("YAML Processing Error", e);
-			;
 			mav.addObject("message", e.getMessage());
 		}
 
@@ -202,16 +209,25 @@ public class WebController {
 	// private String yamlFolderPath;
 
 	@PostMapping("fileContent")
-	@ResponseBody
 	public String getFileContent(@RequestBody String fileName) {
+	
+		String filePath =  yamlTestCriteriaFilesPath + "/" + fileName;
 
-		try {
+		
+//		 String file = Paths.get(filePath).toString();
 
-			return new String(Files.readAllBytes(Paths.get(yamlTestCriteriaFilesPath + fileName)));
-		} catch (Exception e) {
-			log.error("Error reading file.", e);
-			return "File  not found";
-		}
+		    try {
+		        // Read the file content using java.nio.file.Files
+		        byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+		        String content = new String(bytes, StandardCharsets.UTF_8);
+		        return content;
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		        return "Error while reading file: " + e.getMessage();
+		    }
+
+
+
 
 	}
 
@@ -253,7 +269,7 @@ public class WebController {
 
 	private Set<String> getFileNamesForSmokeTest() {
 		// Fetch the list of YAML file names from the directory
-		Set<String> fileNames = fileOperations.listFilesUsingFilesList(yamlSmokeTestSuiteFilesPath);
+		Set<String> fileNames = fileOperations.listYamlFiles(yamlSmokeTestSuiteFilesPath);
 		// Add additional filtering logic if needed (e.g., exclude specific files)
 		return fileNames;
 	}
