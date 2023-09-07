@@ -2,6 +2,8 @@ environment: sg.hb.yahoo.net
 cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-a: ""]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://sports.yahoo.com/"
+bidexAppendString: ""
+bidexReplaceString: { "": "" }
 
 networkCallsPositive: {
   PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",

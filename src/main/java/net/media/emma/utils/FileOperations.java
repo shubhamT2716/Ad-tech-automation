@@ -61,7 +61,7 @@ public class FileOperations {
 		Set<String> yamlFiles = new HashSet<String>();
 		try {
 			ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-			Resource[] resources = resolver.getResources("yamlTestCriteriaFiles" + "/*.yaml");
+			Resource[] resources = resolver.getResources(dir + "/*.yaml");
 			for (Resource resource : resources) {
 				yamlFiles.add(resource.getFilename());
 			}

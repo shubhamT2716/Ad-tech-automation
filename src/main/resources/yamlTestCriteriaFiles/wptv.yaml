@@ -1,0 +1,40 @@
+environment: hbx.media.net
+cookies: [Visitor-id: 3335276217835857062V10, data-o: d663ccb3-d84d-4d8c-9f26-aff828f94e76~~3]
+userAgent: Chrome.Dekstop.Mac
+publisherUrl: 'https://www.wptv.com/'
+bidexAppendString: "&hb_test=1"
+bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
+
+
+networkCallsPositive: {
+  PRLog: "https://hblg.media.net/log?logid=prlog",
+  APLog: "https://hblg.media.net/log?logid=aplog",
+  AWLog: "https://hblg.media.net/log?logid=awlog",
+  RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+}
+
+networkCallsNegative: {
+  nerrPing: "pattern: .*nerrping.php.*", #pattern: .*nerrping.(php|js).*
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  medianetcalls: "pattern: .*yahoo.net.*",
+}
+
+keysToVerifyPositive: {
+    PRLog: {
+    pvid: ["26","43","80","203","214","222","229","236","246","251","261","326","345","450","3012","10000"],
+    cid: ["8CU25AH4U"],
+    svr: ["053011_653_053011_615_ssp"],
+    },
+}
+
+keysToVerifyNegative: {
+  prlog: { snm : ["removed","error",], nbr : ["13"]},
+}
+
+keysToVerifyAnyOneOf: {
+  prlog: { nbr : [ "45","3","69","0","1","99" ]},
+}
+
+#--------------------------
+responseSimulate: []
+domInject: []

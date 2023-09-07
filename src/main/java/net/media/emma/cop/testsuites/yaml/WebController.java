@@ -209,24 +209,39 @@ public class WebController {
 	// private String yamlFolderPath;
 
 	@PostMapping("fileContent")
+	@ResponseBody
 	public String getFileContent(@RequestBody String fileName) {
 	
-		String filePath =  yamlTestCriteriaFilesPath + "/" + fileName;
+//		String filePath =  yamlTestCriteriaFilesPath + "/" + fileName;
+//
+//		
+////		 String file = Paths.get(filePath).toString();
+//
+//		    try {
+//		        // Read the file content using java.nio.file.Files
+//		        byte[] bytes = Files.readAllBytes(Paths.get(filePath));
+//		        String content = new String(bytes, StandardCharsets.UTF_8);
+//		        return content;
+//		    } catch (IOException e) {
+//		        e.printStackTrace();
+//		        return "Error while reading file: " + e.getMessage();
+//		    }
 
 		
-//		 String file = Paths.get(filePath).toString();
+		ClassPathResource classPathResource = new ClassPathResource(yamlTestCriteriaFilesPath+"/" + fileName);
 
-		    try {
-		        // Read the file content using java.nio.file.Files
-		        byte[] bytes = Files.readAllBytes(Paths.get(filePath));
-		        String content = new String(bytes, StandardCharsets.UTF_8);
-		        return content;
-		    } catch (IOException e) {
-		        e.printStackTrace();
-		        return "Error while reading file: " + e.getMessage();
-		    }
+		try {
+			InputStream inputStream = classPathResource.getInputStream();
 
+			String content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 
+			inputStream.close();
+
+			return content;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Error while reading Yaml" + e.getMessage();
+		}
 
 
 	}

@@ -113,7 +113,7 @@ public class YamlTestSuiteScheduling {
 			for (String env : environments) {
 				for (String agent : userAgents) {
 
-					TestCriteriaBo testCriteriaBo = getYamlObject(yamlSmokeTestSuiteFilesPath + yaml);
+					TestCriteriaBo testCriteriaBo = getYamlObject("src/main/resources/yamlSmokeTestSuiteFiles"+"/" + yaml);
 
 					if (null == testCriteriaBo) {
 						log.error("Error while reading yaml file");

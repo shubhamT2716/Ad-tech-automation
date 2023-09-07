@@ -2,6 +2,8 @@ environment: hbx-stage.media.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.medscape.com/"
+bidexAppendString: ""
+bidexReplaceString: { "": "" }
 
 networkCallsPositive: {
           belog: "https://lg1.hb.yahoo.net/log?logid=belog",

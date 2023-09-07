@@ -128,7 +128,7 @@ public class WebController {
 //		}
 //		return "Input File Name Empty";
 		
-		ClassPathResource resource = new ClassPathResource("yaml/" + fileName);
+		ClassPathResource resource = new ClassPathResource(pageTestyamlPath+"/" + fileName);
 		
 		try {
 			
