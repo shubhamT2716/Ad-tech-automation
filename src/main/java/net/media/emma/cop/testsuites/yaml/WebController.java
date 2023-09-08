@@ -78,6 +78,7 @@ public class WebController {
 	}
 
 	@PostMapping("/smokeTestSuite")
+	@ResponseBody
 	public ModelAndView runThreadPoolTest(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
 			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles) {
 
