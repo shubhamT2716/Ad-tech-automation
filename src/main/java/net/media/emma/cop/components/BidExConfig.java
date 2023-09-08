@@ -61,6 +61,7 @@ public class BidExConfig {
         // loadbidExContent(bidExContent);
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
+        getInstreamDfpPlacements(bidExContent);
 
     }
 
@@ -141,6 +142,35 @@ public class BidExConfig {
                 }
             });
         }
+    }
+
+
+
+
+    // This is to get intream video ad units. In bidex config we get instream video ad units separatley in the key "InStreamVideoDfpPlacements". 
+    // This can be merged in the above method setCridAdunitPathMapping.
+
+    private void getInstreamDfpPlacements(JsonNode bidExContent) {
+        // TODO Auto-generated method stub
+ List < String > videoCrids = new ArrayList < String > ();
+
+        JsonNode vCridConfig = bidExContent.get("InStreamVideoDfpPlacements");
+        try {
+            JsonNode rootNode = mapper.readTree(vCridConfig.toString());
+            rootNode.fields().forEachRemaining(entry -> {
+                videoCrids.add(entry.getKey());
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for (String cridList: videoCrids) {
+            JsonNode cridNode = vCridConfig.get(cridList).get("targ").get(0).get("value");
+            String adUnitPathTrimmed = cridNode.toString().substring(cridNode.toString().lastIndexOf("/") + 1).replace('"', ' ').trim();
+            getSlotById(cridList.toString()).setAdunitPath(adUnitPathTrimmed);
+
+        }        
+        
     }
 
 
