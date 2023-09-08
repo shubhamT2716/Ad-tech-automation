@@ -1,17 +1,17 @@
 environment: hb.yahoo.net
-cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.engadget.com/?headerbidding=1&mnet_test=1"
 bidexAppendString: "&hb_test=1"
 bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
 
 networkCallsPositive: {
-   checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
-   PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
-   APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
-   AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
-   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
+  PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+  APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+  AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 }
 
 networkCallsNegative: {
@@ -32,7 +32,7 @@ keysToVerifyPositive: {
     svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
   },
-  
+
   APLog: {
     svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
@@ -41,15 +41,15 @@ keysToVerifyPositive: {
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  PRLog: { snm : ["removed","error",], nbr : ["13"]},
+  PRLog: { snm: ["removed","error",], nbr: ["13"]},
   APLog: { nbr: ["13","",null], mpvid: [], abs: []},
-  AWLog: { ogbdp : ["0","-1","-2"]},
+  AWLog: { ogbdp: ["0","-1","-2"]},
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+  prlog: { nbr: [ "45","3","69","0","1","99" ]},
+  aplog: { nbr: [ "45","3","69","0","1","99" ], pvid: ["-3","25014","25015","25016"]}
 }
 
 bidderDataUrls: {
@@ -72,11 +72,11 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner[1].w", value: "970" },
     { jsonPath: "x.imp[0].banner[1].h", value: "250" },
     { jsonPath: "x.imp[0].tagid", value: "534774365" },
-   # { jsonPath: "x.ext.bxLogs.svr", value: "" }
+      # { jsonPath: "x.ext.bxLogs.svr", value: "" }
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-    #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
     ]
   },
   {
@@ -85,18 +85,187 @@ bidderDataAssertions: {
       expectedValue: "LB-MULTI_BTF"
     },
     requestData: [
-    { jsonPath: "x.imp[1].all.cid", value: "8YHBL12EX" },
-    { jsonPath: "x.imp[1].all.crid", value: "888157941" },
-      # Other requestData items...
+    {jsonPath: "x.imp[1].all.cid", value: "8YHBL12EX"},
+    {jsonPath: "x.imp[1].all.crid", value: "888157941"},
+    {jsonPath: "x.imp[1].banner[0].w", value: "728"},
+    {jsonPath: "x.imp[1].banner[0].h", value: "90"},
+    {jsonPath: "x.imp[1].banner[1].w", value: "970"},
+    {jsonPath: "x.imp[1].banner[1].h", value: "250"},
+    {jsonPath: "x.imp[1].tagid", value: "888157941"},
+    {jsonPath: "x.ext.bxLogs.svr", value: ""},
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-    #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
-      # Other responseData items...
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
     ]
   },
-    # Other assertions...
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[2].ortb2Imp.ext.data.divId",
+      expectedValue: "RR-MULTI_ATF"
+    },
+    requestData: [
+    {jsonPath: "x.imp[2].all.cid", value: "8YHBL12EX"},
+    {jsonPath: "x.imp[2].all.crid", value: "667548672"},
+    {jsonPath: "x.imp[2].banner[0].w", value: "300"},
+    {jsonPath: "x.imp[2].banner[0].h", value: "250"},
+    {jsonPath: "x.imp[2].tagid", value: "667548672"},
+      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[3].ortb2Imp.ext.data.divId",
+      expectedValue: "RR-MULTI_BTF"
+    },
+    requestData: [
+    {jsonPath: "x.imp[3].all.cid", value: "8YHBL12EX"},
+    {jsonPath: "x.imp[3].all.crid", value: "355218353"},
+    {jsonPath: "x.imp[3].banner[0].w", value: "300"},
+    {jsonPath: "x.imp[3].banner[0].h", value: "600"},
+    {jsonPath: "x.imp[3].banner[1].w", value: "300"},
+    {jsonPath: "x.imp[3].banner[1].h", value: "250"},
+    {jsonPath: "x.imp[3].tagid", value: "355218353"},
+      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+      expectedValue: ""
+    },
+    requestData: [
+    {jsonPath: "x.imp[0].all.cid", value: "8YHBL12EX"},
+    {jsonPath: "x.imp[0].all.crid", value: ""},
+    {jsonPath: "x.imp[0].banner[0].w", value: ""},
+    {jsonPath: "x.imp[0].banner[0].h", value: ""},
+    {jsonPath: "x.imp[0].tagid", value: ""},
+      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+      expectedValue: "RR-MULTI-2_BTF"
+    },
+    requestData: [
+    {jsonPath: "x.imp[0].all.cid", value: "8YHBL12EX"},
+    {jsonPath: "x.imp[0].all.crid", value: "355218353"},
+    {jsonPath: "x.imp[0].banner[0].w", value: "300"},
+    {jsonPath: "x.imp[0].banner[0].h", value: "600"},
+    {jsonPath: "x.imp[0].banner[1].w", value: "300"},
+    {jsonPath: "x.imp[0].banner[1].h", value: "250"},
+    {jsonPath: "x.imp[0].tagid", value: "355218353"},
+      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
   ],
+  YPBJS: [
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_eng_main_dt_top_center"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_center" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_top_center" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_top_center" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    ],
+    responseData: [
+      #  { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_eng_main_dt_btm_center"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "btm_center" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_btm_center" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_btm_center" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    ],
+    responseData: [
+      # { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_eng_main_dt_top_right"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_right" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_top_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_top_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "250" },
+    ],
+    responseData: [
+      #  { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_eng_main_dt_mid_right"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "600" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    ],
+    responseData: [
+      # { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_eng_main_dt_mid_right"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right_2" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "600" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    ],
+    responseData: [
+      # { jsonPath: "", value: "" },
+    ]
+  },
+  ]
 }
 
 # ------------------------------ignore the lines below--rats---------------------
