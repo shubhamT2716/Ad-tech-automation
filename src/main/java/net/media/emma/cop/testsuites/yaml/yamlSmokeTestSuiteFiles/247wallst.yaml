@@ -1,10 +1,9 @@
 environment: hb.yahoo.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://www.engadget.com/?headerbidding=1"
+publisherUrl: "https://247wallst.com/investing/2023/04/07/bitcoin-passed-its-first-major-liquidity-stress-test-report/?mnet_test=1"
 
 networkCallsPositive: {
-          bidExchange: "https://hb.yahoo.net/bidexchange.js?cid=8YHBL12EX",
           PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
           APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
           AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
@@ -14,23 +13,23 @@ networkCallsPositive: {
 
 networkCallsNegative: {
   nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
-  Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
-}a
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+ }
 
 keysToVerifyPositive: {
 
   PRLog: {
     pvid: ["X"],
-    cid: ["8YHBL12EX"],
+    cid: ["8CUYL308C"],
     svr: ["060106_3473_060106_1067_ssp"],
     ugd: ["4"],
-    gpp: ["testing --rats"]
   },
   
   APLog: {
     svr: ["060106_3473_060106_1067_ssp"],
     ugd: ["4"],
   },
+
 }
 
 #to_check_negative_keys

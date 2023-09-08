@@ -5,10 +5,12 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.stereotype.Service;
 
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
+import net.media.emma.cop.testsuites.yaml.TestReportModel;
 
 @Service
 public interface GenericTestSuite {
 
-    public String getTestResults(TestCriteriaBo testData);
-    public CompletableFuture<String> getTestResultsThreadPool(TestCriteriaBo testData);
+	public TestReportModel getTestResults(TestCriteriaBo testData);
+
+	public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData);
 }

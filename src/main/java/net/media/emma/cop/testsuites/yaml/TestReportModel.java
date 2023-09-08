@@ -3,13 +3,19 @@ package net.media.emma.cop.testsuites.yaml;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class TestReportModel {
 
 	TestMetaData testMetaData;
@@ -20,6 +26,7 @@ public class TestReportModel {
 	@Getter
 	@Setter
 	@Builder
+	@ToString
 	public static class TestMetaData {
 		String testName;
 		TestStatus testStatus;
@@ -33,6 +40,7 @@ public class TestReportModel {
 	@Getter
 	@Setter
 	@Builder
+	@ToString
 	public static class BidExController {
 		@Builder.Default
 		List<String> matchingUrls = new ArrayList<>();
@@ -49,6 +57,7 @@ public class TestReportModel {
 	@Getter
 	@Setter
 	@Builder
+	@ToString
 	public static class NetworkAnalytics {
 		// Logging Calls - Analytics:
 		// Total Logging pixels fired (for the host):
@@ -67,4 +76,5 @@ public class TestReportModel {
 	public static enum CheckType {
 		POSSITIVE, NEGERIVE, OPTIONAL
 	}
+
 }

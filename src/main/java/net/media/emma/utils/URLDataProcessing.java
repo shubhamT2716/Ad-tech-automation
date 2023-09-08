@@ -6,107 +6,122 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import com.microsoft.playwright.Request;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class URLDataProcessing {
 
-    public String getRequestFor2(String url, List<String> networkCalls){
+	public String getRequestFor2(String url, List<String> networkCalls) {
 
-        for(String currentCall : networkCalls){
+		for (String currentCall : networkCalls) {
 
-            if(currentCall.startsWith(url)){
-    
-                return currentCall;
-            }
-        }
+			if (currentCall.startsWith(url)) {
 
-        return null;
-    }
+				return currentCall;
+			}
+		}
 
-    public Request getRequestFor(String url, List<Request> requestList){
+		return null;
+	}
 
-        for(Request request : requestList){
-            if(request.postData() != null){
-            log.info(request.url());
-            log.info(url);
-            }
-            if(request.url().startsWith(url)){
-                log.info(request.toString());
-                return request;
-            }
-        }
+	public Request getRequestFor(String url, List<Request> requestList) {
 
-        return null;
-    }
+		for (Request request : requestList) {
+			if (request.postData() != null) {
+				log.info(request.url());
+				log.info(url);
+			}
+			if (request.url().startsWith(url)) {
+				log.info(request.toString());
+				return request;
+			}
+		}
 
-    public String printURLDetails(List<String> urlPatterns){
+		return null;
+	}
 
-        StringBuilder sb = new StringBuilder("URL Data: \n");
+	public String printURLDetails(List<String> urlPatterns) {
 
-        int sizeOfURLs = 0;
-        Set<String> uniqueKeys = new HashSet<String>();
+		StringBuilder sb = new StringBuilder("URL Data: \n");
 
-        for(String urlPattern : urlPatterns){
+		int sizeOfURLs = 0;
+		Set<String> uniqueKeys = new HashSet<String>();
 
-            sizeOfURLs+=urlPattern.length();
+		for (String urlPattern : urlPatterns) {
 
-            try{
-                URL url = new URL(urlPattern);
+			sizeOfURLs += urlPattern.length();
 
-                HashMap<String, String> queryStringMap = queryStringToMap(url.getQuery());
+			try {
+				URL url = new URL(urlPattern);
 
-                uniqueKeys.addAll(queryStringMap.keySet());
+				HashMap<String, String> queryStringMap = queryStringToMap(url.getQuery());
 
-                sb.append(
-                        queryStringMap.get("evtid") + "-" + queryStringMap.get("logid") + 
-                        ".\nCount of key-val pairs:" + queryStringMap.size() +
-                        ".\nSize of the URL: " + urlPattern.length() +
-                        ".\n" + queryStringMap.toString() + "\n\n");
-            }
-            catch(MalformedURLException e){
-                log.error("URL malformed exception");
-                continue;
-            }
-        }
+				uniqueKeys.addAll(queryStringMap.keySet());
 
-        sb.insert(0, "Total Size of URLs: " + sizeOfURLs + "\n" +
-                "Total Unique Keys: " + uniqueKeys.toString() + "\n");
+				sb.append(queryStringMap.get("evtid") + "-" + queryStringMap.get("logid") + ".\nCount of key-val pairs:"
+						+ queryStringMap.size() + ".\nSize of the URL: " + urlPattern.length() + ".\n"
+						+ queryStringMap.toString() + "\n\n");
+			} catch (MalformedURLException e) {
+				log.error("URL malformed exception");
+				continue;
+			}
+		}
 
+		sb.insert(0, "Total Size of URLs: " + sizeOfURLs + "\n" + "Total Unique Keys: " + uniqueKeys.toString() + "\n");
 
-        return sb.toString();
-    }
+		return sb.toString();
+	}
 
-    public HashMap<String, String> queryStringToMap(String queryString){
+	public HashMap<String, String> queryStringToMap(String queryString) {
+		
+		System.err.println("Query String "+queryString);
 
-        HashMap<String, String> queryStringMap = new HashMap<String, String>();
+		HashMap<String, String> queryStringMap = new HashMap<String, String>();
 
-        String[] queryStringParts = queryString.split("\\&");
+			String[] queryStringParts = queryString.split("\\&");
+			
+			System.err.println(queryStringParts);
 
-        for(String queryStringPart : queryStringParts){
+		for (String queryStringPart : queryStringParts) {
 
-            String[] queryStringPartParts = queryStringPart.split("\\=");
+			String[] queryStringPartParts = queryStringPart.split("\\="); // "auctionId="
 
-            if(queryStringPartParts.length == 2){
-                queryStringMap.put(queryStringPartParts[0], queryStringPartParts[1]);
-            }
-        }
+			if (queryStringPartParts.length == 2) {
+				queryStringMap.put(queryStringPartParts[0], queryStringPartParts[1]);
+				// queryStringMap.put(queryStringPartParts[0], ""); --rats
+				// queryStringMap.put(queryStringPartParts[0], null); --rats
+			}
+//			if (queryStringPartParts.length == 1) {
+//				queryStringMap.put(queryStringPartParts[0], "");
+//			}
 
-        return queryStringMap;
-    }
+//			if (queryStringPartParts.length == 2 || queryStringPartParts.length == 1) {
+//
+//				if (queryStringPartParts.length == 2) {
+//					queryStringMap.put(queryStringPartParts[0], queryStringPartParts[1]);
+//				}
+//				queryStringMap.put(queryStringPartParts[0], "");
+//			}
 
-    public HashMap<String, String> getQueryStringMapFromUrl(String url){
+		}
 
-        try{
-            URL urlObj = new URL(url);
-            return queryStringToMap(urlObj.getQuery());
+		return queryStringMap;
+	}
 
-        }
-        catch(MalformedURLException e){
-            log.error("URL malformed exception");
-        }
+	public HashMap<String, String> getQueryStringMapFromUrl(String url) {
 
-        return new HashMap<>();
-    }
+		try {
+			URL urlObj = new URL(url);
+			System.err.println(urlObj);
+			return queryStringToMap(urlObj.getQuery());
+
+		} catch (MalformedURLException e) {
+			log.error("URL malformed exception");
+		}
+
+		return new HashMap<>();
+	}
 }

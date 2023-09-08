@@ -8,15 +8,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.BrowserContext;
@@ -24,6 +23,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
 import com.microsoft.playwright.options.Timing;
+
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
@@ -49,6 +49,8 @@ public class TestSuite implements GenericTestSuite {
 	ObjectWriter jsonWriter;
 	@Autowired
 	URLDataProcessing urlDataProcessing;
+	@Autowired
+	PlAssestion payloadAsserstions;
 
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
@@ -56,7 +58,8 @@ public class TestSuite implements GenericTestSuite {
 	// List of strings "1", "2"
 	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
 			"hbx-stage.media.net");
-	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");//, "catchpoint_content.js", "topics.js");
+	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");// , "catchpoint_content.js",
+																					// "topics.js");
 
 	private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
 
@@ -78,20 +81,19 @@ public class TestSuite implements GenericTestSuite {
 		return bc;
 	}
 
-	//async with future string
+	// async with future string
 	@Async("yamlTestSuitePool")
-	public CompletableFuture<String> getTestResultsThreadPool(TestCriteriaBo testData){
+	public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData) {
 
-		CompletableFuture<String> future = new CompletableFuture<>();
+		CompletableFuture<TestReportModel> future = new CompletableFuture<>();
 
 		future.complete(getTestResults(testData));
 		return future;
-		
+
 	}
 
-
 	@Override
-	public String getTestResults(TestCriteriaBo testData) {
+	public TestReportModel getTestResults(TestCriteriaBo testData) {
 
 		String harFilePath = CommonBrowserUtil.getFileNameForHar();
 
@@ -130,7 +132,7 @@ public class TestSuite implements GenericTestSuite {
 			Page page = browserContext.newPage();
 			consoleMessage = getConsoleErrors(page);
 			page.navigate(testData.getPublisherUrl());
-	
+
 			// page.waitForLoadState(LoadState.NETWORKIDLE,new
 			// Page.WaitForLoadStateOptions().setTimeout(5000));
 			// page.waitForFunction("() => performance.getEntriesByType('resource').length >
@@ -157,18 +159,20 @@ public class TestSuite implements GenericTestSuite {
 				.harFileDownloadLink("harDownload/" + harFilePath).build()).build();
 
 		testReport.setBidExController(bidExController);
-		testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab, testData));
+		testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab,requestList, testData));
 
 		browserContext.close();
-		try {
+//		try {
+//
+//			return jsonWriter.writeValueAsString(testReport);
+//
+//		} catch (JsonProcessingException e) {
+//
+//			log.error("Error while converting test report to json: {}", e.getMessage());
+//			return "Error while converting test report to json";
+//		}
 
-			return jsonWriter.writeValueAsString(testReport);
-
-		} catch (JsonProcessingException e) {
-
-			log.error("Error while converting test report to json: {}", e.getMessage());
-			return "Error while converting test report to json";
-		}
+		return testReport;
 	}
 
 	private List<Request> getBidExRequestObjects(List<Request> listOfPwRequestObjects, String environmentHost) {
@@ -227,17 +231,21 @@ public class TestSuite implements GenericTestSuite {
 		for (Request request : bidExRequestObjects) {
 			bidexReport.getMatchingUrls().add(request.url());
 
-			Timing timing = request.timing();
-
-			if(null != timing){
-				Date date = new Date((long) (timing.responseEnd - timing.responseStart));
-				bidexReport.setTotalResponseTime(date.getTime() + "ms");
-			}else
-			{
-				bidexReport.setTotalResponseTime("Not Available");	
+			if (null != request.failure()) {
+				bidexReport.getConsoleMessages().add("Request has failed. " + request.failure().toString());
+				continue;
 			}
 
-			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "kb");
+			Timing timing = request.timing();
+
+			if (null != timing) {
+				Date date = new Date((long) (timing.responseEnd - timing.responseStart));
+				bidexReport.setTotalResponseTime(date.getTime() + "ms");
+			} else {
+				bidexReport.setTotalResponseTime("Not Available");
+			}
+
+			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "b");
 		}
 
 		if (bidExRequestObjects.size() == 0) {
@@ -269,24 +277,22 @@ public class TestSuite implements GenericTestSuite {
 
 		for (Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()) {
 
-			if(urlData.getValue().startsWith("pattern: ")){ // pattern: .*\.media\.net.*
-				if(currentUrl.matches(urlData.getValue().substring(9))) { //substring
+			if (urlData.getValue().startsWith("pattern: ")) { // pattern: .*\.media\.net.*
+				if (currentUrl.matches(urlData.getValue().substring(9))) { // substring
 					return urlData;
 				}
 			}
 
-			else if(currentUrl.startsWith(urlData.getValue())) {
+			else if (currentUrl.startsWith(urlData.getValue())) {
 
 				return urlData;
 			}
 		}
 
-		
-
 		return null;
 	}
 
-	private URLChecksReportModel getUrlAssertionsData(List<String> requestList, TestCriteriaBo testData) {
+	private URLChecksReportModel getUrlAssertionsData(List<String> requestList,List<Request> requests, TestCriteriaBo testData) {
 
 		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
 
@@ -335,9 +341,73 @@ public class TestSuite implements GenericTestSuite {
 		urlChecks.updateMatchingUrlsCount();
 		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
+		payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
 
 		return urlChecks;
 	}
+
+	/*private void verifyBidderDataValuesComparisons(URLChecksReportModel urlChecks, List<Request> requestList, TestCriteriaBo testData) {
+		Map<String, Map<String, List<URLChecksReportModel.DataAssertion>>> bidderDataAssertions = testData.getBidderDataAssertions();
+
+		for (Map.Entry<String, Map<String, List<URLChecksReportModel.DataAssertion>>> entry : bidderDataAssertions.entrySet()) {
+			String bidder = entry.getKey();
+			Map<String, List<URLChecksReportModel.DataAssertion>> assertionMap = entry.getValue();
+
+			URLChecksReportModel.BidderDataAssertionsCheck bidderDataAssertionsCheck = URLChecksReportModel.BidderDataAssertionsCheck.builder()
+					.label(bidder)
+					.urlPattern(testData.getBidderDataUrls().get(bidder))
+					.build();
+
+			for (Request request : requestList) {
+				String requestBody = request.postData();
+				boolean allAssertionMatched = true;
+
+				List<URLChecksReportModel.DataAssertion> assertions = assertionMap.get(bidder);
+
+				for (URLChecksReportModel.DataAssertion assertion : assertions) {
+					URLChecksReportModel.MatchingJsonPath matchingJsonPath = assertion.getMatchingJsonPath();
+					String matchingJsonPathValue = matchingJsonPath.getJsonPath();
+					String matchingJsonPathExpectedValue = matchingJsonPath.getExpectedValue();
+
+					JsonNode matchingJsonNode = domUtils.getJsonNode(requestBody,matchingJsonPathValue);
+
+					if (domUtils.verifyJsonNodeValue(matchingJsonNode,matchingJsonPathExpectedValue)) {
+						List<URLChecksReportModel.DataPathValue> requestDataAssertions = assertion.getRequestData();
+
+						for (URLChecksReportModel.DataPathValue requestData : requestDataAssertions) {
+							String requestDataJsonPath = requestData.getJsonPath();
+							String requestDataExpectedValue = requestData.getValue();
+
+							JsonNode requestDataNode = domUtils.getJsonNode(requestBody,requestDataJsonPath);
+
+							if (!domUtils.verifyJsonNodeValue(requestDataNode,requestDataExpectedValue)) {
+								allAssertionMatched = false;
+								break;
+							}
+						}
+					} else {
+						allAssertionMatched = false;
+					}
+
+					if (!allAssertionMatched) {
+						bidderDataAssertionsCheck.getTestMessages().add("Assertion failed for " + matchingJsonPathValue + " " + matchingJsonPathExpectedValue);
+						break;
+					}
+				}
+
+				if (allAssertionMatched) {
+					bidderDataAssertionsCheck.setTestResult(URLChecksReportModel.TestResult.PASS);
+					bidderDataAssertionsCheck.getMatchingUrls().add(request.url());
+					break; // Found a matching request, no need to check others
+				}
+			}
+
+			if (!bidderDataAssertionsCheck.getMatchingUrls().isEmpty()) {
+				urlChecks.getBidderDataAssertionsChecks().put(bidder, bidderDataAssertionsCheck);
+			}
+		}
+	}*/
+
 
 	// private String getNetworkCallAssertions2(List<String> requestList,
 	// TestCriteriaBo testData){
@@ -428,6 +498,18 @@ public class TestSuite implements GenericTestSuite {
 	// return "json error";
 	// }
 
+//	private String getIStageParam(String url, String environment) {
+//		if (environment.matches(".*.hbistage.internal.ad.tech.*")) {
+//			String a[] = environment.split("\\.");
+//			String username = a[0];
+//			String addToUrl = "&username=" + username;
+//			String replaceUrl = url.concat(addToUrl);
+//
+//			return replaceUrl;
+//		}
+//		return url;
+//	}
+
 	private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteriaBo testData) {
 
 		for (String currentHost : bidExHosts) {
@@ -444,6 +526,25 @@ public class TestSuite implements GenericTestSuite {
 							break;
 						}
 					}
+
+					for (Entry<String, String> entry : testData.bidexReplaceString.entrySet()) {
+
+						if (originalURl.contains(entry.getKey())) {
+							replacedURL = replacedURL.replace(entry.getKey(), entry.getValue());
+						}
+					}
+
+					replacedURL = replacedURL.concat(testData.getBidexAppendString());
+
+					if (testData.getEnvironment().matches(".*.hbistage.internal.ad.tech.*")) {
+
+						String splitUrl[] = testData.getEnvironment().split("\\.");
+						String username = splitUrl[0];
+						String addToUrl = "&ad_username=" + username;
+						replacedURL = replacedURL.concat(addToUrl);
+					}
+
+					log.info("replace Url  =  " + replacedURL);
 					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
 				});
 			}

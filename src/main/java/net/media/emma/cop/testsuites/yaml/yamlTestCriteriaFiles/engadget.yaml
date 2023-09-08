@@ -2,6 +2,8 @@ environment: hb.yahoo.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.engadget.com/?headerbidding=1&mnet_test=1"
+bidexAppendString: "&hb_test=1"
+bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
 
 networkCallsPositive: {
    checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
@@ -26,37 +28,75 @@ keysToVerifyPositive: {
   },
 
   PRLog: {
-    svr: ["2023072709_174_080214_705_080214_668_ssp"],
+    cid: ["8YHBL12EX"],
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
   },
   
   APLog: {
-    cid: ["8YHBL12EX"],
-    svr: ["2023072709_174_080214_705_080214_668_ssp"],
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
   },
 }
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  prlog: { snm : ["removed","error",], nbr : ["13"]},
-  aplog: { cid: [], nbr: ["13"], ugd: ["3"]},
-  awlog: { ogbdp : ["0","-1","-2"]},
+  PRLog: { snm : ["removed","error",], nbr : ["13"]},
+  APLog: { nbr: ["13","",null], mpvid: [], abs: []},
+  AWLog: { ogbdp : ["0","-1","-2"]},
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
   prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { nbr : [ "45","3","69","0","1","99","3" ], pvid : ["-3","25014","25015","25016"], 
-          crid : ["355218353" ,"534774365","667548672","888157941",], 
-          snm : ["success","nobid","bid_after_aucation","response_after_auction"],
-          size : ["300x600","728x90|970x250", "728x90","300x600|300x250","300x250",],
-          pvid : ["-2","-3","25016","25015","25014","25013","25012","25011","25000",],
-          adtype : ["banner", "native","video"],
-          req_mtype <> : ["0","1","2"],
-          dapp: ["green","blue"],
-          iwb: ["0","1"],
-        }
+  aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+}
+
+bidderDataUrls: {
+  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBL12EX",
+  YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
+}
+
+bidderDataAssertions: {
+  YHB: [
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+      expectedValue: "LB-MULTI_ATF"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].all.cid", value: "8YHBL12EX" },
+    { jsonPath: "x.imp[0].all.crid", value: "534774365" },
+    { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+    { jsonPath: "x.imp[0].tagid", value: "534774365" },
+   # { jsonPath: "x.ext.bxLogs.svr", value: "" }
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+    #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[1].ortb2Imp.ext.data.divId",
+      expectedValue: "LB-MULTI_BTF"
+    },
+    requestData: [
+    { jsonPath: "x.imp[1].all.cid", value: "8YHBL12EX" },
+    { jsonPath: "x.imp[1].all.crid", value: "888157941" },
+      # Other requestData items...
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+    #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      # Other responseData items...
+    ]
+  },
+    # Other assertions...
+  ],
 }
 
 # ------------------------------ignore the lines below--rats---------------------

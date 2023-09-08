@@ -1,7 +1,11 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -11,8 +15,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -23,7 +29,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.testsuites.yaml.SmokeTestSummeryDto.Testdata;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.BidExController;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.FileOperations;
 import net.media.emma.utils.MailServiceImpl;
 
@@ -42,6 +52,9 @@ public class YamlTestSuiteScheduling {
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
 
+	@Value("${yamlSmokeTestSuiteFilesPath}")
+	private String yamlSmokeTestSuiteFilesPath;
+
 	@Autowired
 	private MailServiceImpl mailServiceImpl;
 
@@ -51,25 +64,90 @@ public class YamlTestSuiteScheduling {
 	@Autowired
 	private ObjectMapper yamlMapper;
 
-	// @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
-	public Map<String,JsonNode> getAutoTest() {
+	@Value("${zipFileBasePath}")
+	private String zipFilePath;
 
-		Map<String, CompletableFuture<String>> map = new HashMap<>();
+	@Value("${yamlSmokeTestSuiteFilesPath}")
+	private String smokeTestYamlPath;
 
-		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath).stream()
-				.filter(x -> !x.contains("aol") && !x.contains("tech") && !x.contains("webmd")).limit(4)
+//	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+	public void smokeTestScheduling() {
+
+		String environment = "hbx.media.net";
+
+		String userAgent = "Chrome.Desktop.Mac";
+
+		List<String> list = this.fileOperations.listFilesUsingFilesList(smokeTestYamlPath).stream()
+				.filter(x -> !x.contains("techinvestor") && !x.contains("247")).collect(Collectors.toList());
+
+		boolean flagForMail = true;
+
+		getAutoTest(environment, userAgent, list, flagForMail);
+
+	}
+
+	public String getTestResult() {
+		// here we have to add some condition based requirement to handle result
+
+		return "fail";
+	}
+
+	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
+			boolean flagForMail) {
+
+		// if (selectedFiles == null || selectedFiles.isEmpty()) {
+		// return new HashMap<>();
+		// }
+
+		SmokeTestRawDataDto rawDataDto = new SmokeTestRawDataDto();
+
+		Map<String, CompletableFuture<TestReportModel>> map = new HashMap<>();
+		List<String> listOfYamlEnv = new ArrayList<>();
+
+		Set<String> listOfYaml = selectedFiles.stream()
+				// .filter(x -> !x.contains("aol") && !x.contains("tech") &&
+				// !x.contains("webmd")).limit(2)
 				.collect(Collectors.toSet());
+
+		String[] environments = environment.trim().split(",");
+		String[] userAgents = userAgent.trim().split(",");
 
 		for (String yaml : listOfYaml) {
 
-			TestCriteriaBo testCriteriaBo = getYamlObject(yamlTestCriteriaFilesPath + yaml);
+			for (String env : environments) {
+				for (String agent : userAgents) {
 
-			if (null == testCriteriaBo) {
-				log.error("Error while reading yaml file");
-				continue;
+					ClassPathResource classPathResource = new ClassPathResource(yamlSmokeTestSuiteFilesPath + "/" + yaml);
+		            String content = null;
+
+		            try {
+		                InputStream inputStream = classPathResource.getInputStream();
+		                content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+		                
+		                ObjectMapper yamlMapper = new YAMLMapper();
+		                
+		                TestCriteriaBo testCriteriaBo = yamlMapper.readValue(content, TestCriteriaBo.class);
+		                
+		                		// Update the environment and userAgent parameters in TestCriteriaBo
+		    					testCriteriaBo.setEnvironment(env);
+		    					testCriteriaBo.setUserAgent(agent);
+
+//		    					map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+
+		    					map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+		    					listOfYamlEnv.add(yaml + "_" + env + "_" + agent);
+		                
+		            } catch (Exception e) {
+		                // Handle exceptions here
+		                log.error("Error while reading YAML file", e);
+		                continue; // Continue to the next iteration
+		            }
+
+		           
+
+					
+				}
 			}
-
-			map.put(yaml, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
 		}
 
 		// get values of Map into CompeletableFuture
@@ -78,11 +156,10 @@ public class YamlTestSuiteScheduling {
 
 		allFutures.join();
 
-		Map<String, JsonNode> finalResultJson=null;
+		Map<String, TestReportModel> finalResult = new HashMap<>();
 		if (allFutures.isDone()) {
-			// Map<String, CompletableFuture<String>> to Map<String, String>
 
-			Map<String, String> finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
+			finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
 				try {
 					return e.getValue().get();
 				} catch (InterruptedException | ExecutionException e1) {
@@ -90,22 +167,79 @@ public class YamlTestSuiteScheduling {
 				}
 				return null;
 			}));
-
-			
-			 finalResultJson = finalResult.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
-				try {
-					return yamlMapper.readTree(e.getValue());
-				} catch (IOException e1) {
-					log.error("Error while converting String to JsonNode", e1);
-				}
-				return null;
-			}));
 		}
 
-		return finalResultJson;
+		List<TestReportModel> testReportModelList = new ArrayList<>();
 
-		// this.mailServiceImpl.sendMail("rathnakar.ko@media.net",
-		// "rathnakar.ko@media.net", result);
+		SmokeTestSummeryDto dto = new SmokeTestSummeryDto();
+
+		List<Testdata> testdataResult = new ArrayList<>();
+
+		TestReportModel reportModel = new TestReportModel();
+
+		Map<String, BidExController> bidExReport = new HashMap<>();
+
+		Map<String, List<String>> errorMessage = new HashMap<>();
+
+		Map<String, Map<String, List<String>>> error = new HashMap<>();
+
+		for (String yaml : listOfYamlEnv) {
+			Testdata testdata = new SmokeTestSummeryDto().new Testdata();
+
+			reportModel = finalResult.get(yaml);
+
+			testReportModelList.add(reportModel);
+
+			bidExReport.put(yaml, reportModel.getBidExController());
+
+			Map<String, PositiveURLChecks> model = reportModel.getUrlChecks().getPositiveUrlChecks();
+
+			errorMessage = model.entrySet().stream()
+					.filter(n -> n.getValue().getTestMessages() != null && !n.getValue().getTestMessages().isEmpty())
+					.collect(Collectors.toMap(Map.Entry::getKey, e -> {
+						try {
+							return e.getValue().getTestMessages();
+						} catch (Exception e2) {
+							log.info("Error While read error message from testReport Data" + e);
+						}
+						return null;
+
+					}));
+
+			error.put(yaml, errorMessage);
+
+			testdata.setEnvironment(reportModel.getTestMetaData().getEnvironment());
+			testdata.setUserAgent(reportModel.getTestMetaData().getUserAgent());
+			testdata.setBidExFileSize(reportModel.getBidExController().getTotalSizeDownloaded());
+			testdata.setBidExTime(reportModel.getBidExController().getTotalResponseTime());
+			testdata.setDateTime(reportModel.getTestMetaData().getDateTime());
+			testdata.setHarFileDownloadLink(reportModel.getTestMetaData().getHarFileDownloadLink());
+			testdata.setPublisherUrl(reportModel.getTestMetaData().getPublisherUrl());
+			testdata.setMatchingUrls(reportModel.getBidExController().getMatchingUrls());
+
+			testdataResult.add(testdata);
+
+		}
+
+		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
+
+		String testResult = getTestResult();
+
+		if (flagForMail == true) {
+			this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList,
+					zipFile, testResult);
+
+		}
+
+		dto.setRawDataLink("zipDownload/" + zipFile);
+		dto.setTestdatas(testdataResult);
+
+		rawDataDto.setRawData(finalResult);
+		rawDataDto.setSmokeReport(dto);
+		rawDataDto.setBidExReport(bidExReport);
+		rawDataDto.setErrorMessage(error);
+
+		return rawDataDto;
 
 	}
 
@@ -130,6 +264,18 @@ public class YamlTestSuiteScheduling {
 		context.setVariable("name", user);
 		context.setVariable("result", result);
 		return this.engine.process("SchedulerReport", context);
+	}
+
+	public JsonNode readDataFromZip(String fileName) {
+
+		String filePath = zipFilePath + fileName;
+
+		JsonNode resultData = CommonBrowserUtil.readDataFromZip(filePath);
+
+		log.info("Result Data " + resultData);
+
+		return resultData;
+
 	}
 
 }

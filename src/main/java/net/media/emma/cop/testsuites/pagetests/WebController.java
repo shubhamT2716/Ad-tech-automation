@@ -1,6 +1,8 @@
 package net.media.emma.cop.testsuites.pagetests;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
@@ -8,11 +10,13 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +30,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
+import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.utils.FileOperations;
 
@@ -43,6 +48,9 @@ public class WebController {
 
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
+	
+	@Value("${pageLevelyamlFilesPath}")
+	private String pageTestyamlPath;
 
 	// @GetMapping("/domInject")
 	// public String domINject() {
@@ -75,7 +83,7 @@ public class WebController {
 	public ModelAndView openIndex() {
 
 		ModelAndView mav = new ModelAndView("pageLevelTests");
-		mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/pageLevelTestsYaml/"));// Arrays.asList(null,
+		mav.addObject("files", fileOperations.listYamlFiles(pageTestyamlPath));// Arrays.asList(null,
 																													// "testCriteria.yaml",
 																													// "testCriteria2.yaml"));
 		mav.addObject("testSuites", listOfTestSuites);
@@ -109,16 +117,35 @@ public class WebController {
 	@ResponseBody
 	public String getFileContent(@RequestBody String fileName) {
 
-		if (fileName.length() > 0) {
+//		if (fileName.length() > 0) {
+//
+//			try {
+//				return new String(Files.readAllBytes(Paths.get("src/main/resources/pageLevelTestsYaml/" + fileName)));
+//			} catch (IOException e) {
+//				log.error("File Read Error", e);
+//				return e.getMessage();
+//			}
+//		}
+//		return "Input File Name Empty";
+		
+		ClassPathResource resource = new ClassPathResource(pageTestyamlPath+"/" + fileName);
+		
+		try {
+			
+			// return new String(Files.readAllBytes(Paths.get(resource.getURI())));
 
-			try {
-				return new String(Files.readAllBytes(Paths.get("src/main/resources/pageLevelTestsYaml/" + fileName)));
-			} catch (IOException e) {
-				log.error("File Read Error", e);
-				return e.getMessage();
-			}
+			InputStream inputStream = resource.getInputStream();
+			
+			String content =StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+
+			inputStream.close();
+
+			return content;
+
+		} catch (Exception e) {
+			log.error("Error reading file.", e);
+			return e.getMessage();
 		}
-		return "Input File Name Empty";
 	}
 
 	@GetMapping("harDownload/{fileName}")

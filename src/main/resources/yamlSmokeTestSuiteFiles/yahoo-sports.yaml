@@ -1,0 +1,101 @@
+environment: sg.hb.yahoo.net
+cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-a: ""]
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://sports.yahoo.com/"
+bidexAppendString: ""
+bidexReplaceString: { "": "" }
+
+networkCallsPositive: {
+  PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+  APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+  AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+  ADPLog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=adplog",
+  GPTSLog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=gptslog",
+  BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog",
+  RELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=relog",
+  ARLog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=arlog",
+  BRQLog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=brqlog",
+  CHECKSYNCLog: "https://hb.yahoo.net/checksync.php?",
+  UCREATIVE: "https://hb.yahoo.net/ucreative.php?cv=1",
+  YAHOOPREBIADAPTERLog: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
+  MEDIAPrebidAdaptorCall: "https://warp.media.net/ss/nes/force/prebid?",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  Flog: "https://hb.yahoo.net/log?logid=kfk&evtid=flog"
+
+}
+
+networkCallsNegative: {
+  nerrPing: "https://hb.yahoo.net/nerrping.php?"
+}
+
+keysToVerifyPositive: {
+
+  PRLog: {
+    pvid: ["25014", "-3"],
+    cid: ["8YHBN4BN8"],
+    svr: [""],
+    ugd: ["4","3"],
+    usp_ldf: ["0","1"],
+  },
+
+  APLog: {
+    svr: [""],
+    ugd: ["4","3"],
+    usp_ldf: [],
+    cid: [],
+    crid: [],
+    pvid: [],
+    snm: [],
+    nbr: [],
+    size: [],
+    type: [],
+    ttl: [],
+    ogbdp: [],
+    acid: [],
+    iwb: [],
+    ldf: []
+  },
+  BELog: {
+    name: [],
+    stack: [],
+    cid: [],
+    svr: []
+  }
+}
+
+
+keysToVerifyNegative: {
+  prlog: {
+    snm: ["removed","error",],
+    nbr: ["13"],
+    usp_ldf: [""]},
+  aplog: {
+    nbr: ["13", "1202"],
+    snm: [],
+    size: [],
+    type: [],
+    ttl: [],
+    ogbdp: [],
+    acid: [],
+    iwb: []
+  },
+  awlog: { ogbdp: ["0","-1","-2"]},
+}
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: {
+  prlog: { nbr: [ "45","3","69","0","1","99" ]},
+  aplog: { nbr: [ "45","3","69","0","1","99" ]},
+}
+
+bidderDataUrls: {
+
+}
+
+bidderDataAssertions: {
+
+}
+
+# ------------------------------ignore the lines below--rats---------------------
+responseSimulate: []
+domInject: []

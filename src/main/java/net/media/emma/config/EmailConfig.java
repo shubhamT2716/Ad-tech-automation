@@ -1,5 +1,6 @@
 package net.media.emma.config;
 
+import java.util.HashMap;
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class EmailConfig {
 		properties.put("mail.smtp.auth", "true");
 		properties.put("mail.smtp.starttls.enable", "true");
 		properties.put("mail.debug", "true");
+		
 
 		return javaMailSender;
 	}

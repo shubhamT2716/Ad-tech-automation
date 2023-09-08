@@ -11,23 +11,40 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter @Setter @Builder
+@Getter
+@Setter
+@Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class URLChecksReportModel {
 
 	@Builder.Default
 	Map<String, PositiveURLChecks> positiveUrlChecks = new HashMap<String, PositiveURLChecks>();
 	@Builder.Default
 	Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
+	@Builder.Default
+	Map<String, List<BidderDataAssertion>> bidderDataAssertions = new HashMap<>();
+
+
 
 	enum TestResult {
 		PASS, FAIL, NA
 	}
 
-	@Getter @Setter @Builder
+	@Getter
+	@Setter
+	@Builder
+	@ToString
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class PositiveURLChecks {
 		String label;
 		String urlPattern;
@@ -58,8 +75,13 @@ public class URLChecksReportModel {
 		Map<String, Set<String>> anyOneOfKeyValChecks = new HashMap<String, Set<String>>();
 	}
 
-	@Getter @Setter @Builder
+	@Getter
+	@Setter
+	@Builder
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@ToString
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class NegativeURLChecks {
 		String label;
 		String urlPattern;
@@ -72,6 +94,29 @@ public class URLChecksReportModel {
 		@Builder.Default
 		Integer countOfMatchingUrls = 0;
 	}
+
+	@Getter
+	@Setter
+	@Builder
+	@ToString
+	public static class BidderDataAssertion {
+		String message;
+		TestResult testResult;
+		String url;
+		MatchingJsonPath matchingJson;
+
+		// ... any other fields you may require
+	}
+
+	@Getter
+	@Setter
+	@Builder
+	@ToString
+	public static class MatchingJsonPath {
+		String jsonPath;
+		String Value;
+	}
+
 
 	public void updateMatchingUrlsCount() {
 		positiveUrlChecks.forEach((key, value) -> {
@@ -132,11 +177,20 @@ public class URLChecksReportModel {
 
 					callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
 						if (qsMapFromNetworkCall.containsKey(qsParam)) {
+
 							actualValues.add(qsMapFromNetworkCall.get(qsParam));
+
 						}
+
 					});
 
-					if (actualValues.retainAll(listOfValues)) {
+//					if (actualValues.retainAll(listOfValues) == false && actualValues.isEmpty()) {
+//						callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
+//								+ ". Found negative matches: " + actualValues);
+//						callData.setTestResult(TestResult.FAIL);
+//					}
+
+					if (!actualValues.retainAll(listOfValues)) {
 						callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
 								+ ". Found negative matches: " + actualValues);
 						callData.setTestResult(TestResult.FAIL);
@@ -166,4 +220,5 @@ public class URLChecksReportModel {
 		});
 
 	}
+
 }
