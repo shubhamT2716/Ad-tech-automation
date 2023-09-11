@@ -74,16 +74,45 @@ public class URLDataProcessing {
 
 		return sb.toString();
 	}
+	
+	public static  boolean isValidUrl(String url) {
+
+		try {
+			
+			URL url1 = new URL(url);
+
+				if(url1==null)
+				{
+					throw new Exception();
+				}
+			
+			String u = url1.getQuery();
+			
+			
+
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+
+	}
+	
 
 	public HashMap<String, String> queryStringToMap(String queryString) {
 		
-		System.err.println("Query String "+queryString);
+		
 
 		HashMap<String, String> queryStringMap = new HashMap<String, String>();
 
+		
+		if(queryString==null)
+		{
+			return queryStringMap;
+		}
+		
 			String[] queryStringParts = queryString.split("\\&");
 			
-			System.err.println(queryStringParts);
+			
 
 		for (String queryStringPart : queryStringParts) {
 
@@ -114,8 +143,10 @@ public class URLDataProcessing {
 	public HashMap<String, String> getQueryStringMapFromUrl(String url) {
 
 		try {
+		
 			URL urlObj = new URL(url);
-			System.err.println(urlObj);
+			
+				
 			return queryStringToMap(urlObj.getQuery());
 
 		} catch (MalformedURLException e) {

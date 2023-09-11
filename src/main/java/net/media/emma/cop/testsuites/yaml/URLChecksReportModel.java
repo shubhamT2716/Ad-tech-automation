@@ -1,5 +1,6 @@
 package net.media.emma.cop.testsuites.yaml;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -144,6 +145,8 @@ public class URLChecksReportModel {
 			}
 		});
 	}
+
+	
 
 	public void verifyPositiveKeyValChecks() {
 
