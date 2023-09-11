@@ -65,8 +65,7 @@ public class JsonPath {
     public boolean compareValueInJson(String json, String jsonPath, Object expectedValue) {
         try {
             Object actualValue = readValueFromJson(json, jsonPath);
-            System.err.println("actualValue = "+ actualValue);
-            System.err.println("expectedValue = "+ expectedValue);
+            log.info("Actual Value = "+actualValue);
             return Objects.equals(actualValue.toString(), expectedValue.toString());
         } catch (PathNotFoundException e) {
             return false;

@@ -121,7 +121,7 @@ public class PlAssestion {
     }
 
     private void createReport(URLChecksReportModel urlChecksReportModel, TestCriteriaBo.BidderDataAssertions bidderDataAssertions , String bidder, String url, String message, URLChecksReportModel.TestResult result) {
-        System.out.println("Creating Report -- ");
+        
         URLChecksReportModel.BidderDataAssertion assertionReport = URLChecksReportModel.BidderDataAssertion.builder()
                 .message(message)
                 .testResult(result)
