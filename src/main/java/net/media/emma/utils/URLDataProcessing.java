@@ -100,8 +100,6 @@ public class URLDataProcessing {
 
 	public HashMap<String, String> queryStringToMap(String queryString) {
 		
-		
-
 		HashMap<String, String> queryStringMap = new HashMap<String, String>();
 
 		
@@ -143,10 +141,8 @@ public class URLDataProcessing {
 	public HashMap<String, String> getQueryStringMapFromUrl(String url) {
 
 		try {
-		
-			URL urlObj = new URL(url);
 			
-				
+			URL urlObj = new URL(url);
 			return queryStringToMap(urlObj.getQuery());
 
 		} catch (MalformedURLException e) {
