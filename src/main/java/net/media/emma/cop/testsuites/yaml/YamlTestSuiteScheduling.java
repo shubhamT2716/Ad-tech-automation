@@ -1,6 +1,8 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +15,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -113,21 +117,35 @@ public class YamlTestSuiteScheduling {
 			for (String env : environments) {
 				for (String agent : userAgents) {
 
-					TestCriteriaBo testCriteriaBo = getYamlObject("src/main/resources/yamlSmokeTestSuiteFiles"+"/" + yaml);
+					ClassPathResource classPathResource = new ClassPathResource(yamlSmokeTestSuiteFilesPath + "/" + yaml);
+		            String content = null;
 
-					if (null == testCriteriaBo) {
-						log.error("Error while reading yaml file");
-						continue;
-					}
+		            try {
+		                InputStream inputStream = classPathResource.getInputStream();
+		                content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+		                
+		                ObjectMapper yamlMapper = new YAMLMapper();
+		                
+		                TestCriteriaBo testCriteriaBo = yamlMapper.readValue(content, TestCriteriaBo.class);
+		                
+		                		// Update the environment and userAgent parameters in TestCriteriaBo
+		    					testCriteriaBo.setEnvironment(env);
+		    					testCriteriaBo.setUserAgent(agent);
 
-					// Update the environment and userAgent parameters in TestCriteriaBo
-					testCriteriaBo.setEnvironment(env);
-					testCriteriaBo.setUserAgent(agent);
+//		    					map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
 
-//					map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+		    					map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+		    					listOfYamlEnv.add(yaml + "_" + env + "_" + agent);
+		                
+		            } catch (Exception e) {
+		                // Handle exceptions here
+		                log.error("Error while reading YAML file", e);
+		                continue; // Continue to the next iteration
+		            }
 
-					map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-					listOfYamlEnv.add(yaml + "_" + env + "_" + agent);
+		           
+
+					
 				}
 			}
 		}

@@ -76,10 +76,14 @@ public class URLDataProcessing {
 	}
 
 	public HashMap<String, String> queryStringToMap(String queryString) {
+		
+		System.err.println("Query String "+queryString);
 
 		HashMap<String, String> queryStringMap = new HashMap<String, String>();
 
-		String[] queryStringParts = queryString.split("\\&");
+			String[] queryStringParts = queryString.split("\\&");
+			
+			System.err.println(queryStringParts);
 
 		for (String queryStringPart : queryStringParts) {
 
@@ -111,6 +115,7 @@ public class URLDataProcessing {
 
 		try {
 			URL urlObj = new URL(url);
+			System.err.println(urlObj);
 			return queryStringToMap(urlObj.getQuery());
 
 		} catch (MalformedURLException e) {
