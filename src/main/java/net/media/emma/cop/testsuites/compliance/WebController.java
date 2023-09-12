@@ -1,11 +1,16 @@
 package net.media.emma.cop.testsuites.compliance;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,12 +35,15 @@ public class WebController {
     ComplianceTestSuite complianceTestSuite;
     @Autowired
     FileOperations fileOperations;
+    
+    @Value("${complianceYamlFilesPath}")
+    private String complianceYamlFilesPath;
 
     @GetMapping
     public ModelAndView complianceTestSuite() {
 
         ModelAndView mav = new ModelAndView("privacyComplianceTestSuite");
-        mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/complianceYamlFiles/"));//  Arrays.asList(null, "testCriteria.yaml", "testCriteria2.yaml"));
+        mav.addObject("files", fileOperations.listYamlFiles(complianceYamlFilesPath));//  Arrays.asList(null, "testCriteria.yaml", "testCriteria2.yaml"));
 
         return mav;
     }
@@ -68,15 +76,31 @@ public class WebController {
     @ResponseBody
     public String getFileContent(@RequestBody String fileName) {
 
-        if (fileName.length() > 0) {
+//        if (fileName.length() > 0) {
+//
+//            try {
+//                return new String(Files.readAllBytes(Paths.get("src/main/resources/complianceYamlFiles/" + fileName)));
+//            } catch (IOException e) {
+//                log.error("File Read Error", e);
+//                return e.getMessage();
+//            }
+//        }
+//        return "Input File Name Empty";
+    	
+    	ClassPathResource classPathResource = new ClassPathResource(complianceYamlFilesPath+"/" + fileName);
 
-            try {
-                return new String(Files.readAllBytes(Paths.get("src/main/resources/complianceYamlFiles/" + fileName)));
-            } catch (IOException e) {
-                log.error("File Read Error", e);
-                return e.getMessage();
-            }
-        }
-        return "Input File Name Empty";
+		try {
+			InputStream inputStream = classPathResource.getInputStream();
+
+			String content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+
+			inputStream.close();
+
+			return content;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Error while reading Yaml" + e.getMessage();
+		}
+    	
     }
 }
