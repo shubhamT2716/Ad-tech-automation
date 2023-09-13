@@ -1,23 +1,21 @@
 package net.media.emma.cop.testsuites.yaml;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -44,6 +43,7 @@ import net.media.emma.utils.FileOperations;
 @Controller("yamlTestSuiteController")
 @Slf4j
 @RequestMapping("/yamlTestSuite/")
+@RestController
 public class WebController {
 
 	@Autowired
@@ -101,6 +101,32 @@ public class WebController {
 
 	}
 
+
+	@GetMapping("/smokeTestSuiteApi")
+	public ResponseEntity<?> triggerSmokeTestApi(@RequestParam(value = "env", defaultValue = "hb.yahoo.net") String environment, @RequestParam(value = "ua",defaultValue = "Chrome.Desktop.Mac") String userAgent,
+			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles) {
+
+				try {
+
+					if(selectedFiles==null|| selectedFiles.isEmpty()==true ){
+						selectedFiles = new ArrayList<>(getFileNamesForSmokeTest());
+					}
+
+					SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles, false);
+
+					return ResponseEntity.ok(result);
+
+				} catch (Exception e) {
+				
+					log.info("Error reading file.", e);
+					return ResponseEntity.status(org.springframework.http.HttpStatus.BAD_REQUEST).body(e.getMessage());
+				}
+	}
+
+
+
+	
+
 	@GetMapping("/smokeTestSuite/{fileName}")
 	public ModelAndView runReortForEmail(@PathVariable("fileName") String fileName) {
 
@@ -118,6 +144,7 @@ public class WebController {
 		return mav;
 
 	}
+	
 
 	@GetMapping("/autoTest")
 	public ModelAndView getAutoTest() {
@@ -283,7 +310,7 @@ public class WebController {
 
 	}
 
-	private Set<String> getFileNamesForSmokeTest() {
+	private Set<String> 	getFileNamesForSmokeTest() {
 		// Fetch the list of YAML file names from the directory
 		Set<String> fileNames = fileOperations.listYamlFiles(yamlSmokeTestSuiteFilesPath);
 		// Add additional filtering logic if needed (e.g., exclude specific files)
