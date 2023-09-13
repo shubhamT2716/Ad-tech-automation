@@ -248,7 +248,7 @@ public class ComplianceTestSuite {
                 "      if (success && isSet(tcfApiInfo)) {\n" +
                 "        resolve(tcfApiInfo);\n" +
                 "      }\n" +
-                "    });\n" +
+                "    });\n" +	
                 "  });\n" +
                 "}");
         return (LinkedHashMap<String, String>) d;

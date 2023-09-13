@@ -297,13 +297,12 @@ public class TestSuite implements GenericTestSuite {
 		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
 
 		for (String requestUrl : requestList) {
+
+			//check if requestUrl is  not valid then continue
 			
-//			if(!URLDataProcessing.isValidUrl(requestUrl))
-//			{
-//				System.err.println();
-//				
-//				continue;
-//			}
+			// if(!requestUrl.startsWith("http")) {
+			// 	continue;
+			// }
 			
 			Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
 
