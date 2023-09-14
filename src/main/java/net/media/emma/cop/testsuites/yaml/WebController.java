@@ -233,8 +233,7 @@ public class WebController {
 		return mav;
 	}
 
-	// @Value("${yamlFolderPath}")
-	// private String yamlFolderPath;
+	
 
 	@PostMapping("fileContent")
 	@ResponseBody
