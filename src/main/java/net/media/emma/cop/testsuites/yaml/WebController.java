@@ -123,10 +123,6 @@ public class WebController {
 				}
 	}
 
-
-
-	
-
 	@GetMapping("/smokeTestSuite/{fileName}")
 	public ModelAndView runReortForEmail(@PathVariable("fileName") String fileName) {
 
@@ -309,7 +305,7 @@ public class WebController {
 
 	}
 
-	private Set<String> 	getFileNamesForSmokeTest() {
+	private Set<String> getFileNamesForSmokeTest() {
 		// Fetch the list of YAML file names from the directory
 		Set<String> fileNames = fileOperations.listYamlFiles(yamlSmokeTestSuiteFilesPath);
 		// Add additional filtering logic if needed (e.g., exclude specific files)
