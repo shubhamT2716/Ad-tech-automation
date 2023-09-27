@@ -41,12 +41,12 @@ keysToVerifyPositive: {
 }
 responseHeaders: {
   APLog: {
-    Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-    User-Agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36]',
+    Content-Type: image/gif,
+    Content-Length: '35',
   },
   PRLog: {
-    Cache-Control: 'max-age=0, no-cache, no-store',
-    Content-Type: 'image/gif',
+    Cache-Control: max-age=0, no-cache, no-storese,
+    Content-Type: image/gif,
     cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
   },
 }
@@ -55,14 +55,14 @@ requestHeaders: {
   APLog: {
     accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
     user-agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
-    cookie: [
-    {"visitor-Id": "295a8052-83a4-4bc7-06bd-b840f17d88f7"},
-    {"data-o": "295a8052-83a4-4bc7-06bd-b840f17d88f7"}
-    ],
+    #    cookie: [
+    #    {"visitor-Id": "295a8052-83a4-4bc7-06bd-b840f17d88f7"},
+    #   {"data-o": "295a8052-83a4-4bc7-06bd-b840f17d88f7"}
+    #   ],
   },
   PRLog: {
-    Cache-Control: 'max-age=0, no-cache, no-store',
-    Content-Type: 'image/gif',
+    Cache-Control: max-age=0, no-cache, no-store,
+    Content-Type: image/gif,
     cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
   },
 }
