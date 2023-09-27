@@ -6,17 +6,17 @@ bidexAppendString: "&hb_test=1"
 bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
 
 networkCallsPositive: {
-      PRLog: "https://hblg.media.net/log?logid=prlog",
-      APLog: "https://hblg.media.net/log?logid=aplog",
-      AWLog: "https://hblg.media.net/log?logid=awlog",
-      RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-      checksync: "https://hbx.media.net/checksync.php?cid=8CU66J63J",
-      hb: "https://hb-pb.media.net/rtb/hb?cid=8CU66J63J",
-      ucreative: "https://hbx.media.net/__media__/js/ucreative.js?cv=1",
-      tcb: "https://contextual.media.net/tcb.js?",
-      belog: "https://hblg.media.net/log?logid=kfk&evtid=belog",
-      # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
- }
+  PRLog: "https://hblg.media.net/log?logid=prlog",
+  APLog: "https://hblg.media.net/log?logid=aplog",
+  AWLog: "https://hblg.media.net/log?logid=awlog",
+  RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  checksync: "https://hbx.media.net/checksync.php?cid=8CU66J63J",
+  hb: "https://hb-pb.media.net/rtb/hb?cid=8CU66J63J",
+  ucreative: "https://hbx.media.net/__media__/js/ucreative.js?cv=1",
+  tcb: "https://contextual.media.net/tcb.js?",
+  belog: "https://hblg.media.net/log?logid=kfk&evtid=belog",
+  # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+}
 
 networkCallsNegative: {
   nerrPing: "https://hblg.media.net/nerrping.php?",
@@ -45,23 +45,51 @@ keysToVerifyPositive: {
   APLog: {
     svr: ["2023072110_141_080214_705_080214_668_ssp"],
     ugd: ["4"],
-  #usp_ldf: ["0","1"],
-   },
- }
+    #usp_ldf: ["0","1"],
+  },
+}
 
 #to_check_negative_keys
 keysToVerifyNegative: {
   belog: { name: ["ADS_DISABLED"]},
-  prlog: { snm : ["removed","error",], nbr : ["13"], usp_ldf : []},
+  prlog: { snm: ["removed","error",], nbr: ["13"], usp_ldf: []},
   aplog: { nbr: ["13"]},
   awlog: { ogbdp: ["0","-1","-2"]},
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { cid: ["8CULM0U5B", "8CU66J6"], snm: ["success", "nobid"], nbr : [ "45","3","69","0","1","99" ]},
- }
+  prlog: { nbr: [ "45","3","69","0","1","99" ]},
+  aplog: { cid: ["8CULM0U5B", "8CU66J6"], snm: ["success", "nobid"], nbr: [ "45","3","69","0","1","99" ]},
+}
+
+responseHeaders: {
+  APLog: {
+    Content-Type: image/gif,
+    Content-Length: '35',
+  },
+  PRLog: {
+    Cache-Control: max-age=0, no-cache, no-storese,
+    Content-Type: image/gif,
+    cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+  },
+}
+
+requestHeaders: {
+  APLog: {
+    accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+    user-agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
+    #    cookie: [
+    #    {"visitor-Id": "295a8052-83a4-4bc7-06bd-b840f17d88f7"},
+    #   {"data-o": "295a8052-83a4-4bc7-06bd-b840f17d88f7"}
+    #   ],
+  },
+  PRLog: {
+    Cache-Control: max-age=0, no-cache, no-store,
+    Content-Type: image/gif,
+    cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+  },
+}
 
 bidderDataUrls: {
   YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBL12EX",
