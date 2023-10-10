@@ -1,0 +1,15 @@
+# ----------common rules at one place------------
+# all logging pixels url like: ap, pr, aw, be, (for list, get it from watson developer. they have a list of all logging pixels)
+# cookie sync (checksync) positivity checks and heacers check too
+# error logs - negetive checks
+# all logs - negetive value checks
+# all logs - positive value checks
+# compliace - gpp string etc (only if applicable)
+# bidder calls - request headers check (TODO, ASAP)
+
+
+
+# ----------property specific rules on each YAML------------
+# cid, crid [multiple crids] in all logs
+# device checks in logs (ugd 2/3/4 -> mobile/tabler/desktop) randomly pick one check
+# location data: country code (cc, state etc)

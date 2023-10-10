@@ -88,6 +88,12 @@ keysToVerifyAnyOneOf: {
   aplog: { nbr: [ "45","3","69","0","1","99" ]},
 }
 
+responseHeaders: {
+}
+
+requestHeaders: {
+}
+
 bidderDataUrls: {
 
 }
