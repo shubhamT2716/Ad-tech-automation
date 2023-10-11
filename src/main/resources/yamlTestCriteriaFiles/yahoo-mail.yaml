@@ -10,19 +10,19 @@ bidexAppendString: "&hb_test=1"
 bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
 
 networkCallsPositive: {
-  #yhbcall: https://m.hb.yahoo.net/rtb/yhb?cid=8YHB7Y738,
-  checksync: "https://hb.yahoo.net/checksync.php?cid=8YHB7Y738",
-  PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
-  APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
-  AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+  yhbcall: https://m.hb.yahoo.net/rtb/yhb?cid=8YHB7Y738,
+   checksync: "https://hb.yahoo.net/checksync.php?cid=8YHB7Y738",
+   PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+   APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+   AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
  }
 
 networkCallsNegative: {
-  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
-  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
-  mnetcall: ".*media.net.*"
+   nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+   Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+   mnetcall: ".*media.net.*"
  }
 
 keysToVerifyPositive: {
@@ -57,9 +57,9 @@ keysToVerifyPositive: {
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  prlog: { snm : ["removed","error"]},
-  aplog: { nbr: ["13"]},
-  awlog: { ogbdp : ["0","-1","-2"]},
+   prlog: { snm : ["removed","error"]},
+   aplog: { nbr: ["13"]},
+   awlog: { ogbdp : ["0","-1","-2"]},
  }
 
 #to_check_any_keys_among_these

@@ -8,21 +8,21 @@ bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
 
 
 networkCallsPositive: {
-    checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBN4BN8",
-    PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
-    APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
-    AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
-    GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+     checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBN4BN8",
+     PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+     APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+     AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+    # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
     ucreative: "https://hb.yahoo.net/ucreative.php?cv=1",
     tcb: "https://contextual.media.net/tcb.js?&cb=window.advBidxc.nativetemplatefetch&v=1"
     #Yahoomnetcall: "*.hb.yahoo.net*"
 }
 
 networkCallsNegative: {
-    nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
-    Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
+     nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+     Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
     BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog",
-    mnetcall: "pattern: .*media.net.*"
+     mnetcall: "pattern: .*media.net.*"
 }     
 
 keysToVerifyPositive: {
@@ -52,9 +52,9 @@ keysToVerifyPositive: {
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-    prlog: { snm : ["removed"], nbr : ["13"]},
-    aplog: { nbr: ["13"]},
-    awlog: { ogbdp : ["0","-1","-2"]},
+     prlog: { snm : ["removed"], nbr : ["13"]},
+     aplog: { nbr: ["13"]},
+     awlog: { ogbdp : ["0","-1","-2"]},
     belog: { name : ["DFS_PERF","NO_DOMINANT_BID_ERROR","DFST","ADS_DISABLED"]}
 }
 

@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
+import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
@@ -64,6 +65,11 @@ public class WebController {
 
 	@Value("${zipFileBasePath}")
 	private String zipFilePath;
+	
+	@Value("${commonYamlFilePath}")
+	private String commonYamlFile;
+	
+	
 
 	@Autowired
 	YamlTestSuiteScheduling yamlTestSuiteScheduling;
@@ -73,6 +79,7 @@ public class WebController {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuite");
 		mav.addObject("fileNames", new ArrayList<>(getFileNamesForSmokeTest()));
+		mav.addObject("commonFile", new ArrayList<>(getCommonFilesForSmokeTest()));
 		return mav;
 
 	}
@@ -80,11 +87,14 @@ public class WebController {
 	@PostMapping("/smokeTestSuite")
 	@ResponseBody
 	public ModelAndView runThreadPoolTest(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
-			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles) {
+			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles,
+			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
+		
+		System.err.println(commonFiles);
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles, false);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles, false);
 
 		try {
 			mav.addObject("message2", result.getSmokeReport());
@@ -187,7 +197,13 @@ public class WebController {
 
 		try {
 
+			
 			ObjectMapper mapper = new YAMLMapper();
+			
+//			String finalYaml=fileOperations.mergeYaml(yaml, "src/main/resources/commonYaml/common.yaml");
+//			
+//			System.err.println(finalYaml);
+			
 			TestCriteriaBo yamlTc = mapper.readValue(yaml, TestCriteriaBo.class);
 
 			TestReportModel message = yamlTestSuite.getTestResults(yamlTc);
@@ -289,5 +305,13 @@ public class WebController {
 		// Add additional filtering logic if needed (e.g., exclude specific files)
 		return fileNames;
 	}
+	
+	private Set<String> getCommonFilesForSmokeTest()
+	{
+		Set<String> fileName=fileOperations.listYamlFiles(commonYamlFile);
+		
+		return fileName;
+	}
+	
 
 }
