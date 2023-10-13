@@ -1,79 +1,83 @@
 environment: hb.yahoo.net
-cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://www.engadget.com/?headerbidding=1&mnet_test=1"
 bidexAppendString: ""
 bidexReplaceString: { "": "" }
-
-userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://www.engadget.com/?headerbidding=1"
+#location: paris
 
 networkCallsPositive: {
+  checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
   PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
   APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
   AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
-  ADPLog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=adplog",
-  GPTSLog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=gptslog",
-  BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog",
-  RELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=relog",
-  ARLog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=arlog",
-  BRQLog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=brqlog",
-  CHECKSYNCLog: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX&cs=1&cv=37&hb=1&prvid=25014&vsSync=1&refUrl=&gdpr=1&gdprconsent=1&gdprstring=CPu2HEAPu2HEAAOACBENDQCoAP_AAEfAACiQJVtB9G7WTXNnMXp_YPsUeYUX1VBp4uAhBgCBA-ABzBsUIIwGVmEzJEyIJigCGAIAoEJBIEFtGAlAAFAAYIAFABHICEAAJAAAIGAAECAAAgBACBBIEwAAAAAQIUBVEhQAkAdAQFoIQYhAlgAgAQIAICAEgIhAAgQAEAAgQABIAEAAgggAggAAAAIAAAAEAFAIGQBQBgFCAIJIgAkGpUQBNgAGBNIGEUKIEQVBABQKAAAACBAgAATBgUIIwCVGASAECIAAgAAAIAoAIBAAABAAhAAEAAYIAAABAIAAAAIAAAACAAEAAAAAAAAAAIAQAAAAAAIQBEAAQAgAEAABAAQQAAEAAgAAAAACAEAIhAAAAAAAAgAAAAAEAAAgAAgAAAAAIAAAAAAAAIEABABgBhoAMAAQTFEQAYAAgmKKgAwABBMU&usp_status=0&usp_consent=1&coppa=0&ckdel=0&gpp=&gpp_sid=",
-  UCREATIVE: "https://hb.yahoo.net/ucreative.php?cv=1",
-  YAHOOPREBIADAPTERLog: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
-  MEDIAPrebidAdaptorCall: "https://warp.media.net/ss/nes/force/prebid?cid=8YHBL12EX&cpm=15&mtypepref=banner%2Cnative%2Cvideo&ogHost=m.hb.yahoo.net&ogPath=%2Frtb%2Fyhb",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
-  Flog: "https://hb.yahoo.net/log?logid=kfk&evtid=flog"
 }
 
 networkCallsNegative: {
-  nerrPing: "https://hb.yahoo.net/nerrping.php?"
+  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
 }
 
 keysToVerifyPositive: {
 
+  checksync: {
+    #gdpr: ["0"],
+    gpp: ["DBAA"],
+    gpp_sid: ["-1"]
+  },
+
   PRLog: {
-    pvid: ["25014", "-3"],
     cid: ["8YHBL12EX"],
-    svr: ["2023072110_141_072113_693_072113_656_ssp"],
-    ugd: ["4","3"],
-    usp_ldf: ["0","1"],
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
+    ugd: ["4"],
   },
 
   APLog: {
-    svr: ["2023072110_141_072113_693_072113_656_ssp"],
-    ugd: ["4","3"],
-    usp_ldf: [],
-    cid: [],
-    crid: [],
-    pvid: [],
-    snm: [],
-    nbr: [],
-    size: [],
-    type: [],
-    ttl: [],
-    ogbdp: [],
-    acid: [],
-    iwb: [],
-    ldf: []
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
+    ugd: ["4"],
   },
-  BELog: {
-    name: [],
-    stack: [],
-    cid: [],
-    svr: []
-  }
+}
+responseHeaders: {
+  APLog: {
+    Content-Type: image/gif,
+    Content-Length: '35',
+  },
+  PRLog: {
+    Cache-Control: max-age=0, no-cache, no-storese,
+    Content-Type: image/gif,
+    cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+  },
 }
 
+requestHeaders: {
+  APLog: {
+    accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+    user-agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
+    #    cookie: [
+    #    {"visitor-Id": "295a8052-83a4-4bc7-06bd-b840f17d88f7"},
+    #   {"data-o": "295a8052-83a4-4bc7-06bd-b840f17d88f7"}
+    #   ],
+  },
+  PRLog: {
+    Cache-Control: max-age=0, no-cache, no-store,
+    Content-Type: image/gif,
+    cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+  },
+}
 
+#to_check_negative_keys
 keysToVerifyNegative: {
-  PRLog: { snm : ["removed","error",], nbr : ["13"]},
+  PRLog: { snm: ["removed","error",], nbr: ["13"]},
   APLog: { nbr: ["13","",null], mpvid: [], abs: []},
-  AWLog: { ogbdp : ["0","-1","-2"]},
+  AWLog: { ogbdp: ["0","-1","-2"]},
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
   prlog: { nbr: [ "45","3","69","0","1","99" ]},
-  aplog: { nbr: [ "45","3","69","0","1","99" ]},
+  aplog: { nbr: [ "45","3","69","0","1","99" ], pvid: ["-3","25014","25015","25016"]}
 }
 
 bidderDataUrls: {
@@ -96,6 +100,16 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner[1].w", value: "970" },
     { jsonPath: "x.imp[0].banner[1].h", value: "250" },
     { jsonPath: "x.imp[0].tagid", value: "534774365" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lmsid:;lu:0;pct:;pd:;pstaid:;pt:home;site:engadget;ver:carbon||1197802876||||eng-nl-hp-dis,privacy-footer|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "eng-nl-hp-dis,privacy-footer"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "top_center"},
       # { jsonPath: "x.ext.bxLogs.svr", value: "" }
     ],
     responseData: [
@@ -116,7 +130,17 @@ bidderDataAssertions: {
     {jsonPath: "x.imp[1].banner[1].w", value: "970"},
     {jsonPath: "x.imp[1].banner[1].h", value: "250"},
     {jsonPath: "x.imp[1].tagid", value: "888157941"},
-    {jsonPath: "x.ext.bxLogs.svr", value: ""},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lmsid:;lu:0;pct:;pd:;pstaid:;pt:home;site:engadget;ver:carbon||1197802876||||eng-nl-hp-dis,privacy-footer|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "eng-nl-hp-dis,privacy-footer"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "btm_center"},
+      # {jsonPath: "x.ext.bxLogs.svr", value: ""},
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -134,6 +158,16 @@ bidderDataAssertions: {
     {jsonPath: "x.imp[2].banner[0].w", value: "300"},
     {jsonPath: "x.imp[2].banner[0].h", value: "250"},
     {jsonPath: "x.imp[2].tagid", value: "667548672"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lmsid:;lu:0;pct:;pd:;pstaid:;pt:home;site:engadget;ver:carbon||1197802876||||eng-nl-hp-dis,privacy-footer|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "eng-nl-hp-dis,privacy-footer"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "top_right"},
       #{jsonPath: "x.ext.bxLogs.svr", value: ""},
     ],
     responseData: [
@@ -154,24 +188,16 @@ bidderDataAssertions: {
     {jsonPath: "x.imp[3].banner[1].w", value: "300"},
     {jsonPath: "x.imp[3].banner[1].h", value: "250"},
     {jsonPath: "x.imp[3].tagid", value: "355218353"},
-      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
-    ],
-    responseData: [
-    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
-    ]
-  },
-  {
-    matchingJsonPath: {
-      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
-      expectedValue: ""
-    },
-    requestData: [
-    {jsonPath: "x.imp[0].all.cid", value: "8YHBL12EX"},
-    {jsonPath: "x.imp[0].all.crid", value: ""},
-    {jsonPath: "x.imp[0].banner[0].w", value: ""},
-    {jsonPath: "x.imp[0].banner[0].h", value: ""},
-    {jsonPath: "x.imp[0].tagid", value: ""},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lmsid:;lu:0;pct:;pd:;pstaid:;pt:home;site:engadget;ver:carbon||1197802876||||eng-nl-hp-dis,privacy-footer|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "eng-nl-hp-dis,privacy-footer"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "mid_right"},
       #{jsonPath: "x.ext.bxLogs.svr", value: ""},
     ],
     responseData: [
@@ -192,6 +218,16 @@ bidderDataAssertions: {
     {jsonPath: "x.imp[0].banner[1].w", value: "300"},
     {jsonPath: "x.imp[0].banner[1].h", value: "250"},
     {jsonPath: "x.imp[0].tagid", value: "355218353"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lmsid:;lu:0;pct:;pd:;pstaid:;pt:home;site:engadget;ver:carbon||1197802876||||eng-nl-hp-dis,privacy-footer|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "eng-nl-hp-dis,privacy-footer"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "mid_right_2"},
       #{jsonPath: "x.ext.bxLogs.svr", value: ""},
     ],
     responseData: [
@@ -214,6 +250,9 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
     { jsonPath: "x.imp[0].banner.format[1].w", value: "970" },
     { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_center"},
     ],
     responseData: [
       #  { jsonPath: "", value: "" },
@@ -232,6 +271,9 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
     { jsonPath: "x.imp[0].banner.format[1].w", value: "970" },
     { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "btm_center"},
     ],
     responseData: [
       # { jsonPath: "", value: "" },
@@ -248,6 +290,9 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_top_right" },
     { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
     { jsonPath: "x.imp[0].banner.format[0].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_right"},
     ],
     responseData: [
       #  { jsonPath: "", value: "" },
@@ -266,6 +311,9 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner.format[0].h", value: "600" },
     { jsonPath: "x.imp[0].banner.format[1].w", value: "300" },
     { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right"},
     ],
     responseData: [
       # { jsonPath: "", value: "" },
@@ -284,6 +332,9 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner.format[0].h", value: "600" },
     { jsonPath: "x.imp[0].banner.format[1].w", value: "300" },
     { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right_2"},
     ],
     responseData: [
       # { jsonPath: "", value: "" },
