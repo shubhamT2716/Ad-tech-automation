@@ -200,10 +200,6 @@ public class WebController {
 			
 			ObjectMapper mapper = new YAMLMapper();
 			
-//			String finalYaml=fileOperations.mergeYaml(yaml, "src/main/resources/commonYaml/common.yaml");
-//			
-//			System.err.println(finalYaml);
-			
 			TestCriteriaBo yamlTc = mapper.readValue(yaml, TestCriteriaBo.class);
 
 			TestReportModel message = yamlTestSuite.getTestResults(yamlTc);
@@ -243,7 +239,6 @@ public class WebController {
 //		        e.printStackTrace();
 //		        return "Error while reading file: " + e.getMessage();
 //		    }
-
 		
 		ClassPathResource classPathResource = new ClassPathResource(yamlTestCriteriaFilesPath+"/" + fileName);
 
