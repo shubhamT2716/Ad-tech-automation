@@ -66,7 +66,13 @@ keysToVerifyNegative: {
 keysToVerifyAnyOneOf: {
   prlog: { nbr : [ "45","3","69","0","1","99" ], cid : ["8YHB7Y738","8YHBJ3BJ0"]},
   aplog: { nbr : [ "45","3","69","0","1","99" ], pvid: ["-3", "25014","25016", "25015"], adtype: ["BANNER", "NATIVE", "VIDEO"]}
- }
+}
+
+responseHeaders: {
+}
+
+requestHeaders: {
+}
 
 bidderDataUrls: {
 }
