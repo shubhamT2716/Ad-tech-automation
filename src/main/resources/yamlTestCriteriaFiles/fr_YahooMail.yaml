@@ -1,0 +1,159 @@
+loginUrl: "https://login.yahoo.com/"
+userName: "adtechtest@yahoo.com"
+password : "QWEasd!@#123"
+
+environment: hb.yahoo.net
+cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://mail.yahoo.com/?headerbidding=1&force_hbtest=all"
+bidexAppendString: ""
+bidexReplaceString: { "": "" }
+
+networkCallsPositive: {
+  yhbcall: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHB7Y738",
+  checksync: "https://hb.yahoo.net/checksync.php?cid=8YHB7Y738",
+  PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+  APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+  AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+}
+
+networkCallsNegative: {
+  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  mnetcall: ".*media.net.*"
+}
+
+keysToVerifyPositive: {
+
+  #yhbcall: {
+  #gpp: ["DBAA"],
+  #gpp_sid: ["-1"],
+  #},
+
+  checksync: {
+    gdpr: ["0"],
+    gdprconsent: ["0"],
+    cid: ["8YHB7Y738"],
+    hb: ["1"],
+    refUrl: ["https://mail.yahoo.com/"],
+    gpp: ["DBAA"],
+    gpp_sid: ["-1"],
+  },
+
+  PRLog: {
+    svr: ["2023091809_217_100405_59_100405_70_ssp"],
+    ugd: ["4"],
+  },
+
+  APLog: {
+    svr: ["2023091809_217_100405_59_100405_70_ssp"],
+    ugd: ["4"],
+  },
+
+  AWLog: {
+    snm: ["success"],
+    nbr: ["0"]
+  }
+
+}
+
+#to_check_negative_keys
+keysToVerifyNegative: {
+  prlog: { snm : ["removed","error"]},
+  aplog: { nbr: ["13"]},
+  awlog: { ogbdp : ["0","-1","-2"]},
+}
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: {
+  prlog: { nbr : [ "45","3","69","0","1","99" ], cid : ["8YHB7Y738","8YHBJ3BJ0"]},
+  aplog: { nbr : [ "45","3","69","0","1","99" ], pvid: ["-3", "25014","25016", "25015"], adtype: ["BANNER", "NATIVE", "VIDEO"]}
+}
+
+bidderDataUrls: {
+  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHB7Y738",
+  YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
+}
+
+
+
+bidderDataAssertions: {
+  YHB: [
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "gpt-passback"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8YHB7Y738" },
+        { jsonPath: "x.imp[0].all.crid", value: "625266448" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "300" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "600" },
+        { jsonPath: "x.imp[0].tagid", value: "625266448" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lu:1||159600009||" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "ultraLightThemeDefault_control,NorrinBIMIControl,CMUSNORRINWALLETT01,ICAFFILIATE_Desktop_McAfee_Competitor,ICAFFILIATEDesktopTOMCardsTestE,yai_phase_0_1,YMPEMPTYMLT01,control-caas-guid-bucketing-dev,NorrinNewUserOnboardingStickyV3,ICAFFILIATEDesktopCart1Green" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "top_right" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[1].ortb2Imp.ext.data.divId",
+        expectedValue: "gpt-passback"
+      },
+      requestData: [
+        { jsonPath: "x.imp[1].all.cid", value: "8YHB7Y738" },
+        { jsonPath: "x.imp[1].all.crid", value: "625266448" },
+        { jsonPath: "x.imp[1].banner[0].w", value: "300" },
+        { jsonPath: "x.imp[1].banner[0].h", value: "250" },
+        { jsonPath: "x.imp[1].tagid", value: "625266448" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lu:1||159600009||" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "ultraLightThemeDefault_control,NorrinBIMIControl,CMUSNORRINWALLETT01,ICAFFILIATE_Desktop_McAfee_Competitor,ICAFFILIATEDesktopTOMCardsTestE,yai_phase_0_1,YMPEMPTYMLT01,control-caas-guid-bucketing-dev,NorrinNewUserOnboardingStickyV3,ICAFFILIATEDesktopCart1Green" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "top_right" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      ]
+    },
+
+  ],
+  YPBJS: [
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+        expectedValue: "us_ymail_ros_dt_top_right"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_right" },
+        { jsonPath: "x.imp[0].ext.pos", value: "us_ymail_ros_dt_top_right" },
+        { jsonPath: "x.imp[0].tagid", value: "us_ymail_ros_dt_top_right" },
+        { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+        { jsonPath: "x.imp[0].banner.format[0].h", value: "250" },
+        { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US" },
+        { jsonPath: "x.imp[0].ext.kvs.loc", value: "top-right" },
+      ],
+      responseData: [
+        #  { jsonPath: "", value: "" },
+      ]
+    },
+  ],
+}
+# ------------------------------ignore the lines below--rats---------------------
+responseSimulate: []
+domInject: []
