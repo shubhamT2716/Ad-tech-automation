@@ -1,7 +1,7 @@
 environment: hbx.media.net
 cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-a: ""]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
+publisherUrl: "https://www.webmd.com/?mnet_test=1"
 bidexAppendString: ""
 bidexReplaceString: { "": "" }
 
