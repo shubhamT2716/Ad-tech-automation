@@ -43,6 +43,12 @@ keysToVerifyPositive: {
     },
  }
 
+responseHeaders: {
+}
+
+requestHeaders: {
+}
+
 #to_check_negative_keys
 keysToVerifyNegative: {
     prlog: { snm : ["removed","error",], nbr : ["13"]},
