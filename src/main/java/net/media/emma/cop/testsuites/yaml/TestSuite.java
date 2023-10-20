@@ -50,6 +50,8 @@ public class TestSuite implements GenericTestSuite {
     URLDataProcessing urlDataProcessing;
     @Autowired
     PlAssestion payloadAsserstions;
+    @Autowired
+    HeadersAssertion headersAssertion;
 
     @Value("${harFileBasePath}")
     private String harFileBasePath;
@@ -357,19 +359,19 @@ public class TestSuite implements GenericTestSuite {
                             .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
                             .queryStringMap(new ArrayList<HashMap<String, String>>(
                                     Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
-                            .queryStringMapRequestHeader(new ArrayList<HashMap<String, Object>>(Arrays.asList(getRequestHeaders(request))))
-                            .queryStringMapResponseHeader(new ArrayList<HashMap<String, Object>>(Arrays.asList(getResponseHeaders(request))))
+                    //        .queryStringMapRequestHeader(new ArrayList<HashMap<String, Object>>(Arrays.asList(getRequestHeaders(request))))
+                    //        .queryStringMapResponseHeader(new ArrayList<HashMap<String, Object>>(Arrays.asList(getResponseHeaders(request))))
                             .negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
                             .positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
-                            .anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey()))
-                            .requestHeadersChecks(testData.getRequestHeaders().get(urlData.getKey()))
-                            .responseHeadersChecks(testData.getResponseHeaders().get(urlData.getKey())).build();
+                            .anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey())).build();
+                     //       .requestHeadersChecks(testData.getRequestHeaders().get(urlData.getKey()))
+                      //      .responseHeadersChecks(testData.getResponseHeaders().get(urlData.getKey())).build();
                     urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
                 } else {
                     labelExists.getMatchingUrls().add(requestUrl);
                     labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
-                    labelExists.getQueryStringMapRequestHeader().add(getRequestHeaders(request));
-                    labelExists.getQueryStringMapResponseHeader().add(getResponseHeaders(request));
+                 //   labelExists.getQueryStringMapRequestHeader().add(getRequestHeaders(request));
+                 //   labelExists.getQueryStringMapResponseHeader().add(getResponseHeaders(request));
                 }
 
                 continue;
@@ -389,6 +391,7 @@ public class TestSuite implements GenericTestSuite {
             }
         }
 
+        headersAssertion.verifyRequestResponseHeaders(urlChecks,requests,testData);
         urlChecks.updateMatchingUrlsCount();
         urlChecks.updateNetworkCallErrors(testData);
         urlChecks.verifyPositiveKeyValChecks();
