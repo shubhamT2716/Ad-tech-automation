@@ -22,6 +22,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
+import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.Timing;
 
 import lombok.extern.slf4j.Slf4j;
@@ -133,11 +134,11 @@ public class TestSuite implements GenericTestSuite {
 			consoleMessage = getConsoleErrors(page);
 			page.navigate(testData.getPublisherUrl());
 
-			// page.waitForLoadState(LoadState.NETWORKIDLE,new
-			// Page.WaitForLoadStateOptions().setTimeout(5000));
-			// page.waitForFunction("() => performance.getEntriesByType('resource').length >
-			// 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
-			Thread.sleep(500);
+//			 page.waitForLoadState(LoadState.NETWORKIDLE,new
+//			 Page.WaitForLoadStateOptions().setTimeout(5000));
+//			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
+//			 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
+			Thread.sleep(20000);
 
 		} catch (Exception e) {
 
@@ -535,8 +536,13 @@ public class TestSuite implements GenericTestSuite {
 					}
 
 					for (Entry<String, String> entry : testData.bidexReplaceString.entrySet()) {
-
-						if (originalURl.contains(entry.getKey())) {
+						
+						if(entry==null)
+						{
+							continue;
+						}
+						
+						else  if (originalURl.contains(entry.getKey())) {
 							replacedURL = replacedURL.replace(entry.getKey(), entry.getValue());
 						}
 					}
