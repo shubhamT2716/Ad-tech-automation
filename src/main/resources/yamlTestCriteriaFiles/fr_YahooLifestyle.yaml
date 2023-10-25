@@ -166,6 +166,89 @@ bidderDataAssertions: {
     ]
   }  
 
+  ],
+  YPBJS: [
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_ylife_main_dt_top_right"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_right" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_ylife_main_dt_top_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_ylife_main_dt_top_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "600" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    ],
+    responseData: [
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_ylife_main_dt_mid_right"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_ylife_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_ylife_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    ],
+    responseData: [
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_ylife_main_dt_top_center"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_center" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_ylife_main_dt_top_center" },
+    { jsonPath: "x.imp[0].tagid", value: "us_ylife_main_dt_top_center" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" }
+    ],
+    responseData: [
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_ylife_main_dt_mid_right"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_ylife_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_ylife_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "250" }
+    ],
+    responseData: [
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_ylife_main_dt_mid_right"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_ylife_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_ylife_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "250" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    ],
+    responseData: [
+    ]
+  },
   ]
 }
 
