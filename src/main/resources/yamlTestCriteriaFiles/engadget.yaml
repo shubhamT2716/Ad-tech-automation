@@ -6,17 +6,20 @@ bidexAppendString: "&hb_test=1"
 bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
 
 networkCallsPositive: {
-   checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBL12EX",
-   PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
-   APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
-   AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
-   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  checksync: "https://hb.yahoo.net/checksync.php?",
+  PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+  APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+  AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+ 
+  
 }
 
 networkCallsNegative: {
   nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
   Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  mnetcall: ".*media.net.*"
 }
 
 keysToVerifyPositive: {
@@ -41,15 +44,16 @@ keysToVerifyPositive: {
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  PRLog: { snm : ["removed","error",], nbr : ["13"]},
-  APLog: { nbr: ["13","",null], mpvid: [], abs: []},
-  AWLog: { ogbdp : ["0","-1","-2"]},
-}
+   PRLog: { snm : ["removed","error",], nbr : ["13"]},
+   APLog: { nbr: ["13","",null], mpvid: [], abs: []},
+   AWLog: { ogbdp : ["0","-1","-2"]},
+ }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+   prlog: { nbr : [ "45","3","69","0","1","99" ]},
+   aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+
 }
 
 bidderDataUrls: {

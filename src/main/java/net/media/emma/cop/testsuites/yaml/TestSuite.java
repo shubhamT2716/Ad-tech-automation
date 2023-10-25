@@ -138,7 +138,7 @@ public class TestSuite implements GenericTestSuite {
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
 //			 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
-			Thread.sleep(250000);
+			Thread.sleep(20000);
 
 		} catch (Exception e) {
 

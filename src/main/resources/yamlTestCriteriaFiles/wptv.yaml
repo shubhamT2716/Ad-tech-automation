@@ -1,7 +1,7 @@
 environment: hbx.media.net
 cookies: [Visitor-id: 3335276217835857062V10, data-o: d663ccb3-d84d-4d8c-9f26-aff828f94e76~~3]
 userAgent: Chrome.Dekstop.Mac
-publisherUrl: 'https://www.wptv.com/'
+publisherUrl: 'https://www.wptv.com/?mnet_test=1'
 bidexAppendString: "&hb_test=1"
 bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
 

@@ -1,11 +1,14 @@
 package net.media.emma.utils;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,6 +21,9 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 import com.fasterxml.jackson.core.JsonParser;
 
@@ -32,6 +38,10 @@ public class FileOperations {
 
 	@Value("${yamlFilePath}")
 	private String yamlFilePath;
+	
+	@Value("${commonYamlFilePath}")
+	private String commonYaml;
+	
 
 	public void saveYamlFile(String fileContent) {
 		try {
@@ -108,6 +118,61 @@ public class FileOperations {
 			return null;
 		}
     }
+
+	public String mergeYaml(String yamlFileWithPath, String commonYamlFile)
+	{
+		
+		System.err.println(commonYamlFile);
+		
+		
+		
+		Yaml yaml=new Yaml(new Constructor(Map.class));
+
+		try(FileReader fileReader=new FileReader(yamlFileWithPath);
+				FileReader fileReader2=new FileReader("src/main/resources/commonYaml/common.yaml"))
+		{
+			Map<String,Object> data1=yaml.load(fileReader);
+			
+			System.err.println("data1"+data1);
+			Map<String,Object> data2=yaml.load(fileReader2);
+			
+			System.err.println(data1);
+			System.err.println(data2);
+				
+
+			data1.putAll(data2);
+
+			return yaml.dump(data1);
+			
+		}
+		catch(Exception e)
+		{
+			log.error("YAML Merge Failed", e);
+			return null;
+		}
+		
+	}
+	
+	public String getCommonFile(String commonFile)
+	{
+		ClassPathResource commonYamlClassPath=new ClassPathResource(commonYaml+"/"+commonFile);
+		
+		 String commonContent=null;
+		 try {
+			 InputStream stream=commonYamlClassPath.getInputStream();
+			 
+			 commonContent=StreamUtils.copyToString(stream, StandardCharsets.UTF_8);
+			 
+			 return commonContent;
+		 }
+		 catch (Exception e) {
+			e.printStackTrace();
+			
+			return null;
+		}
+		
+		
+	}
 
 	
 	

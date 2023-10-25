@@ -36,6 +36,7 @@ import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.FileOperations;
 import net.media.emma.utils.MailServiceImpl;
+import net.media.emma.utils.YamlUtils;
 
 @Slf4j
 @Service
@@ -45,6 +46,9 @@ public class YamlTestSuiteScheduling {
 
 	@Autowired
 	private FileOperations fileOperations;
+	
+	@Autowired
+	private YamlUtils yamlUtils;
 
 	@Autowired
 	private GenericTestSuite yamlTestSuite;
@@ -69,6 +73,10 @@ public class YamlTestSuiteScheduling {
 
 	@Value("${yamlSmokeTestSuiteFilesPath}")
 	private String smokeTestYamlPath;
+	
+	@Value("${commonYamlFilePath}")
+	private String commonYaml;
+	
 
 //	@Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
 	public void smokeTestScheduling() {
@@ -82,7 +90,7 @@ public class YamlTestSuiteScheduling {
 
 		boolean flagForMail = true;
 
-		getAutoTest(environment, userAgent, list, flagForMail);
+		getAutoTest(environment, userAgent, list,null, flagForMail);
 
 	}
 
@@ -92,7 +100,7 @@ public class YamlTestSuiteScheduling {
 		return "fail";
 	}
 
-	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
+	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,List<String> commonFiles,
 			boolean flagForMail) {
 
 		// if (selectedFiles == null || selectedFiles.isEmpty()) {
@@ -113,20 +121,34 @@ public class YamlTestSuiteScheduling {
 		String[] userAgents = userAgent.trim().split(",");
 
 		for (String yaml : listOfYaml) {
+			
+			for(String commonYamls : commonFiles)
+			{
 
 			for (String env : environments) {
 				for (String agent : userAgents) {
 
+//					String finalYaml=fileOperations.mergeYaml("src/main/resources/yamlTestCriteriaFiles" + "/" + yaml, "src/main/resources/commonYaml"+"/"+"common.yaml");
+					
 					ClassPathResource classPathResource = new ClassPathResource(yamlSmokeTestSuiteFilesPath + "/" + yaml);
+					
 		            String content = null;
-
+		           
 		            try {
 		                InputStream inputStream = classPathResource.getInputStream();
+		                
 		                content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+		                
+		              String commonContent =  this.fileOperations.getCommonFile(commonYamls);
 		                
 		                ObjectMapper yamlMapper = new YAMLMapper();
 		                
-		                TestCriteriaBo testCriteriaBo = yamlMapper.readValue(content, TestCriteriaBo.class);
+		                List<String> list=new ArrayList<>();
+		                list.add(content);
+		                
+		                String a[]= {content, commonContent};
+		                
+		                TestCriteriaBo testCriteriaBo = yamlUtils.buildYaml(a);
 		                
 		                		// Update the environment and userAgent parameters in TestCriteriaBo
 		    					testCriteriaBo.setEnvironment(env);
@@ -143,7 +165,7 @@ public class YamlTestSuiteScheduling {
 		                continue; // Continue to the next iteration
 		            }
 
-		           
+				}  
 
 					
 				}

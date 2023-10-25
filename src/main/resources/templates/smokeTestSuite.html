@@ -31,6 +31,17 @@
             <label class="form-check-label" th:text="${fileName}"></label>
             <input class="form-check-input" type="checkbox" name="selectedFiles" th:value="${fileName}">
         </div>
+        
+        <label>Select common  YAML files to execute:</label>
+        <div class="form-check">
+            <label class="form-check-label" for="selectAll">Select All</label>
+            <input class="form-check-input" type="checkbox" id="selectAll" onchange="toggleCheckboxes(this)">
+        </div>
+        <div class="form-check" th:each="fileName : ${commonFile}">
+            <label class="form-check-label" th:text="${fileName}"></label>
+            <input class="form-check-input" type="checkbox" name="commonFiles" th:value="${fileName}">
+        </div>
+        
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <pre th:text="${message}"></pre>
@@ -39,9 +50,10 @@
 <script>
     function validateForm() {
         const selectedFiles = document.querySelectorAll('input[name="selectedFiles"]:checked');
+         const commonFiles = document.querySelectorAll('input[name="commonFiles"]:checked');
         const errorMessage = document.getElementById('error-message');
-        if (selectedFiles.length === 0) {
-            errorMessage.textContent = 'Please select at least one YAML file to execute.';
+        if (selectedFiles.length === 0 || commonFiles.length=== 0)  {
+            errorMessage.textContent = 'Please select at least one YAML or common yaml file to execute.';
             errorMessage.style.display = 'block';
             return false; // Prevent form submission
         }
@@ -55,6 +67,16 @@
         const checkboxes = document.querySelectorAll('input[name="selectedFiles"]');
         checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
     }
+
+    function toggleCheckboxes(selectAllCheckbox) {
+        const checkboxes = document.querySelectorAll('input[name="commonFiles"]');
+        checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+    }
+
+
+    
+    
+    
 </script>
 
 </body>

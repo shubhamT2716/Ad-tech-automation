@@ -1,0 +1,36 @@
+networkCallsPositive: {
+  checksync: "https://hb.yahoo.net/checksync.php?",
+ # PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+  APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+  AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+
+}
+networkCallsNegative: {
+  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  mnetcall: ".*media.net.*"
+}
+
+keysToVerifyPositive: {
+#	PRLog: {  nbr : ["13"]}
+}
+
+keysToVerifyNegative: {
+  PRLog: { snm : ["removed","error",], nbr : ["13"]},
+  aplog: { nbr: ["13","",null], mpvid: [], abs: []},
+  awlog: { ogbdp : ["0","-1","-2"]},
+}
+
+keysToVerifyAnyOneOf: {
+  PRLog: { nbr : [ "45","3","69","0","1","99" ]},
+  aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+}
+
+
+bidderDataUrls: {
+  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBL12EX",
+  YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
+}
+
