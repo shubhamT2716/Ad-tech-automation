@@ -32,9 +32,8 @@ public class HeadersAssertion {
 
                 if (verifyHeaders(expectedRequestHeaders, actualRequestHeaders) &&
                         verifyHeaders(expectedResponseHeaders, actualResponseHeaders)) {
-                    createReport(urlChecksReportModel, bidder, "All headers passed", URLChecksReportModel.TestResult.PASS, request.url());
-                } else {
-                    createReport(urlChecksReportModel, bidder, "Failed headers", URLChecksReportModel.TestResult.FAIL,request.url());
+                    passed = true;
+                    break;
                 }
             }
             if(passed) {
