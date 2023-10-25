@@ -66,11 +66,12 @@ bidderDataAssertions: {
     },
     requestData: [
     { jsonPath: "x.imp[0].all.cid", value: "8YHB39WQ8" },
-    { jsonPath: "x.imp[0].all.crid", value: "806876124" },
-    { jsonPath: "x.imp[0].banner[0].w", value: "970" },
-    { jsonPath: "x.imp[0].banner[0].h", value: "250" },
-    { jsonPath: "x.imp[0].tagid", value: "806876124" },
-    
+    { jsonPath: "x.imp[0].all.crid", value: "545873764" },
+    { jsonPath: "x.imp[0].banner[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner[0].h", value: "600" },
+    { jsonPath: "x.imp[0].banner[1].w", value: "300" },
+    { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+    { jsonPath: "x.imp[0].tagid", value: "545873764" },
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -145,8 +146,8 @@ bidderDataAssertions: {
     {jsonPath: "x.imp[3].all.crid", value: "806876124"},
     {jsonPath: "x.imp[3].banner[0].w", value: "728"},
     {jsonPath: "x.imp[3].banner[0].h", value: "90"},
-      {jsonPath: "x.imp[3].banner[0].w", value: "970"},
-    {jsonPath: "x.imp[3].banner[0].h", value: "250"},
+      {jsonPath: "x.imp[3].banner[1].w", value: "970"},
+    {jsonPath: "x.imp[3].banner[1].h", value: "250"},
     {jsonPath: "x.imp[3].tagid", value: "806876124"},
     # { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
     # { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "axid:y-yxNPS3hE2uKmyopn4ULX9dfWSvowQEIq~A;colo:gq1;device:desktop;lang:en-US;lu:0;pt:home;region:US;site:lifestyle;ver:megastrm-lifestyle||980751902||||life-gam-migration1-0,seamless|"},
