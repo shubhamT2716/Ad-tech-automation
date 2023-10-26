@@ -54,7 +54,8 @@ keysToVerifyAnyOneOf: {
 }
 
 bidderDataUrls: {
-  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHB39WQ8"
+  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHB39WQ8",
+  YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS"
 }
 
 bidderDataAssertions: {
