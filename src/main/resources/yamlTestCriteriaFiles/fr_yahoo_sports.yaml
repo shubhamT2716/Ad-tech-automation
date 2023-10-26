@@ -1,0 +1,288 @@
+environment: hb.yahoo.net
+cookies: [VisitorId: "3369108664772247000V10" ,  data-o: "80355c46-2942-061b-157d-6b11450087ce~~1"]
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://sports.yahoo.com/?headerbidding=1&force_hbtest=all"
+bidexAppendString: "&hb_test=1"
+bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
+
+networkCallsPositive: {
+  checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBN4BN8",
+  PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+  APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+  AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+}
+
+networkCallsNegative: {
+  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+}
+
+keysToVerifyPositive: {
+
+  checksync: {
+    #gdpr: ["0"],
+    gpp: ["DBAA"],
+    gpp_sid: ["-1"],
+
+    cid: ["8YHBN4BN8"],
+    cs: ["1"],
+    cv: ["37"],
+    hb: ["1"],
+    vsSync: ["1"],
+    prvid: ["25014"],
+
+  },
+
+  PRLog: {
+    logid: ["prlog"],
+    itype: ["YHB"],
+    adt: ["desktop"],
+    cid: ["8YHBN4BN8"],
+    ct: ["MUMBAI"],
+    cc: ["IN"],
+    ugd: ["4"],
+    app: ["0"],
+    pid: ["8PR6KY355"],
+    dn: ["sports.yahoo.com"],
+#    svr: ["2023091809_217_100311_741_100311_714_ssp"],
+  },
+
+  APLog: {
+    logid: ["aplog"],
+    itype: ["YHB"],
+    adt: ["desktop"],
+    cid: ["8YHBN4BN8"],
+    ct: ["MUMBAI"],
+    cc: ["IN"],
+    ugd: ["4"],
+    app: ["0"],
+    pid: ["8PR6KY355"],
+    dn: ["sports.yahoo.com"],
+  },
+}
+
+#to_check_negative_keys
+keysToVerifyNegative: {
+  PRLog: { snm: ["removed","error",], nbr: ["13"]},
+#  APLog: { nbr
+  : ["13","",null], mpvid: [], abs: []},
+  APLog: { nbr: ["13","",null], mpvid: []},
+  AWLog: { ogbdp: ["0","-1","-2"]},
+}
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: {
+  prlog: { nbr: [ "45","3","69","0","1","99" ]},
+  aplog: { nbr: [ "45","3","69","0","1","99" ], pvid: ["-3","25014","25015","25016"]}
+}
+
+bidderDataUrls: {
+  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBN4BN8",
+  YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
+}
+
+bidderDataAssertions: {
+  YHB: [
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+      expectedValue: "defaultLDRB-9-sizer"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].all.cid", value: "8YHBN4BN8" },
+    { jsonPath: "x.imp[0].all.crid", value: "461348594" },
+    { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+    { jsonPath: "x.imp[0].tagid", value: "461348594" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "axid:y-xNav8OVE2uIKhvnTdrI9o.WapexOyJ4X~A;colo:bf1;device:desktop;lang:en-US;lu:0;pt:home;region:US;site:sports;ver:y20||25664825||||sixpack-odds-control,hva-newsletter-bdl-bucket-dt-copy|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "sixpack-odds-control,hva-newsletter-bdl-bucket-dt-copy"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "top_center"},
+      # { jsonPath: "x.ext.bxLogs.svr", value: "" }
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[1].ortb2Imp.ext.data.divId",
+      expectedValue: "defaultLDRB2-1-sizer"
+    },
+    requestData: [
+    {jsonPath: "x.imp[1].all.cid", value: "8YHBN4BN8"},
+    {jsonPath: "x.imp[1].all.crid", value: "725542367"},
+    {jsonPath: "x.imp[1].banner[0].w", value: "728"},
+    {jsonPath: "x.imp[1].banner[0].h", value: "90"},
+    {jsonPath: "x.imp[1].banner[1].w", value: "970"},
+    {jsonPath: "x.imp[1].banner[1].h", value: "250"},
+    {jsonPath: "x.imp[1].tagid", value: "725542367"},
+    { jsonPath: "x.imp[1].ortb2Imp.ext.kvs.k1.key", value: "publisherblob" },
+    { jsonPath: "x.imp[1].ortb2Imp.ext.kvs.k1.value", value: "axid:y-xNav8OVE2uIKhvnTdrI9o.WapexOyJ4X~A;colo:bf1;device:desktop;lang:en-US;lu:0;pt:home;region:US;site:sports;ver:y20||25664825||||sixpack-odds-control,hva-newsletter-bdl-bucket-dt-copy|" },
+    { jsonPath: "x.imp[1].ortb2Imp.ext.kvs.k2.key", value: "bucket" },
+    { jsonPath: "x.imp[1].ortb2Imp.ext.kvs.k2.value", value: "sixpack-odds-control,hva-newsletter-bdl-bucket-dt-copy" },
+    { jsonPath: "x.imp[1].ortb2Imp.ext.kvs.k3.key", value: "cobrand" },
+    { jsonPath: "x.imp[1].ortb2Imp.ext.kvs.k4.value", value: "none" },
+    { jsonPath: "x.imp[1].ortb2Imp.ext.kvs.k4.key", value: "lang" },
+    { jsonPath: "x.imp[1].ortb2Imp.ext.kvs.k4.value", value: "en-US" },
+    { jsonPath: "x.imp[1].ortb2Imp.ext.kvs.k7.key", value: "loc" },
+    { jsonPath: "x.imp[1].ortb2Imp.ext.kvs.k7.value", value: "mid_center" },
+   # {jsonPath: "x.ext.bxLogs.svr", value: ""},
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+      expectedValue: "defaultLDRB2-2-sizer"
+    },
+    requestData: [
+    {jsonPath: "x.imp[0].all.cid", value: "8YHBN4BN8"},
+    {jsonPath: "x.imp[0].all.crid", value: "725542367"},
+    {jsonPath: "x.imp[0].banner[0].w", value: "728"},
+    {jsonPath: "x.imp[0].banner[0].h", value: "90"},
+    {jsonPath: "x.imp[0].banner[1].w", value: "970"},
+    {jsonPath: "x.imp[0].banner[1].h", value: "250"},
+    {jsonPath: "x.imp[0].tagid", value: "355218353"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "axid:y-xNav8OVE2uIKhvnTdrI9o.WapexOyJ4X~A;colo:bf1;device:desktop;lang:en-US;lu:0;pt:home;region:US;site:sports;ver:y20||25664825||||sixpack-odds-control,hva-newsletter-bdl-bucket-dt-copy|" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "sixpack-odds-control,hva-newsletter-bdl-bucket-dt-copy" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "none" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "mid_center_2" },
+      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  ],
+  YPBJS: [
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_ysports_main_dt_top_center"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_center" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_top_center" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_top_center" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_center"},
+    ],
+    responseData: [
+      #  { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_ysports_main_dt_mid_center"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "btm_center" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_btm_center" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_btm_center" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "btm_center"},
+    ],
+    responseData: [
+      # { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_ysports_main_dt_mid_center"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_right" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_top_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_top_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_right"},
+    ],
+    responseData: [
+      #  { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_ysports_main_dt_top_center"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "600" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right"},
+    ],
+    responseData: [
+      # { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_ysports_main_dt_top_center"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right_2" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "600" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right_2"},
+    ],
+    responseData: [
+      # { jsonPath: "", value: "" },
+    ]
+  },
+  ]
+}
+
+# ------------------------------ignore the lines below--rats---------------------
+responseSimulate: []
+domInject: []
