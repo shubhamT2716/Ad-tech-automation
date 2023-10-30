@@ -90,7 +90,7 @@ public class WebController {
 			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles,
 			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
 		
-		System.err.println(commonFiles);
+		
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
