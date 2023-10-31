@@ -39,6 +39,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
 
@@ -170,7 +171,35 @@ public class WebController {
 
 		return mav;
 	}
+	
+	
+	@GetMapping("/userAgent")
+	public ModelAndView getUserAgent()
+	{
+		
+		ModelAndView mav=new ModelAndView("UserAgent");
+		try {
+			
+			Map<String, String> map=BrowserFactory.browserContexts; 
+			
+			
+			
+			JsonNode jsonNode=yamlMapper.convertValue(map, JsonNode.class);
+			
+			
+			
+			mav.addObject("userAgent", jsonNode);
+				
+		}
+		catch (Exception e) {
+			
+			mav.addObject("message1", e.getMessage());
+		}
+		
+		return mav;
+	}
 
+	
 //	@Autowired
 //	private YamlTestSuiteScheduling scheduling;
 //
