@@ -1,21 +1,21 @@
-environment: hbx.media.net
+senvironment: hbx.media.net
 cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
+publisherUrl: "https://www.webmd.com/?mnet_test=1"
 bidexAppendString: "&hb_test=1"
 bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
 
 networkCallsPositive: {
-      PRLog: "https://hblg.media.net/log?logid=prlog",
-      APLog: "https://hblg.media.net/log?logid=aplog",
-      AWLog: "https://hblg.media.net/log?logid=awlog",
+       PRLog: "https://hblg.media.net/log?logid=prlog",
+       APLog: "https://hblg.media.net/log?logid=aplog",
+       AWLog: "https://hblg.media.net/log?logid=awlog",
       RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-      checksync: "https://hbx.media.net/checksync.php?cid=8CU66J63J",
+       checksync: "https://hbx.media.net/checksync.php?cid=8CU66J63J",
       hb: "https://hb-pb.media.net/rtb/hb?cid=8CU66J63J",
       ucreative: "https://hbx.media.net/__media__/js/ucreative.js?cv=1",
       tcb: "https://contextual.media.net/tcb.js?",
       belog: "https://hblg.media.net/log?logid=kfk&evtid=belog",
-      # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+       GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
  }
 
 networkCallsNegative: {
