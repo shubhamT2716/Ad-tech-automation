@@ -62,7 +62,7 @@ public class BidExConfig {
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
         getInstreamDfpPlacements(bidExContent);
-
+        getABTestConfig(bidExContent);
     }
 
 
@@ -172,7 +172,29 @@ public class BidExConfig {
         }        
         
     }
+    private void getABTestConfig(JsonNode bidexContent){
+        JsonNode abTestConifgData;
+//for each ab config get the ad unit, id, name and start date
+        abTestConifgData = bidexContent.get("AbtestRawConfig").get("adUnits");
+        try {
+            JsonNode rootNode = mapper.readTree(abTestConifgData.toString());
+            rootNode.fields().forEachRemaining(entry -> {
+                String adUnit = entry.getKey();
+                JsonNode adUnitNode = entry.getValue();
+                JsonNode firsNode = adUnitNode.get(0);
+                JsonNode name = firsNode.get("name");
+                JsonNode id = firsNode.get("id");
+                JsonNode startDate = firsNode.get("startDate");
+                JsonNode endDate = firsNode.get("endDate");
+                log.info("AdUnit " + adUnit + " " + "ID " + id + " " + "Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate);
+                log.info
+            });
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public void setSizes() {
 
