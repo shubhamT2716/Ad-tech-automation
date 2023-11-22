@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -62,7 +63,7 @@ public class BidExConfig {
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
         getInstreamDfpPlacements(bidExContent);
-        getABTestConfig(bidExContent);
+        getFeaturesData(bidExContent);
     }
 
 
@@ -172,7 +173,13 @@ public class BidExConfig {
         }        
         
     }
-    private void getABTestConfig(JsonNode bidexContent){
+    private void getFeaturesData(JsonNode bidexContent){
+        List < String > features = new ArrayList < String > ();
+        //add multiple features to the list
+        Collections.addAll(features, "CridSizeMapForMultiAd", "fpd");
+
+
+        //Getting AB test Config Data
         JsonNode abTestConifgData;
 //for each ab config get the ad unit, id, name and start date
         abTestConifgData = bidexContent.get("AbtestRawConfig").get("adUnits");
@@ -181,18 +188,22 @@ public class BidExConfig {
             rootNode.fields().forEachRemaining(entry -> {
                 String adUnit = entry.getKey();
                 JsonNode adUnitNode = entry.getValue();
-                JsonNode firsNode = adUnitNode.get(0);
-                JsonNode name = firsNode.get("name");
-                JsonNode id = firsNode.get("id");
-                JsonNode startDate = firsNode.get("startDate");
-                JsonNode endDate = firsNode.get("endDate");
-                log.info("AdUnit " + adUnit + " " + "ID " + id + " " + "Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate);
-                log.info
+                JsonNode rootValueNode = adUnitNode.get(0);
+                JsonNode name = rootValueNode.get("name");
+                JsonNode id = rootValueNode.get("id");
+                JsonNode startDate = rootValueNode.get("startDate");
+                JsonNode endDate = rootValueNode.get("endDate");
+                log.info("AdUnit " + adUnit + " " + "ID " + id + " " + "Experiment Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate);
+
+
             });
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        log.info("List of Features to check " + features);
+
+
 
     }
 
