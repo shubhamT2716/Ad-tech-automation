@@ -1,6 +1,6 @@
-environment: hbx.media.net
+environment: hb.yahoo.net
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://www.engadget.com/?headerbidding=1"
+publisherUrl: "https://www.yahoo.com/?headerbidding=1"
 
 ypbjs: {
   "$.[0].path": "$.imp.[0].ext.dfp_ad_unit_code", # adUnitPath from JS vs adUnitPath from bidderPostData. Data needs to be normalized and verified.

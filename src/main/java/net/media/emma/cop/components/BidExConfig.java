@@ -49,7 +49,7 @@ public class BidExConfig {
     // cridDetails = { "164457376" : { "dcn" : "8a969d570187874cae488063d27b00ab", "adunitPath" : "/22888152279/us/ysports/main/dt/us_ysports_main_dt_mid_right" } }
     // private Map<String, Map<String, String>> cridDetails = new HashMap<String, Map<String, String>>();
 
-    public void loadBidExConfig(JsonNode bidExContent) {
+    public JsonNode loadBidExConfig(JsonNode bidExContent) {
 
         if (bidExContent == null) {
             File sample = new File("src/main/java/net/media/emma/cop/components/sample/bidExConfigSample.json");
@@ -63,11 +63,16 @@ public class BidExConfig {
             }
         }
 
-        // loadbidExContent(bidExContent);
+//         loadbidExContent(bidExContent);
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
         getInstreamDfpPlacements(bidExContent);
-        getFeaturesData(bidExContent);
+        
+        
+        JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent), JsonNode.class);
+        
+        return featureResult;
+        
     }
 
 
@@ -118,6 +123,8 @@ public class BidExConfig {
 
     public void setDcnIntoCrid(JsonNode bidExContent) {
         //get dcn mapping from sample bidex config
+    	
+    	Map<String , Object> map=new HashMap<>();
         JsonNode dcnConfig = bidExContent.get("PlacementProviderRules");
         if (dcnConfig != null && dcnConfig.isObject()) {
             dcnConfig.fields().forEachRemaining(entry -> {
@@ -143,10 +150,13 @@ public class BidExConfig {
                         // TODO: handle exception
                         log.error("DCN build failed");
                     }
-
+                    
+                    
+                    
                 }
             });
         }
+        
     }
 
 
@@ -177,26 +187,28 @@ public class BidExConfig {
         }        
         
     }
-    private void getFeaturesData(JsonNode bidexContent){
+    
+    
+    private Map<String, Object> getFeaturesData(JsonNode bidexContent){
         List < String > features = new ArrayList < String > ();
         //add multiple features to the list
-        Collections.addAll(features, "CridSizeMapForMultiAd", "InsertSlotInLargeSlot", "MultiBidTemplateConfig", "fpd", "cwrs", "MultiAdSzComb", "osrm");
+        
+        Collections.addAll(features, "CridSizeMapForMultiAd","DfpPlacements","PlacementProviderRules","InStreamVideoDfpPlacements", "InsertSlotInLargeSlot", "MultiBidTemplateConfig", "fpd", "cwrs", "MultiAdSzComb", "osrm");
 
-        Map<String , Map<String, Object>> map=new HashMap<>();
+        Map<String ,Object> map=new HashMap<>();
 
         for(String feature : features)
         {
             ObjectMapper mapper = new ObjectMapper();
 
         	JsonNode basedOnFeature = bidexContent.get(feature);
+        	
 
-            Map<String, Object> featureMap=mapper.convertValue(basedOnFeature, new  TypeReference<Map<String, Object>>() {});
+            Object featureMap=mapper.convertValue(basedOnFeature, Object.class);
 
            map.put(feature, featureMap);
 
-            System.err.println(featureMap);
-
-            System.out.println("Feature data : "+map);
+           
 
 //        	basedOnFeature.fields().forEachRemaining(entry ->{
 //        		String key=entry.getKey();
@@ -205,15 +217,7 @@ public class BidExConfig {
 //        		JsonNode value=entry.getValue();
 //        		map.put(key, value);
 //        	});
-
-
-        	
         }
-        
-        
-        
-        
-        System.err.println("Feature data : "+map);
         
         //Getting AB test Config Data
         JsonNode abTestConifgData;
@@ -229,23 +233,26 @@ public class BidExConfig {
                 JsonNode id = rootValueNode.get("id");
                 JsonNode startDate = rootValueNode.get("startDate");
                 JsonNode endDate = rootValueNode.get("endDate");
-                log.info("AdUnit " + adUnit + " " + "ID " + id + " " + "Experiment Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate);
+//                log.info("AdUnit " + adUnit + " " + "ID " + id + " " + "Experiment Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate);
 
+                String abTest="AdUnit " + adUnit + " " + "ID " + id + " " + "Experiment Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate;
+
+                
+                map.put("Abtesting", abTest);
 
             });
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        log.info("List of Features to check " + features);
+//        log.info("List of Features to check " + features);
 
-
-
-    }
-
-    public void setSizes() {
+        
+        return map;
 
     }
+
+   
 
     @Getter @Setter @Builder @ToString
     public static class SlotsData {

@@ -116,17 +116,15 @@ public class bidexAndFeatureTests {
 		finalConfig = bidexResp.substring(startIndex, endIndex);
 
 		try {
-					 replaced = mapper.readTree(finalConfig.toString());
+		 replaced = mapper.readTree(finalConfig.toString());
 					// log.info("Json :"+ replaced);
 
 		} catch (Exception e) {
 			log.info("Converting to json error");
 		}
-				
-		bidExConfig.loadBidExConfig(replaced);
 		
 		page.close();
-		return replaced;
+		return bidExConfig.loadBidExConfig(replaced);
     }
 
 
