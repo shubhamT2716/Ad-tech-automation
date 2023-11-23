@@ -180,7 +180,7 @@ public class BidExConfig {
     private void getFeaturesData(JsonNode bidexContent){
         List < String > features = new ArrayList < String > ();
         //add multiple features to the list
-        Collections.addAll(features, "CridSizeMapForMultiAd", "fpd");
+        Collections.addAll(features, "CridSizeMapForMultiAd", "InsertSlotInLargeSlot", "MultiBidTemplateConfig", "fpd", "cwrs", "MultiAdSzComb", "osrm");
 
         Map<String , Map<String, Object>> map=new HashMap<>();
 
