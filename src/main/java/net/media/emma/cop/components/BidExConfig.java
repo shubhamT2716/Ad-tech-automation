@@ -4,9 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Collections;
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -178,7 +182,39 @@ public class BidExConfig {
         //add multiple features to the list
         Collections.addAll(features, "CridSizeMapForMultiAd", "fpd");
 
+        Map<String , Map<String, Object>> map=new HashMap<>();
 
+        for(String feature : features)
+        {
+            ObjectMapper mapper = new ObjectMapper();
+
+        	JsonNode basedOnFeature = bidexContent.get(feature);
+
+            Map<String, Object> featureMap=mapper.convertValue(basedOnFeature, new  TypeReference<Map<String, Object>>() {});
+
+           map.put(feature, featureMap);
+
+            System.err.println(featureMap);
+
+            System.out.println("Feature data : "+map);
+
+//        	basedOnFeature.fields().forEachRemaining(entry ->{
+//        		String key=entry.getKey();
+//        		
+//        		System.err.println(key);
+//        		JsonNode value=entry.getValue();
+//        		map.put(key, value);
+//        	});
+
+
+        	
+        }
+        
+        
+        
+        
+        System.err.println("Feature data : "+map);
+        
         //Getting AB test Config Data
         JsonNode abTestConifgData;
 //for each ab config get the ad unit, id, name and start date
