@@ -77,6 +77,9 @@ public class bidexAndFeatureTests {
 				
 				if(response.status()==200){
 				bidexResp = response.text();
+				
+				
+				
 				}
 
 				// log.info("Bidex Response: " + bidexJsonNode.toPrettyString());
@@ -96,31 +99,42 @@ public class bidexAndFeatureTests {
 		}
 
 
-		String startTarget  =  ".loadConfig";
+		String startTarget = "this.configRegistry.loadConfig";
 		String endTarget = "})}abtest(e,t)";
 		int startIndex=0;
 		int endIndex=0;
 
-		if(bidexResp.contains(startTarget)){
-			 startIndex  = bidexResp.indexOf(startTarget);
-			startIndex+=12;
-			log.info("Start Index : " + startIndex);
-		}
-		if(bidexResp.contains(endTarget)){
-			endIndex  = bidexResp.indexOf(endTarget);
-			endIndex+=3;
-			log.info("End Index : " + endIndex);
-		}
+//		if(bidexResp.contains(startTarget)){
+//			 startIndex  = bidexResp.indexOf(startTarget);
+//			startIndex+=12;
+//			log.info("Start Index : " + startIndex);
+//		}
+//		if(bidexResp.contains(endTarget)){
+//			endIndex  = bidexResp.indexOf(endTarget);
+//			endIndex+=3;
+//			log.info("End Index : " + endIndex);
+//		}
+		
+		startIndex=bidexResp.indexOf(startTarget);
+		endIndex=bidexResp.indexOf(endTarget);
+		
+		System.out.println(endIndex);
 
 		//control in Bidexconfig.java
 		finalConfig = bidexResp.substring(startIndex, endIndex);
+		log.info("finalString = "+ finalConfig);
+		
+//		System.err.println(finalConfig);
+		
 
 		try {
 		 replaced = mapper.readTree(finalConfig.toString());
-					// log.info("Json :"+ replaced);
+				 log.info("Json :"+ replaced);
+		 
+		 
 
 		} catch (Exception e) {
-			log.info("Converting to json error");
+//			log.info("Converting to json error");
 		}
 		
 		page.close();

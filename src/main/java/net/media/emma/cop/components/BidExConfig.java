@@ -81,14 +81,14 @@ public class BidExConfig {
         if (slotsData.size() > 0) {
             for (SlotsData slot: slotsData) {
                 if (slot.crid.equals(cridIn)) {
-                    log.info("Slots data crid " + slotsData);
+//                    log.info("Slots data crid " + slotsData);
                     return slot;
                 }
             }
         }
 
         slotsData.add(SlotsData.builder().crid(cridIn).build());
-        log.info("Slots data crid " + slotsData);
+//        log.info("Slots data crid " + slotsData);
 
         for (SlotsData slot: slotsData) {
             if (slot.crid.equals(cridIn)) {
@@ -136,11 +136,11 @@ public class BidExConfig {
                 if (cridNode != null & cridNode.isObject()) {
                     try {
                         getDcn = cridNode.get("25014").get("pp").get("dcn");
-                        log.info("Crid " + cridKey + " " + "DCN" + getDcn.toString());
+//                        log.info("Crid " + cridKey + " " + "DCN" + getDcn.toString());
 
                     } catch (Exception e) {
                         // TODO: handle exception
-                        log.error("DCN does not exist for crid " + cridKey);
+//                        log.error("DCN does not exist for crid " + cridKey);
                     }
                     try {
                         if (getDcn.toString() != null) {
@@ -148,7 +148,7 @@ public class BidExConfig {
                         }
                     } catch (Exception e) {
                         // TODO: handle exception
-                        log.error("DCN build failed");
+//                        log.error("DCN build failed");
                     }
                     
                     
@@ -193,6 +193,11 @@ public class BidExConfig {
         List < String > features = new ArrayList < String > ();
         //add multiple features to the list
         
+        log.info("bidexContent "+bidexContent);
+        
+        
+        System.out.println(bidexContent);
+        
         Collections.addAll(features, "CridSizeMapForMultiAd","DfpPlacements","PlacementProviderRules","InStreamVideoDfpPlacements", "InsertSlotInLargeSlot", "MultiBidTemplateConfig", "fpd", "cwrs", "MultiAdSzComb", "osrm");
 
         Map<String ,Object> map=new HashMap<>();
@@ -219,32 +224,32 @@ public class BidExConfig {
 //        	});
         }
         
-        //Getting AB test Config Data
-        JsonNode abTestConifgData;
-//for each ab config get the ad unit, id, name and start date
-        abTestConifgData = bidexContent.get("AbtestRawConfig").get("adUnits");
-        try {
-            JsonNode rootNode = mapper.readTree(abTestConifgData.toString());
-            rootNode.fields().forEachRemaining(entry -> {
-                String adUnit = entry.getKey();
-                JsonNode adUnitNode = entry.getValue();
-                JsonNode rootValueNode = adUnitNode.get(0);
-                JsonNode name = rootValueNode.get("name");
-                JsonNode id = rootValueNode.get("id");
-                JsonNode startDate = rootValueNode.get("startDate");
-                JsonNode endDate = rootValueNode.get("endDate");
-//                log.info("AdUnit " + adUnit + " " + "ID " + id + " " + "Experiment Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate);
-
-                String abTest="AdUnit " + adUnit + " " + "ID " + id + " " + "Experiment Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate;
-
-                
-                map.put("Abtesting", abTest);
-
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        //Getting AB test Config Data
+//        JsonNode abTestConifgData;
+////for each ab config get the ad unit, id, name and start date
+//        abTestConifgData = bidexContent.get("AbtestRawConfig").get("adUnits");
+//        try {
+//            JsonNode rootNode = mapper.readTree(abTestConifgData.toString());
+//            rootNode.fields().forEachRemaining(entry -> {
+//                String adUnit = entry.getKey();
+//                JsonNode adUnitNode = entry.getValue();
+//                JsonNode rootValueNode = adUnitNode.get(0);
+//                JsonNode name = rootValueNode.get("name");
+//                JsonNode id = rootValueNode.get("id");
+//                JsonNode startDate = rootValueNode.get("startDate");
+//                JsonNode endDate = rootValueNode.get("endDate");
+////                log.info("AdUnit " + adUnit + " " + "ID " + id + " " + "Experiment Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate);
+//
+//                String abTest="AdUnit " + adUnit + " " + "ID " + id + " " + "Experiment Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate;
+//
+//                
+//                map.put("Abtesting", abTest);
+//
+//            });
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 //        log.info("List of Features to check " + features);
 
         
