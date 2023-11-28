@@ -1,4 +1,5 @@
 package net.media.emma.cop.testsuites.pagetests;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,9 @@ public class bidexAndFeatureTests {
 
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
+	
+	@Value("#{'${listOfFeature}'.split(',')}")
+    private List<String> listOfFeatures;
 
     public JsonNode bidexTests(TestCriteria yaml) throws JsonMappingException, JsonProcessingException{
 
@@ -65,7 +69,7 @@ public class bidexAndFeatureTests {
 
 		// finalConfig = finalConfig.replaceAll("\""	, "")
 
-		Map<String,String> getCrids;
+		
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath);
 		try {
 		page.onResponse(response -> {
@@ -138,7 +142,7 @@ public class bidexAndFeatureTests {
 		}
 		
 		page.close();
-		return bidExConfig.loadBidExConfig(replaced);
+		return bidExConfig.loadBidExConfig(replaced,listOfFeatures);
     }
 
 

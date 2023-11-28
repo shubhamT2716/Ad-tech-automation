@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import net.media.emma.utils.FileOperations;
+
 import net.media.emma.utils.URLDataProcessing;
 
 @Builder @Getter @Setter @Slf4j @ToString
@@ -43,13 +43,15 @@ public class BidExConfig {
 
     @Builder.Default
     ObjectMapper mapper = new ObjectMapper();
+    
+    
 
     //Data format
     // cridDetails = { "crid" : { "dcn" : "dcnValue", "adunitPath" : "adunitPathValue" } }
     // cridDetails = { "164457376" : { "dcn" : "8a969d570187874cae488063d27b00ab", "adunitPath" : "/22888152279/us/ysports/main/dt/us_ysports_main_dt_mid_right" } }
     // private Map<String, Map<String, String>> cridDetails = new HashMap<String, Map<String, String>>();
 
-    public JsonNode loadBidExConfig(JsonNode bidExContent) {
+    public JsonNode loadBidExConfig(JsonNode bidExContent, List<String> feature ) {
 
         if (bidExContent == null) {
             File sample = new File("src/main/java/net/media/emma/cop/components/sample/bidExConfigSample.json");
@@ -62,14 +64,15 @@ public class BidExConfig {
 
             }
         }
-
+        
+      
 //         loadbidExContent(bidExContent);
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
         getInstreamDfpPlacements(bidExContent);
         
         
-        JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent), JsonNode.class);
+        JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent, feature), JsonNode.class);
         
         return featureResult;
         
@@ -189,31 +192,25 @@ public class BidExConfig {
     }
     
     
-    private Map<String, Object> getFeaturesData(JsonNode bidexContent){
-        List < String > features = new ArrayList < String > ();
-        //add multiple features to the list
-        
-        log.info("bidexContent "+bidexContent);
-        
-        
-        System.out.println(bidexContent);
-        
-        Collections.addAll(features, "CridSizeMapForMultiAd","DfpPlacements","PlacementProviderRules","InStreamVideoDfpPlacements", "InsertSlotInLargeSlot", "MultiBidTemplateConfig", "fpd", "cwrs", "MultiAdSzComb", "osrm");
+    private Map<String, Object> getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ){
+//        List < String > features = new ArrayList < String > ();
+//        //add multiple features to the list
+//        
+//        Collections.addAll(features, "CridSizeMapForMultiAd","DfpPlacements","PlacementProviderRules","InStreamVideoDfpPlacements", "InsertSlotInLargeSlot", "MultiBidTemplateConfig", "fpd", "cwrs", "MultiAdSzComb", "osrm");
 
-        Map<String ,Object> map=new HashMap<>();
+        Map<String ,Object> featureResult=new HashMap<>();
+        
+        
 
-        for(String feature : features)
+        for(String feature : listOfFeatures)
         {
-            ObjectMapper mapper = new ObjectMapper();
-
+          
         	JsonNode basedOnFeature = bidexContent.get(feature);
         	
 
             Object featureMap=mapper.convertValue(basedOnFeature, Object.class);
 
-           map.put(feature, featureMap);
-
-           
+           featureResult.put(feature, featureMap);
 
 //        	basedOnFeature.fields().forEachRemaining(entry ->{
 //        		String key=entry.getKey();
@@ -253,7 +250,8 @@ public class BidExConfig {
 //        log.info("List of Features to check " + features);
 
         
-        return map;
+        return featureResult;
+        
 
     }
 
