@@ -50,6 +50,9 @@ public class bidexAndFeatureTests {
 	
 	@Value("#{'${listOfFeature}'.split(',')}")
     private List<String> listOfFeatures;
+	
+	
+	
 
     public JsonNode bidexTests(TestCriteria yaml) throws JsonMappingException, JsonProcessingException{
 
@@ -126,14 +129,14 @@ public class bidexAndFeatureTests {
 
 		//control in Bidexconfig.java
 		finalConfig = bidexResp.substring(startIndex, endIndex);
-		log.info("finalString = "+ finalConfig);
+//		log.info("finalString = "+ finalConfig);
 		
 //		System.err.println(finalConfig);
 		
 
 		try {
 		 replaced = mapper.readTree(finalConfig.toString());
-				 log.info("Json :"+ replaced);
+//				 log.info("Json :"+ replaced);
 		 
 		 
 

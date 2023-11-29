@@ -3,8 +3,13 @@ package net.media.emma.cop.components;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import javax.print.DocFlavor.STRING;
+
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -20,7 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-
+import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport;
 import net.media.emma.utils.URLDataProcessing;
 
 @Builder @Getter @Setter @Slf4j @ToString
@@ -40,6 +45,9 @@ public class BidExConfig {
     private JsonNode bidExContent;
     @Builder.Default
     public List < SlotsData > slotsData = new ArrayList < SlotsData > ();
+    
+    @Builder.Default
+    BidexFeatureReport report=new BidexFeatureReport();
 
     @Builder.Default
     ObjectMapper mapper = new ObjectMapper();
@@ -70,6 +78,7 @@ public class BidExConfig {
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
         getInstreamDfpPlacements(bidExContent);
+        getEnvironment(bidExContent);
         
         
         JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent, feature), JsonNode.class);
@@ -79,7 +88,37 @@ public class BidExConfig {
     }
 
 
-    public SlotsData getSlotById(String cridIn) {
+    private Map<String, Object> getEnvironment(JsonNode bidExContent) {
+		
+    	JsonNode envConfig = bidExContent.get("Environment");
+        
+        ArrayList<String> envDetails=(ArrayList<String>) Arrays.asList("ip2ct","app","ip2sc","ip2c","ip");
+
+        log.info("Environment " + envConfig.toString());
+
+        Map<String , Object> feature =new HashMap<>();
+        
+        for(String env : envDetails)
+        {
+        	JsonNode envResult=envConfig.get(env);
+   
+        	feature.put(env, envResult);
+        
+        }
+        
+       return feature;
+
+        
+
+        //ip2ct,app,ip2sc,ip2c,ip;
+        //ip2ct,app,ip2sc,ip2c,ip;
+
+    	
+		
+	}
+
+
+	public SlotsData getSlotById(String cridIn) {
 
         if (slotsData.size() > 0) {
             for (SlotsData slot: slotsData) {
@@ -192,21 +231,43 @@ public class BidExConfig {
     }
     
     
-    private Map<String, Object> getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ){
+    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ){
 //        List < String > features = new ArrayList < String > ();
 //        //add multiple features to the list
 //        
 //        Collections.addAll(features, "CridSizeMapForMultiAd","DfpPlacements","PlacementProviderRules","InStreamVideoDfpPlacements", "InsertSlotInLargeSlot", "MultiBidTemplateConfig", "fpd", "cwrs", "MultiAdSzComb", "osrm");
+  	
+    	
+    	//DefaultTargets.--> cc,Ugd
+    	//env deatail above ;FloorPrice
+    	
+    	// report if feature pass then return boolean
+    	
+    	BidexFeatureReport bidexFeatureReport =new BidexFeatureReport();
 
-        Map<String ,Object> featureResult=new HashMap<>();
-        
-        
-
+       
+    	
+    	
+    	 Map<String ,Object> featureTestResult=new HashMap<>();
+    	
+       Map<String ,Object> featureResult=new HashMap<>();
+     
         for(String feature : listOfFeatures)
         {
           
         	JsonNode basedOnFeature = bidexContent.get(feature);
         	
+        	if(basedOnFeature==null)
+        	{
+        		featureTestResult.put(feature, true);
+        	}
+        	else {
+        		featureTestResult.put(feature, false);
+        	}
+	
+
+            bidexFeatureReport.getBusinessFeaturesDetected().setFeatureDetails(featureTestResult);
+    	 
 
             Object featureMap=mapper.convertValue(basedOnFeature, Object.class);
 
@@ -219,6 +280,11 @@ public class BidExConfig {
 //        		JsonNode value=entry.getValue();
 //        		map.put(key, value);
 //        	});
+           
+           
+           bidexFeatureReport.getAllFeatureData().setFeatureData(featureResult);
+           
+          
         }
         
 //        //Getting AB test Config Data
@@ -250,7 +316,7 @@ public class BidExConfig {
 //        log.info("List of Features to check " + features);
 
         
-        return featureResult;
+        return bidexFeatureReport;
         
 
     }
