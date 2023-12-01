@@ -16,12 +16,13 @@ import net.media.emma.cop.testsuites.yaml.TestReportModel.TestStatus;
 @Builder
 public class BidexFeatureReport {
 
- 	TestMetaDataBidex testMetaDataBidex;
-	BusinessFeaturesDetected  businessFeaturesDetected;
-	SlotsDetected slotsDetected; 
-	AllFeatureData allFeatureData;
-	
-	@Getter @Setter @Builder
+	TestMetaDataBidex testMetaDataBidex;
+//	BusinessFeaturesDetected  businessFeaturesDetected;
+//	EnvironmentDetails environmentDetails;
+//	SlotsDetected slotsDetected; 
+//	AllFeatureData allFeatureData;
+//	
+	@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
 	public static class TestMetaDataBidex {
 		String testName;
 		TestStatus testStatus;
@@ -31,28 +32,38 @@ public class BidexFeatureReport {
 		String userAgent;
 		String harFileDownloadLink;
 	}
+//	
+//	@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
+//	public static class BusinessFeaturesDetected{
+//		
+//		Map<String, Object> featureDetails;
+//	}
+//	
+//	@Getter @Setter @Builder @NoArgsConstructor
+//	@AllArgsConstructor
+//	public static class EnvironmentDetails{
+//		Map<String, Object> envDetails; 
+//	}
+//	
+//	@Getter @Setter @Builder @NoArgsConstructor
+//	@AllArgsConstructor
+//	public static class SlotsDetected{
+//		Map<String, Object> slotsData;
+//	}
+//	
+//	
+//	@Getter @Setter @Builder @NoArgsConstructor
+//	@AllArgsConstructor
+//	public static class AllFeatureData{
+//		Map<String,Object> featureData;
+//	}
 	
-	@Getter @Setter @Builder
-	public static class BusinessFeaturesDetected{
-		
-		Map<String, Object> featureDetails;
-	}
 	
-	@Getter @Setter @Builder
-	public static class Environment{
-		Map<String, Object> envDetails; 
-	}
+	Map<String, Object> businessFeaturesDetected;
+	Map<String , Object> environmentDetails;
+	Map<String, Object> slotsDetected;
+	Map<String, Object> allFeatureData;
 	
-	@Getter @Setter @Builder
-	public static class SlotsDetected{
-		Map<String, Object> slotsData;
-	}
-	
-	
-	@Getter @Setter @Builder
-	public static class AllFeatureData{
-		Map<String,Object> featureData;
-	}
 	
 	
 	

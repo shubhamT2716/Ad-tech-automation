@@ -2,6 +2,7 @@ package net.media.emma.cop.components;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.Map;
 import javax.print.DocFlavor.STRING;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport;
+import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.TestMetaDataBidex;
 import net.media.emma.utils.URLDataProcessing;
 
 @Builder @Getter @Setter @Slf4j @ToString
@@ -46,11 +49,26 @@ public class BidExConfig {
     @Builder.Default
     public List < SlotsData > slotsData = new ArrayList < SlotsData > ();
     
-    @Builder.Default
-    BidexFeatureReport report=new BidexFeatureReport();
+//    @Builder.Default
+//    BidexFeatureReport report=new BidexFeatureReport();
 
     @Builder.Default
     ObjectMapper mapper = new ObjectMapper();
+    
+//    @Builder.Default
+//    BidexFeatureReport bidexFeatureReport =new BidexFeatureReport();
+
+//    @Builder.Default
+//	BusinessFeaturesDetected bfd=new BusinessFeaturesDetected();
+//    
+//    @Builder.Default
+//    TestMetaDataBidex metaDataBidex=new TestMetaDataBidex();
+    
+//    @Builder.Default
+//    AllFeatureData allFeatureData=new AllFeatureData();
+    
+//    @Builder.Default
+//    EnvironmentDetails environmentDetails=new EnvironmentDetails();
     
     
 
@@ -86,14 +104,49 @@ public class BidExConfig {
         return featureResult;
         
     }
+    
+    public String getEnvironmentName(String envdata)
+    {
 
+        // List < String > name = Arrays.asList("city","server","state","Country","ip");
+        
+        // for(String replace: name )
+        // {
+        // 	envdata.replace(envdata, replace);
+        // }
+
+        Map<String , Object> map =new HashMap<>();
+        map.put("ip2ct", "City");
+        map.put("app", "Server");
+        map.put("ip2sc", "State");
+        map.put("ip2c", "Country");
+        map.put("ip", "ip");
+
+        //get the value from the map
+        String value=(String) map.get(envdata);
+
+        return value;
+
+
+
+
+    }
+    
+//    public String getFeatureName(String name)
+//    {
+//    	Map<String, Object> map=new HashMap<>();
+//    	
+//    }
+    
+
+    
 
     private Map<String, Object> getEnvironment(JsonNode bidExContent) {
 		
     	JsonNode envConfig = bidExContent.get("Environment");
         
-        ArrayList<String> envDetails=(ArrayList<String>) Arrays.asList("ip2ct","app","ip2sc","ip2c","ip");
-
+        List<String> envDetails=Arrays.asList("ip2ct","app","ip2sc","ip2c","ip");
+    
         log.info("Environment " + envConfig.toString());
 
         Map<String , Object> feature =new HashMap<>();
@@ -102,7 +155,7 @@ public class BidExConfig {
         {
         	JsonNode envResult=envConfig.get(env);
    
-        	feature.put(env, envResult);
+        	feature.put(getEnvironmentName(env), envResult);
         
         }
         
@@ -183,6 +236,7 @@ public class BidExConfig {
                     } catch (Exception e) {
                         // TODO: handle exception
 //                        log.error("DCN does not exist for crid " + cridKey);
+                    	
                     }
                     try {
                         if (getDcn.toString() != null) {
@@ -242,12 +296,7 @@ public class BidExConfig {
     	//env deatail above ;FloorPrice
     	
     	// report if feature pass then return boolean
-    	
-    	BidexFeatureReport bidexFeatureReport =new BidexFeatureReport();
-
-       
-    	
-    	
+    
     	 Map<String ,Object> featureTestResult=new HashMap<>();
     	
        Map<String ,Object> featureResult=new HashMap<>();
@@ -257,35 +306,29 @@ public class BidExConfig {
           
         	JsonNode basedOnFeature = bidexContent.get(feature);
         	
-        	if(basedOnFeature==null)
+        	if(basedOnFeature!=null)
         	{
         		featureTestResult.put(feature, true);
         	}
         	else {
         		featureTestResult.put(feature, false);
         	}
-	
 
-            bidexFeatureReport.getBusinessFeaturesDetected().setFeatureDetails(featureTestResult);
     	 
 
             Object featureMap=mapper.convertValue(basedOnFeature, Object.class);
 
            featureResult.put(feature, featureMap);
-
-//        	basedOnFeature.fields().forEachRemaining(entry ->{
-//        		String key=entry.getKey();
-//        		
-//        		System.err.println(key);
-//        		JsonNode value=entry.getValue();
-//        		map.put(key, value);
-//        	});
-           
-           
-           bidexFeatureReport.getAllFeatureData().setFeatureData(featureResult);
-           
-          
         }
+        
+        
+        BidexFeatureReport bidexFeatureReport=BidexFeatureReport.builder().testMetaDataBidex(TestMetaDataBidex.builder().dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+        		.testName("Bidex And Feature Report ").publisherUrl("publisherUrl").userAgent("userAgent").build()).build();
+        
+        
+        bidexFeatureReport.setAllFeatureData(featureResult);
+        bidexFeatureReport.setBusinessFeaturesDetected(featureTestResult);
+        bidexFeatureReport.setEnvironmentDetails(getEnvironment(bidexContent));
         
 //        //Getting AB test Config Data
 //        JsonNode abTestConifgData;
