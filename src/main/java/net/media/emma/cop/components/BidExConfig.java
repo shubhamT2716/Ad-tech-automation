@@ -132,16 +132,48 @@ public class BidExConfig {
 
     }
     
-//    public String getFeatureName(String name)
-//    {
-//    	Map<String, Object> map=new HashMap<>();
-//    	
-//    }
+   public String getFeatureName(String name)
+   {
+   	Map<String, String> featureMap=new HashMap<>();
+
+   	featureMap.put("InStreamVideoDfpPlacements", "Instream Video ");
+   	featureMap.put("osrm", "Outstream Video");
+   	featureMap.put("CridSizeMapForMultiAd","AdStacking 1.0");
+   	featureMap.put("InsertSlotInLargeSlot","Ad-Stacking 1.0");
+   	featureMap.put("MultiAdSzComb","AdStacking 2.0");
+   	featureMap.put("aucmods", "Ad-Stacking 2.0.0 ");
+   	featureMap.put("FloorPrice", "Floor Data");
+   	featureMap.put("KeyValuePairAssociations", "Key Value detected");
+   	featureMap.put("DfpPlacements", "DfpPlacements Value");
+    featureMap.put("PlacementProviderRules", "Placement-Provider-Rules -Value");
+    featureMap.put("fpd", "fpd Value ");
+    featureMap.put("cwrs", "cwrs Value ");
+    featureMap.put("MultiBidTemplateConfig", "MultiBidConfig Value ");
+
+    String value=(String) featureMap.get(name);
+    
+    if(value ==null)
+    {
+    	featureMap.put(name, name);
+    	
+    	value=featureMap.get(name);
+    	
+    	return value;
+    }
+    
+    log.info(name  +" :  "+value);
+
+    return value;
+
+   	
+   }
     
 
     
 
     private Map<String, Object> getEnvironment(JsonNode bidExContent) {
+    	
+    	log.info("bid :" +bidExContent);
 		
     	JsonNode envConfig = bidExContent.get("Environment");
         
@@ -300,26 +332,41 @@ public class BidExConfig {
     	 Map<String ,Object> featureTestResult=new HashMap<>();
     	
        Map<String ,Object> featureResult=new HashMap<>();
-     
-        for(String feature : listOfFeatures)
+       
+      
+       for(String feature : listOfFeatures)
         {
           
         	JsonNode basedOnFeature = bidexContent.get(feature);
         	
+        	String featureName=getFeatureName(feature);
+        	
+        	
+        	
         	if(basedOnFeature!=null)
-        	{
-        		featureTestResult.put(feature, true);
+        	{        		
+//        		if(featureName==null)
+//        		{
+//        			featureTestResult.put(feature, true);
+//        		}
+//        		else {
+        			featureTestResult.put(featureName, true);
+//        		}
+//        		featureTestResult.put(featureName, true);
         	}
         	else {
-        		featureTestResult.put(feature, false);
+        		
+        		
+        			featureTestResult.put(featureName, false);
+        	
         	}
-
-    	 
 
             Object featureMap=mapper.convertValue(basedOnFeature, Object.class);
 
            featureResult.put(feature, featureMap);
         }
+        
+        
         
         
         BidexFeatureReport bidexFeatureReport=BidexFeatureReport.builder().testMetaDataBidex(TestMetaDataBidex.builder().dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
