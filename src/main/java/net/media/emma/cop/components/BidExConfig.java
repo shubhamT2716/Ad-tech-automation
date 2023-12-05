@@ -57,7 +57,7 @@ public class BidExConfig {
     ObjectMapper mapper = new ObjectMapper();
     
 
-    Map<String, Object> solts=new HashMap<>();
+  
     
 
     //Data format
@@ -374,8 +374,13 @@ public class BidExConfig {
 
            featureResult.put(feature, featureMap);
         }
+       
+       Map<String, Object> solts=new HashMap<>();
         
-        
+        for(SlotsData data: slotsData)
+        {
+        	solts.put(data.getCrid(), data);
+        }
         
         
         BidexFeatureReport bidexFeatureReport=BidexFeatureReport.builder().testMetaDataBidex(TestMetaDataBidex.builder().dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
@@ -385,7 +390,7 @@ public class BidExConfig {
         bidexFeatureReport.setAllFeatureData(featureResult);
         bidexFeatureReport.setBusinessFeaturesDetected(featureTestResult);
         bidexFeatureReport.setEnvironmentDetails(getEnvironment(bidexContent));
-//        bidexFeatureReport.setSlotsDetected(get);
+        bidexFeatureReport.setSlotsDetected(solts);
         
 //        //Getting AB test Config Data
 //        JsonNode abTestConifgData;
