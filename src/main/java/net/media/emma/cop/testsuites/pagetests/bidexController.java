@@ -23,10 +23,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.TestDataResult;
 import net.media.emma.utils.FileOperations;
 
 @Controller("bidexController")
@@ -95,8 +97,14 @@ public class bidexController {
 			// mav.addObject("message", yamlTc.getEnvironment());
 			// mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
 			// modelAndView.addObject("message", );
-
-			modelAndView.addObject("message1", bidexAndFeatureTests.bidexTests(yamlTc));
+			
+			BidexFeatureReport bidexFeatureReport=bidexAndFeatureTests.bidexTests(yamlTc);
+			
+			 TestDataResult dataResult=TestDataResult.builder().businessFeaturesDetected(bidexFeatureReport.getBusinessFeaturesDetected()).environmentDetails(bidexFeatureReport.getEnvironmentDetails()).bidex(bidexFeatureReport.getTestMetaDataBidex()).build();
+			 
+			modelAndView.addObject("message1",dataResult);
+			modelAndView.addObject("message2", bidexFeatureReport.getSlotsDetected());
+			modelAndView.addObject("message3", bidexFeatureReport.getAllFeatureData());
 
 		} catch (JsonProcessingException e) {
 			log.error("YAML Processing Error", e);

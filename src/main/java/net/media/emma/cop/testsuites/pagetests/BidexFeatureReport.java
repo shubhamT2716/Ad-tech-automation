@@ -17,6 +17,10 @@ import net.media.emma.cop.testsuites.yaml.TestReportModel.TestStatus;
 public class BidexFeatureReport {
 
 	TestMetaDataBidex testMetaDataBidex;
+	Map<String, Object> businessFeaturesDetected;
+	Map<String , Object> environmentDetails;
+	Map<String, Object> slotsDetected;
+	Map<String, Object> allFeatureData;
 //	BusinessFeaturesDetected  businessFeaturesDetected;
 //	EnvironmentDetails environmentDetails;
 //	SlotsDetected slotsDetected; 
@@ -32,6 +36,15 @@ public class BidexFeatureReport {
 		String userAgent;
 		String harFileDownloadLink;
 	}
+	
+	@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
+	public static class TestDataResult{
+		TestMetaDataBidex bidex;
+		Map<String, Object> businessFeaturesDetected;
+		Map<String , Object> environmentDetails;
+		
+	}
+	
 //	
 //	@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
 //	public static class BusinessFeaturesDetected{
@@ -59,10 +72,7 @@ public class BidexFeatureReport {
 //	}
 	
 	
-	Map<String, Object> businessFeaturesDetected;
-	Map<String , Object> environmentDetails;
-	Map<String, Object> slotsDetected;
-	Map<String, Object> allFeatureData;
+	
 	
 	
 	

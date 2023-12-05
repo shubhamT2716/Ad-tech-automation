@@ -1,5 +1,7 @@
 package net.media.emma.cop.components;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -49,27 +51,13 @@ public class BidExConfig {
     @Builder.Default
     public List < SlotsData > slotsData = new ArrayList < SlotsData > ();
     
-//    @Builder.Default
-//    BidexFeatureReport report=new BidexFeatureReport();
+
 
     @Builder.Default
     ObjectMapper mapper = new ObjectMapper();
     
-//    @Builder.Default
-//    BidexFeatureReport bidexFeatureReport =new BidexFeatureReport();
 
-//    @Builder.Default
-//	BusinessFeaturesDetected bfd=new BusinessFeaturesDetected();
-//    
-//    @Builder.Default
-//    TestMetaDataBidex metaDataBidex=new TestMetaDataBidex();
-    
-//    @Builder.Default
-//    AllFeatureData allFeatureData=new AllFeatureData();
-    
-//    @Builder.Default
-//    EnvironmentDetails environmentDetails=new EnvironmentDetails();
-    
+    Map<String, Object> solts=new HashMap<>();
     
 
     //Data format
@@ -77,7 +65,7 @@ public class BidExConfig {
     // cridDetails = { "164457376" : { "dcn" : "8a969d570187874cae488063d27b00ab", "adunitPath" : "/22888152279/us/ysports/main/dt/us_ysports_main_dt_mid_right" } }
     // private Map<String, Map<String, String>> cridDetails = new HashMap<String, Map<String, String>>();
 
-    public JsonNode loadBidExConfig(JsonNode bidExContent, List<String> feature ) {
+    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature ) {
 
         if (bidExContent == null) {
             File sample = new File("src/main/java/net/media/emma/cop/components/sample/bidExConfigSample.json");
@@ -99,9 +87,9 @@ public class BidExConfig {
         getEnvironment(bidExContent);
         
         
-        JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent, feature), JsonNode.class);
+//        JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent, feature), JsonNode.class);
         
-        return featureResult;
+        return getFeaturesData(bidExContent, feature);
         
     }
     
@@ -202,26 +190,36 @@ public class BidExConfig {
 		
 	}
 
+    
+    
+    
 
 	public SlotsData getSlotById(String cridIn) {
 
         if (slotsData.size() > 0) {
             for (SlotsData slot: slotsData) {
                 if (slot.crid.equals(cridIn)) {
-//                    log.info("Slots data crid " + slotsData);
+                    log.info("Slots data crid " + slotsData);
+                    
                     return slot;
+                   
                 }
             }
         }
 
         slotsData.add(SlotsData.builder().crid(cridIn).build());
-//        log.info("Slots data crid " + slotsData);
+        log.info("Slots data crid " + slotsData);
+        
+        
 
         for (SlotsData slot: slotsData) {
             if (slot.crid.equals(cridIn)) {
                 return slot;
             }
         }
+//       solts.put(cridIn, slotsData);
+       
+       
 
         return null;
 
@@ -258,25 +256,28 @@ public class BidExConfig {
                 String cridKey = entry.getKey();
                 JsonNode cridNode = entry.getValue();
                 JsonNode getDcn = null;
-                // log.info("cridNode " + cridNode.toString());
+                 log.info("cridNode " + cridNode.toString());
 
                 if (cridNode != null & cridNode.isObject()) {
                     try {
                         getDcn = cridNode.get("25014").get("pp").get("dcn");
-//                        log.info("Crid " + cridKey + " " + "DCN" + getDcn.toString());
+                        log.info("Crid " + cridKey + " " + "DCN" + getDcn.toString());
 
                     } catch (Exception e) {
                         // TODO: handle exception
-//                        log.error("DCN does not exist for crid " + cridKey);
+                        log.error("DCN does not exist for crid " + cridKey);
                     	
                     }
                     try {
                         if (getDcn.toString() != null) {
-                            getSlotById(cridKey).setDcn(getDcn.toString());
+                            SlotsData data=getSlotById(cridKey);
+                            data.setDcn(getDcn.toString());
+                            
+                            
                         }
                     } catch (Exception e) {
                         // TODO: handle exception
-//                        log.error("DCN build failed");
+                        log.error("DCN build failed");
                     }
                     
                     
@@ -310,7 +311,11 @@ public class BidExConfig {
         for (String cridList: videoCrids) {
             JsonNode cridNode = vCridConfig.get(cridList).get("targ").get(0).get("value");
             String adUnitPathTrimmed = cridNode.toString().substring(cridNode.toString().lastIndexOf("/") + 1).replace('"', ' ').trim();
-            getSlotById(cridList.toString()).setAdunitPath(adUnitPathTrimmed);
+            SlotsData data=getSlotById(cridList.toString());
+            data.setAdunitPath(adUnitPathTrimmed);
+           
+            
+            
 
         }        
         
@@ -328,6 +333,10 @@ public class BidExConfig {
     	//env deatail above ;FloorPrice
     	
     	// report if feature pass then return boolean
+    	
+//    	setCridAdunitPathMapping(bidExContent);
+//        setDcnIntoCrid(bidExContent);
+//        getInstreamDfpPlacements(bidExContent);
     
     	 Map<String ,Object> featureTestResult=new HashMap<>();
     	
@@ -376,6 +385,7 @@ public class BidExConfig {
         bidexFeatureReport.setAllFeatureData(featureResult);
         bidexFeatureReport.setBusinessFeaturesDetected(featureTestResult);
         bidexFeatureReport.setEnvironmentDetails(getEnvironment(bidexContent));
+//        bidexFeatureReport.setSlotsDetected(get);
         
 //        //Getting AB test Config Data
 //        JsonNode abTestConifgData;

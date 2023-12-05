@@ -54,7 +54,7 @@ public class bidexAndFeatureTests {
 	
 	
 
-    public JsonNode bidexTests(TestCriteria yaml) throws JsonMappingException, JsonProcessingException{
+    public BidexFeatureReport bidexTests(TestCriteria yaml) throws JsonMappingException, JsonProcessingException{
 
 		// bidExConfig.getSlotById("164457376").getProvidersData().add(
 		// 						ProvidersData.builder()
@@ -125,7 +125,7 @@ public class bidexAndFeatureTests {
 		startIndex=bidexResp.indexOf(startTarget);
 		endIndex=bidexResp.indexOf(endTarget);
 		
-		System.out.println(endIndex);
+		
 
 		//control in Bidexconfig.java
 		finalConfig = bidexResp.substring(startIndex, endIndex);
