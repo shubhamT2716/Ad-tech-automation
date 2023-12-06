@@ -17,7 +17,7 @@ import com.microsoft.playwright.Page;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
-
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 
 
@@ -51,7 +51,8 @@ public class bidexAndFeatureTests {
 	@Value("#{'${listOfFeature}'.split(',')}")
     private List<String> listOfFeatures;
 	
-	
+	@Autowired
+	private CommonBrowserUtil browserUtil;
 	
 
     public BidexFeatureReport bidexTests(TestCriteria yaml) throws JsonMappingException, JsonProcessingException{
@@ -72,8 +73,10 @@ public class bidexAndFeatureTests {
 
 		// finalConfig = finalConfig.replaceAll("\""	, "")
 
+    	String harFile=browserUtil.getFileNameForHar();
+    	
 		
-		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath);
+		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
 		try {
 		page.onResponse(response -> {
 			if(response.url().contains("https://hb.yahoo.net/bidexchange.js?cid")){
@@ -145,7 +148,7 @@ public class bidexAndFeatureTests {
 		}
 		
 		page.close();
-		return bidExConfig.loadBidExConfig(replaced,listOfFeatures);
+		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml);
     }
 
 

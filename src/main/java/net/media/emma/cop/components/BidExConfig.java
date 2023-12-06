@@ -31,6 +31,8 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport;
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.TestMetaDataBidex;
+import net.media.emma.cop.testsuites.pagetests.TestCriteria;
+import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 
 @Builder @Getter @Setter @Slf4j @ToString
@@ -56,6 +58,9 @@ public class BidExConfig {
     @Builder.Default
     ObjectMapper mapper = new ObjectMapper();
     
+    
+    @Autowired
+    CommonBrowserUtil browserUtil;
 
   
     
@@ -65,7 +70,7 @@ public class BidExConfig {
     // cridDetails = { "164457376" : { "dcn" : "8a969d570187874cae488063d27b00ab", "adunitPath" : "/22888152279/us/ysports/main/dt/us_ysports_main_dt_mid_right" } }
     // private Map<String, Map<String, String>> cridDetails = new HashMap<String, Map<String, String>>();
 
-    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature ) {
+    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteria yaml ) {
 
         if (bidExContent == null) {
             File sample = new File("src/main/java/net/media/emma/cop/components/sample/bidExConfigSample.json");
@@ -89,7 +94,7 @@ public class BidExConfig {
         
 //        JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent, feature), JsonNode.class);
         
-        return getFeaturesData(bidExContent, feature);
+        return getFeaturesData(bidExContent, feature, yaml);
         
     }
     
@@ -127,7 +132,7 @@ public class BidExConfig {
    	featureMap.put("InStreamVideoDfpPlacements", "Instream Video ");
    	featureMap.put("osrm", "Outstream Video");
    	featureMap.put("CridSizeMapForMultiAd","AdStacking 1.0");
-   	featureMap.put("InsertSlotInLargeSlot","Ad-Stacking 1.0");
+   	featureMap.put("InsertSlotInLargeSlot","AdStacking 1.0");
    	featureMap.put("MultiAdSzComb","AdStacking 2.0");
    	featureMap.put("aucmods", "Ad-Stacking 2.0.0 ");
    	featureMap.put("FloorPrice", "Floor Data");
@@ -149,7 +154,7 @@ public class BidExConfig {
     	return value;
     }
     
-    log.info(name  +" :  "+value);
+//    log.info(name  +" :  "+value);
 
     return value;
 
@@ -161,13 +166,13 @@ public class BidExConfig {
 
     private Map<String, Object> getEnvironment(JsonNode bidExContent) {
     	
-    	log.info("bid :" +bidExContent);
+//    	log.info("bid :" +bidExContent);
 		
     	JsonNode envConfig = bidExContent.get("Environment");
         
         List<String> envDetails=Arrays.asList("ip2ct","app","ip2sc","ip2c","ip");
     
-        log.info("Environment " + envConfig.toString());
+//        log.info("Environment " + envConfig.toString());
 
         Map<String , Object> feature =new HashMap<>();
         
@@ -181,13 +186,6 @@ public class BidExConfig {
         
        return feature;
 
-        
-
-        //ip2ct,app,ip2sc,ip2c,ip;
-        //ip2ct,app,ip2sc,ip2c,ip;
-
-    	
-		
 	}
 
     
@@ -199,7 +197,7 @@ public class BidExConfig {
         if (slotsData.size() > 0) {
             for (SlotsData slot: slotsData) {
                 if (slot.crid.equals(cridIn)) {
-                    log.info("Slots data crid " + slotsData);
+//                    log.info("Slots data crid " + slotsData);
                     
                     return slot;
                    
@@ -208,7 +206,7 @@ public class BidExConfig {
         }
 
         slotsData.add(SlotsData.builder().crid(cridIn).build());
-        log.info("Slots data crid " + slotsData);
+//        log.info("Slots data crid " + slotsData);
         
         
 
@@ -241,7 +239,10 @@ public class BidExConfig {
         for (String cridList: crids) {
             JsonNode cridNode = cridConfig.get(cridList).get("targ").get(0).get("value");
             String adUnitPathTrimmed = cridNode.toString().substring(cridNode.toString().lastIndexOf("/") + 1).replace('"', ' ').trim();
-            getSlotById(cridList.toString()).setAdunitPath(adUnitPathTrimmed);
+            SlotsData data=getSlotById(cridList.toString());
+            data.setAdunitPath(adUnitPathTrimmed);
+            data.setFeatureName("DfpPlacements");
+            
 
         }
     }
@@ -272,6 +273,7 @@ public class BidExConfig {
                         if (getDcn.toString() != null) {
                             SlotsData data=getSlotById(cridKey);
                             data.setDcn(getDcn.toString());
+                            data.setFeatureName("PlacementProviderRules");
                             
                             
                         }
@@ -313,6 +315,7 @@ public class BidExConfig {
             String adUnitPathTrimmed = cridNode.toString().substring(cridNode.toString().lastIndexOf("/") + 1).replace('"', ' ').trim();
             SlotsData data=getSlotById(cridList.toString());
             data.setAdunitPath(adUnitPathTrimmed);
+            data.setFeatureName("InStreamVideoDfpPlacements");
            
             
             
@@ -322,7 +325,7 @@ public class BidExConfig {
     }
     
     
-    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ){
+    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteria yaml){
 //        List < String > features = new ArrayList < String > ();
 //        //add multiple features to the list
 //        
@@ -334,9 +337,8 @@ public class BidExConfig {
     	
     	// report if feature pass then return boolean
     	
-//    	setCridAdunitPathMapping(bidExContent);
-//        setDcnIntoCrid(bidExContent);
-//        getInstreamDfpPlacements(bidExContent);
+
+    	String harFile=browserUtil.getFileNameForHar();
     
     	 Map<String ,Object> featureTestResult=new HashMap<>();
     	
@@ -347,29 +349,28 @@ public class BidExConfig {
         {
           
         	JsonNode basedOnFeature = bidexContent.get(feature);
-        	
+       	
         	String featureName=getFeatureName(feature);
         	
-        	
-        	
-        	if(basedOnFeature!=null)
-        	{        		
-//        		if(featureName==null)
-//        		{
-//        			featureTestResult.put(feature, true);
-//        		}
-//        		else {
-        			featureTestResult.put(featureName, true);
-//        		}
-//        		featureTestResult.put(featureName, true);
+        	if(basedOnFeature ==null)
+        	{
+        		featureTestResult.put(featureName, false);
         	}
         	else {
         		
-        		
-        			featureTestResult.put(featureName, false);
-        	
+        		 basedOnFeature.fields().forEachRemaining(entry->{
+              		
+              		if(entry.getKey()==null )
+              		{
+              			featureTestResult.put(featureName, false);
+              		}
+              		else {
+              			featureTestResult.put(featureName, true);
+              		}
+              		
+              	});
         	}
-
+        	
             Object featureMap=mapper.convertValue(basedOnFeature, Object.class);
 
            featureResult.put(feature, featureMap);
@@ -384,7 +385,7 @@ public class BidExConfig {
         
         
         BidexFeatureReport bidexFeatureReport=BidexFeatureReport.builder().testMetaDataBidex(TestMetaDataBidex.builder().dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
-        		.testName("Bidex And Feature Report ").publisherUrl("publisherUrl").userAgent("userAgent").build()).build();
+        		.testName("Bidex And Feature Report ").environment(yaml.getEnvironment()).publisherUrl(yaml.getPublisherUrl()).harFileDownloadLink(harFile).userAgent(yaml.getUserAgent()).build()).build();
         
         
         bidexFeatureReport.setAllFeatureData(featureResult);
@@ -431,6 +432,7 @@ public class BidExConfig {
     @Getter @Setter @Builder @ToString
     public static class SlotsData {
 
+    	public String featureName;
         public String crid;
         public String dcn;
         public String adunitPath;
