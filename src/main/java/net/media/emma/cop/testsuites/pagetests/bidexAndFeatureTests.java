@@ -80,7 +80,7 @@ public class bidexAndFeatureTests {
 		try {
 		page.onResponse(response -> {
 			if(response.url().contains("https://hb.yahoo.net/bidexchange.js?cid")){
-			log.info("Response Status: " + response.status() + ", Response Headers: " + response.headers());
+//			log.info("Response Status: " + response.status() + ", Response Headers: " + response.headers());
 			// log.info("Response Body: " + response.text());	
 			
 			try {
@@ -148,7 +148,7 @@ public class bidexAndFeatureTests {
 		}
 		
 		page.close();
-		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml);
+		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml, harFile);
     }
 
 
