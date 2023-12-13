@@ -1,9 +1,9 @@
 environment: hb.yahoo.net
 cookies: [VisitorId: "3369108664772247000V10" ,  data-o: "80355c46-2942-061b-157d-6b11450087ce~~1"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://sports.yahoo.com/?headerbidding=1&force_hbtest=all"
-bidexAppendString: "&hb_test=1"
-bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
+publisherUrl: "https://sports.yahoo.com/?mnet_test=1"
+bidexAppendString: ""
+bidexReplaceString: { "": "" }
 
 networkCallsPositive: {
   checksync: "https://hb.yahoo.net/checksync.php?cid=8YHBN4BN8",

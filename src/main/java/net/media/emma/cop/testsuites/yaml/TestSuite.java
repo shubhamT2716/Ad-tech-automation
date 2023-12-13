@@ -129,7 +129,7 @@ public class TestSuite implements GenericTestSuite {
 
 		try {
 
-			browserContext.setDefaultTimeout(90000); // 90 seconds
+			browserContext.setDefaultTimeout(10000); // 70 seconds
 			Page page = browserContext.newPage();
 			consoleMessage = getConsoleErrors(page);
 			page.navigate(testData.getPublisherUrl());
@@ -138,7 +138,7 @@ public class TestSuite implements GenericTestSuite {
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
 //			 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
-			Thread.sleep(20000);
+			Thread.sleep(500);
 
 		} catch (Exception e) {
 
@@ -535,19 +535,27 @@ public class TestSuite implements GenericTestSuite {
 						}
 					}
 
-					for (Entry<String, String> entry : testData.bidexReplaceString.entrySet()) {
-						
-						if(entry==null)
-						{
-							continue;
-						}
-						
-						else  if (originalURl.contains(entry.getKey())) {
-							replacedURL = replacedURL.replace(entry.getKey(), entry.getValue());
+					if(testData.getBidexReplaceString()!=null)
+					{
+						for (Entry<String, String> entry : testData.bidexReplaceString.entrySet()) {
+							
+							if(entry==null)
+							{
+								continue;
+							}
+							
+							else  if (originalURl.contains(entry.getKey())) {
+								replacedURL = replacedURL.replace(entry.getKey(), entry.getValue());
+							}
 						}
 					}
+					
+					if(testData.getBidexAppendString() !=null)
+					{
+						replacedURL = replacedURL.concat(testData.getBidexAppendString());
+					}
 
-					replacedURL = replacedURL.concat(testData.getBidexAppendString());
+					
 
 					if (testData.getEnvironment().matches(".*.hbistage.internal.ad.tech.*")) {
 
@@ -557,7 +565,7 @@ public class TestSuite implements GenericTestSuite {
 						replacedURL = replacedURL.concat(addToUrl);
 					}
 
-					log.info("replace Url  =  " + replacedURL);
+//					log.info("replace Url  =  " + replacedURL);
 					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
 				});
 			}
