@@ -49,7 +49,7 @@ public class ComplianceTestSuite {
     private static String windscribeSearchLocation = "xpath=//div//i";
     private static String windscribeSearchbox = "xpath=//input[contains(@class,'css-1c1txoj')]";
     private static String windscribeParisLoc = "xpath=(//div[@aria-label='Paris'])[1]";
-    private static String acceptAllBtn = "xpath=//button[text()='Accept All']";
+    private static String acceptAllBtn = "xpath=//button[text()='I Accept']";
 
 
     String url = "chrome-extension://hnmpcagpplmpfojmgmnngilcnanddlhb/popup.html";
