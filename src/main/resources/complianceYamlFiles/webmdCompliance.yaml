@@ -22,7 +22,7 @@ keysToVerifyPositive: {
     tcf_prp: ["1111--1"],
     tcf_api: ["1"],
     gdpr: ["1"],
-    gdprconsent:["1"],
+    gdprconsent: ["1"],
   },
   APLog: {
     tcf_cmp: ["28"],
@@ -30,17 +30,17 @@ keysToVerifyPositive: {
     tcf_prp: ["1111--1"],
     tcf_api: ["1"],
     gdpr: ["1"],
-    gdprconsent:["1"],
+    gdprconsent: ["1"],
   },
-  RTBSCall:{
+  RTBSCall: {
     gdpr: ["1"],
-    gdprconsent:["1"],
+    gdprconsent: ["1"],
     gdprstring: [""],
   },
-  Checksync:{
+  Checksync: {
     gdpr: ["1"],
-    gdprconsent:["1"],
-    gdprstring:[""],
+    gdprconsent: ["1"],
+    gdprstring: [""],
   },
 }
 
@@ -48,9 +48,9 @@ keysToVerifyPositive: {
 keysToVerifyAnyOneOf: {
   prlog: {
     cc: ["FR", "DE"],
-    ct:["PARIS","FRANKFURT"]},
+    ct: ["PARIS","FRANKFURT"]},
   aplog: { cc: ["FR", "DE"],
-           ct:["PARIS","FRANKFURT"]},
+           ct: ["PARIS","FRANKFURT"]},
   RTBSCall: {isRefresh: ["0", "1"] },
 }
 
