@@ -57,6 +57,9 @@ public class WebController {
             log.error("YAML Processing Error", e);
             mav.addObject("message", e.getMessage());
         }
+//        catch (Exception e) {
+//           e.printStackTrace();
+//        }
 
         return mav;
     }

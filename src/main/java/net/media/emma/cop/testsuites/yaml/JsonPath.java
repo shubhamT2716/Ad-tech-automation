@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Service
@@ -66,8 +67,15 @@ public class JsonPath {
         try {
             Object actualValue = readValueFromJson(json, jsonPath);
             
-            log.info("Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue);
+//            log.info("Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue);
            
+            String pathValue="Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue;
+            
+            ArrayList<String> al=new ArrayList<>();
+            al.add(pathValue);
+            
+//            log.info(pathValue);
+            
             return Objects.equals(actualValue.toString(), expectedValue.toString());
             
         } catch (PathNotFoundException e) {
