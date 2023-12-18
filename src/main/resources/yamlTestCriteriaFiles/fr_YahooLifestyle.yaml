@@ -1,7 +1,7 @@
 environment: hb.yahoo.net
 cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Windows
-publisherUrl: "https://www.yahoo.com/lifestyle/?headerbidding=1&mnet_test=1"
+publisherUrl: "https://www.yahoo.com/lifestyle/?mnet_test=1"
 bidexAppendString: ""
 bidexReplaceString: { "": "" }
 

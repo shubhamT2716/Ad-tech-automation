@@ -77,7 +77,7 @@ public class bidexController {
 			put("Page Level Checks - Test Suite", "/pageLevelTests/");
 			put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
 			put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "testSuite4");
-            put("Auto Tester", "/autoTester/");
+            put("Auto Tester", "/bidexAndFeatureTests/");
 		}
 	};
 
