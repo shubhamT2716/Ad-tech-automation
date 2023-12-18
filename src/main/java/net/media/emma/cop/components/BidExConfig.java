@@ -4,6 +4,7 @@ package net.media.emma.cop.components;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +17,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,6 +65,8 @@ public class BidExConfig {
     
     @Autowired
     CommonBrowserUtil browserUtil;
+    
+    
 
   
     
@@ -72,11 +76,20 @@ public class BidExConfig {
     // cridDetails = { "164457376" : { "dcn" : "8a969d570187874cae488063d27b00ab", "adunitPath" : "/22888152279/us/ysports/main/dt/us_ysports_main_dt_mid_right" } }
     // private Map<String, Map<String, String>> cridDetails = new HashMap<String, Map<String, String>>();
 
-    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteria yaml, String harFile) {
+    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteria yaml, String harFile, String jsonPathFile) {
 
         if (bidExContent == null) {
-            File sample = new File("src/main/java/net/media/emma/cop/components/sample/bidExConfigSample.json");
-            try {
+           
+//        File sample = new File("src/main/java/net/media/emma/cop/components/sample/bidExConfigSample.json");
+          
+        	ClassPathResource classPathResource=new ClassPathResource(jsonPathFile+"/"+"bidExConfigSample.json");
+        	
+        	
+        	
+        	try {
+        		
+        		InputStream sample=classPathResource.getInputStream();
+        		
                 bidExContent = mapper.readTree(sample);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -119,19 +132,35 @@ public class BidExConfig {
    {
    	Map<String, String> featureMap=new HashMap<>();
 
-   	featureMap.put("InStreamVideoDfpPlacements", "Instream Video ");
-   	featureMap.put("osrm", "Outstream Video");
-   	featureMap.put("CridSizeMapForMultiAd","AdStacking 1.0");
-   	featureMap.put("InsertSlotInLargeSlot","AdStacking 1.0");
-   	featureMap.put("MultiAdSzComb","AdStacking 2.0");
-   	featureMap.put("aucmods", "Ad-Stacking 2.0.0 ");
+//   	featureMap.put("InStreamVideoDfpPlacements", "Instream Video ");
+//   	featureMap.put("osrm", "Outstream Video");
+//   	featureMap.put("CridSizeMapForMultiAd","AdStacking 1.0");
+//   	featureMap.put("InsertSlotInLargeSlot","AdStacking 1.0");
+//   	featureMap.put("MultiAdSzComb","AdStacking 2.0");
+//   	featureMap.put("aucmods", "Ad-Stacking 2.0.0 ");
+//   	featureMap.put("FloorPrice", "Floor Data");
+//   	featureMap.put("KeyValuePairAssociations", "Key Value detected");
+//   	featureMap.put("DfpPlacements", "DfpPlacements Value");
+//    featureMap.put("PlacementProviderRules", "Placement-Provider-Rules -Value");
+//    featureMap.put("fpd", "fpd Value ");
+//    featureMap.put("cwrs", "cwrs Value ");
+//    featureMap.put("MultiBidTemplateConfig", "MultiBidConfig Value ");
+   	
+//   	/multi_ad_config
+//   	multi_ad_size_combinations
+   	
+   	featureMap.put("InStreamVideoDfpPlacements","Instream Video");
+   	featureMap.put("InsertSlotInLargeSlot", "AdStacking 1.0 - insertslots_in_largeslots");
+   	featureMap.put("CridSizeMapForMultiAd", "AdStacking 1.0 - crid_size_map_for_multi_ad");
+   	featureMap.put("hb_ad_stacking_features", "AdStacking 1.0 - hb_ad_stacking_features");
+   	featureMap.put("MultiAdConfig", "AdStacking 2.0 - multi_ad_config");
+   	featureMap.put("MultiAdSzComb", "AdStacking 2.0 - multi_ad_size_combinations");
    	featureMap.put("FloorPrice", "Floor Data");
-   	featureMap.put("KeyValuePairAssociations", "Key Value detected");
-   	featureMap.put("DfpPlacements", "DfpPlacements Value");
-    featureMap.put("PlacementProviderRules", "Placement-Provider-Rules -Value");
-    featureMap.put("fpd", "fpd Value ");
-    featureMap.put("cwrs", "cwrs Value ");
-    featureMap.put("MultiBidTemplateConfig", "MultiBidConfig Value ");
+	featureMap.put("KeyValuePairAssociations", "Key Value Detected");
+	featureMap.put("DfpPlacements", "DfpPlacements Value");
+	featureMap.put("PlacementProviderRules", "Placement Provider Rules Value Detected");
+	featureMap.put("fpd", "fpd Value Detected ");
+	featureMap.put("cwrs", "cwrs Value Detected ");
 
     String value=(String) featureMap.get(name);
     
@@ -181,7 +210,7 @@ public class BidExConfig {
 
 	public SlotsData getSlotById(String cridIn, String feature) {
 
-		System.out.println(feature);
+		
 		
         if (slotsData.size() > 0) {
             for (SlotsData slot: slotsData) {
@@ -382,7 +411,7 @@ public class BidExConfig {
         
         
         BidexFeatureReport bidexFeatureReport=BidexFeatureReport.builder().testMetaDataBidex(TestMetaDataBidex.builder().dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
-        		.testName("Bidex And Feature Report ").environment(yaml.getEnvironment()).publisherUrl(yaml.getPublisherUrl()).harFileDownloadLink("harDownload/"+harFile ).userAgent(yaml.getUserAgent()).build()).build();
+        		.testName("Auto Tester Report").environment(yaml.getEnvironment()).publisherUrl(yaml.getPublisherUrl()).harFileDownloadLink("harDownload/"+harFile ).userAgent(yaml.getUserAgent()).build()).build();
         
         
         bidexFeatureReport.setAllFeatureData(featureResult);

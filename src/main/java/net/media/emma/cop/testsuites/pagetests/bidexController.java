@@ -1,6 +1,8 @@
 package net.media.emma.cop.testsuites.pagetests;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
@@ -8,11 +10,13 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +36,7 @@ import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.TestDataResult
 import net.media.emma.utils.FileOperations;
 
 @Controller("bidexController")
-@RequestMapping("/bidexAndFeatureTests/")
+@RequestMapping("/autoTester/")
 @Slf4j
 public class bidexController {
 
@@ -45,6 +49,9 @@ public class bidexController {
 
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
+	
+	@Value("${autoTestFilePath}")
+	private String autoTestFilePath;
 
 	// @GetMapping("/domInject")
 	// public String domINject() {
@@ -70,7 +77,7 @@ public class bidexController {
 			put("Page Level Checks - Test Suite", "/pageLevelTests/");
 			put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
 			put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "testSuite4");
-            put("Bidex And Feature Tests", "/bidexAndFeatureTests/");
+            put("Auto Tester", "/autoTester/");
 		}
 	};
 
@@ -78,10 +85,10 @@ public class bidexController {
 	public ModelAndView openIndex() {
 
 		ModelAndView mav = new ModelAndView("bidexAndFeatureTests");
-		mav.addObject("files", fileOperations.listFilesUsingFilesList("src/main/resources/bidexAndFeatureTestsYaml/"));// Arrays.asList(null,
+		mav.addObject("files", fileOperations.listYamlFiles(autoTestFilePath));// Arrays.asList(null,
 																													// "testCriteria.yaml",
 																													// "testCriteria2.yaml"));
-		mav.addObject("testSuites", listOfTestSuites);
+//		mav.addObject("testSuites", listOfTestSuites);
 		return mav;
 	}
 
@@ -118,16 +125,40 @@ public class bidexController {
 	@ResponseBody
 	public String getFileContent(@RequestBody String fileName) {
 
-		if (fileName.length() > 0) {
-
-			try {
-				return new String(Files.readAllBytes(Paths.get("src/main/resources/bidexAndFeatureTestsYaml/" + fileName)));
-			} catch (IOException e) {
-				log.error("File Read Error", e);
-				return e.getMessage();
-			}
+//		if (fileName.length() > 0) {
+//
+//			try {
+//				return new String(Files.readAllBytes(Paths.get("src/main/resources/bidexAndFeatureTestsYaml/" + fileName)));
+//			} catch (IOException e) {
+//				log.error("File Read Error", e);
+//				return e.getMessage();
+//			}
+//		}
+//		return "Input File Name Empty";
+		
+		ClassPathResource classPathResource=new ClassPathResource(autoTestFilePath+"/"+fileName);
+		
+		try {
+			
+			InputStream inputStream=classPathResource.getInputStream();
+			
+			String content=StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+			
+			inputStream.close();
+			
+			return content;
+			
 		}
-		return "Input File Name Empty";
+		catch (Exception e) {
+			
+			log.info("Error while reading file : "+ e.getMessage());
+			
+			return "Error while reading file : "+e.getMessage();
+			
+			
+		}
+		
+		
 	}
 
 	@GetMapping("harDownload/{fileName}")

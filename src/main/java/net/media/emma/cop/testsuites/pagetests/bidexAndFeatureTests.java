@@ -54,6 +54,9 @@ public class bidexAndFeatureTests {
 	@Autowired
 	private CommonBrowserUtil browserUtil;
 	
+	@Value("${jsonFile}")
+    private String bidexConfigSampleFilePath;
+	
 
     public BidexFeatureReport bidexTests(TestCriteria yaml) throws JsonMappingException, JsonProcessingException{
 
@@ -148,7 +151,7 @@ public class bidexAndFeatureTests {
 		}
 		
 		page.close();
-		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml, harFile);
+		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath);
     }
 
 
