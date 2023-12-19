@@ -108,7 +108,11 @@ public class TestSuite implements GenericTestSuite {
 		}
 
 		browserContext = replaceBidExUrl(browserContext, testData);
-		browserContext = attachResponseMocking(browserContext, testData);
+		if(testData.getResponseSimulate()!=null)
+		{
+			browserContext = attachResponseMocking(browserContext, testData);
+		}
+		
 		// browserContext = injectDOM(browserContext, testData);
 
 		// list of arrays initialization
@@ -349,8 +353,11 @@ public class TestSuite implements GenericTestSuite {
 		urlChecks.updateMatchingUrlsCount();
 		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
-		payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
-
+		if(testData.getBidderDataAssertions()!=null && testData.getBidderDataUrls()!=null)
+		{
+			payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
+		}
+		
 		return urlChecks;
 	}
 
@@ -576,6 +583,7 @@ public class TestSuite implements GenericTestSuite {
 
 	private BrowserContext attachResponseMocking(BrowserContext browserContext, TestCriteriaBo testData) {
 
+		
 		for (ResponseSimulateParams responseSim : testData.getResponseSimulate()) {
 
 			browserContext.route(responseSim.getUrlPattern(), route -> {

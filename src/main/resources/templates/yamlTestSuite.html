@@ -97,10 +97,14 @@
             <option value="webmd.yaml">webmd.yaml</option> -->
             <option th:each="fileName : ${files}" th:value="${fileName}" th:text="${fileName}"></option>
         </select>
+       
         <br>
         <div id="or"> OR</div>
         <br>
         <label for="yamlInput">Enter YAML:</label>
+        <br>
+         <small id="emailHelp" class="form-text text-muted"> click <a href="/yamlTestSuite/userAgent">here</a> to show user agents</small>
+
         <textarea class="form-control" rows="20" id="yamlInput" name="yaml"></textarea>
         <p class="error">Invalid YAML format</p>
         <input class="form-control" id="submitButton" type="submit" value="Execute Tests" disabled>

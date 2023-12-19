@@ -242,7 +242,14 @@ public class ComplianceTestSuite {
     }*/
 
     private LinkedHashMap<String, String> getTcfApiResponse(Page page) {
-        Object d = page.evaluate("() => {\n" +
+    	try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	Object d = page.waitForFunction("() => {\n" +
                 "  return new Promise((resolve) => {\n" +
                 "    window.__tcfapi(\"addEventListener\", 2, (tcfApiInfo, success) => {\n" +
                 "      if (success && isSet(tcfApiInfo)) {\n" +
@@ -251,6 +258,16 @@ public class ComplianceTestSuite {
                 "    });\n" +
                 "  });\n" +
                 "}");
+
+//        Object d = page.evaluate("() => {\n" +
+//                "  return new Promise((resolve) => {\n" +
+//                "    window.__tcfapi(\"addEventListener\", 2, (tcfApiInfo, success) => {\n" +
+//                "      if (success && isSet(tcfApiInfo)) {\n" +
+//                "        resolve(tcfApiInfo);\n" +
+//                "      }\n" +
+//                "    });\n" +
+//                "  });\n" +
+//                "}");
         return (LinkedHashMap<String, String>) d;
     }
 
