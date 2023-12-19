@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.microsoft.playwright.options.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -76,7 +77,14 @@ public class BidExConfig {
     // cridDetails = { "164457376" : { "dcn" : "8a969d570187874cae488063d27b00ab", "adunitPath" : "/22888152279/us/ysports/main/dt/us_ysports_main_dt_mid_right" } }
     // private Map<String, Map<String, String>> cridDetails = new HashMap<String, Map<String, String>>();
 
-    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteria yaml, String harFile, String jsonPathFile) {
+//    page.waitForTimeout(5000);
+//    List<Cookie> cookies = page.context().cookies();
+//		log.info("Cookies: " + cookies);
+//		for(Cookie cookie : cookies){
+//        log.info("Cookie: " + cookie.name + " : " + cookie.value);
+//    }
+//		page.close();
+    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteria yaml, String harFile, String jsonPathFile, List<Cookie> cookies) {
 
         if (bidExContent == null) {
            
@@ -99,7 +107,7 @@ public class BidExConfig {
             }
         }
         
-      
+      displayCookies(cookies);
 //         loadbidExContent(bidExContent);
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
@@ -112,7 +120,14 @@ public class BidExConfig {
         return getFeaturesData(bidExContent, feature, yaml, harFile);
         
     }
-    
+
+    //Getting list of cookies here, after waiting for 5 secs.
+    public void displayCookies(List<Cookie> cookies)
+    {
+    	for(Cookie cookie : cookies){
+            log.info("Cookie: " + cookie.name + " : " + cookie.value);
+        }
+    }
     public String getEnvironmentName(String envdata)
     {
         Map<String , Object> map =new HashMap<>();

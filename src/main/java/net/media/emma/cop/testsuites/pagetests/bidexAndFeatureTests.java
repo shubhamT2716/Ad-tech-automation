@@ -2,6 +2,7 @@ package net.media.emma.cop.testsuites.pagetests;
 import java.util.List;
 import java.util.Map;
 
+import com.microsoft.playwright.options.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -149,9 +150,10 @@ public class bidexAndFeatureTests {
 		} catch (Exception e) {
 //			log.info("Converting to json error");
 		}
-		
+		page.waitForTimeout(5000);
+		List<Cookie> cookies = page.context().cookies();
 		page.close();
-		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath);
+		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies);
     }
 
 
