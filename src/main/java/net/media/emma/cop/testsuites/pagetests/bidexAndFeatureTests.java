@@ -1,6 +1,7 @@
 package net.media.emma.cop.testsuites.pagetests;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+
 
 import com.microsoft.playwright.options.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +13,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
-
+import com.microsoft.playwright.Route;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
+
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 
@@ -28,6 +31,12 @@ import net.media.emma.utils.URLDataProcessing;
 public class bidexAndFeatureTests {
 
 	BidExConfig bidExConfig = BidExConfig.builder().build();
+	
+	
+	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
+			"hbx-stage.media.net");
+	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");// , "catchpoint_content.js",
+		
 
 	String finalConfig = "";
 	String bidexResp = "";
@@ -82,6 +91,9 @@ public class bidexAndFeatureTests {
 		
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
 		try {
+			
+//			replaceBidExUrl(null, yaml)
+			
 		page.onResponse(response -> {
 			if(response.url().contains("https://hb.yahoo.net/bidexchange.js?cid")){
 //			log.info("Response Status: " + response.status() + ", Response Headers: " + response.headers());
@@ -91,8 +103,6 @@ public class bidexAndFeatureTests {
 				
 				if(response.status()==200){
 				bidexResp = response.text();
-				
-				
 				
 				}
 
@@ -233,4 +243,39 @@ public class bidexAndFeatureTests {
 
 	// 		return dcnToCridMap;
 	// }
+    
+    private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteria testData) {
+
+		for (String currentHost : bidExHosts) {
+			for (String currentController : bidExControlers) {
+
+				browserContext.route("**/" + currentHost + "/" + currentController + "*", route -> {
+
+					String replacedURL = "";
+					String originalURl = route.request().url();
+
+					for (String currentHostInner : bidExHosts) {
+						if (originalURl.contains(currentHostInner)) {
+							replacedURL = originalURl.replace(currentHost, testData.getEnvironment());
+							break;
+						}
+					}
+
+					if (testData.getEnvironment().matches(".*.hbistage.internal.ad.tech.*")) {
+
+						String splitUrl[] = testData.getEnvironment().split("\\.");
+						String username = splitUrl[0];
+						String addToUrl = "&ad_username=" + username;
+						replacedURL = replacedURL.concat(addToUrl);
+					}
+
+//					log.info("replace Url  =  " + replacedURL);
+					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
+				});
+			}
+		}
+
+		return browserContext;
+	}
+    
 }

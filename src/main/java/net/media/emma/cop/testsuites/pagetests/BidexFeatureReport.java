@@ -21,6 +21,7 @@ public class BidexFeatureReport {
 	Map<String , Object> environmentDetails;
 	Map<String, Object> slotsDetected;
 	Map<String, Object> allFeatureData;
+	Map<String, String> cookies;
 //	BusinessFeaturesDetected  businessFeaturesDetected;
 //	EnvironmentDetails environmentDetails;
 //	SlotsDetected slotsDetected; 

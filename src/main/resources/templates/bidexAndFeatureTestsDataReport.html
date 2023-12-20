@@ -27,6 +27,8 @@
             <button onClick="displayRaw()" type="button" class="btn btn-primary">Show Raw Data</button>
             <button onClick="displaySlots()" type="button" class="btn btn-secondary">Show Slots Data</button>
             <button onClick="displayAllFeature()" type="button" class="btn btn-secondary">Show All Feature Data</button>
+           <button onClick="displayAllCookies()" type="button" class="btn btn-secondary">Show All Cookies Data</button>
+
             <!-- <code id="testReport" th:text="${message}"></code> -->
           <br>
         </div>  
@@ -63,6 +65,12 @@
 <script th:inline="javascript">
 /*<![CDATA[*/
 var displayAllFeatureData = /*[[${message3}]]*/ 'allFeatureData';
+   /*]]>*/
+</script>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+var displayAllCookiesData = /*[[${message4}]]*/ 'allCookiesData';
    /*]]>*/
 </script>
 
@@ -138,6 +146,19 @@ var displayAllFeatureData = /*[[${message3}]]*/ 'allFeatureData';
         hljs.highlightAll();
       }
   
+  	   function displayAllCookies() {
+  
+        const pre = document.createElement("pre");
+        const code = document.createElement("code");
+        code.classList.add("language-json");
+        code.innerHTML = JSON.stringify(displayAllCookiesData, null, 2);
+        pre.appendChild(code);
+        document.getElementById("testReport").innerHTML = "";
+        document.getElementById("testReport").appendChild(pre);
+        hljs.highlightAll();
+      }
+  		
+  
     function display(status) {
   
       // console.log(status);
@@ -155,6 +176,7 @@ var displayAllFeatureData = /*[[${message3}]]*/ 'allFeatureData';
     displayRaw();
     displaySlots();
     displayAllFeature();
+    displayAllCookies();
 
           
   </script>

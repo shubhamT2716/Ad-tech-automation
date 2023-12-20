@@ -123,41 +123,48 @@ public class PageLevelTests {
 						.userAgent(yaml.getUserAgent()).harFileDownloadLink("harDownload/" + harFilePath).build())
 				.build();
 
-		for (Slots slotData : slotsData) {
+		
+		if(slotsData!=null)
+		{
+			
+			for (Slots slotData : slotsData) {
 
-			TestReportV2.Slot slotReport = TestReportV2.Slot.builder().slotName(slotData.getPath()).build();
+				TestReportV2.Slot slotReport = TestReportV2.Slot.builder().slotName(slotData.getPath()).build();
 
-			for (Map.Entry<String, List<? extends AbstractBidder>> bidderList : bidderData.entrySet()) {
+				for (Map.Entry<String, List<? extends AbstractBidder>> bidderList : bidderData.entrySet()) {
 
-				log.info("Bidder Name: " + bidderList.getKey() + " Bidder Data: " + bidderList.getValue());
+					log.info("Bidder Name: " + bidderList.getKey() + " Bidder Data: " + bidderList.getValue());
 
-				TestReportV2.Bidder bidderReport = TestReportV2.Bidder.builder().bidderName(bidderList.getKey())
-						.build();
+					TestReportV2.Bidder bidderReport = TestReportV2.Bidder.builder().bidderName(bidderList.getKey())
+							.build();
 
-				AbstractBidder bidder = getMatchingDataByAdUnit(slotData, bidderList.getValue());
+					AbstractBidder bidder = getMatchingDataByAdUnit(slotData, bidderList.getValue());
 
-				if (null == bidder) {
-					bidderReport.getTestMessages().add("Bidder Call not found");
+					if (null == bidder) {
+						bidderReport.getTestMessages().add("Bidder Call not found");
+						slotReport.getBidders().add(bidderReport);
+						continue;
+					}
+
+	                
+					AbstractBidder bidderSizes = getMatchingDataByAdUnitYHB(slotData, bidderList.getValue());
+
+					if(bidderSizes == null){
+	                    log.info("Bidder size = " + bidder.getSizes());
+						bidderReport.getTestMessages().add("Slot Sizes " + slotData.getSizes()
+								+ " mismatched with bidder sizes " + bidder.getSizes() + "");
+	                } else {
+						bidderReport.getTestMessages().add("Sizes matched " + slotData.getSizes() + "");
+					}
+
 					slotReport.getBidders().add(bidderReport);
-					continue;
 				}
 
-                
-				AbstractBidder bidderSizes = getMatchingDataByAdUnitYHB(slotData, bidderList.getValue());
-
-				if(bidderSizes == null){
-                    log.info("Bidder size = " + bidder.getSizes());
-					bidderReport.getTestMessages().add("Slot Sizes " + slotData.getSizes()
-							+ " mismatched with bidder sizes " + bidder.getSizes() + "");
-                } else {
-					bidderReport.getTestMessages().add("Sizes matched " + slotData.getSizes() + "");
-				}
-
-				slotReport.getBidders().add(bidderReport);
+				testReport.getSlots().add(slotReport);
 			}
-
-			testReport.getSlots().add(slotReport);
 		}
+		
+		
 
 		testReport.getTestRawData().put("Slots Raw Data", jsonReader.valueToTree(slotsData));
 		testReport.getTestRawData().put("Bidder Calls Raw Data", jsonReader.valueToTree(bidderData));

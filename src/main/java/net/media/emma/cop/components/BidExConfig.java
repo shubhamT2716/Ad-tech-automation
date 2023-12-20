@@ -107,7 +107,7 @@ public class BidExConfig {
             }
         }
         
-      displayCookies(cookies);
+//      displayCookies(cookies);
 //         loadbidExContent(bidExContent);
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
@@ -117,16 +117,22 @@ public class BidExConfig {
         
 //        JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent, feature), JsonNode.class);
         
-        return getFeaturesData(bidExContent, feature, yaml, harFile);
+        return getFeaturesData(bidExContent, feature, yaml, harFile, cookies);
         
     }
 
     //Getting list of cookies here, after waiting for 5 secs.
-    public void displayCookies(List<Cookie> cookies)
+    public Map<String, String> displayCookies(List<Cookie> cookies)
     {
+    	Map<String, String> allCookies=new HashMap<>();
     	for(Cookie cookie : cookies){
             log.info("Cookie: " + cookie.name + " : " + cookie.value);
+            
+            allCookies.put(cookie.name, cookie.value);
+            
         }
+    	
+    	return allCookies;
     }
     public String getEnvironmentName(String envdata)
     {
@@ -371,7 +377,7 @@ public class BidExConfig {
     }
     
     
-    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteria yaml, String harFile){
+    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteria yaml, String harFile, List<Cookie> cookies){
 //        List < String > features = new ArrayList < String > ();
 //        //add multiple features to the list
 //        
@@ -433,6 +439,7 @@ public class BidExConfig {
         bidexFeatureReport.setBusinessFeaturesDetected(featureTestResult);
         bidexFeatureReport.setEnvironmentDetails(getEnvironment(bidexContent));
         bidexFeatureReport.setSlotsDetected(solts);
+        bidexFeatureReport.setCookies(displayCookies(cookies));
         
 //        //Getting AB test Config Data
 //        JsonNode abTestConifgData;
