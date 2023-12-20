@@ -41,8 +41,8 @@ keysToVerifyNegative: {
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-     prlog: { nbr : [ "45","3","69","0","1","99" ]},
-   	 aplog: { nbr : [ "45","3","69","0","1","99" ]},
+    prlog: { nbr : [ "45","3","69","0","1","99" ]},
+   	aplog: { nbr : [ "45","3","69","0","1","99" ]},
  }
 
 bidderDataUrls: {

@@ -65,18 +65,27 @@ public class JsonPath {
 
     public boolean compareValueInJson(String json, String jsonPath, Object expectedValue) {
         try {
-            Object actualValue = readValueFromJson(json, jsonPath);
+        	
+//            if (json!=null)
+//            {
+            	Object actualValue = readValueFromJson(json, jsonPath);
+                
+//              log.info("Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue);
+             
+              String pathValue="Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue;
+              
+              ArrayList<String> al=new ArrayList<>();
+              al.add(pathValue);
+              
+              return Objects.equals(actualValue.toString(), expectedValue.toString());
+//            }else {
+//            	throw new PathNotFoundException();
+//            }
             
-//            log.info("Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue);
-           
-            String pathValue="Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue;
-            
-            ArrayList<String> al=new ArrayList<>();
-            al.add(pathValue);
             
 //            log.info(pathValue);
             
-            return Objects.equals(actualValue.toString(), expectedValue.toString());
+            
             
         } catch (PathNotFoundException e) {
             return false;
