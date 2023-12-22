@@ -56,6 +56,7 @@ public class JsonPath {
     }
 
     public Object readValueFromJson(String data, String jsonPath) throws PathNotFoundException {
+    	
         return com.jayway.jsonpath.JsonPath.read(data, jsonPath);
     }
 
@@ -65,8 +66,8 @@ public class JsonPath {
 
     public boolean compareValueInJson(String json, String jsonPath, Object expectedValue) {
         try {
-            Object actualValue = readValueFromJson(json, jsonPath);
-            
+        	Object actualValue = readValueFromJson(json, jsonPath);
+        		
 //            log.info("Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue);
            
             String pathValue="Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue;
@@ -78,7 +79,7 @@ public class JsonPath {
             
             return Objects.equals(actualValue.toString(), expectedValue.toString());
             
-        } catch (PathNotFoundException e) {
+        } catch (PathNotFoundException | IllegalArgumentException | NullPointerException e) {
             return false;
         }
         
