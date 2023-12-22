@@ -78,7 +78,7 @@ public class PlAssestion {
                 if (passedForOneImpObject) {
                     createReport(urlChecksReportModel, assertion,bidder, bidderUrl, "All assertions passed", URLChecksReportModel.TestResult.PASS);
                 } else {
-                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, "Failed assertions " , URLChecksReportModel.TestResult.FAIL);
+                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, errorMap.get("data")+ " Failed Asssertions - " + "Json Path - " + errorMap.get("jsonPath") +" , Expected : " + errorMap.get("expectedValue") + " and Actual : " + errorMap.get("actualValue") , URLChecksReportModel.TestResult.FAIL);
                 }
             }
         }
@@ -142,7 +142,7 @@ public class PlAssestion {
     private void createReport(URLChecksReportModel urlChecksReportModel, TestCriteriaBo.BidderDataAssertions bidderDataAssertions , String bidder, String url, String message, URLChecksReportModel.TestResult result) {
 
         URLChecksReportModel.BidderDataAssertion assertionReport = URLChecksReportModel.BidderDataAssertion.builder()
-                .message(errorMap.get("data")+ " " + message + " - " + "Json Path - " + errorMap.get("jsonPath") +" , Expected : " + errorMap.get("expectedValue") + " and Actual : " + errorMap.get("actualValue"))
+                .message(message)
                 .testResult(result)
                 .url(url).matchingJson(URLChecksReportModel.MatchingJsonPath.builder()
                         .jsonPath(bidderDataAssertions.getMatchingJsonPath().getJsonPath())
