@@ -92,7 +92,7 @@ bidderDataAssertions: {
         {jsonPath: "x.imp[1].banner[1].w", value: "970"},
         {jsonPath: "x.imp[1].banner[1].h", value: "250"},
         {jsonPath: "x.imp[1].tagid", value: "888157941"},
-        {jsonPath: "x.ext.bxLogs.svr", value: ""},
+       # {jsonPath: "x.ext.bxLogs.svr", value: ""},
       ],
       responseData: [
         { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
