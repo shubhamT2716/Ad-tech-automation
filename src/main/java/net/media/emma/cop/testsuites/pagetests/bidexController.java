@@ -98,12 +98,19 @@ public class bidexController {
 		ModelAndView modelAndView = new ModelAndView("bidexAndFeatureTestsDataReport");
 
 		try {
+			
+			
 
 			ObjectMapper mapper = new YAMLMapper();
-			TestCriteria yamlTc = mapper.readValue(yaml, TestCriteria.class);
+			TestCriteriaBo yamlTc = bidexAndFeatureTests.meargeYaml(yaml);
+			
+		
+			
+			
 			// mav.addObject("message", yamlTc.getEnvironment());
 			// mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
 			// modelAndView.addObject("message", );
+			
 			
 			BidexFeatureReport bidexFeatureReport=bidexAndFeatureTests.bidexTests(yamlTc);
 			
@@ -120,6 +127,9 @@ public class bidexController {
 		}
 		return modelAndView;
 	}
+	
+	
+	
 
 	@PostMapping("fileContent")
 	@ResponseBody

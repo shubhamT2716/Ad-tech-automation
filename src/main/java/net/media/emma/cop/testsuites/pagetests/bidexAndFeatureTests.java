@@ -1,7 +1,10 @@
 package net.media.emma.cop.testsuites.pagetests;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Set;
 
 import com.microsoft.playwright.options.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +18,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
 
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 import net.media.emma.utils.CommonBrowserUtil;
+import net.media.emma.utils.FileOperations;
 import net.media.emma.utils.URLDataProcessing;
+import net.media.emma.utils.YamlUtils;
 
 
 
@@ -64,11 +73,21 @@ public class bidexAndFeatureTests {
 	@Autowired
 	private CommonBrowserUtil browserUtil;
 	
+	
+	@Autowired
+	private FileOperations fileOperations;
+	
+	@Value("${commonYamlFilePath}")
+	private String commonYamlFile;
+	
 	@Value("${jsonFile}")
     private String bidexConfigSampleFilePath;
 	
+	@Autowired
+	private YamlUtils yamlUtils;
+	
 
-    public BidexFeatureReport bidexTests(TestCriteria yaml) throws JsonMappingException, JsonProcessingException{
+    public BidexFeatureReport bidexTests(TestCriteriaBo yaml) throws JsonMappingException, JsonProcessingException{
 
 		// bidExConfig.getSlotById("164457376").getProvidersData().add(
 		// 						ProvidersData.builder()
@@ -277,5 +296,129 @@ public class bidexAndFeatureTests {
 
 		return browserContext;
 	}
+    
+    
+    public TestCriteriaBo meargeYaml(String yaml)
+    {
+    	Set<String> listofCommonYaml=fileOperations.listYamlFiles(commonYamlFile);
+    	
+    	
+    	
+    	net.media.emma.cop.testsuites.pagetests.TestCriteriaBo criteria=null;
+    	
+    	for(String commonFile: listofCommonYaml)
+    	{
+    		String yamlcontent=this.fileOperations.getCommonFile(commonFile);
+    	
+    		String mearge[]= {yaml,yamlcontent};
+    		
+    		 criteria=yamlUtils.buildAutoTesterYaml(mearge);
+    		 
+    		
+    		
+    	}
+    	
+    	return criteria;
+    }
+    
+    private URLChecksReportModel getUrlAssertionsData(List<String> requestList,List<Request> requests, TestCriteriaBo testData) {
+
+		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
+
+		for (String requestUrl : requestList) {
+			
+//			if(!URLDataProcessing.isValidUrl(requestUrl))
+//			{
+//				System.err.println();
+//				
+//				continue;
+//			}
+			
+			Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
+
+			if (urlData != null) {
+
+				PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
+
+				if (labelExists == null) {
+
+					PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
+							.urlPattern(urlData.getValue())
+							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
+							.queryStringMap(new ArrayList<HashMap<String, String>>(
+									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
+							.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
+							.positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
+							.anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey())).build();
+
+					urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
+				} else {
+					labelExists.getMatchingUrls().add(requestUrl);
+					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
+				}
+
+				continue;
+			}
+
+			urlData = negativeURLPatternExists(requestUrl, testData);
+
+			if (urlData != null) {
+				NegativeURLChecks nuc = urlChecks.getNegativeUrlChecks().get(urlData.getKey());
+				if (nuc == null) {
+					urlChecks.getNegativeUrlChecks().put(urlData.getKey(),
+							NegativeURLChecks.builder().label(urlData.getKey()).urlPattern(urlData.getValue())
+									.matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl)))).build());
+				} else {
+					nuc.getMatchingUrls().add(requestUrl);
+				}
+			}
+		}
+
+		urlChecks.updateMatchingUrlsCount();
+//		urlChecks.updateNetworkCallErrors(testData);
+		urlChecks.verifyPositiveKeyValChecks();
+//		if(testData.getBidderDataAssertions()!=null && testData.getBidderDataUrls()!=null)
+//		{
+//			payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
+//		}
+		
+		return urlChecks;
+	}
+    
+    
+    private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, TestCriteriaBo testData) {
+
+		for (Map.Entry<String, String> urlData : testData.getNetworkCallsPositive().entrySet()) {
+
+			if (currentUrl.startsWith(urlData.getValue())) {
+
+				return urlData;
+			}
+		}
+
+		return null;
+	}
+
+	private Map.Entry<String, String> negativeURLPatternExists(String currentUrl, TestCriteriaBo testData) {
+
+		for (Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()) {
+
+			if (urlData.getValue().startsWith("pattern: ")) { // pattern: .*\.media\.net.*
+				if (currentUrl.matches(urlData.getValue().substring(9))) { // substring
+					return urlData;
+				}
+			}
+
+			else if (currentUrl.startsWith(urlData.getValue())) {
+
+				return urlData;
+			}
+		}
+
+		return null;
+	}
+
+    
+    
     
 }

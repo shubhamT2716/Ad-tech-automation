@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.testsuites.pagetests.TestCriteria;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
 
 
@@ -39,6 +40,39 @@ public class YamlUtils {
             String finalYaml=yaml.dump(map);
             
             TestCriteriaBo bo=mapper.readValue(finalYaml, TestCriteriaBo.class);
+            
+            return  bo;
+            
+    	}
+    	catch (Exception e) {
+    		log.info("Error while mearging "+e.getMessage());
+    		return null;
+    		
+		}
+    }
+    
+    
+    public net.media.emma.cop.testsuites.pagetests.TestCriteriaBo buildAutoTesterYaml(String [] yamlFiles)
+    {
+try {
+    		
+    		Yaml yaml=new Yaml();
+    		
+    		ObjectMapper mapper=new YAMLMapper();
+
+            Map<String, Object> map = new HashMap<>();
+
+            for(String yamlContent: yamlFiles)
+            {
+                    // read yaml file as map
+            	Map<String, Object> data2=yaml.load(yamlContent);
+//                      map = yaml.load(yamlContent);
+            	meargeYaml(map, data2);	
+            }
+            
+            String finalYaml=yaml.dump(map);
+            
+            net.media.emma.cop.testsuites.pagetests.TestCriteriaBo bo=mapper.readValue(finalYaml, net.media.emma.cop.testsuites.pagetests.TestCriteriaBo.class);
             
             return  bo;
             

@@ -12,7 +12,8 @@ public class TestCriteria {
     String userAgent;
     String publisherUrl;
     List<Map<String,String>> coockies;
-    Map<String, String>  ypbjs;
-    Map<String, String>  rtbs;
+   
+    
+    
 
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.TestStatus;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 
 @Getter
 @Setter
@@ -22,6 +23,8 @@ public class BidexFeatureReport {
 	Map<String, Object> slotsDetected;
 	Map<String, Object> allFeatureData;
 	Map<String, String> cookies;
+	URLChecksReportModel urlChecksReport;
+	
 //	BusinessFeaturesDetected  businessFeaturesDetected;
 //	EnvironmentDetails environmentDetails;
 //	SlotsDetected slotsDetected; 
