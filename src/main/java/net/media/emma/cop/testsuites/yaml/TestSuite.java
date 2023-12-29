@@ -133,7 +133,7 @@ public class TestSuite implements GenericTestSuite {
 
 		try {
 
-			browserContext.setDefaultTimeout(10000); // 70 seconds
+			browserContext.setDefaultTimeout(90000); // 70 seconds
 			Page page = browserContext.newPage();
 			consoleMessage = getConsoleErrors(page);
 			page.navigate(testData.getPublisherUrl());
@@ -142,7 +142,7 @@ public class TestSuite implements GenericTestSuite {
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
 //			 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
-			Thread.sleep(500);
+			Thread.sleep(10000);
 
 		} catch (Exception e) {
 
