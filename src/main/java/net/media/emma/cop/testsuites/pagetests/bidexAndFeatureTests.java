@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.microsoft.playwright.options.Cookie;
+import net.media.emma.cop.testsuites.yaml.JsonPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,6 @@ public class bidexAndFeatureTests {
 	ObjectMapper mapper = new ObjectMapper(); 
 	JsonNode replaced;
 
-    
 	@Autowired
 	BrowserFactory browserFactory;
 	@Autowired
@@ -136,12 +136,13 @@ public class bidexAndFeatureTests {
         });
  
         page.navigate(yaml.getPublisherUrl());
-	
+
 		} catch (Exception e) {
 			log.info("Bidex not found");
 		}
 
-
+		JsonNode pageSlots = slotsDataFromPage(page);
+		log.info("Slots data from page " + pageSlots.toString());
 		String startTarget = "this.configRegistry.loadConfig";
 		String endTarget = "})}abtest(e,t)";
 		int startIndex=0;
@@ -168,14 +169,10 @@ public class bidexAndFeatureTests {
 //		log.info("finalString = "+ finalConfig);
 		
 //		System.err.println(finalConfig);
-		
 
 		try {
 		 replaced = mapper.readTree(finalConfig.toString());
 //				 log.info("Json :"+ replaced);
-		 
-		 
-
 		} catch (Exception e) {
 //			log.info("Converting to json error");
 		}
@@ -186,6 +183,18 @@ public class bidexAndFeatureTests {
     }
 
 
+	private JsonNode slotsDataFromPage(Page page){
+		try {
+			Object pubSlots = page.evaluate(adSlotScraping());
+			//log.info("Slots data from page " + pubSlots.toString());
+			JsonNode slotsExctracted = jsonReader.readTree(pubSlots.toString());
+			return slotsExctracted;
+		}catch (Exception e){
+			log.info("Slots data from page failed");
+		}
+
+		return null;
+	}
 
 
 	// ----------------OLD LOGIC--------------
@@ -418,6 +427,29 @@ public class bidexAndFeatureTests {
 		return null;
 	}
 
+
+	private String adSlotScraping(){
+		return"""
+				let slotsData = [];
+
+				function getAdUnitJs(){
+				         return JSON.stringify(slotsData);
+				     }
+
+				if(googletag.pubads()){
+				    googletag.pubads().getSlots().map(s => {
+				        // console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
+				        slotsData.push(s.getAdUnitPath(), s.getSizes(), s.getTargetingMap());
+
+				    });
+
+				}
+
+				//console.log(JSON.stringify(slotsData, null, 4));
+
+				getAdUnitJs();
+				""";
+	}
     
     
     
