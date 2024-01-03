@@ -24,7 +24,7 @@ import com.microsoft.playwright.Route;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
-
+import net.media.emma.cop.testsuites.yaml.PlAssestion;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
@@ -86,6 +86,8 @@ public class bidexAndFeatureTests {
 	@Autowired
 	private YamlUtils yamlUtils;
 	
+	@Autowired
+	private PlAssestion payloadAsserstions;
 
     public BidexFeatureReport bidexTests(TestCriteriaBo yaml) throws JsonMappingException, JsonProcessingException{
 
@@ -384,7 +386,7 @@ public class bidexAndFeatureTests {
 		}
 
 		urlChecks.updateMatchingUrlsCount();
-//		urlChecks.updateNetworkCallErrors(testData);
+		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
 //		if(testData.getBidderDataAssertions()!=null && testData.getBidderDataUrls()!=null)
 //		{
@@ -426,6 +428,9 @@ public class bidexAndFeatureTests {
 
 		return null;
 	}
+	
+	
+	
 	
 	
 
