@@ -38,6 +38,7 @@ import net.media.emma.cop.testsuites.pagetests.TestCriteria;
 import net.media.emma.cop.testsuites.pagetests.TestCriteriaBo;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 
 @Builder @Getter @Setter @Slf4j @ToString
 public class BidExConfig {
@@ -85,7 +86,7 @@ public class BidExConfig {
 //        log.info("Cookie: " + cookie.name + " : " + cookie.value);
 //    }
 //		page.close();
-    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, List<Cookie> cookies) {
+    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, List<Cookie> cookies, URLChecksReportModel model) {
 
         if (bidExContent == null) {
            
@@ -118,7 +119,7 @@ public class BidExConfig {
         
 //        JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent, feature), JsonNode.class);
         
-        return getFeaturesData(bidExContent, feature, yaml, harFile, cookies);
+        return getFeaturesData(bidExContent, feature, yaml, harFile, cookies, model);
         
     }
 
@@ -378,7 +379,7 @@ public class BidExConfig {
     }
     
     
-    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, List<Cookie> cookies){
+    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, List<Cookie> cookies, URLChecksReportModel reportModel){
 //        List < String > features = new ArrayList < String > ();
 //        //add multiple features to the list
 //        
@@ -441,6 +442,7 @@ public class BidExConfig {
         bidexFeatureReport.setEnvironmentDetails(getEnvironment(bidexContent));
         bidexFeatureReport.setSlotsDetected(solts);
         bidexFeatureReport.setCookies(displayCookies(cookies));
+        bidexFeatureReport.setUrlChecksReport(reportModel);
         
 //        //Getting AB test Config Data
 //        JsonNode abTestConifgData;

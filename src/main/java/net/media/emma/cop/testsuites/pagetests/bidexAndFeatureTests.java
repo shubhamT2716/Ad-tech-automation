@@ -25,7 +25,7 @@ import com.microsoft.playwright.Route;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
-
+import net.media.emma.cop.testsuites.yaml.PlAssestion;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
@@ -86,9 +86,15 @@ public class bidexAndFeatureTests {
 	@Autowired
 	private YamlUtils yamlUtils;
 	
+	@Autowired
+	private PlAssestion payloadAsserstions;
 
     public BidexFeatureReport bidexTests(TestCriteriaBo yaml) throws JsonMappingException, JsonProcessingException{
 
+    	
+    	List<String> urlFromNetworkTab=new ArrayList<>();
+		List<Request> listOfReqest=new ArrayList<>();
+    	
 		// bidExConfig.getSlotById("164457376").getProvidersData().add(
 		// 						ProvidersData.builder()
 		// 							.pvid(123123)
@@ -113,10 +119,18 @@ public class bidexAndFeatureTests {
 			
 //			replaceBidExUrl(null, yaml)
 			
+			
+			
+			page.onRequest(request ->{
+				urlFromNetworkTab.add(request.url());
+				listOfReqest.add(request);
+			});
+			
 		page.onResponse(response -> {
 			if(response.url().contains("https://hb.yahoo.net/bidexchange.js?cid")){
 //			log.info("Response Status: " + response.status() + ", Response Headers: " + response.headers());
 			// log.info("Response Body: " + response.text());	
+				
 			
 			try {
 				
@@ -136,7 +150,9 @@ public class bidexAndFeatureTests {
         });
  
         page.navigate(yaml.getPublisherUrl());
-
+        
+        Thread.sleep(4000);
+	
 		} catch (Exception e) {
 			log.info("Bidex not found");
 		}
@@ -179,7 +195,7 @@ public class bidexAndFeatureTests {
 		page.waitForTimeout(5000);
 		List<Cookie> cookies = page.context().cookies();
 		page.close();
-		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies);
+		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml));
     }
 
 
@@ -310,9 +326,7 @@ public class bidexAndFeatureTests {
     public TestCriteriaBo meargeYaml(String yaml)
     {
     	Set<String> listofCommonYaml=fileOperations.listYamlFiles(commonYamlFile);
-    	
-    	
-    	
+      	
     	net.media.emma.cop.testsuites.pagetests.TestCriteriaBo criteria=null;
     	
     	for(String commonFile: listofCommonYaml)
@@ -322,10 +336,7 @@ public class bidexAndFeatureTests {
     		String mearge[]= {yaml,yamlcontent};
     		
     		 criteria=yamlUtils.buildAutoTesterYaml(mearge);
-    		 
-    		
-    		
-    	}
+       	}
     	
     	return criteria;
     }
@@ -384,7 +395,7 @@ public class bidexAndFeatureTests {
 		}
 
 		urlChecks.updateMatchingUrlsCount();
-//		urlChecks.updateNetworkCallErrors(testData);
+		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
 //		if(testData.getBidderDataAssertions()!=null && testData.getBidderDataUrls()!=null)
 //		{
@@ -426,6 +437,11 @@ public class bidexAndFeatureTests {
 
 		return null;
 	}
+	
+	
+	
+	
+	
 
 
 	private String adSlotScraping(){
