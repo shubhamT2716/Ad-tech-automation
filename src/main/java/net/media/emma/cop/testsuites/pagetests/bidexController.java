@@ -1,10 +1,9 @@
 package net.media.emma.cop.testsuites.pagetests;
 
-import java.io.IOException;
+
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -116,11 +115,11 @@ public class bidexController {
 			
 			 TestDataResult dataResult=TestDataResult.builder().businessFeaturesDetected(bidexFeatureReport.getBusinessFeaturesDetected()).environmentDetails(bidexFeatureReport.getEnvironmentDetails()).bidex(bidexFeatureReport.getTestMetaDataBidex()).build();
 			 
-			modelAndView.addObject("message1",dataResult);
-			modelAndView.addObject("message2", bidexFeatureReport.getSlotsDetected());
-			modelAndView.addObject("message3", bidexFeatureReport.getAllFeatureData());
-			modelAndView.addObject("message4", bidexFeatureReport.getCookies());
-			modelAndView.addObject("message5", bidexFeatureReport.getUrlChecksReport());
+			modelAndView.addObject("rawData",dataResult);
+			modelAndView.addObject("slotsData", bidexFeatureReport.getSlotsDetected());
+			modelAndView.addObject("allFeatureData", bidexFeatureReport.getAllFeatureData());
+			modelAndView.addObject("allCookiesData", bidexFeatureReport.getCookies());
+			modelAndView.addObject("basicReport", bidexFeatureReport.getUrlChecksReport());
 		} catch (JsonProcessingException e) {
 			log.error("YAML Processing Error", e);
 			

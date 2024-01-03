@@ -128,7 +128,7 @@ public class BidExConfig {
     {
     	Map<String, String> allCookies=new HashMap<>();
     	for(Cookie cookie : cookies){
-            log.info("Cookie: " + cookie.name + " : " + cookie.value);
+//            log.info("Cookie: " + cookie.name + " : " + cookie.value);
             
             allCookies.put(cookie.name, cookie.value);
             
@@ -156,7 +156,7 @@ public class BidExConfig {
    	Map<String, String> featureMap=new HashMap<>();
 
 //   	featureMap.put("InStreamVideoDfpPlacements", "Instream Video ");
-//   	featureMap.put("osrm", "Outstream Video");
+   	featureMap.put("osrm", "Outstream Video");
 //   	featureMap.put("CridSizeMapForMultiAd","AdStacking 1.0");
 //   	featureMap.put("InsertSlotInLargeSlot","AdStacking 1.0");
 //   	featureMap.put("MultiAdSzComb","AdStacking 2.0");

@@ -1,6 +1,6 @@
 networkCallsPositive: {
   checksync: "https://hb.yahoo.net/checksync.php?",
- # PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+  PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
   APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
   AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",

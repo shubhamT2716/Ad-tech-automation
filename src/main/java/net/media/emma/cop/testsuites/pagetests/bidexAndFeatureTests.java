@@ -159,6 +159,7 @@ public class bidexAndFeatureTests {
 
 		JsonNode pageSlots = slotsDataFromPage(page);
 		log.info("Slots data from page " + pageSlots.toString());
+		System.err.println(pageSlots) ;
 		String startTarget = "this.configRegistry.loadConfig";
 		String endTarget = "})}abtest(e,t)";
 		int startIndex=0;
@@ -194,7 +195,7 @@ public class bidexAndFeatureTests {
 		}
 		page.waitForTimeout(5000);
 		List<Cookie> cookies = page.context().cookies();
-		page.close();
+//		page.close();
 		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml));
     }
 
