@@ -1,13 +1,15 @@
 package net.media.emma.cop.testsuites.pagetests;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.microsoft.playwright.options.Cookie;
-import net.media.emma.cop.testsuites.yaml.JsonPath;
+import com.microsoft.playwright.options.Timing;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ import com.microsoft.playwright.Route;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
+import net.media.emma.cop.testsuites.compliance.ComplianceTestReport.BidExController;
+import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.BidexController;
 import net.media.emma.cop.testsuites.yaml.PlAssestion;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
@@ -95,21 +99,7 @@ public class bidexAndFeatureTests {
     	List<String> urlFromNetworkTab=new ArrayList<>();
 		List<Request> listOfReqest=new ArrayList<>();
     	
-		// bidExConfig.getSlotById("164457376").getProvidersData().add(
-		// 						ProvidersData.builder()
-		// 							.pvid(123123)
-		// 							.ecc("asdf")
-		// 							.sizes(Arrays.asList( Sizes.builder().epc("asdfa").sz("300x250").mediaType("0").build()))
-		// 							.build());
-
-		// bidExConfig.getSlotById("164457376").getProvidersData().get(0).getSizes()
-		// bidExConfig.getSlotById("asdf").getProviderById(233).getEcc();
-		// bidExConfig.getSlotById("asdf").getSizes();
-
-		// bidExConfig.getSlotById("164457376").getSizes();
-
-
-		// finalConfig = finalConfig.replaceAll("\""	, "")
+	
 
     	String harFile=browserUtil.getFileNameForHar();
     	
@@ -117,7 +107,7 @@ public class bidexAndFeatureTests {
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
 		try {
 			
-//			replaceBidExUrl(null, yaml)
+
 			
 			
 			
@@ -127,22 +117,21 @@ public class bidexAndFeatureTests {
 			});
 			
 		page.onResponse(response -> {
-			if(response.url().contains("https://hb.yahoo.net/bidexchange.js?cid")){
-//			log.info("Response Status: " + response.status() + ", Response Headers: " + response.headers());
-			// log.info("Response Body: " + response.text());	
-				
+			if(response.url().contains("https://hb.yahoo.net/bidexchange.js?")){
+
 			
 			try {
 				
 				if(response.status()==200){
 				bidexResp = response.text();
+
 				
 				}
 
-				// log.info("Bidex Response: " + bidexJsonNode.toPrettyString());
+				
 			} catch (Exception e) {
 				log.info("Response Json failed");
-				// log.info("Json Node value " + bidexJsonNode.toString());
+				
 
 			}
 			
@@ -151,6 +140,8 @@ public class bidexAndFeatureTests {
  
         page.navigate(yaml.getPublisherUrl());
         
+      
+        
         Thread.sleep(4000);
 	
 		} catch (Exception e) {
@@ -158,12 +149,15 @@ public class bidexAndFeatureTests {
 		}
 
 		JsonNode pageSlots = slotsDataFromPage(page);
-		log.info("Slots data from page " + pageSlots.toString());
-		System.err.println(pageSlots) ;
-		String startTarget = "this.configRegistry.loadConfig";
-		String endTarget = "})}abtest(e,t)";
-		int startIndex=0;
-		int endIndex=0;
+//		log.info("Slots data from page " + pageSlots.toString());
+//		System.err.println(pageSlots) ;
+//		String startTarget = "{\"AaxDpCeiling\"";
+		// String endTarget = "\"aeinfo\":\"y_ad\"}}";
+		 int startIndex=0;
+		// int endIndex=0;
+		
+		//  int startIndex=75518;
+		// int endIndex=170449;
 
 //		if(bidexResp.contains(startTarget)){
 //			 startIndex  = bidexResp.indexOf(startTarget);
@@ -176,27 +170,30 @@ public class bidexAndFeatureTests {
 //			log.info("End Index : " + endIndex);
 //		}
 		
-		startIndex=bidexResp.indexOf(startTarget);
-		endIndex=bidexResp.indexOf(endTarget);
-		
-		
+		// startIndex=bidexResp.indexOf(startTarget);
+		// endIndex=bidexResp.indexOf(endTarget);
+
+//		log.info("bidex : " + bidexResp);
+
+		// set index at 75518 and  end index at 170449
+
+
+		 String startTarget = "{\"AaxDpCeiling\"";
+		if (bidexResp.contains(startTarget)) {
+			startIndex = bidexResp.indexOf(startTarget);
+			startIndex += 12;
+			log.info("Start Index : " + startIndex);
+			
+		}
 
 		//control in Bidexconfig.java
-		finalConfig = bidexResp.substring(startIndex, endIndex);
-//		log.info("finalString = "+ finalConfig);
+		finalConfig = bidexResp.substring(startIndex-12);
+		 JsonNode jsonNode= mapper.readValue(finalConfig, JsonNode.class);
 		
-//		System.err.println(finalConfig);
-
-		try {
-		 replaced = mapper.readTree(finalConfig.toString());
-//				 log.info("Json :"+ replaced);
-		} catch (Exception e) {
-//			log.info("Converting to json error");
-		}
 		page.waitForTimeout(5000);
 		List<Cookie> cookies = page.context().cookies();
 //		page.close();
-		return bidExConfig.loadBidExConfig(replaced,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml));
+		return bidExConfig.loadBidExConfig(jsonNode,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml),getBidexData(listOfReqest, yaml));
     }
 
 
@@ -212,6 +209,8 @@ public class bidexAndFeatureTests {
 
 		return null;
 	}
+	
+	
 
 
 	// ----------------OLD LOGIC--------------
@@ -440,10 +439,68 @@ public class bidexAndFeatureTests {
 	}
 	
 	
-	
-	
-	
+	private BidexController getBidexData(List<Request> listOfRequest, TestCriteriaBo criteriaBo)
+	{
+		BidexFeatureReport report=new BidexFeatureReport();
+		
+		BidexFeatureReport.BidexController bidexController=new BidexController();
+		
+		
+		
+		String regEx = ".*/(" + String.join("|", bidExHosts) + "|" + criteriaBo.getEnvironment() + ")/("
+				+ String.join("|", bidExControlers) + ").*";
 
+		List<Request> bidexRequest=new ArrayList<>();
+		
+		for(Request request:listOfRequest)
+		{
+			if(request.url().matches(regEx))
+			{
+				bidexRequest.add(request);
+			}
+		}
+
+		for(Request request: bidexRequest)
+		{
+			bidexController.getListOfMatchingUrls().add(request.url());
+
+			if(null != request.failure())
+			{
+				bidexController.getConsoleMessage().add(request.failure().toString());
+				continue;
+			}
+
+			Timing timing = request.timing();
+
+
+			if (null != timing) {
+				Date date = new Date((long) (timing.responseEnd - timing.responseStart));
+				bidexController.setTotalResponsetime(date.getTime() + "ms");
+			} else {
+				bidexController.setTotalResponsetime("Not Available");
+			}
+
+			bidexController.setTotalSize(request.sizes().responseBodySize + "b");
+		}
+
+		 if (bidexRequest.size() == 0) {
+			 bidexController.getConsoleMessage().add("No bidex request found");
+		 }
+
+		 if (bidexRequest.size() > 1) {
+			 bidexController.getConsoleMessage().add("Multiple bidex request found");
+		}
+
+		return bidexController;
+
+
+
+		}
+		
+		
+		
+	
+	
 
 	private String adSlotScraping(){
 		return"""

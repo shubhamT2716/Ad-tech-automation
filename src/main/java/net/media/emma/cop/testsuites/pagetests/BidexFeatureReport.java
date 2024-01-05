@@ -1,5 +1,7 @@
 package net.media.emma.cop.testsuites.pagetests;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
@@ -39,6 +41,7 @@ public class BidexFeatureReport {
 		String environment;
 		String userAgent;
 		String harFileDownloadLink;
+		BidexController bidexController;
 	}
 	
 	@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
@@ -47,6 +50,16 @@ public class BidexFeatureReport {
 		Map<String, Object> businessFeaturesDetected;
 		Map<String , Object> environmentDetails;
 		
+	}
+	
+	@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
+	public static class BidexController{
+		@Builder.Default
+		List<String> listOfMatchingUrls=new ArrayList<>();
+		String totalSize;
+		String totalResponsetime;
+		@Builder.Default
+		List<String> consoleMessage=new ArrayList<>();
 	}
 	
 //	

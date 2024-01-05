@@ -2,24 +2,18 @@ package net.media.emma.cop.components;
 
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import java.util.List;
 import java.util.Map;
 
-
-import java.util.Date;
 import java.util.HashMap;
 
 import com.microsoft.playwright.options.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
+
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,8 +27,9 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport;
+import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.BidexController;
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.TestMetaDataBidex;
-import net.media.emma.cop.testsuites.pagetests.TestCriteria;
+
 import net.media.emma.cop.testsuites.pagetests.TestCriteriaBo;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
@@ -74,43 +69,31 @@ public class BidExConfig {
   
     
 
-    //Data format
-    // cridDetails = { "crid" : { "dcn" : "dcnValue", "adunitPath" : "adunitPathValue" } }
-    // cridDetails = { "164457376" : { "dcn" : "8a969d570187874cae488063d27b00ab", "adunitPath" : "/22888152279/us/ysports/main/dt/us_ysports_main_dt_mid_right" } }
-    // private Map<String, Map<String, String>> cridDetails = new HashMap<String, Map<String, String>>();
+    
+    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, List<Cookie> cookies, URLChecksReportModel model,BidexController bidexController) {
 
-//    page.waitForTimeout(5000);
-//    List<Cookie> cookies = page.context().cookies();
-//		log.info("Cookies: " + cookies);
-//		for(Cookie cookie : cookies){
-//        log.info("Cookie: " + cookie.name + " : " + cookie.value);
-//    }
-//		page.close();
-    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, List<Cookie> cookies, URLChecksReportModel model) {
-
-        if (bidExContent == null) {
-           
-//        File sample = new File("src/main/java/net/media/emma/cop/components/sample/bidExConfigSample.json");
-          
-        	ClassPathResource classPathResource=new ClassPathResource(jsonPathFile+"/"+"bidExConfigSample.json");
-        	
-        	
-        	
-        	try {
-        		
-        		InputStream sample=classPathResource.getInputStream();
-        		
-                bidExContent = mapper.readTree(sample);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                log.info("Bidex null");
-
-            }
-        }
+//        if (bidExContent == null) {
+//           
+////        File sample = new File("src/main/java/net/media/emma/cop/components/sample/bidExConfigSample.json");
+//          
+//        	ClassPathResource classPathResource=new ClassPathResource(jsonPathFile+"/"+"bidExConfigSample.json");
+//        	
+//        	
+//        	
+//        	try {
+//        		
+//        		InputStream sample=classPathResource.getInputStream();
+//        		
+//                bidExContent = mapper.readTree(sample);
+//            } catch (IOException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//                log.info("Bidex null");
+//
+//            }
+//        }
         
-//      displayCookies(cookies);
-//         loadbidExContent(bidExContent);
+
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
         getInstreamDfpPlacements(bidExContent);
@@ -119,7 +102,7 @@ public class BidExConfig {
         
 //        JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent, feature), JsonNode.class);
         
-        return getFeaturesData(bidExContent, feature, yaml, harFile, cookies, model);
+        return getFeaturesData(bidExContent, feature, yaml, harFile, cookies, model, bidexController);
         
     }
 
@@ -169,8 +152,7 @@ public class BidExConfig {
 //    featureMap.put("cwrs", "cwrs Value ");
 //    featureMap.put("MultiBidTemplateConfig", "MultiBidConfig Value ");
    	
-//   	/multi_ad_config
-//   	multi_ad_size_combinations
+
    	
    	featureMap.put("InStreamVideoDfpPlacements","Instream Video");
    	featureMap.put("InsertSlotInLargeSlot", "AdStacking 1.0 - insertslots_in_largeslots");
@@ -317,25 +299,9 @@ public class BidExConfig {
                         
                         JsonNode getSizeFor3=cridNode.get("-3").get("szs");
                         
-//                        
-//                        System.out.println(getSizeFor25014);
-//                        
-//                        System.out.println(getSizeFor3);
+                   
                         
-                    //     List<ProvidersData> list=new ArrayList<>();
-                      
-                    //   getSize.entrySet().forEach(e -> {
-                      
-                    //   	ProvidersData providersData=mapper.convertValue(e, ProvidersData.class);
-                    //   	log.info("data  : "+providersData);
-                    //   	list.add(providersData);
-                      	
-                    //   });
-                      
-                    //   data.setProvidersData(list);
-                        
-
-//                       log.info("Crid " + cridKey + " " + "DCN" + getDcn.toString());
+          
 
                     } catch (Exception e) {
                         // TODO: handle exception
@@ -351,11 +317,9 @@ public class BidExConfig {
 
 
 
-    // This is to get intream video ad units. In bidex config we get instream video ad units separatley in the key "InStreamVideoDfpPlacements". 
-    // This can be merged in the above method setCridAdunitPathMapping.
-
+   
     private void getInstreamDfpPlacements(JsonNode bidExContent) {
-        // TODO Auto-generated method stub
+        
  List < String > videoCrids = new ArrayList < String > ();
 
         JsonNode vCridConfig = bidExContent.get("InStreamVideoDfpPlacements");
@@ -379,15 +343,8 @@ public class BidExConfig {
     }
     
     
-    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, List<Cookie> cookies, URLChecksReportModel reportModel){
-//        List < String > features = new ArrayList < String > ();
-//        //add multiple features to the list
-//        
-//        Collections.addAll(features, "CridSizeMapForMultiAd","DfpPlacements","PlacementProviderRules","InStreamVideoDfpPlacements", "InsertSlotInLargeSlot", "MultiBidTemplateConfig", "fpd", "cwrs", "MultiAdSzComb", "osrm");
-  	
-    	
-    	
-    
+    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, List<Cookie> cookies, URLChecksReportModel reportModel, BidexController bidexController){
+ 
     	 Map<String ,Object> featureTestResult=new HashMap<>();
     	
        Map<String ,Object> featureResult=new HashMap<>();
@@ -434,7 +391,8 @@ public class BidExConfig {
         
         
         BidexFeatureReport bidexFeatureReport=BidexFeatureReport.builder().testMetaDataBidex(TestMetaDataBidex.builder().dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
-        		.testName("Auto Tester Report").environment(yaml.getEnvironment()).publisherUrl(yaml.getPublisherUrl()).harFileDownloadLink("harDownload/"+harFile ).userAgent(yaml.getUserAgent()).build()).build();
+        		.testName("Auto Tester Report").environment(yaml.getEnvironment()).publisherUrl(yaml.getPublisherUrl()).harFileDownloadLink("harDownload/"+harFile ).userAgent(yaml.getUserAgent())
+        		.bidexController(bidexController).build()).build();
         
         
         bidexFeatureReport.setAllFeatureData(featureResult);
@@ -443,6 +401,7 @@ public class BidExConfig {
         bidexFeatureReport.setSlotsDetected(solts);
         bidexFeatureReport.setCookies(displayCookies(cookies));
         bidexFeatureReport.setUrlChecksReport(reportModel);
+       
         
 //        //Getting AB test Config Data
 //        JsonNode abTestConifgData;
