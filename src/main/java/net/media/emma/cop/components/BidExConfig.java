@@ -4,12 +4,7 @@ package net.media.emma.cop.components;
 
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-
-import java.util.List;
-import java.util.Map;
-
-import java.util.HashMap;
+import java.util.*;
 
 import com.microsoft.playwright.options.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +91,7 @@ public class BidExConfig {
 
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
+        setSizesIntoCrid(bidExContent);
         getInstreamDfpPlacements(bidExContent);
         getEnvironment(bidExContent);
         
@@ -166,6 +162,8 @@ public class BidExConfig {
 	featureMap.put("PlacementProviderRules", "Placement Provider Rules Value Detected");
 	featureMap.put("fpd", "fpd Value Detected ");
 	featureMap.put("cwrs", "cwrs Value Detected ");
+    featureMap.put("sizes", "Sizes Value Detected ");
+    featureMap.put("Mediatypes", "MediaTypes Value Detected ");
 
     String value=(String) featureMap.get(name);
     
@@ -191,7 +189,7 @@ public class BidExConfig {
 		
     	JsonNode envConfig = bidExContent.get("Environment");
         
-        List<String> envDetails=Arrays.asList("ip2ct","app","ip2sc","ip2c","ip");
+        List<String> envDetails= Arrays.asList("ip2ct","app","ip2sc","ip2c","ip");
     
 //        log.info("Environment " + envConfig.toString());
 
@@ -220,7 +218,7 @@ public class BidExConfig {
         if (slotsData.size() > 0) {
             for (SlotsData slot: slotsData) {
                 if (slot.crid.equals(cridIn)&& slot.getFeatureName().equals(feature)) {
-//                    log.info("Slots data crid " + slotsData);
+//                   log.info("Slots data crid " + slotsData);
                     
                     return slot;
                    
@@ -229,11 +227,11 @@ public class BidExConfig {
         }
 
         slotsData.add(SlotsData.builder().crid(cridIn).featureName(feature).build());
-//        log.info("Slots data crid " + slotsData);
+       log.info("Slots data crid " + slotsData);
        
         for (SlotsData slot: slotsData) {
             if (slot.crid.equals(cridIn)&& slot.getFeatureName().equals(feature)) {
-//            	System.err.println(slotsData);
+//           	System.err.println(slotsData);
                 return slot;
             }
         }
@@ -294,10 +292,7 @@ public class BidExConfig {
                           data.setDcn(getDcn.toString());
 //                          data.setFeatureName("PlacementProviderRules");
                         }
-                        
-                        JsonNode getSizeFor25014=cridNode.get("25014").get("szs");
-                        
-                        JsonNode getSizeFor3=cridNode.get("-3").get("szs");
+
                         
                    
                         
@@ -305,7 +300,7 @@ public class BidExConfig {
 
                     } catch (Exception e) {
                         // TODO: handle exception
-//                        log.error("DCN does not exist for crid " + cridKey);
+                          log.error("DCN does not exist for crid " + cridKey);
                     	
                     }
                 }
@@ -316,7 +311,80 @@ public class BidExConfig {
 
 
 
+    public void setSizesIntoCrid(JsonNode bidExContent) {
+        //get dcn mapping from sample bidex config
 
+        Map<String, Map<String, Map < String, String>>> sizesData = new HashMap<>();
+        JsonNode sizeConfig = bidExContent.get("PlacementProviderRules");
+        if (sizeConfig != null && sizeConfig.isObject()) {
+            sizeConfig.fields().forEachRemaining(entry -> {
+                String cridKey = entry.getKey();
+                JsonNode cridNode = entry.getValue();
+                if (cridNode != null & cridNode.isObject()) {
+                    try {
+                        cridNode.fields().forEachRemaining(entries->{
+                            String provider = entries.getKey();
+                            JsonNode sizesvalue = entries.getValue();
+//                            log.info("sizes value out "+ sizesvalue);
+                            if(sizesvalue!=null && sizesvalue.isObject()) {
+                                JsonNode szs = sizesvalue.get("szs");
+//                                log.info("sizes value array "+ szs);
+                                if(szs !=null) {
+                                    szs.forEach(sizeNode -> {
+                                        String sz = sizeNode.get("sz").toString();
+                                        String mediaType = sizeNode.get("mediatype").toString();
+                                        SlotsData data=getSlotById(cridKey,"sizes");
+                                        data.setSizes(sz);
+                                        data = getSlotById(cridKey, "Mediatypes");
+                                        data.setMediaTypes(mediaType);
+                                        sizesData.put(cridKey, Collections.singletonMap(provider, Collections.singletonMap((sz), (mediaType))));
+
+                                        //Display sizesData
+                                        for (Map.Entry<String, Map<String, Map<String, String>>> entry1 : sizesData.entrySet()) {
+                                            String key = entry1.getKey();
+                                            Map<String, Map<String, String>> value = entry1.getValue();
+                                            for (Map.Entry<String, Map<String, String>> entry2 : value.entrySet()) {
+                                                String key1 = entry2.getKey();
+                                                Map<String, String> value1 = entry2.getValue();
+                                                for (Map.Entry<String, String> entry3 : value1.entrySet()) {
+                                                    String key2 = entry3.getKey();
+                                                    String value2 = entry3.getValue();
+//                                                    log.info("Crid " + key);
+//                                                    log.info("Provider " + key1);
+////                                                            log.info("value1 "+ value1);
+//                                                    log.info("Size " + key2);
+//                                                    log.info("Mediatype " + value2);
+
+                                                }
+                                            }
+                                        }
+//                                        log.info("Crid " + cridKey);
+//                                        log.info("provider value exact " + provider);
+//                                        log.info("sizes value exact " + sz);
+//                                        log.info("Mediatype value exact " + mediaType);
+//                                        SlotsData data = new SlotsData();
+//                                        data = getSlotById(cridKey, "sizes");
+//                                        data.setSizes(sz);
+
+
+
+
+                                    });
+                                }
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        log.error("Sizes extraction failed for crid " + cridKey);
+//                        log.error("DCN does not exist for crid " + cridKey);
+
+                    }
+                }
+            });
+        }
+
+    }
    
     private void getInstreamDfpPlacements(JsonNode bidExContent) {
         
@@ -402,34 +470,6 @@ public class BidExConfig {
         bidexFeatureReport.setCookies(displayCookies(cookies));
         bidexFeatureReport.setUrlChecksReport(reportModel);
        
-        
-//        //Getting AB test Config Data
-//        JsonNode abTestConifgData;
-////for each ab config get the ad unit, id, name and start date
-//        abTestConifgData = bidexContent.get("AbtestRawConfig").get("adUnits");
-//        try {
-//            JsonNode rootNode = mapper.readTree(abTestConifgData.toString());
-//            rootNode.fields().forEachRemaining(entry -> {
-//                String adUnit = entry.getKey();
-//                JsonNode adUnitNode = entry.getValue();
-//                JsonNode rootValueNode = adUnitNode.get(0);
-//                JsonNode name = rootValueNode.get("name");
-//                JsonNode id = rootValueNode.get("id");
-//                JsonNode startDate = rootValueNode.get("startDate");
-//                JsonNode endDate = rootValueNode.get("endDate");
-////                log.info("AdUnit " + adUnit + " " + "ID " + id + " " + "Experiment Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate);
-//
-//                String abTest="AdUnit " + adUnit + " " + "ID " + id + " " + "Experiment Name " + name + " " + "Start Date " + startDate + " " + "End Date " + endDate;
-//
-//                
-//                map.put("Abtesting", abTest);
-//
-//            });
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        log.info("List of Features to check " + features);
 
         
         return bidexFeatureReport;
@@ -446,7 +486,9 @@ public class BidExConfig {
         public String crid;
         public String dcn;
         public String adunitPath;
-        
+        public String sizes;
+        public String mediaTypes;
+        public String providerId;
 //        Map<String, Object> providerData=new HashMap<>();
 
         @Builder.Default
@@ -461,15 +503,15 @@ public class BidExConfig {
             return null;
         }
 
-        public List < String > getSizes() {
-            List < String > sizes = new ArrayList < String > ();
-            for (ProvidersData provider: providersData) {
-                for (ProvidersData.Sizes size: provider.sizes) {
-                    sizes.add(size.sz);
-                }
-            }
-            return sizes;
-        }
+//        public List < String > getSizes() {
+//            List < String > sizes = new ArrayList < String > ();
+//            for (ProvidersData provider: providersData) {
+//                for (ProvidersData.Sizes size: provider.sizes) {
+//                    sizes.add(size.sz);
+//                }
+//            }
+//            return sizes;
+//        }
 
     }
 

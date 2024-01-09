@@ -182,18 +182,19 @@ public class bidexAndFeatureTests {
 		if (bidexResp.contains(startTarget)) {
 			startIndex = bidexResp.indexOf(startTarget);
 			startIndex += 12;
-			log.info("Start Index : " + startIndex);
+//			log.info("Start Index : " + startIndex);
 			
 		}
 
 		//control in Bidexconfig.java
 		finalConfig = bidexResp.substring(startIndex-12);
-		 JsonNode jsonNode= mapper.readValue(finalConfig, JsonNode.class);
+		 JsonNode bidexJson= mapper.readValue(finalConfig, JsonNode.class);
+//		 log.info("bidexJson : " + bidexJson);
 		
 		page.waitForTimeout(5000);
 		List<Cookie> cookies = page.context().cookies();
-//		page.close();
-		return bidExConfig.loadBidExConfig(jsonNode,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml),getBidexData(listOfReqest, yaml));
+		page.close();
+		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml),getBidexData(listOfReqest, yaml));
     }
 
 
