@@ -227,7 +227,7 @@ public class BidExConfig {
         }
 
         slotsData.add(SlotsData.builder().crid(cridIn).featureName(feature).build());
-       log.info("Slots data crid " + slotsData);
+//       log.info("Slots data crid " + slotsData);
        
         for (SlotsData slot: slotsData) {
             if (slot.crid.equals(cridIn)&& slot.getFeatureName().equals(feature)) {
@@ -293,11 +293,6 @@ public class BidExConfig {
 //                          data.setFeatureName("PlacementProviderRules");
                         }
 
-                        
-                   
-                        
-          
-
                     } catch (Exception e) {
                         // TODO: handle exception
                           log.error("DCN does not exist for crid " + cridKey);
@@ -310,65 +305,31 @@ public class BidExConfig {
     }
 
 
+//Getting each crid-> {provider->{mediatype & sizes}}
 
     public void setSizesIntoCrid(JsonNode bidExContent) {
-        //get dcn mapping from sample bidex config
 
-        Map<String, Map<String, Map < String, String>>> sizesData = new HashMap<>();
+
+        Map<String, Map<List<String>, Map<String , String>>> sizesData = new HashMap<>();
         JsonNode sizeConfig = bidExContent.get("PlacementProviderRules");
         if (sizeConfig != null && sizeConfig.isObject()) {
             sizeConfig.fields().forEachRemaining(entry -> {
                 String cridKey = entry.getKey();
+                sizesData.put(cridKey, new HashMap<>());
                 JsonNode cridNode = entry.getValue();
                 if (cridNode != null & cridNode.isObject()) {
                     try {
                         cridNode.fields().forEachRemaining(entries->{
-                            String provider = entries.getKey();
+                            List<String> provider = Collections.singletonList(entries.getKey());
+                            sizesData.get(cridKey).put(provider, new HashMap<>());
                             JsonNode sizesvalue = entries.getValue();
-//                            log.info("sizes value out "+ sizesvalue);
                             if(sizesvalue!=null && sizesvalue.isObject()) {
                                 JsonNode szs = sizesvalue.get("szs");
-//                                log.info("sizes value array "+ szs);
                                 if(szs !=null) {
                                     szs.forEach(sizeNode -> {
                                         String sz = sizeNode.get("sz").toString();
                                         String mediaType = sizeNode.get("mediatype").toString();
-                                        SlotsData data=getSlotById(cridKey,"sizes");
-                                        data.setSizes(sz);
-                                        data = getSlotById(cridKey, "Mediatypes");
-                                        data.setMediaTypes(mediaType);
-                                        sizesData.put(cridKey, Collections.singletonMap(provider, Collections.singletonMap((sz), (mediaType))));
-
-                                        //Display sizesData
-                                        for (Map.Entry<String, Map<String, Map<String, String>>> entry1 : sizesData.entrySet()) {
-                                            String key = entry1.getKey();
-                                            Map<String, Map<String, String>> value = entry1.getValue();
-                                            for (Map.Entry<String, Map<String, String>> entry2 : value.entrySet()) {
-                                                String key1 = entry2.getKey();
-                                                Map<String, String> value1 = entry2.getValue();
-                                                for (Map.Entry<String, String> entry3 : value1.entrySet()) {
-                                                    String key2 = entry3.getKey();
-                                                    String value2 = entry3.getValue();
-//                                                    log.info("Crid " + key);
-//                                                    log.info("Provider " + key1);
-////                                                            log.info("value1 "+ value1);
-//                                                    log.info("Size " + key2);
-//                                                    log.info("Mediatype " + value2);
-
-                                                }
-                                            }
-                                        }
-//                                        log.info("Crid " + cridKey);
-//                                        log.info("provider value exact " + provider);
-//                                        log.info("sizes value exact " + sz);
-//                                        log.info("Mediatype value exact " + mediaType);
-//                                        SlotsData data = new SlotsData();
-//                                        data = getSlotById(cridKey, "sizes");
-//                                        data.setSizes(sz);
-
-
-
-
+                                        sizesData.get(cridKey).get(provider).put(sz, mediaType);
                                     });
                                 }
                             }
@@ -377,12 +338,40 @@ public class BidExConfig {
                     } catch (Exception e) {
                         // TODO: handle exception
                         log.error("Sizes extraction failed for crid " + cridKey);
-//                        log.error("DCN does not exist for crid " + cridKey);
+
 
                     }
                 }
             });
         }
+
+
+
+
+
+        //Display sizesData
+//         for (Map.Entry<String, Map<List<String>, Map<String, String>>> entry1 : sizesData.entrySet()) {
+//             String key = entry1.getKey();
+//             Map<List<String>, Map<String, String>> value = entry1.getValue();
+//             for (Map.Entry<List<String>, Map < String, String>> entry2 : value.entrySet()) {
+//                 List<String> key1 = entry2.getKey();
+//                 Map<String, String> value1 = entry2.getValue();
+//                 for (Map.Entry <String, String> entry3 : value1.entrySet()) {
+//                     String key2 = entry3.getKey();
+//                     String value2 = entry3.getValue();
+//                                                     log.info("Crid " + key);
+//                                                     log.info("Provider " + key1);
+// //                                                            log.info("value1 "+ value1);
+//                                                     log.info("Size " + key2);
+//                                                     log.info("Mediatype " + value2);
+
+//                 }
+//             }
+//         }
+
+
+
+
 
     }
    
