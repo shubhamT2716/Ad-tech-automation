@@ -535,4 +535,15 @@ public class BidExConfig {
 
     }
 
+     
+    public Map<String, Map<String, Boolean>> getSlotsReport(URLChecksReportModel reportModel, JsonNode bidexContent)
+    {
+            Map<String, Map<String, Boolean>> slotsReport=new HashMap<>();  
+            
+
+
+
+    	return null;
+    }
+
 }
