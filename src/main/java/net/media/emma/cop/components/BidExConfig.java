@@ -29,6 +29,7 @@ import net.media.emma.cop.testsuites.pagetests.TestCriteriaBo;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 
 @Builder @Getter @Setter @Slf4j @ToString
 public class BidExConfig {
@@ -91,7 +92,7 @@ public class BidExConfig {
 
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
-        setSizesIntoCrid(bidExContent);
+//        setSizesIntoCrid(bidExContent);
         getInstreamDfpPlacements(bidExContent);
         getEnvironment(bidExContent);
         
@@ -227,7 +228,7 @@ public class BidExConfig {
         }
 
         slotsData.add(SlotsData.builder().crid(cridIn).featureName(feature).build());
-       log.info("Slots data crid " + slotsData);
+//       log.info("Slots data crid " + slotsData);
        
         for (SlotsData slot: slotsData) {
             if (slot.crid.equals(cridIn)&& slot.getFeatureName().equals(feature)) {
@@ -293,11 +294,6 @@ public class BidExConfig {
 //                          data.setFeatureName("PlacementProviderRules");
                         }
 
-                        
-                   
-                        
-          
-
                     } catch (Exception e) {
                         // TODO: handle exception
                           log.error("DCN does not exist for crid " + cridKey);
@@ -310,79 +306,77 @@ public class BidExConfig {
     }
 
 
+//Getting each crid-> {provider->{mediatype & sizes}}
 
-    public void setSizesIntoCrid(JsonNode bidExContent) {
-        //get dcn mapping from sample bidex config
+    public Map<String, Map<List<String>, Map<String, String>>> setSizesIntoCrid(JsonNode bidExContent) {
 
-        Map<String, Map<String, Map < String, String>>> sizesData = new HashMap<>();
+
+        Map<String, Map<List<String>, Map<String , String>>> sizesData = new HashMap<>();
         JsonNode sizeConfig = bidExContent.get("PlacementProviderRules");
         if (sizeConfig != null && sizeConfig.isObject()) {
             sizeConfig.fields().forEachRemaining(entry -> {
                 String cridKey = entry.getKey();
+                sizesData.put(cridKey, new HashMap<>());
                 JsonNode cridNode = entry.getValue();
                 if (cridNode != null & cridNode.isObject()) {
                     try {
                         cridNode.fields().forEachRemaining(entries->{
-                            String provider = entries.getKey();
+                            List<String> provider = Collections.singletonList(entries.getKey());
+                            sizesData.get(cridKey).put(provider, new HashMap<>());
                             JsonNode sizesvalue = entries.getValue();
-//                            log.info("sizes value out "+ sizesvalue);
                             if(sizesvalue!=null && sizesvalue.isObject()) {
                                 JsonNode szs = sizesvalue.get("szs");
-//                                log.info("sizes value array "+ szs);
                                 if(szs !=null) {
                                     szs.forEach(sizeNode -> {
                                         String sz = sizeNode.get("sz").toString();
                                         String mediaType = sizeNode.get("mediatype").toString();
-                                        SlotsData data=getSlotById(cridKey,"sizes");
-                                        data.setSizes(sz);
-                                        data = getSlotById(cridKey, "Mediatypes");
-                                        data.setMediaTypes(mediaType);
-                                        sizesData.put(cridKey, Collections.singletonMap(provider, Collections.singletonMap((sz), (mediaType))));
-
-                                        //Display sizesData
-                                        for (Map.Entry<String, Map<String, Map<String, String>>> entry1 : sizesData.entrySet()) {
-                                            String key = entry1.getKey();
-                                            Map<String, Map<String, String>> value = entry1.getValue();
-                                            for (Map.Entry<String, Map<String, String>> entry2 : value.entrySet()) {
-                                                String key1 = entry2.getKey();
-                                                Map<String, String> value1 = entry2.getValue();
-                                                for (Map.Entry<String, String> entry3 : value1.entrySet()) {
-                                                    String key2 = entry3.getKey();
-                                                    String value2 = entry3.getValue();
-//                                                    log.info("Crid " + key);
-//                                                    log.info("Provider " + key1);
-////                                                            log.info("value1 "+ value1);
-//                                                    log.info("Size " + key2);
-//                                                    log.info("Mediatype " + value2);
-
-                                                }
-                                            }
-                                        }
-//                                        log.info("Crid " + cridKey);
-//                                        log.info("provider value exact " + provider);
-//                                        log.info("sizes value exact " + sz);
-//                                        log.info("Mediatype value exact " + mediaType);
-//                                        SlotsData data = new SlotsData();
-//                                        data = getSlotById(cridKey, "sizes");
-//                                        data.setSizes(sz);
-
-
-
-
+                                        sizesData.get(cridKey).get(provider).put(sz, mediaType);
                                     });
                                 }
                             }
                         });
 
+                        
+                        
                     } catch (Exception e) {
                         // TODO: handle exception
                         log.error("Sizes extraction failed for crid " + cridKey);
-//                        log.error("DCN does not exist for crid " + cridKey);
+                    
 
                     }
                 }
             });
+           
         }
+		return sizesData;
+
+
+
+
+
+        //Display sizesData
+//         for (Map.Entry<String, Map<List<String>, Map<String, String>>> entry1 : sizesData.entrySet()) {
+//             String key = entry1.getKey();
+//             Map<List<String>, Map<String, String>> value = entry1.getValue();
+//             for (Map.Entry<List<String>, Map < String, String>> entry2 : value.entrySet()) {
+//                 List<String> key1 = entry2.getKey();
+//                 Map<String, String> value1 = entry2.getValue();
+//                 for (Map.Entry <String, String> entry3 : value1.entrySet()) {
+//                     String key2 = entry3.getKey();
+//                     String value2 = entry3.getValue();
+//                                                     log.info("Crid " + key);
+//                                                     log.info("Provider " + key1);
+// //                                                            log.info("value1 "+ value1);
+//                                                     log.info("Size " + key2);
+//                                                     log.info("Mediatype " + value2);
+
+//                 }
+//             }
+//         }
+
+
+
+
 
     }
    
@@ -469,7 +463,8 @@ public class BidExConfig {
         bidexFeatureReport.setSlotsDetected(solts);
         bidexFeatureReport.setCookies(displayCookies(cookies));
         bidexFeatureReport.setUrlChecksReport(reportModel);
-       
+        bidexFeatureReport.setSlotsReport(getSlotsReport(reportModel, bidexContent));       
+        
 
         
         return bidexFeatureReport;
@@ -536,14 +531,158 @@ public class BidExConfig {
     }
 
      
-    public Map<String, Map<String, Boolean>> getSlotsReport(URLChecksReportModel reportModel, JsonNode bidexContent)
+    public Map<String, Map<List<String>, Boolean>> getSlotsReport(URLChecksReportModel reportModel, JsonNode bidexContent)
     {
-            Map<String, Map<String, Boolean>> slotsReport=new HashMap<>();  
+            Map<String, Map<List<String>, Boolean>> slotsReport=new HashMap<>();  
             
 
+            //call setSizesIntoCrid 
+            Map<String, Map<List<String>, Map<String, String>>> sizesData = setSizesIntoCrid(bidexContent);
 
+            //get apLog from reportModel
+            
+            
+            
+            PositiveURLChecks logData = reportModel.getPositiveUrlChecks().get("APLog");
+            if(logData == null)
+            {
+            	logData=reportModel.getPositiveUrlChecks().get("PRLog");
+            }
+            
+            
+            List<String>  listOfMatchingUrl=logData.getMatchingUrls();
+            
+            // one list for crid , list of pvids 
+//            Map<String, List<Map<List<String>, Map<String, String>>>> getSlotsDataFromLog=new HashMap<>();
+            
+            Set<String> set=new HashSet<>();
+            
+           
+            
+            Map<String, Map<List<String>, Map<String, String>>> getSlotsDataFromLog=new HashMap<>();
+            
+            
+            for(String matchedUrl: listOfMatchingUrl)
+            {
+            	int index=matchedUrl.indexOf("&crid=");
+            	String crid=matchedUrl.substring(index+6, matchedUrl.indexOf("&", index+6));
+            	
+//            	Set<String> listOfCrid=(Set<String>) Collections.singletonList(crid);
+            	
+            	set.add(crid);
+            	
+//            	 getSlotsDataFromLog.put(listOfCrid, new HashMap<>());
+            	
+            	
+            	int sizeIndex=matchedUrl.indexOf("&size=");
+            	int pvidIndex=matchedUrl.indexOf("&pvid=") ; 
+            	int getMediaType=matchedUrl.indexOf("res_mtype=");
+            	
+            	 String size=matchedUrl.substring(sizeIndex+6, matchedUrl.indexOf("&",sizeIndex+6));
+                 String pvid=matchedUrl.substring(pvidIndex+6, matchedUrl.indexOf("&",pvidIndex+6));
+                 List<String> listOfPvid=Collections.singletonList(pvid);
+                 String mediaType=matchedUrl.substring(getMediaType+10,matchedUrl.indexOf("&",getMediaType+10));
+            	
+                
+                 // add crid , pvid , size , mediaType into getSlotsDataFromLog
 
-    	return null;
+                 
+                 getSlotsDataFromLog.computeIfAbsent(crid, k->new HashMap<>()).put(listOfPvid, Collections.singletonMap(size, mediaType));
+
+                 System.out.println("crid:"+crid+"  "+"size:"+size+"  "+"pvid:"+pvid+" "+"mediaType:"+mediaType);
+                
+            	
+  
+  
+
+                
+              
+                
+            }
+
+            sizesData.entrySet().forEach(entry->{
+               			
+               			String crid=entry.getKey();
+               			
+               			getSlotsDataFromLog.entrySet().forEach(e->{
+               				
+               				if(crid.equals(e.getKey()))
+                   			{
+                   				Map<List<String>, Map<String, String>>  map=entry.getValue();
+                   				
+                   				Map<List<String>, Map<String, String>> response=e.getValue();
+                   				
+//                   				System.out.println("map:  "+map);
+//                   				System.out.println("map2: "+map2);
+//                   				
+                   				response.entrySet().forEach(r->{
+                   					
+                   					List<String> listOfPvid=r.getKey();
+                   					
+                   					map.entrySet().forEach(m->{
+                   						
+                   						if(m.getKey().equals(listOfPvid))
+                   						{
+                   							Map<String, String> data=m.getValue();
+                   							Map<String, String> valueFromResponse=r.getValue();
+                   							
+                   							for(String key:data.keySet()) {
+                   								
+//                   								System.out.println("Key : "+key);
+                   								
+                   								String k1=key.replace("\"", "");
+                   								
+                   								String answer=data.get(key);
+                   								
+                   								String a1 = answer.replace("\"", "");
+                   								
+                   								System.err.println("Key : "+k1+" Answer :"+a1);
+                   								
+                   								for(String valueKey :valueFromResponse.keySet())
+                   								{
+                   									
+                   									
+                   									String valueAnswer=valueFromResponse.get(valueKey);
+                   									
+                   									System.out.println("valueKey"+ valueKey+ " valueAnswer :"+valueAnswer);
+                   									
+                   									if(k1.equals(valueKey) && a1.equals(valueAnswer))
+                   									{
+                   										slotsReport.put(crid, Collections.singletonMap(listOfPvid, true));
+                   									}
+                   									else {
+                   										slotsReport.put(crid, Collections.singletonMap(listOfPvid, false));
+                   									}
+                   									
+                   								}
+                   								
+                   								
+                   							}
+                                            	
+//                   							
+                   						}
+                   						
+                   					});
+                   					
+                   				});	
+                   				
+                   			}
+               				
+               			});
+               			
+               			
+               			
+               		});
+            
+            
+           System.err.println("getSize From logs: "+getSlotsDataFromLog);
+           
+           System.err.println("Result : "+slotsReport);
+           
+            
+           
+
+    	return slotsReport;
     }
 
 }

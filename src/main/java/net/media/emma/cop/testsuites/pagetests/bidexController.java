@@ -120,6 +120,7 @@ public class bidexController {
 			modelAndView.addObject("allFeatureData", bidexFeatureReport.getAllFeatureData());
 			modelAndView.addObject("allCookiesData", bidexFeatureReport.getCookies());
 			modelAndView.addObject("basicReport", bidexFeatureReport.getUrlChecksReport());
+			modelAndView.addObject("slotsReport",bidexFeatureReport.getSlotsReport());
 		} catch (JsonProcessingException e) {
 			log.error("YAML Processing Error", e);
 			
