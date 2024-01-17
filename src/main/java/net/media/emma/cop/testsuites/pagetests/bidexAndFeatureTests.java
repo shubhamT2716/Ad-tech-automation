@@ -106,42 +106,23 @@ public class bidexAndFeatureTests {
 		
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
 		try {
-			
-
-			
-			
-			
 			page.onRequest(request ->{
 				urlFromNetworkTab.add(request.url());
 				listOfReqest.add(request);
 			});
 			
 		page.onResponse(response -> {
-			if(response.url().contains("https://hb.yahoo.net/bidexchange.js?")){
-
-			
+			if(response.url().contains("bidexchange.js?")){
 			try {
-				
 				if(response.status()==200){
 				bidexResp = response.text();
-
-				
 				}
-
-				
 			} catch (Exception e) {
 				log.info("Response Json failed");
-				
-
 			}
-			
 			}
         });
- 
         page.navigate(yaml.getPublisherUrl());
-        
-      
-        
         Thread.sleep(4000);
 	
 		} catch (Exception e) {
@@ -149,47 +130,20 @@ public class bidexAndFeatureTests {
 		}
 
 		JsonNode pageSlots = slotsDataFromPage(page);
-//		log.info("Slots data from page " + pageSlots.toString());
-//		System.err.println(pageSlots) ;
-//		String startTarget = "{\"AaxDpCeiling\"";
-		// String endTarget = "\"aeinfo\":\"y_ad\"}}";
 		 int startIndex=0;
-		// int endIndex=0;
-		
-		//  int startIndex=75518;
-		// int endIndex=170449;
-
-//		if(bidexResp.contains(startTarget)){
-//			 startIndex  = bidexResp.indexOf(startTarget);
-//			startIndex+=12;
-//			log.info("Start Index : " + startIndex);
-//		}
-//		if(bidexResp.contains(endTarget)){
-//			endIndex  = bidexResp.indexOf(endTarget);
-//			endIndex+=3;
-//			log.info("End Index : " + endIndex);
-//		}
-		
-		// startIndex=bidexResp.indexOf(startTarget);
-		// endIndex=bidexResp.indexOf(endTarget);
-
-//		log.info("bidex : " + bidexResp);
-
-		// set index at 75518 and  end index at 170449
 
 
 		 String startTarget = "{\"AaxDpCeiling\"";
 		if (bidexResp.contains(startTarget)) {
 			startIndex = bidexResp.indexOf(startTarget);
 			startIndex += 12;
-//			log.info("Start Index : " + startIndex);
-			
+
 		}
 
 		//control in Bidexconfig.java
 		finalConfig = bidexResp.substring(startIndex-12);
 		 JsonNode bidexJson= mapper.readValue(finalConfig, JsonNode.class);
-//		 log.info("bidexJson : " + bidexJson);
+
 		
 		page.waitForTimeout(5000);
 		List<Cookie> cookies = page.context().cookies();
@@ -210,84 +164,7 @@ public class bidexAndFeatureTests {
 
 		return null;
 	}
-	
-	
 
-
-	// ----------------OLD LOGIC--------------
-
-	// private Map<String,String> getCridsByXpath(JsonNode replaced){
-	// 	Map<String, String> cridToDfpPath = new HashMap<String, String>();
-	// 	List<String> crids = new ArrayList<String>();
-	// 	Map<String, String> getDcn;
-		
-	// 	JsonNode parent = replaced.get("DfpPlacements");
-	// 	try {
-    //         JsonNode rootNode = mapper.readTree(parent.toString());
-    //         // log.info("rootNode: " + rootNode);
-    //         rootNode.fields().forEachRemaining(entry -> {
-    //             crids.add(entry.getKey());
-    //             // log.info("Object ID: " + crids);
-	// 			// log.info("Printed crids and dfp outside");
-    //         });
-			
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //     }
-	// 	for (String cridList : crids) {
-	// 			// String id = cridList;
-	// 			JsonNode cridNode = parent.get(cridList).get("targ").get(0).get("value");
-	// 			String adUnitPathTrimmed = cridNode.toString().substring(cridNode.toString().lastIndexOf("/") + 1).replace('"', ' ').trim();
-	// 			cridToDfpPath.put(cridList, adUnitPathTrimmed);
-	// 			// log.info("Crid is " + id + " and Dfp Path is" + cridNode);
-	// 		}
-	// 		log.info("Crid and DfpPath outside " + cridToDfpPath);
-
-	// 		getDcn = getDcnForCrid(replaced, crids);
-
-
-	// 	return cridToDfpPath;
-	// }
-
-
-
-	// private Map<String, String> getDcnForCrid(JsonNode replaced, List<String> crids){
-	// 	Map<String, String> dcnToCridMap = new HashMap<String, String>();
-				
-	// 			try {
-		
-	// 				JsonNode bidderParamsConfigNode = replaced.get("BidderParamsConfig");
-	// 				if (bidderParamsConfigNode != null && bidderParamsConfigNode.isObject()) {
-
-	// 					bidderParamsConfigNode.fields().forEachRemaining(entry -> {
-	// 						String fieldKey = entry.getKey();
-	// 						JsonNode fieldNode = entry.getValue();
-		
-	// 						JsonNode placementParamsNode = fieldNode.get("placementParams");
-	// 						if (placementParamsNode != null && placementParamsNode.isObject()) {
-
-	// 							placementParamsNode.fields().forEachRemaining(ppEntry -> {
-	// 								String dcn = ppEntry.getKey();
-
-	// 								String dcnVal = placementParamsNode.get(dcn).get("dcn").toString();
-	// 								dcnToCridMap.put(dcn, dcnVal);
-
-									
-	// 							});
-	// 						}
-	// 					});
-	// 				}
-	// 			} catch (Exception e) {
-	// 				e.printStackTrace();
-				
-	// 			// log.info("Crid is " + id + " and Dfp Path is" + cridNode);
-				
-
-	// 		}
-	// 		log.info("DCN mapped for crids outside" + dcnToCridMap);
-
-	// 		return dcnToCridMap;
-	// }
     
     private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteria testData) {
 

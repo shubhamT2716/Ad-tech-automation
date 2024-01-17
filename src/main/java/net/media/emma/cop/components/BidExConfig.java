@@ -256,12 +256,19 @@ public class BidExConfig {
             e.printStackTrace();
         }
         for (String cridList: crids) {
-            JsonNode cridNode = cridConfig.get(cridList).get("targ").get(0).get("value");
+            JsonNode cridNode;
+          try{
+            cridNode = cridConfig.get(cridList).get("targ").get(0).get("value");
             String adUnitPathTrimmed = cridNode.toString().substring(cridNode.toString().lastIndexOf("/") + 1).replace('"', ' ').trim();
             SlotsData data=getSlotById(cridList.toString(),"DfpPlacements");
             data.setAdunitPath(adUnitPathTrimmed);
 //            data.setFeatureName("DfpPlacements");
-            
+            }catch(Exception e){
+                cridNode = cridConfig.get(cridList).get("div");
+                String adUnitPathTrimmed = cridNode.toString().substring(cridNode.toString().lastIndexOf("/") + 1).replace('"', ' ').trim();
+                SlotsData data=getSlotById(cridList.toString(),"DfpPlacements");
+                data.setAdunitPath(adUnitPathTrimmed);
+            }
 
         }
     }
@@ -296,7 +303,10 @@ public class BidExConfig {
                     } catch (Exception e) {
                         // TODO: handle exception
                           log.error("DCN does not exist for crid " + cridKey);
-                    	
+                          String nullDcn = "null";
+                        SlotsData  data=new SlotsData();
+                        data=getSlotById(cridKey,"PlacementProviderRules");
+                        data.setDcn(nullDcn);
                     }
                 }
             });
@@ -308,8 +318,6 @@ public class BidExConfig {
 //Getting each crid-> {provider->{mediatype & sizes}}
 
     public void setSizesIntoCrid(JsonNode bidExContent) {
-
-
         Map<String, Map<List<String>, Map<String , String>>> sizesData = new HashMap<>();
         JsonNode sizeConfig = bidExContent.get("PlacementProviderRules");
         if (sizeConfig != null && sizeConfig.isObject()) {
@@ -327,19 +335,25 @@ public class BidExConfig {
                                 JsonNode szs = sizesvalue.get("szs");
                                 if(szs !=null) {
                                     szs.forEach(sizeNode -> {
-                                        String sz = sizeNode.get("sz").toString();
-                                        String mediaType = sizeNode.get("mediatype").toString();
+                                         String sz = null;
+                                         String mediaType = null;
+                                        try{
+                                         sz = sizeNode.get("sz").toString();
+                                         mediaType = sizeNode.get("mediatype").toString();
                                         sizesData.get(cridKey).get(provider).put(sz, mediaType);
+                                        }catch(Exception e){
+                                        sz = "null";
+                                        mediaType = "null";
+                                        sizesData.get(cridKey).get(provider).put(sz, mediaType);
+
+                                        }
                                     });
                                 }
                             }
                         });
-
                     } catch (Exception e) {
                         // TODO: handle exception
                         log.error("Sizes extraction failed for crid " + cridKey);
-
-
                     }
                 }
             });
