@@ -108,7 +108,7 @@ public class bidexAndFeatureTests {
 		try {
 			
 
-			
+			page=replaceBidExUrl(page, yaml);
 			
 			
 			page.onRequest(request ->{
@@ -289,7 +289,7 @@ public class bidexAndFeatureTests {
 	// 		return dcnToCridMap;
 	// }
     
-    private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteria testData) {
+    private Page replaceBidExUrl(Page browserContext, TestCriteriaBo testData) {
 
 		for (String currentHost : bidExHosts) {
 			for (String currentController : bidExControlers) {
