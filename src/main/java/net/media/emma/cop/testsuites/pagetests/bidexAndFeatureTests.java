@@ -106,6 +106,11 @@ public class bidexAndFeatureTests {
 		
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
 		try {
+			
+
+			page=replaceBidExUrl(page, yaml);
+			
+			
 			page.onRequest(request ->{
 				urlFromNetworkTab.add(request.url());
 				listOfReqest.add(request);
@@ -166,7 +171,7 @@ public class bidexAndFeatureTests {
 	}
 
     
-    private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteria testData) {
+    private Page replaceBidExUrl(Page browserContext, TestCriteriaBo testData) {
 
 		for (String currentHost : bidExHosts) {
 			for (String currentController : bidExControlers) {

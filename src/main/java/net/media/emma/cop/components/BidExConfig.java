@@ -29,6 +29,7 @@ import net.media.emma.cop.testsuites.pagetests.TestCriteriaBo;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 
 @Builder @Getter @Setter @Slf4j @ToString
 public class BidExConfig {
@@ -91,23 +92,23 @@ public class BidExConfig {
 
         setCridAdunitPathMapping(bidExContent);
         setDcnIntoCrid(bidExContent);
-        setSizesIntoCrid(bidExContent);
+
         getInstreamDfpPlacements(bidExContent);
         getEnvironment(bidExContent);
         
         
-//        JsonNode featureResult = mapper.convertValue(getFeaturesData(bidExContent, feature), JsonNode.class);
+
         
         return getFeaturesData(bidExContent, feature, yaml, harFile, cookies, model, bidexController);
         
     }
 
-    //Getting list of cookies here, after waiting for 5 secs.
+
     public Map<String, String> displayCookies(List<Cookie> cookies)
     {
     	Map<String, String> allCookies=new HashMap<>();
     	for(Cookie cookie : cookies){
-//            log.info("Cookie: " + cookie.name + " : " + cookie.value);
+
             
             allCookies.put(cookie.name, cookie.value);
             
@@ -134,22 +135,7 @@ public class BidExConfig {
    {
    	Map<String, String> featureMap=new HashMap<>();
 
-//   	featureMap.put("InStreamVideoDfpPlacements", "Instream Video ");
    	featureMap.put("osrm", "Outstream Video");
-//   	featureMap.put("CridSizeMapForMultiAd","AdStacking 1.0");
-//   	featureMap.put("InsertSlotInLargeSlot","AdStacking 1.0");
-//   	featureMap.put("MultiAdSzComb","AdStacking 2.0");
-//   	featureMap.put("aucmods", "Ad-Stacking 2.0.0 ");
-//   	featureMap.put("FloorPrice", "Floor Data");
-//   	featureMap.put("KeyValuePairAssociations", "Key Value detected");
-//   	featureMap.put("DfpPlacements", "DfpPlacements Value");
-//    featureMap.put("PlacementProviderRules", "Placement-Provider-Rules -Value");
-//    featureMap.put("fpd", "fpd Value ");
-//    featureMap.put("cwrs", "cwrs Value ");
-//    featureMap.put("MultiBidTemplateConfig", "MultiBidConfig Value ");
-   	
-
-   	
    	featureMap.put("InStreamVideoDfpPlacements","Instream Video");
    	featureMap.put("InsertSlotInLargeSlot", "AdStacking 1.0 - insertslots_in_largeslots");
    	featureMap.put("CridSizeMapForMultiAd", "AdStacking 1.0 - crid_size_map_for_multi_ad");
@@ -185,14 +171,10 @@ public class BidExConfig {
 
     private Map<String, Object> getEnvironment(JsonNode bidExContent) {
     	
-//    	log.info("bid :" +bidExContent);
-		
     	JsonNode envConfig = bidExContent.get("Environment");
         
         List<String> envDetails= Arrays.asList("ip2ct","app","ip2sc","ip2c","ip");
     
-//        log.info("Environment " + envConfig.toString());
-
         Map<String , Object> feature =new HashMap<>();
         
         for(String env : envDetails)
@@ -206,10 +188,7 @@ public class BidExConfig {
        return feature;
 
 	}
-
-    
-    
-    
+  
 
 	public SlotsData getSlotById(String cridIn, String feature) {
 
@@ -317,7 +296,9 @@ public class BidExConfig {
 
 //Getting each crid-> {provider->{mediatype & sizes}}
 
-    public void setSizesIntoCrid(JsonNode bidExContent) {
+    private  Map<String, Map<List<String>, Map<String, String>>> setSizesIntoCrid(JsonNode bidExContent) {
+
+
         Map<String, Map<List<String>, Map<String , String>>> sizesData = new HashMap<>();
         JsonNode sizeConfig = bidExContent.get("PlacementProviderRules");
         if (sizeConfig != null && sizeConfig.isObject()) {
@@ -351,13 +332,20 @@ public class BidExConfig {
                                 }
                             }
                         });
+
+                        
+                        
                     } catch (Exception e) {
                         // TODO: handle exception
                         log.error("Sizes extraction failed for crid " + cridKey);
+                    
+
                     }
                 }
             });
+           
         }
+		return sizesData;
 
 
 
@@ -472,7 +460,8 @@ public class BidExConfig {
         bidexFeatureReport.setSlotsDetected(solts);
         bidexFeatureReport.setCookies(displayCookies(cookies));
         bidexFeatureReport.setUrlChecksReport(reportModel);
-       
+        bidexFeatureReport.setSlotsReport(getSlotsReport(reportModel, bidexContent));       
+        
 
         
         return bidexFeatureReport;
@@ -536,6 +525,153 @@ public class BidExConfig {
             String mediaType;
         }
 
+    }
+
+   
+    String urlLog = null ;
+    
+    public Map<String, Map<List<String>, Boolean>> getSlotsReport(URLChecksReportModel reportModel, JsonNode bidexContent)
+    {
+    	 List<String> listOfLogs=Arrays.asList("AWLog","APLog","PRLog");
+    	 
+    	
+    	
+    	try {
+
+//            Map<String,Map<String, Map<List<String>, Boolean>>> slotsReport=new HashMap<>();
+    		Map<String, Map<List<String>, Boolean>> slotsReport=new HashMap<>();
+            
+
+            //call setSizesIntoCrid 
+            Map<String, Map<List<String>, Map<String, String>>> sizesData = setSizesIntoCrid(bidexContent);
+            
+          
+            urlLog="APLog";
+            
+            PositiveURLChecks logData = reportModel.getPositiveUrlChecks().get("APLog"); ;
+            if(logData == null)
+            {
+            	urlLog="PRLog";
+            	logData=reportModel.getPositiveUrlChecks().get("PRLog");
+//            	if(logData==null)
+//            	{
+//            		urlLog="PRLog";
+//                	logData=reportModel.getPositiveUrlChecks().get("PRLog");
+//            	}
+            	
+            }
+
+            List<String>  listOfMatchingUrl=logData.getMatchingUrls();
+            
+
+            
+            Set<String> set=new HashSet<>();
+            
+           
+            
+//            Map<String, Map<List<String>, Map<String, String>>> getSlotsDataFromLog=new HashMap<>();
+            Map<String, Map<List<String>, Map<String, String>>> getSlotsDataFromLog=new HashMap<>();
+            
+            
+            for(String matchedUrl: listOfMatchingUrl)
+            {
+            	int index=matchedUrl.indexOf("&crid=");
+            	String crid=matchedUrl.substring(index+6, matchedUrl.indexOf("&", index+6));
+
+            	set.add(crid);
+            	     	
+            	
+            	int sizeIndex=matchedUrl.indexOf("&size=");
+            	int pvidIndex=matchedUrl.indexOf("&pvid=") ; 
+            	int getMediaType=matchedUrl.indexOf("res_mtype=");
+            	
+            	 String size=matchedUrl.substring(sizeIndex+6, matchedUrl.indexOf("&",sizeIndex+6));
+                 String pvid=matchedUrl.substring(pvidIndex+6, matchedUrl.indexOf("&",pvidIndex+6));
+                 List<String> listOfPvid=Collections.singletonList(pvid);
+                 String mediaType=matchedUrl.substring(getMediaType+10,matchedUrl.indexOf("&",getMediaType+10));
+            	
+                 getSlotsDataFromLog.computeIfAbsent(crid, k->new HashMap<>()).put(listOfPvid, Collections.singletonMap(size, mediaType));
+
+                 log.info("crid:"+crid+"  "+"size:"+size+"  "+"pvid:"+pvid+" "+"mediaType:"+mediaType);
+              
+            }
+
+            sizesData.entrySet().forEach(entry->{
+               			
+               			String crid=entry.getKey();
+               			
+               			getSlotsDataFromLog.entrySet().forEach(entryOfLogData->{
+               				
+               				if(crid.equals(entryOfLogData.getKey()))
+                   			{
+                   				Map<List<String>, Map<String, String>>  valueOfSizes=entry.getValue();
+                   				
+                   				Map<List<String>, Map<String, String>> responseValue=entryOfLogData.getValue();
+                   				
+
+                   				
+                   				responseValue.entrySet().forEach(response->{
+                   					
+                   					List<String> listOfPvid=response.getKey();
+                   					
+                   					valueOfSizes.entrySet().forEach(sizeResponse->{
+                   						
+                   						if(sizeResponse.getKey().equals(listOfPvid))
+                   						{
+                   							Map<String, String> data=sizeResponse.getValue();
+                   							Map<String, String> valueFromResponse=response.getValue();
+                   							
+                   							for(String key:data.keySet()) {
+                   								
+
+                   								String sz=key.replace("\"", "");
+                   								
+                   								String mType=data.get(key);
+                   								
+                   								String mediaTypes = mType.replace("\"", "");
+                   								
+                   								log.info("Key : "+sz+" Answer :"+mediaTypes);
+                   								
+                   								for(String sizeMediaType :valueFromResponse.keySet())
+                   								{
+                   									
+                   									
+                   									String mediaType=valueFromResponse.get(sizeMediaType);
+                   									
+                   									log.info("valueKey"+ sizeMediaType+ " valueAnswer :"+mediaType);
+                   									
+                   									if(sz.equals(sizeMediaType) && mediaTypes.equals(mediaType))
+                   									{
+                   										slotsReport.put(crid, Collections.singletonMap(listOfPvid, true));
+                   									}
+                   									else {
+                   										slotsReport.put(crid, Collections.singletonMap(listOfPvid, false));
+                   									}
+                   									
+                   								}
+                   								
+                   							}
+                	
+                   						}
+                   						
+                   					});
+                   					
+                   				});	
+                   				
+                   			}
+               				
+               			});
+       
+               		});
+            
+           
+    	return slotsReport;
+    	}
+    	catch (Exception e) {
+    		log.info("Error "+e.getMessage());		
+    		return null;
+		}
+    	
     }
 
 }
