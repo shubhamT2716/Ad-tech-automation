@@ -253,9 +253,9 @@ public class BidExConfig {
     }
 
     public void setDcnIntoCrid(JsonNode bidExContent) {
-        //get dcn mapping from sample bidex config
+       
     	
-    	Map<String , Object> map=new HashMap<>();
+//    	Map<String , Object> map=new HashMap<>();
         JsonNode dcnConfig = bidExContent.get("PlacementProviderRules");
         if (dcnConfig != null && dcnConfig.isObject()) {
             dcnConfig.fields().forEachRemaining(entry -> {
@@ -530,45 +530,40 @@ public class BidExConfig {
    
     String urlLog = null ;
     
-    public Map<String, Map<List<String>, Boolean>> getSlotsReport(URLChecksReportModel reportModel, JsonNode bidexContent)
+    public Map<String, Map<String, Map<List<String>, Boolean>>> getSlotsReport(URLChecksReportModel reportModel, JsonNode bidexContent)
     {
-    	 List<String> listOfLogs=Arrays.asList("AWLog","APLog","PRLog");
     	 
-    	
-    	
     	try {
 
-//            Map<String,Map<String, Map<List<String>, Boolean>>> slotsReport=new HashMap<>();
-    		Map<String, Map<List<String>, Boolean>> slotsReport=new HashMap<>();
-            
-
-            //call setSizesIntoCrid 
+            Map<String,Map<String, Map<List<String>, Boolean>>> slotsReport=new HashMap<>();
+//    		Map<String, Map<List<String>, Boolean>> slotsReport=new HashMap<>();
+     
             Map<String, Map<List<String>, Map<String, String>>> sizesData = setSizesIntoCrid(bidexContent);
             
-          
-            urlLog="APLog";
+            urlLog="AWLog";
             
-            PositiveURLChecks logData = reportModel.getPositiveUrlChecks().get("APLog"); ;
-            if(logData == null)
+            PositiveURLChecks logData = reportModel.getPositiveUrlChecks().get("AWLog"); ;
+            
+            List<String> listOfMatchingUrl=logData.getMatchingUrls();
+            
+            if(listOfMatchingUrl.isEmpty()|| listOfMatchingUrl==null|| logData==null)
             {
-            	urlLog="PRLog";
-            	logData=reportModel.getPositiveUrlChecks().get("PRLog");
-//            	if(logData==null)
-//            	{
-//            		urlLog="PRLog";
-//                	logData=reportModel.getPositiveUrlChecks().get("PRLog");
-//            	}
+            	urlLog="APLog";
+            	logData=reportModel.getPositiveUrlChecks().get("APLog");
+            	listOfMatchingUrl=logData.getMatchingUrls();
+            	
+            	if(listOfMatchingUrl.isEmpty()|| listOfMatchingUrl==null||logData==null)
+            	{
+            		urlLog="PRLog";
+                	logData=reportModel.getPositiveUrlChecks().get("PRLog");
+                	listOfMatchingUrl=logData.getMatchingUrls();
+            	}
             	
             }
-
-            List<String>  listOfMatchingUrl=logData.getMatchingUrls();
-            
-
             
             Set<String> set=new HashSet<>();
             
-           
-            
+          
 //            Map<String, Map<List<String>, Map<String, String>>> getSlotsDataFromLog=new HashMap<>();
             Map<String, Map<List<String>, Map<String, String>>> getSlotsDataFromLog=new HashMap<>();
             
@@ -639,13 +634,15 @@ public class BidExConfig {
                    									String mediaType=valueFromResponse.get(sizeMediaType);
                    									
                    									log.info("valueKey"+ sizeMediaType+ " valueAnswer :"+mediaType);
+
                    									
                    									if(sz.equals(sizeMediaType) && mediaTypes.equals(mediaType))
                    									{
-                   										slotsReport.put(crid, Collections.singletonMap(listOfPvid, true));
+	
+                                                        slotsReport.computeIfAbsent(urlLog, k->new HashMap<>()).put(crid, Collections.singletonMap(listOfPvid, true));
                    									}
                    									else {
-                   										slotsReport.put(crid, Collections.singletonMap(listOfPvid, false));
+                                                        slotsReport.computeIfAbsent(urlLog, k->new HashMap<>()).put(crid, Collections.singletonMap(listOfPvid, false));
                    									}
                    									
                    								}
