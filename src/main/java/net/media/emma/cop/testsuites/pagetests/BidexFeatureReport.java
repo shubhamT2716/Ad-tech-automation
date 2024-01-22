@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.media.emma.cop.components.BidExConfig.SlotsData;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.TestStatus;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 
@@ -22,7 +23,7 @@ public class BidexFeatureReport {
 	TestMetaDataBidex testMetaDataBidex;
 	Map<String, Object> businessFeaturesDetected;
 	Map<String , Object> environmentDetails;
-	Map<String, Object> slotsDetected;
+	Map<String, List<SlotsData>> slotsDetected;
 	Map<String, Object> allFeatureData;
 	Map<String, String> cookies;
 	URLChecksReportModel urlChecksReport;

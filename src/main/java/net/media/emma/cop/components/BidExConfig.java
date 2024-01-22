@@ -440,12 +440,12 @@ public class BidExConfig {
            featureResult.put(feature, featureMap);
         }
        
-       Map<String, Object> solts=new HashMap<>();
+       Map<String, List<SlotsData>> solts=new HashMap<>();
         
         for(SlotsData data: slotsData)
         {
 //        	log.info("slotsData : "+slotsData);
-        	solts.put(data.getCrid(), data);
+        	solts.computeIfAbsent(data.getCrid(), k -> new ArrayList<>()).add(data);
         }
         
         
@@ -460,7 +460,8 @@ public class BidExConfig {
         bidexFeatureReport.setSlotsDetected(solts);
         bidexFeatureReport.setCookies(displayCookies(cookies));
         bidexFeatureReport.setUrlChecksReport(reportModel);
-        bidexFeatureReport.setSlotsReport(getSlotsReport(reportModel, bidexContent));       
+        bidexFeatureReport.setSlotsReport(getSlotsReport(reportModel, bidexContent));    
+           
         
 
         
