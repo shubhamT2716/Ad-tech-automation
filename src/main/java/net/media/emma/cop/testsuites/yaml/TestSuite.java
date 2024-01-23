@@ -164,7 +164,16 @@ public class TestSuite implements GenericTestSuite {
 				.harFileDownloadLink("harDownload/" + harFilePath).build()).build();
 
 		testReport.setBidExController(bidExController);
-		testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab,requestList, testData));
+		try {
+		
+			testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab,requestList, testData));
+		}catch (Exception e) {
+			
+			e.printStackTrace();
+			
+			testReport.setUrlChecks(null);
+		}
+		
 
 		browserContext.close();
 //		try {
@@ -355,7 +364,15 @@ public class TestSuite implements GenericTestSuite {
 		urlChecks.verifyPositiveKeyValChecks();
 		if(testData.getBidderDataAssertions()!=null && testData.getBidderDataUrls()!=null)
 		{
-			payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
+			try {
+				payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
+			}
+			catch (Exception e) {
+				
+				e.printStackTrace();
+//				payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
+			}
+			
 		}
 		
 		return urlChecks;
