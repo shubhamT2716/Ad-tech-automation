@@ -31,13 +31,21 @@ public class YamlUtils {
 
             for(String yamlContent: yamlFiles)
             {
+            	
+//            	System.err.println(yamlContent);
+            	
                     // read yaml file as map
             	Map<String, Object> data2=yaml.load(yamlContent);
+            	
+            	
+            	System.out.println(data2);;
 //                      map = yaml.load(yamlContent);
             	meargeYaml(map, data2);	
             }
             
             String finalYaml=yaml.dump(map);
+            
+            System.err.println("final Yaml  = "+finalYaml  );
             
             TestCriteriaBo bo=mapper.readValue(finalYaml, TestCriteriaBo.class);
             

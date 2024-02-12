@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
+import de.sstoehr.harreader.model.HttpStatus;
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
@@ -111,6 +112,44 @@ public class WebController {
 		return mav;
 
 	}
+	
+	@GetMapping("/smokeTestSuiteApi")
+	@ResponseBody
+	public ResponseEntity<?>/*ModelAndView*/ smokeTestAPi(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
+			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles) {
+//			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
+		
+		
+		List<String> commonFile=new ArrayList<>(getCommonFilesForSmokeTest());
+		
+		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
+
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFile, false);
+
+		try {
+//			mav.addObject("message2", result.getSmokeReport());
+//			mav.addObject("message1", result.getRawData());
+//			mav.addObject("message3", result.getBidExReport());
+//			mav.addObject("message4", result.getErrorMessage());
+			
+			return ResponseEntity.ok(result);
+
+		} catch (Exception e) {
+			log.info("Error reading file.", e);
+			mav.addObject("message", e.getMessage());
+			
+			return (ResponseEntity<?>) ResponseEntity.badRequest();
+		}
+
+		
+
+	}
+	
+	
+	
+	 
+	
+	
 
 	@GetMapping("/smokeTestSuite/{fileName}")
 	public ModelAndView runReortForEmail(@PathVariable("fileName") String fileName) {

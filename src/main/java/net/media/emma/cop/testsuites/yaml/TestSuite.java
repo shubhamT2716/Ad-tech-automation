@@ -1,5 +1,7 @@
 package net.media.emma.cop.testsuites.yaml;
 
+import java.awt.Desktop;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,6 +63,11 @@ public class TestSuite implements GenericTestSuite {
 			"hbx-stage.media.net");
 	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");// , "catchpoint_content.js",
 																					// "topics.js");
+	
+	List<String> urlController=Arrays.asList("checksync.php");
+	
+	
+	
 
 	private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
 
@@ -106,35 +113,56 @@ public class TestSuite implements GenericTestSuite {
 			doLogin(browserContext, testData);
 
 		}
+		
+		BrowserContext context=replaceUrl(browserContext, testData);
 
-		browserContext = replaceBidExUrl(browserContext, testData);
+		context = replaceBidExUrl(context, testData);
+		
+		
+		
 		if(testData.getResponseSimulate()!=null)
 		{
-			browserContext = attachResponseMocking(browserContext, testData);
+			context = attachResponseMocking(context, testData);
 		}
 		
 		// browserContext = injectDOM(browserContext, testData);
 
+		
+		
+		
+		
 		// list of arrays initialization
 		List<String> urlFromNetworkTab = new ArrayList<>();
 		List<Request> requestList = new ArrayList<>();
-
-		browserContext.onRequest(request -> {
+		
+		
+		context.onRequest(request -> {
 
 			urlFromNetworkTab.add(request.url());
 			requestList.add(request);
 
 		});
+		
+		log.info("request "+requestList);
 
 		// log.info(urlFromNetworkTab.toString());
 		// return urlFromNetworkTab;
 
 		List<String> consoleMessage = new ArrayList<>();
+		
+		
+		
 
 		try {
 
-			browserContext.setDefaultTimeout(90000); // 70 seconds
-			Page page = browserContext.newPage();
+			context.setDefaultTimeout(90000); // 70 seconds
+			
+//			Desktop.getDesktop().browse(new URI(testData.getPublisherUrl()));
+			
+			
+			
+			Page page = context.newPage();
+			
 			consoleMessage = getConsoleErrors(page);
 			page.navigate(testData.getPublisherUrl());
 
@@ -153,7 +181,10 @@ public class TestSuite implements GenericTestSuite {
 		// return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
 		// return getNetworkCallAssertions(requestList, testData);
 
+	
+		
 		BidExController bidExController = getBidExData(requestList, testData);
+		
 		bidExController.setConsoleMessages(consoleMessage);
 
 		TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
@@ -169,13 +200,13 @@ public class TestSuite implements GenericTestSuite {
 			testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab,requestList, testData));
 		}catch (Exception e) {
 			
-			e.printStackTrace();
+//			e.printStackTrace();
 			
 			testReport.setUrlChecks(null);
 		}
 		
 
-		browserContext.close();
+		context.close();
 //		try {
 //
 //			return jsonWriter.writeValueAsString(testReport);
@@ -311,6 +342,8 @@ public class TestSuite implements GenericTestSuite {
 		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
 
 		for (String requestUrl : requestList) {
+			
+			
 			
 //			if(!URLDataProcessing.isValidUrl(requestUrl))
 //			{
@@ -541,6 +574,55 @@ public class TestSuite implements GenericTestSuite {
 //		}
 //		return url;
 //	}
+	
+	
+	private BrowserContext replaceUrl(BrowserContext browserContext, TestCriteriaBo testData)
+	{
+
+		for (String currentHost : bidExHosts) {
+			for (String currentController : urlController) {
+
+				browserContext.route("**/" + currentHost + "/" + currentController + "*", route -> {
+
+					String replacedURL = "";
+					String originalURl = route.request().url();
+
+					for (String currentHostInner : bidExHosts) {
+						if (originalURl.contains(currentHostInner)) {
+							replacedURL = originalURl.replace(currentHost, testData.getEnvironment());
+							break;
+						}
+					}
+
+//					if(testData.getBidexReplaceString()!=null)
+//					{
+//						for (Entry<String, String> entry : testData.bidexReplaceString.entrySet()) {
+//							
+//							if(entry==null)
+//							{
+//								continue;
+//							}
+//							
+//							else  if (originalURl.contains(entry.getKey())) {
+//								replacedURL = replacedURL.replace(entry.getKey(), entry.getValue());
+//							}
+//						}
+//					}
+					
+					
+
+				
+					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
+					
+					log.info("replace Url  =  " + replacedURL);
+				});
+			}
+		}
+		
+		return browserContext;
+		
+	}
+
 
 	private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteriaBo testData) {
 

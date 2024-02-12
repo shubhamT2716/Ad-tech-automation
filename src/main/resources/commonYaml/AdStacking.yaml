@@ -1,0 +1,13 @@
+networkCallsPositive: {
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+}
+
+keysToVerifyPositive: {
+  #GAMAPADCall: { prev_scp: { y_asbkt: ["v2asdfasdf"]},}
+   GAMAPADCall: { prev_scp:  ["y_asbkt"]}
+}
+
+keysToVerifyNegative: {
+ # GAMAPADCall: {prev_scp: { y_dnb: ["1"]},}
+  GAMAPADCall: { prev_scp:  ["y_dnb"]}
+}
