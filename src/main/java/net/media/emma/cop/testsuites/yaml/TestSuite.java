@@ -113,22 +113,20 @@ public class TestSuite implements GenericTestSuite {
 			doLogin(browserContext, testData);
 
 		}
-		
-		BrowserContext context=replaceUrl(browserContext, testData);
 
-		context = replaceBidExUrl(context, testData);
+		browserContext = replaceBidExUrl(browserContext, testData);
 		
 		
 		
 		if(testData.getResponseSimulate()!=null)
 		{
-			context = attachResponseMocking(context, testData);
+			browserContext = attachResponseMocking(browserContext, testData);
 		}
 		
 		// browserContext = injectDOM(browserContext, testData);
 
 		
-		
+		BrowserContext context=replaceUrl(browserContext, testData);
 		
 		
 		// list of arrays initialization
@@ -197,7 +195,11 @@ public class TestSuite implements GenericTestSuite {
 		testReport.setBidExController(bidExController);
 		try {
 		
-			testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab,requestList, testData));
+			URLChecksReportModel  model=getUrlAssertionsData(urlFromNetworkTab,requestList, testData);
+			
+//			getFeatureReport(harFilePath, urlFromNetworkTab);
+			
+			testReport.setUrlChecks(model);
 		}catch (Exception e) {
 			
 //			e.printStackTrace();
@@ -219,6 +221,12 @@ public class TestSuite implements GenericTestSuite {
 
 		return testReport;
 	}
+	
+	
+	
+	
+	
+	
 
 	private List<Request> getBidExRequestObjects(List<Request> listOfPwRequestObjects, String environmentHost) {
 
@@ -410,6 +418,20 @@ public class TestSuite implements GenericTestSuite {
 		
 		return urlChecks;
 	}
+	
+//	
+//	private void getFeatureReport(String yaml , model )
+//	{
+//		
+//	}
+//	
+	
+	
+	
+	
+	
+	
+	
 
 	/*private void verifyBidderDataValuesComparisons(URLChecksReportModel urlChecks, List<Request> requestList, TestCriteriaBo testData) {
 		Map<String, Map<String, List<URLChecksReportModel.DataAssertion>>> bidderDataAssertions = testData.getBidderDataAssertions();
@@ -611,13 +633,12 @@ public class TestSuite implements GenericTestSuite {
 					
 					
 
-				
+				log.info("replace Url  =  " + replacedURL);
 					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
-					
-					log.info("replace Url  =  " + replacedURL);
 				});
 			}
 		}
+		
 		
 		return browserContext;
 		

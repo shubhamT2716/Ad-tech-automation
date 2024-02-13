@@ -31,6 +31,8 @@ public class TestCriteriaBo {
 
     Map<String, String> bidderDataUrls;
     Map<String, List<BidderDataAssertions>> bidderDataAssertions;
+    
+    Map<String, Object> feature;
 
     List<ResponseSimulateParams> responseSimulate;
     List<DomInjectParams> domInject;
