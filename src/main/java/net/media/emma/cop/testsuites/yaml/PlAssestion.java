@@ -78,7 +78,12 @@ public class PlAssestion {
                 if (passedForOneImpObject) {
                     createReport(urlChecksReportModel, assertion,bidder, bidderUrl, "All assertions passed", URLChecksReportModel.TestResult.PASS);
                 } else {
-                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, errorMap.get("data")+ " Failed Asssertions - " + "Json Path - " + errorMap.get("jsonPath") +" , Expected : " + errorMap.get("expectedValue") + " and Actual : " + errorMap.get("actualValue") , URLChecksReportModel.TestResult.FAIL);
+                	
+                	
+                	
+                	String message="bidderAssertion fail:  "+errorMap;
+                	
+                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, message , URLChecksReportModel.TestResult.FAIL);
                 }
             }
         }
