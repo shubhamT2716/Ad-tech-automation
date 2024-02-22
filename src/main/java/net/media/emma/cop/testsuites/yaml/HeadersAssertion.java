@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class HeadersAssertion {
 
+    static String failedMessage = "";
+
     public void verifyRequestResponseHeaders(URLChecksReportModel urlChecksReportModel, List<Request> requestList, TestCriteriaBo testData) {
         Map<String, Map<String, Object>> requestHeaders = testData.getRequestHeaders();
         Map<String, Map<String, Object>> responseHeaders = testData.getResponseHeaders();
@@ -25,8 +27,9 @@ public class HeadersAssertion {
 
             List<Request> matchingRequests = filterMatchingRequests(requestList, bidderUrl);
             if (matchingRequests.isEmpty()) continue;
-
             for (Request request : matchingRequests) {
+                failedMessage = "";
+
                 Map<String, Object> actualRequestHeaders = getRequestHeaders(request);
                 Map<String, Object> actualResponseHeaders = getResponseHeaders(request);
 
@@ -36,10 +39,10 @@ public class HeadersAssertion {
                     break;
                 }
             }
-            if(passed) {
+            if (passed) {
                 createReport(urlChecksReportModel, bidder, "All headers passed", URLChecksReportModel.TestResult.PASS, bidderUrl);
-            } else{
-                createReport(urlChecksReportModel, bidder, "Failed headers", URLChecksReportModel.TestResult.FAIL,bidderUrl);
+            } else {
+                createReport(urlChecksReportModel, bidder, failedMessage, URLChecksReportModel.TestResult.FAIL, bidderUrl);
             }
         }
     }
@@ -50,18 +53,18 @@ public class HeadersAssertion {
 
     private Map<String, Object> getRequestHeaders(Request request) {
         // Implement logic to extract and return request headers
-        return new HashMap<String,Object>(request.allHeaders());
+        return new HashMap<String, Object>(request.allHeaders());
     }
 
     private Map<String, Object> getResponseHeaders(Request request) {
         // Implement logic to extract and return response headers
-        return new HashMap<String,Object>(request.response().allHeaders());
+        return new HashMap<String, Object>(request.response().allHeaders());
     }
 
     private boolean verifyHeaders(Map<String, Object> expectedHeaders, Map<String, Object> actualHeaders) {
 
         boolean isPassed = true;
-        for(Map.Entry<String, Object> entry : expectedHeaders.entrySet()) {
+        for (Map.Entry<String, Object> entry : expectedHeaders.entrySet()) {
             String key = entry.getKey().toLowerCase();
             Object expectedValue = entry.getValue();
             Object actualValue = actualHeaders.get(key);
@@ -81,6 +84,7 @@ public class HeadersAssertion {
                         String expectedKey = expectedEntry.getKey().trim();
                         String expectedVal = expectedEntry.getValue().trim();
                         if (!actualMap.containsKey(expectedKey) || !actualMap.get(expectedKey).equals(expectedVal)) {
+                            failedMessage = failedMessage + expectedKey + " Expected Value: " + expectedVal + " Actual Value: " + actualMap.get(expectedKey);
                             isPassed = false;
                             break;
                         }
@@ -92,10 +96,12 @@ public class HeadersAssertion {
             } else if (expectedValue instanceof String && actualValue != null) {
                 // Continue with the existing string comparison logic
                 if (!actualValue.toString().equals(expectedValue)) {
+                    failedMessage = failedMessage + key + " Expected Value: " + expectedValue + " Actual Value: " + actualValue;
                     isPassed = false;
                     break;
                 }
-            } else if(actualValue == null) {
+            } else if (actualValue == null) {
+                failedMessage = failedMessage + key + " Expected Value: " + expectedValue + " Actual Value: " + actualValue;
                 isPassed = false;
                 break;
             }
@@ -115,8 +121,5 @@ public class HeadersAssertion {
         // Add the new report to the list
         existingReports.add(assertionReport);
         urlChecksReportModel.getHeaderAssertions().put(bidder, existingReports);
-
     }
-
-
 }
