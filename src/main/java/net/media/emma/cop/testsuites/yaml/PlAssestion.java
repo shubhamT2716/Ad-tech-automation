@@ -78,10 +78,8 @@ public class PlAssestion {
                 if (passedForOneImpObject) {
                     createReport(urlChecksReportModel, assertion,bidder, bidderUrl, "All assertions passed", URLChecksReportModel.TestResult.PASS);
                 } else {
-                	
-                	
-                	
-                	String message="bidderAssertion fail:  "+errorMap;
+                
+                	String message="bidderAssertion fail:  "+"Expected Value : "+errorMap.get("expected")+ "  Actual Value : "+errorMap.get("actualValue")+"  JsonPath: "+errorMap.get("jsonPath");
                 	
                     createReport(urlChecksReportModel, assertion,bidder, bidderUrl, message , URLChecksReportModel.TestResult.FAIL);
                 }
@@ -103,8 +101,8 @@ public class PlAssestion {
         else{
             errorMap.put("jsonPath", path);
             errorMap.put("data", "Matching Json Path");
-            errorMap.put("expectedValue ", expectedValue);
             errorMap.put("actualValue", jsonPath.readValueFromJson(postData,removeJsonPathIndexForImp(path)));
+            errorMap.put("expected", expectedValue);
             return false;
         }
     }
@@ -118,8 +116,8 @@ public class PlAssestion {
                 passForAllRequest = false;
                 errorMap.put("jsonPath", path);
                 errorMap.put("data", "Request Data");
-                errorMap.put("expectedValue ", expectedValue);
                 errorMap.put("actualValue", jsonPath.readValueFromJson(parsedData,removeJsonPathIndexForImp(path)));
+                errorMap.put("expected", expectedValue);
                 break;
             }
         }
