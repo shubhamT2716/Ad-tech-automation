@@ -53,6 +53,34 @@ keysToVerifyAnyOneOf: {
 
 }
 
+responseHeaders: {
+  YHB: {
+    # Cache-Control: max-age=0, no-cache, no-storese,
+    server: nginx,
+    #   content-Type: application/json,
+    #  cookie: visitor-id=3509139774772278000V10,
+  },
+  YPBJS: {
+    #Cache-Control: max-age=0, no-cache, no-storese,
+    content-Type: application/json,
+    # Set-Cookie: [SameSite: "None"]
+  },
+
+}
+
+requestHeaders: {
+  YHB: {
+    accept: '*/*',
+    user-agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
+    cookie: [visitor-id: "3515927955937478000V10"]
+  },
+  YPBJS: {
+    accept: '*/*',
+    user-agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
+  },
+
+}
+
 bidderDataUrls: {
   YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBL12EX",
   YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
