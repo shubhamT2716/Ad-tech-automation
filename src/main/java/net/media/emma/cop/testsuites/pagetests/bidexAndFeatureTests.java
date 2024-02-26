@@ -149,6 +149,7 @@ public class bidexAndFeatureTests {
 		finalConfig = bidexResp.substring(startIndex-12);
 		 JsonNode bidexJson= mapper.readValue(finalConfig, JsonNode.class);
 
+		 featureChecks(urlFromNetworkTab, yaml);
 		
 		page.waitForTimeout(5000);
 		List<Cookie> cookies = page.context().cookies();
@@ -286,6 +287,32 @@ public class bidexAndFeatureTests {
 //		}
 		
 		return urlChecks;
+	}
+    
+    
+    public void featureChecks(List<String> requestList, TestCriteriaBo criteriaBo) {
+    	
+    	for(String requestUrl: requestList )
+    	{
+    		Map.Entry<String, String> urlData=positiveURLPatternExistsForFeature(requestUrl, criteriaBo);
+    		
+    		System.err.println(urlData);
+    		
+    	}
+    	
+    }
+    
+    private Map.Entry<String, String> positiveURLPatternExistsForFeature(String currentUrl, TestCriteriaBo testData) {
+
+		for (Map.Entry<String, String> urlData : testData.getFeatureNetworkCallsPositive().entrySet()) {
+
+			if (currentUrl.startsWith(urlData.getValue())) {
+
+				return urlData;
+			}
+		}
+
+		return null;
 	}
     
     

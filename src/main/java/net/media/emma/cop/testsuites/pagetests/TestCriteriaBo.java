@@ -26,5 +26,17 @@ public class TestCriteriaBo {
 
     Map<String, String> bidderDataUrls;
     Map<String, List<BidderDataAssertions>> bidderDataAssertions;
+    
+    Map<String, String> featureNetworkCallsPositive;
+    Map<String , Map<String , Map<String, Object>>> featureKeysToVerifyPositive;
+    Map<String , Map<String , Map<String, Object>>> featureKeysToVerifyNagative;
+    
+    
+//    public class FeatureKeysToVerify{
+//    	
+//    	Map<String , Map<String, Object>> featureKeysToVerifyPositive;
+//    	
+//    }
+    
 	
 }
