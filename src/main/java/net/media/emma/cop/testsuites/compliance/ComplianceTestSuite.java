@@ -49,7 +49,7 @@ public class ComplianceTestSuite {
     private static String windscribeSearchLocation = "xpath=//div//i";
     private static String windscribeSearchbox = "xpath=//input[contains(@class,'css-1c1txoj')]";
     private static String windscribeParisLoc = "xpath=(//div[@aria-label='Paris'])[1]";
-    private static String acceptAllBtn = "xpath=//button[text()='Accept All']";
+    private static String acceptAllBtn = "xpath=//button[text()='I Accept']";
 
 
     String url = "chrome-extension://hnmpcagpplmpfojmgmnngilcnanddlhb/popup.html";
@@ -242,7 +242,14 @@ public class ComplianceTestSuite {
     }*/
 
     private LinkedHashMap<String, String> getTcfApiResponse(Page page) {
-        Object d = page.evaluate("() => {\n" +
+    	try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	Object d = page.waitForFunction("() => {\n" +
                 "  return new Promise((resolve) => {\n" +
                 "    window.__tcfapi(\"addEventListener\", 2, (tcfApiInfo, success) => {\n" +
                 "      if (success && isSet(tcfApiInfo)) {\n" +
@@ -251,6 +258,16 @@ public class ComplianceTestSuite {
                 "    });\n" +	
                 "  });\n" +
                 "}");
+
+//        Object d = page.evaluate("() => {\n" +
+//                "  return new Promise((resolve) => {\n" +
+//                "    window.__tcfapi(\"addEventListener\", 2, (tcfApiInfo, success) => {\n" +
+//                "      if (success && isSet(tcfApiInfo)) {\n" +
+//                "        resolve(tcfApiInfo);\n" +
+//                "      }\n" +
+//                "    });\n" +
+//                "  });\n" +
+//                "}");
         return (LinkedHashMap<String, String>) d;
     }
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -21,6 +22,8 @@ public class PlAssestion {
 
     @Autowired
     private JsonPath jsonPath;
+
+    HashMap<String, Object> errorMap = new HashMap<>();
 
     public void verifyBidderDataAssertions(URLChecksReportModel urlChecksReportModel, List<Request> requestList, TestCriteriaBo testData) {
         Map<String, List<TestCriteriaBo.BidderDataAssertions>> bidderDataAssertions = testData.getBidderDataAssertions();
@@ -72,11 +75,13 @@ public class PlAssestion {
                         }
                     }
                 }
-
                 if (passedForOneImpObject) {
                     createReport(urlChecksReportModel, assertion,bidder, bidderUrl, "All assertions passed", URLChecksReportModel.TestResult.PASS);
                 } else {
-                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, "Failed assertions", URLChecksReportModel.TestResult.FAIL);
+                
+                	String message="bidderAssertion fail:  "+"Expected Value : "+errorMap.get("expected")+ "  Actual Value : "+errorMap.get("actualValue")+"  JsonPath: "+errorMap.get("jsonPath");
+                	
+                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, message , URLChecksReportModel.TestResult.FAIL);
                 }
             }
         }
@@ -90,7 +95,16 @@ public class PlAssestion {
         TestCriteriaBo.MatchingJsonPath matchingJsonPath = assertion.getMatchingJsonPath();
         String path = matchingJsonPath.getJsonPath().replaceFirst("x", Matcher.quoteReplacement("$"));
         String expectedValue = matchingJsonPath.getExpectedValue();
-        return jsonPath.compareValueInJson(postData, removeJsonPathIndexForImp(path), expectedValue);
+        if(jsonPath.compareValueInJson(postData, removeJsonPathIndexForImp(path), expectedValue)) {
+            return true;
+        }
+        else{
+            errorMap.put("jsonPath", path);
+            errorMap.put("data", "Matching Json Path");
+            errorMap.put("actualValue", jsonPath.readValueFromJson(postData,removeJsonPathIndexForImp(path)));
+            errorMap.put("expected", expectedValue);
+            return false;
+        }
     }
 
     private boolean verifyDataAssertionsRequest(List<TestCriteriaBo.RequestData> dataAssertionList, String parsedData) {
@@ -100,6 +114,10 @@ public class PlAssestion {
             String expectedValue = dataAssertion.getValue();
             if(!jsonPath.compareValueInJson(parsedData, removeJsonPathIndexForImp(path), expectedValue)) {
                 passForAllRequest = false;
+                errorMap.put("jsonPath", path);
+                errorMap.put("data", "Request Data");
+                errorMap.put("actualValue", jsonPath.readValueFromJson(parsedData,removeJsonPathIndexForImp(path)));
+                errorMap.put("expected", expectedValue);
                 break;
             }
         }
@@ -113,6 +131,10 @@ public class PlAssestion {
             String expectedValue = dataAssertion.getValue();
             if(!jsonPath.compareValueInJson(parsedData, removeJsonPathIndexForImp(path), expectedValue)) {
                 passForAllResponse = false;
+                errorMap.put("jsonPath", path);
+                errorMap.put("data", "Response Data");
+                errorMap.put("expectedValue ", expectedValue);
+                errorMap.put("actualValue", jsonPath.readValueFromJson(parsedData,removeJsonPathIndexForImp(path)));
                 break;
             }
         }
@@ -121,7 +143,7 @@ public class PlAssestion {
     }
 
     private void createReport(URLChecksReportModel urlChecksReportModel, TestCriteriaBo.BidderDataAssertions bidderDataAssertions , String bidder, String url, String message, URLChecksReportModel.TestResult result) {
-        
+
         URLChecksReportModel.BidderDataAssertion assertionReport = URLChecksReportModel.BidderDataAssertion.builder()
                 .message(message)
                 .testResult(result)

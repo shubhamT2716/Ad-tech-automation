@@ -21,6 +21,11 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Request;
+import com.microsoft.playwright.Route;
+import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.Timing;
 
 import lombok.extern.slf4j.Slf4j;
@@ -136,7 +141,13 @@ public class TestSuite implements GenericTestSuite {
         }
 
         browserContext = replaceBidExUrl(browserContext, testData);
-        browserContext = attachResponseMocking(browserContext, testData);
+
+		if(testData.getResponseSimulate()!=null)
+		{
+			browserContext = attachResponseMocking(browserContext, testData);
+		}
+
+       
         // browserContext = injectDOM(browserContext, testData);
 
         // list of arrays initialization
@@ -151,77 +162,87 @@ public class TestSuite implements GenericTestSuite {
 
             });
         }
+        
+        List<String> consoleMessage = new ArrayList<>();
 
         // log.info(urlFromNetworkTab.toString());
         // return urlFromNetworkTab;
-
-        List<String> consoleMessage = new ArrayList<>();
-
+        
         try {
+        	
+        
 
-            browserContext.setDefaultTimeout(90000); // 90 seconds
-            Page page;
-            if (location != null) {
-                page = browserContext.newPage();
-                openWindscribe(page, testData.getLocation());
-                page.close();
-            }
-            page = browserContext.newPage();
-            consoleMessage = getConsoleErrors(page);
-            page.navigate(testData.getPublisherUrl());
+        
+			browserContext.setDefaultTimeout(90000); // 70 seconds
+			Page page = browserContext.newPage();
+			consoleMessage = getConsoleErrors(page);
+			page.navigate(testData.getPublisherUrl());
 
-            if (location != null) {
-                browserContext.onRequest(request -> {
+//			 page.waitForLoadState(LoadState.NETWORKIDLE,new
+//			 Page.WaitForLoadStateOptions().setTimeout(5000));
+//			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
+//			 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
+			Thread.sleep(10000);
+        }
+        catch (Exception e) {
+        	log.error("Error while navigating to publisher url: {}", e.getMessage());
+		}
+        // try {
 
-                    urlFromNetworkTab.add(request.url());
-                    requestList.add(request);
+        //     browserContext.setDefaultTimeout(90000); // 90 seconds
+            
+        //     if (location != null) {
+        //         page = browserContext.newPage();
+        //         openWindscribe(page, testData.getLocation());
+        //         page.close();
+        //     }
+        //     page = browserContext.newPage();
+        //     consoleMessage = getConsoleErrors(page);
+        //     page.navigate(testData.getPublisherUrl());
 
-                });
-                page.locator(acceptAllBtn).click();
-                Thread.sleep(5000);
-            }
+        //     if (location != null) {
+        //         browserContext.onRequest(request -> {
+
+        //             urlFromNetworkTab.add(request.url());
+        //             requestList.add(request);
+
+        //         });
+        //         page.locator(acceptAllBtn).click();
+        //         Thread.sleep(5000);
+        //     }
 
             // page.waitForLoadState(LoadState.NETWORKIDLE,new
             // Page.WaitForLoadStateOptions().setTimeout(5000));
             // page.waitForFunction("() => performance.getEntriesByType('resource').length >
             // 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
-            Thread.sleep(500);
+            
+			BidExController bidExController = getBidExData(requestList, testData);
+	        bidExController.setConsoleMessages(consoleMessage);
 
-        } catch (Exception e) {
+	        TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
+	                .dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).testName("YAML Test Suite")
+	                .publisherUrl(testData.getPublisherUrl()).environment(testData.getEnvironment())
+	                .userAgent(
+	                        testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
+	                .harFileDownloadLink("harDownload/" + harFilePath).build()).build();
 
-            log.error("Error while navigating to publisher url: {}", e.getMessage());
+	     		testReport.setBidExController(bidExController);
+			try {
+			
+				testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab,requestList, testData));
+			}catch (Exception e) {
+				
+				e.printStackTrace();
+				
+				testReport.setUrlChecks(null);
+			}
 
-        }
+	        browserContext.close();
 
-        // return Arrays.toString(urlFromNetworkTab.toArray()).replace(", ", "<br>\n");
-        // return getNetworkCallAssertions(requestList, testData);
 
-        BidExController bidExController = getBidExData(requestList, testData);
-        bidExController.setConsoleMessages(consoleMessage);
+	        return testReport;
+	    }
 
-        TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
-                .dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).testName("YAML Test Suite")
-                .publisherUrl(testData.getPublisherUrl()).environment(testData.getEnvironment())
-                .userAgent(
-                        testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
-                .harFileDownloadLink("harDownload/" + harFilePath).build()).build();
-
-        testReport.setBidExController(bidExController);
-        testReport.setUrlChecks(getUrlAssertionsData(urlFromNetworkTab, requestList, testData));
-
-        browserContext.close();
-//		try {
-//
-//			return jsonWriter.writeValueAsString(testReport);
-//
-//		} catch (JsonProcessingException e) {
-//
-//			log.error("Error while converting test report to json: {}", e.getMessage());
-//			return "Error while converting test report to json";
-//		}
-
-        return testReport;
-    }
 
     private List<Request> getBidExRequestObjects(List<Request> listOfPwRequestObjects, String environmentHost) {
 
@@ -391,14 +412,39 @@ public class TestSuite implements GenericTestSuite {
             }
         }
 
-        headersAssertion.verifyRequestResponseHeaders(urlChecks,requests,testData);
-        urlChecks.updateMatchingUrlsCount();
-        urlChecks.updateNetworkCallErrors(testData);
-        urlChecks.verifyPositiveKeyValChecks();
-        payloadAsserstions.verifyBidderDataAssertions(urlChecks, requests, testData);
-
-        return urlChecks;
-    }
+        if(testData.getRequestHeaders()!=null && testData.getResponseHeaders()!=null)
+        {
+        	try {
+        	
+        		 headersAssertion.verifyRequestResponseHeaders(urlChecks,requests,testData);
+        		
+        	}
+        	catch (Exception e) {
+        		e.printStackTrace();
+			}
+        	 
+           
+            
+        }
+       
+		urlChecks.updateMatchingUrlsCount();
+		urlChecks.updateNetworkCallErrors(testData);
+		urlChecks.verifyPositiveKeyValChecks();
+		if(testData.getBidderDataAssertions()!=null && testData.getBidderDataUrls()!=null)
+		{
+			try {
+				payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
+			}
+			catch (Exception e) {
+				
+				e.printStackTrace();
+//				payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
+			}
+			
+		}
+		
+		return urlChecks;
+	}
 
 	/*private void verifyBidderDataValuesComparisons(URLChecksReportModel urlChecks, List<Request> requestList, TestCriteriaBo testData) {
 		Map<String, Map<String, List<URLChecksReportModel.DataAssertion>>> bidderDataAssertions = testData.getBidderDataAssertions();
@@ -581,14 +627,27 @@ public class TestSuite implements GenericTestSuite {
                         }
                     }
 
-                    for (Entry<String, String> entry : testData.bidexReplaceString.entrySet()) {
+					if(testData.getBidexReplaceString()!=null)
+					{
+						for (Entry<String, String> entry : testData.bidexReplaceString.entrySet()) {
+							
+							if(entry==null)
+							{
+								continue;
+							}
+							
+							else  if (originalURl.contains(entry.getKey())) {
+								replacedURL = replacedURL.replace(entry.getKey(), entry.getValue());
+							}
+						}
+					}
+					
+					if(testData.getBidexAppendString() !=null)
+					{
+						replacedURL = replacedURL.concat(testData.getBidexAppendString());
+					}
 
-                        if (originalURl.contains(entry.getKey())) {
-                            replacedURL = replacedURL.replace(entry.getKey(), entry.getValue());
-                        }
-                    }
-
-                    replacedURL = replacedURL.concat(testData.getBidexAppendString());
+					
 
                     if (testData.getEnvironment().matches(".*.hbistage.internal.ad.tech.*")) {
 
@@ -598,18 +657,19 @@ public class TestSuite implements GenericTestSuite {
                         replacedURL = replacedURL.concat(addToUrl);
                     }
 
-                    log.info("replace Url  =  " + replacedURL);
-                    route.resume(new Route.ResumeOptions().setUrl(replacedURL));
-                });
-            }
-        }
+//					log.info("replace Url  =  " + replacedURL);
+					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
+				});
+			}
+		}
 
         return browserContext;
     }
 
     private BrowserContext attachResponseMocking(BrowserContext browserContext, TestCriteriaBo testData) {
 
-        for (ResponseSimulateParams responseSim : testData.getResponseSimulate()) {
+		
+		for (ResponseSimulateParams responseSim : testData.getResponseSimulate()) {
 
             browserContext.route(responseSim.getUrlPattern(), route -> {
 

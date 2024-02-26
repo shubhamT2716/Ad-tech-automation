@@ -367,4 +367,44 @@ public class URLChecksReportModel {
 
     }
 
+	public void updateNetworkCallErrors(net.media.emma.cop.testsuites.pagetests.TestCriteriaBo testData) {
+//		testData.getNetworkCallsPositive().forEach((key, value) -> {
+//			if (!positiveUrlChecks.containsKey(key)) {
+//				positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL)
+//						.testMessages(Arrays.asList("Call not fired")).urlPattern(value).build());
+//			}
+//		});
+//
+//		testData.getNetworkCallsNegative().forEach((key, value) -> {
+//			if (!negativeUrlChecks.containsKey(key)) {
+//				negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
+//			} else {
+//				negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
+//			}
+//		});
+		
+		
+		testData.getNetworkCallsPositive().forEach((key,value)-> {
+			if(!positiveUrlChecks.containsKey(key)) {
+				positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL)
+						.testMessages(Arrays.asList("call not fired")).urlPattern(value).build());
+			}
+		});
+		
+		
+		testData.getNetworkCallsNegative().forEach((key,value)->{
+			if(!negativeUrlChecks.containsKey(key))
+			{
+				negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
+			}
+			else {
+				negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);			
+				}
+		});
+		
+	}
+	
+	
+	
+
 }

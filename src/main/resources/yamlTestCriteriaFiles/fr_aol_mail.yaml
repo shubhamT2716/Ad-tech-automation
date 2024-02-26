@@ -1,0 +1,114 @@
+loginUrl: "https://login.aol.com/"
+userName: "adtechtest"
+password : "QWEasd!@#123"
+
+environment: hb.yahoo.net
+cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://mail.aol.com/d/folders/1?mnet_test=1"
+bidexAppendString: ""
+bidexReplaceString: { "": "" }
+
+networkCallsPositive: {
+  checksync: "https://hb.yahoo.net/checksync.php?cid=8YHB8EU59",
+  PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+  APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+  AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+}
+
+networkCallsNegative: {
+  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+}
+
+keysToVerifyPositive: {
+
+  checksync: {
+    #gdpr: ["0"],
+    gpp: ["DBAA"],
+    gpp_sid: ["-1"]
+  },
+
+  PRLog: {
+    cid: ["8YHB8EU59"],
+    svr: ["2023091809_217_100311_741_100311_714_ssp"],
+    ugd: ["4"],
+  },
+
+  APLog: {
+    svr: ["2023091809_217_100311_741_100311_714_ssp"],
+    ugd: ["4"],
+  },
+}
+
+keysToVerifyNegative: {
+  PRLog: { snm: ["removed","error",], nbr: ["13"]},
+  APLog: { nbr: ["13","",null], mpvid: [], abs: []},
+  AWLog: { ogbdp: ["0","-1","-2"]},
+}
+
+keysToVerifyAnyOneOf: {
+  prlog: { nbr: [ "45","3","69","0","1","99" ]},
+  aplog: { nbr: [ "45","3","69","0","1","99" ], pvid: ["-3","25014","25015","25016"]}
+}
+
+bidderDataUrls: {
+  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHB8EU59",
+  YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
+}
+
+bidderDataAssertions: {
+  YHB: [
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "Slot160_600"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8YHB8EU59" },
+        { jsonPath: "x.imp[0].all.crid", value: "614383544" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "160" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "600" },
+        { jsonPath: "x.imp[0].tagid", value: "614383544" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lu:1||972825005||"},
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "aol"},
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+        { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "as_top_right_d"},
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      ]
+    }
+  ],
+  YPBJS: [
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+        expectedValue: "us_aolmail_webmail_dt_as_top_right_d"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].ext.kvs.loc", value: "as_top_right_d" },
+        { jsonPath: "x.imp[0].ext.pos", value: "us_aolmail_webmail_dt_as_top_right_d" },
+        { jsonPath: "x.imp[0].tagid", value: "us_aolmail_webmail_dt_as_top_right_d" },
+        { jsonPath: "x.imp[0].banner.format[0].w", value: "160" },
+        { jsonPath: "x.imp[0].banner.format[0].h", value: "600" },
+        { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "aol"},
+        { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+        { jsonPath: "x.imp[0].ext.kvs.loc", value: "as_top_right_d"},
+      ],
+      responseData: [
+
+      ]
+    }
+  ]
+}
+
+# ------------------------------ignore the lines below--rats---------------------
+responseSimulate: []
+domInject: []

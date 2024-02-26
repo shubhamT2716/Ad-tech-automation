@@ -36,7 +36,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
+import lombok.val;
 import lombok.extern.slf4j.Slf4j;
+import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
 
@@ -64,6 +66,11 @@ public class WebController {
 
 	@Value("${zipFileBasePath}")
 	private String zipFilePath;
+	
+	@Value("${commonYamlFilePath}")
+	private String commonYamlFile;
+	
+	
 
 	@Autowired
 	YamlTestSuiteScheduling yamlTestSuiteScheduling;
@@ -73,6 +80,7 @@ public class WebController {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuite");
 		mav.addObject("fileNames", new ArrayList<>(getFileNamesForSmokeTest()));
+		mav.addObject("commonFile", new ArrayList<>(getCommonFilesForSmokeTest()));
 		return mav;
 
 	}
@@ -80,11 +88,14 @@ public class WebController {
 	@PostMapping("/smokeTestSuite")
 	@ResponseBody
 	public ModelAndView runThreadPoolTest(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
-			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles) {
+			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles,
+			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
+		
+		
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles, false);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles, false);
 
 		try {
 			mav.addObject("message2", result.getSmokeReport());
@@ -100,27 +111,40 @@ public class WebController {
 		return mav;
 
 	}
-
-
+	
 	@GetMapping("/smokeTestSuiteApi")
-	public ResponseEntity<?> triggerSmokeTestApi(@RequestParam(value = "env", defaultValue = "hb.yahoo.net") String environment, @RequestParam(value = "ua",defaultValue = "Chrome.Desktop.Mac") String userAgent,
+	@ResponseBody
+	public ResponseEntity<?>/*ModelAndView*/ smokeTestAPi(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
 			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles) {
+//			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
+		
+		
+		if(selectedFiles==null|| selectedFiles.isEmpty()==true ){
+			selectedFiles = new ArrayList<>(getFileNamesForSmokeTest());
+		}
+		
+		List<String> commonFile=new ArrayList<>(getCommonFilesForSmokeTest());
+		
+		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-				try {
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFile, false);
 
-					if(selectedFiles==null|| selectedFiles.isEmpty()==true ){
-						selectedFiles = new ArrayList<>(getFileNamesForSmokeTest());
-					}
+		try {
+//			mav.addObject("message2", result.getSmokeReport());
+//			mav.addObject("message1", result.getRawData());
+//			mav.addObject("message3", result.getBidExReport());
+//			mav.addObject("message4", result.getErrorMessage());
+			
+			return ResponseEntity.ok(result);
 
-					SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles, false);
+		} catch (Exception e) {
+			log.info("Error reading file.", e);
+			mav.addObject("message", e.getMessage());
+			
+			return (ResponseEntity<?>) ResponseEntity.badRequest();
+		}
+	
 
-					return ResponseEntity.ok(result);
-
-				} catch (Exception e) {
-				
-					log.info("Error reading file.", e);
-					return ResponseEntity.status(org.springframework.http.HttpStatus.BAD_REQUEST).body(e.getMessage());
-				}
 	}
 
 	@GetMapping("/smokeTestSuite/{fileName}")
@@ -183,7 +207,35 @@ public class WebController {
 
 		return mav;
 	}
+	
+	
+	@GetMapping("/userAgent")
+	public ModelAndView getUserAgent()
+	{
+		
+		ModelAndView mav=new ModelAndView("UserAgent");
+		try {
+			
+			Map<String, String> map=BrowserFactory.browserContexts; 
+			
+			
+			
+			JsonNode jsonNode=yamlMapper.convertValue(map, JsonNode.class);
+			
+			
+			
+			mav.addObject("userAgent", jsonNode);
+				
+		}
+		catch (Exception e) {
+			
+			mav.addObject("message1", e.getMessage());
+		}
+		
+		return mav;
+	}
 
+	
 //	@Autowired
 //	private YamlTestSuiteScheduling scheduling;
 //
@@ -210,7 +262,9 @@ public class WebController {
 
 		try {
 
+			
 			ObjectMapper mapper = new YAMLMapper();
+			
 			TestCriteriaBo yamlTc = mapper.readValue(yaml, TestCriteriaBo.class);
 
 			TestReportModel message = yamlTestSuite.getTestResults(yamlTc);
@@ -249,7 +303,6 @@ public class WebController {
 //		        e.printStackTrace();
 //		        return "Error while reading file: " + e.getMessage();
 //		    }
-
 		
 		ClassPathResource classPathResource = new ClassPathResource(yamlTestCriteriaFilesPath+"/" + fileName);
 
@@ -311,5 +364,13 @@ public class WebController {
 		// Add additional filtering logic if needed (e.g., exclude specific files)
 		return fileNames;
 	}
+	
+	private Set<String> getCommonFilesForSmokeTest()
+	{
+		Set<String> fileName=fileOperations.listYamlFiles(commonYamlFile);
+		
+		return fileName;
+	}
+	
 
 }

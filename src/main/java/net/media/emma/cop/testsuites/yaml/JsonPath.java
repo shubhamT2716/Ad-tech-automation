@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Service
@@ -55,6 +56,7 @@ public class JsonPath {
     }
 
     public Object readValueFromJson(String data, String jsonPath) throws PathNotFoundException {
+    	
         return com.jayway.jsonpath.JsonPath.read(data, jsonPath);
     }
 
@@ -64,12 +66,40 @@ public class JsonPath {
 
     public boolean compareValueInJson(String json, String jsonPath, Object expectedValue) {
         try {
-            Object actualValue = readValueFromJson(json, jsonPath);
-            log.info("Actual Value = "+actualValue);
-            return Objects.equals(actualValue.toString(), expectedValue.toString());
-        } catch (PathNotFoundException e) {
+        	
+//            if (json!=null)
+//            {
+            	Object actualValue = readValueFromJson(json, jsonPath);
+                
+//              log.info("Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue);
+             
+              String pathValue="Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue;
+              
+              ArrayList<String> al=new ArrayList<>();
+              al.add(pathValue);
+              
+              return Objects.equals(actualValue.toString(), expectedValue.toString());
+//            }else {
+//            	throw new PathNotFoundException();
+//            }
+            
+//         	Object actualValue = readValueFromJson(json, jsonPath);
+        		
+// //            log.info("Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue);
+           
+//             String pathValue="Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue;
+            
+//             ArrayList<String> al=new ArrayList<>();
+//             al.add(pathValue);
+            
+//            log.info(pathValue);
+            
+            
+            
+        } catch (PathNotFoundException | IllegalArgumentException | NullPointerException e) {
             return false;
         }
+        
     }
 
 

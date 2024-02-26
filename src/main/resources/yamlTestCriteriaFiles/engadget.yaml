@@ -10,7 +10,10 @@ networkCallsPositive: {
   PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
   APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
   AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+ 
+  
 }
 
 networkCallsNegative: {
@@ -41,15 +44,15 @@ keysToVerifyPositive: {
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  PRLog: { snm: ["removed","error",], nbr: ["13"]},
-  APLog: { nbr: ["13","",null], mpvid: [], abs: []},
-  AWLog: { ogbdp: ["0","-1","-2"]},
-}
+   PRLog: { snm : ["removed","error",], nbr : ["13"]},
+   APLog: { nbr: ["13","",null], mpvid: [], abs: []},
+   AWLog: { ogbdp : ["0","-1","-2"]},
+ }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  prlog: { nbr: [ "45","3","69","0","1","99" ]},
-  aplog: { nbr: [ "45","3","69","0","1","99" ], pvid: ["-3","25014","25015","25016"]}
+   prlog: { nbr : [ "45","3","69","0","1","99" ]},
+   aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
 
 }
 
