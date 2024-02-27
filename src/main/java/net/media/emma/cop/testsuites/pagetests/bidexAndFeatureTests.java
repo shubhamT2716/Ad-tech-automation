@@ -1,11 +1,14 @@
 package net.media.emma.cop.testsuites.pagetests;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
+import java.util.Set;import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.Timing;
@@ -219,6 +222,7 @@ public class bidexAndFeatureTests {
     	
     		String mearge[]= {yaml,yamlcontent};
     		
+    		
     		 criteria=yamlUtils.buildAutoTesterYaml(mearge);
        	}
     	
@@ -292,23 +296,69 @@ public class bidexAndFeatureTests {
     
     public void featureChecks(List<String> requestList, TestCriteriaBo criteriaBo) {
     	
+    	
     	for(String requestUrl: requestList )
     	{
-    		Map.Entry<String, String> urlData=positiveURLPatternExistsForFeature(requestUrl, criteriaBo);
     		
-    		System.err.println(urlData);
+    		String urlData=positiveURLPatternExistsForFeature(requestUrl, criteriaBo);
     		
+    		if(urlData!=null)
+    		{
+    			criteriaBo.getFeatureKeysPositive().entrySet().forEach(entry->{
+    				
+    				String key=entry.getKey();
+    				
+    			Map<String, Map<String, String>> value =entry.getValue();
+    			
+    			System.err.println("Key :  "+key);
+    			
+    			System.err.println("Value :  "+value);
+    			
+    			value.entrySet().forEach(valueEntry->{
+    				
+    				String vKey=valueEntry.getKey();
+    				
+    				Map<String, String> vValue= valueEntry.getValue();   
+    				
+    				if(urlData.contains(vKey))
+    				{
+    					System.out.println("vKey: "+ vKey);
+    					System.out.println("vValue: "+ vValue);
+    					
+    					vValue.entrySet().forEach(r->{
+    						
+    						String fKey=r.getKey();
+    						
+    						String fValue=r.getValue();
+    						
+    						
+    						
+    					});
+    					
+    				}
+    				
+    				
+    				
+    				
+    				
+    			});
+    			
+    				
+    				
+    			});
+    		}
+    	
     	}
     	
     }
     
-    private Map.Entry<String, String> positiveURLPatternExistsForFeature(String currentUrl, TestCriteriaBo testData) {
+    private String positiveURLPatternExistsForFeature(String currentUrl, TestCriteriaBo testData) {
 
-		for (Map.Entry<String, String> urlData : testData.getFeatureNetworkCallsPositive().entrySet()) {
+		for (Map.Entry<String, String> urlData : testData.getFeatureCallsPositive().entrySet()) {
 
 			if (currentUrl.startsWith(urlData.getValue())) {
 
-				return urlData;
+				return currentUrl;
 			}
 		}
 

@@ -1,13 +1,13 @@
-FeatureNetworkCallsPositive: {
+featureCallsPositive: {
   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
   AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
 }
 
 
-FeatureKeysToVerifyPositive: {
-  GAMAPADCall: { prev_scp: { y_asbkt: ["v2"]},}
+featureKeysPositive: {
+  GAMAPADCall: { prev_scp: { y_asbkt: "v2"},}
 }
 
-FeatureKeysToVerifyNegative: {
-  GAMAPADCall: {prev_scp: { y_dnb: ["1"]},}
+featureKeysNegative: {
+  GAMAPADCall: { prev_scp: { y_dnb: "1"},}
 }
