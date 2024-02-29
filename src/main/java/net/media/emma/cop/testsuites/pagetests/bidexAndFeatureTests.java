@@ -1,14 +1,16 @@
 package net.media.emma.cop.testsuites.pagetests;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+
 import java.util.Set;import java.util.stream.Collector;
-import java.util.stream.Collectors;
+
 
 import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.Timing;
@@ -22,7 +24,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.microsoft.playwright.BrowserContext;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
@@ -30,7 +33,7 @@ import com.microsoft.playwright.Route;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
-import net.media.emma.cop.testsuites.compliance.ComplianceTestReport.BidExController;
+
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.BidexController;
 import net.media.emma.cop.testsuites.yaml.PlAssestion;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
@@ -332,14 +335,49 @@ public class bidexAndFeatureTests {
     						String fValue=r.getValue();
     						
     						
+    					int index=urlData.indexOf(vKey);
+    					
+    					String url=urlData.substring(index);
+    					
+    					int sIndex=url.indexOf(vKey);
+    					int eIndex=url.indexOf("&");
+    					
+    					url=url.substring(sIndex, eIndex);
+    					
+    					
+    					System.out.println("url : "+url);
+    					
+    					
+    					if(url.contains(fKey)) {
     						
+    						
+    						Map<String, Object> map=new HashMap<>();
+    						
+    						 String[] keyValue = url.split("=");
+
+    						 
+    				            
+    				            try {
+									String  s= URLDecoder.decode(keyValue[0], "UTF-8");
+									
+									String v = URLDecoder.decode(keyValue[1], "UTF-8");
+									
+									map.put(s, v);
+									
+									Object vl=map.get(vKey);
+									
+									System.out.println(vl);
+									
+								} catch (UnsupportedEncodingException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+    				        
+    					}
+    					
     					});
     					
     				}
-    				
-    				
-    				
-    				
     				
     			});
     			

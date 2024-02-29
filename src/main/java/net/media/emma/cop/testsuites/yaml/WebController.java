@@ -72,6 +72,10 @@ public class WebController {
 	private String commonYamlFile;
 	
 	
+	@Value("${autoTestFilePath}")
+	private String autoTesterYamlFile;
+	
+	
 
 	@Autowired
 	YamlTestSuiteScheduling yamlTestSuiteScheduling;
@@ -96,7 +100,7 @@ public class WebController {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles, false);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null, false);
 
 		try {
 			mav.addObject("message2", result.getSmokeReport());
@@ -116,15 +120,18 @@ public class WebController {
 	@GetMapping("/smokeTestSuiteApi")
 	@ResponseBody
 	public ResponseEntity<?>/*ModelAndView*/ smokeTestAPi(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
-			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles) {
+			@RequestParam(value = "pubs", required = false) String pubs) {
 //			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
 		
 		
 		List<String> commonFile=new ArrayList<>(getCommonFilesForSmokeTest());
 		
+		List<String> autoTest=new ArrayList<>(getAutoTesterFilesTest());
+		
+		
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFile, false);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest,commonFile,pubs, false);
 
 		try {
 //			mav.addObject("message2", result.getSmokeReport());
@@ -372,6 +379,13 @@ public class WebController {
 	private Set<String> getCommonFilesForSmokeTest()
 	{
 		Set<String> fileName=fileOperations.listYamlFiles(commonYamlFile);
+		
+		return fileName;
+	}
+	
+	private Set<String> getAutoTesterFilesTest()
+	{
+		Set<String> fileName=fileOperations.listYamlFiles(autoTesterYamlFile);
 		
 		return fileName;
 	}

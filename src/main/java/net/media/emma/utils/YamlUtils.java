@@ -34,6 +34,10 @@ public class YamlUtils {
     		ObjectMapper mapper=new YAMLMapper();
 
             Map<String, Object> map = new HashMap<>();
+            
+            Map<String , Object> data=new HashMap<>();
+            
+            Map<String, Object> data2=new HashMap<>();
 
             for(String yamlContent: yamlFiles)
             {
@@ -41,15 +45,16 @@ public class YamlUtils {
 //            	System.err.println(yamlContent);
             	
                     // read yaml file as map
-            	Map<String, Object> data2=yaml.load(yamlContent);
+            	 data2=yaml.load(yamlContent);
             	
             	
             	
 //                      map = yaml.load(yamlContent);
-            	meargeYaml(map, data2);	
+            	data=meargeYaml(map, data2);	
             }
             
-            String finalYaml=yaml.dump(map);
+            String finalYaml=yaml.dump(data);
+            
             
             
             TestCriteriaBo bo=mapper.readValue(finalYaml, TestCriteriaBo.class);
@@ -107,6 +112,9 @@ try {
     
     public static Map<String, Object> meargeYaml(Map<String, Object>yamlFile, Map<String,Object> commonfiles)
     {
+    	
+    	Map<String , Object> yaml=new HashMap<>();
+    	
     	for (Map.Entry<String, Object> entry : commonfiles.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -145,9 +153,9 @@ try {
             	
             	
                 // For non-map values, simply overwrite the target value
-            	 if (!files.containsKey(key)) {
+//            	 if (!files.containsKey(key)) {
             		 files.put(key, value);
-                 }
+//                 }
             }
             
             

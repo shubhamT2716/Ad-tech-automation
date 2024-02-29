@@ -32,7 +32,11 @@ public class TestCriteriaBo {
     Map<String, String> bidderDataUrls;
     Map<String, List<BidderDataAssertions>> bidderDataAssertions;
     
-    Map<String, Object> feature;
+    Map<String, String> featureCallsPositive;
+	Map<String, Map<String, Map<String, String>>> featureKeysPositive;
+	Map<String, Map<String, Map<String, String>>> featureKeysNegative;
+    
+   
 
     List<ResponseSimulateParams> responseSimulate;
     List<DomInjectParams> domInject;

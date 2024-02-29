@@ -42,6 +42,9 @@ public class FileOperations {
 	@Value("${commonYamlFilePath}")
 	private String commonYaml;
 	
+	@Value("${yamlSmokeTestSuiteFilesPath}")
+	private String yamlSmokeTestSuiteFilesPath;
+	
 
 	public void saveYamlFile(String fileContent) {
 		try {
@@ -156,6 +159,28 @@ public class FileOperations {
 	public String getCommonFile(String commonFile)
 	{
 		ClassPathResource commonYamlClassPath=new ClassPathResource(commonYaml+"/"+commonFile);
+		
+		 String commonContent=null;
+		 try {
+			 InputStream stream=commonYamlClassPath.getInputStream();
+			 
+			 commonContent=StreamUtils.copyToString(stream, StandardCharsets.UTF_8);
+			 
+			 return commonContent;
+		 }
+		 catch (Exception e) {
+			e.printStackTrace();
+			
+			return null;
+		}
+		
+		
+	}
+	
+	
+	public String getYamlFileContent(String commonFile)
+	{
+		ClassPathResource commonYamlClassPath=new ClassPathResource(yamlSmokeTestSuiteFilesPath+"/"+commonFile);
 		
 		 String commonContent=null;
 		 try {
