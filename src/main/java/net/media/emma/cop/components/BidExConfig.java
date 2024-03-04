@@ -104,18 +104,39 @@ public class BidExConfig {
     }
 
 
-    public Map<String, String> displayCookies(List<Cookie> cookies)
+    public Map<String,  String> displayCookies(List<Cookie> cookies)
     {
     	Map<String, String> allCookies=new HashMap<>();
     	for(Cookie cookie : cookies){
-
-            
             allCookies.put(cookie.name, cookie.value);
-            
+//    log.info("Cookie Name : " + cookie.name + " Cookie Value : " + cookie.value + " Cookie url : " + cookie.url+ " Cookie domain : " + cookie.domain+ " Cookie same site : "+cookie.sameSite);
+
         }
     	
     	return allCookies;
     }
+
+//    public Map<String, Map<List<String>, List<String>>> displayCookies(List<Cookie> cookies, List<String> cookieurls)
+//    {
+//        Map<String, Map<List<String>, List<String>>> allCookies=new HashMap<>();
+//        for(String cookieurl : cookieurls){
+//            for(Cookie cookie: cookies)
+//            {
+//                String cookieurlnew = cookieurl.replace("https://", ".");
+//
+//                log.info("Outside!!!!  " + " " + "Cookie domain "+ cookie.domain + " Cookie name "+ cookie.name + " Cookie value "+ cookie.value + " Cookie url "+ cookie.url + " Cookie same site "+ cookie.sameSite);
+//                log.info("Cookie url in func " + cookieurlnew);
+//                if(cookie.domain.equals(cookieurlnew))
+//                {
+//                    log.info("Cookie domain "+ cookie.domain + " Cookie name "+ cookie.name + " Cookie value "+ cookie.value + " Cookie url "+ cookie.url + " Cookie same site "+ cookie.sameSite);
+//
+//                    allCookies.computeIfAbsent(cookie.domain, k->new HashMap<>()).put(Collections.singletonList(cookie.name), Collections.singletonList(cookie.value));
+//                }
+//            }
+
+
+
+
     public String getEnvironmentName(String envdata)
     {
         Map<String , Object> map =new HashMap<>();
@@ -223,6 +244,7 @@ public class BidExConfig {
 
     public void setCridAdunitPathMapping(JsonNode bidExContent) {
         List < String > crids = new ArrayList < String > ();
+
 
         JsonNode cridConfig = bidExContent.get("DfpPlacements");
         try {

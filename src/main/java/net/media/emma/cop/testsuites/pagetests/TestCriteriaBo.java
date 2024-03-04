@@ -14,7 +14,7 @@ public class TestCriteriaBo {
 	String environment;
     String userAgent;
     String publisherUrl;
-    List<Map<String,String>> coockies;
+    List<Map<String,String>> cookies;
     
     
     Map<String, String> networkCallsPositive;
