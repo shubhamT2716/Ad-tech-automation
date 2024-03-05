@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.BidderDataAssertions;
+import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
+import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
 
 @Getter
 @Setter
@@ -31,11 +33,16 @@ public class TestCriteriaBo {
 	Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
 
 	Map<String, String> featureCallsPositive;
-	Map<String, Map<String, Map<String, String>>> featureKeysPositive;
-	Map<String, Map<String, Map<String, String>>> featureKeysNegative;
+	Map<String, Map<String, String>> featureKeysPositive;
+	Map<String, Map<String, String>> featureKeysNegative;
 
 	Map<String, String> bidderDataUrls;
 	Map<String, List<BidderDataAssertions>> bidderDataAssertions;
+	
+	
+	List<ResponseSimulateParams> responseSimulate;
+    List<DomInjectParams> domInject;
+
 
 //    public class FeatureKeysToVerify{
 //    	

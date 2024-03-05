@@ -101,7 +101,12 @@ public class bidexController {
 			
 
 			ObjectMapper mapper = new YAMLMapper();
+			
+			
 			TestCriteriaBo yamlTc = bidexAndFeatureTests.meargeYaml(yaml);
+			
+			
+			
 			
 			
 			// mav.addObject("message", yamlTc.getEnvironment());
@@ -119,6 +124,7 @@ public class bidexController {
 			modelAndView.addObject("allCookiesData", bidexFeatureReport.getCookies());
 			modelAndView.addObject("basicReport", bidexFeatureReport.getUrlChecksReport());
 			modelAndView.addObject("slotsReport",bidexFeatureReport.getSlotsReport());
+			modelAndView.addObject("featureReport", bidexFeatureReport.getFeatureReport());
 		} catch (JsonProcessingException e) {
 			log.error("YAML Processing Error", e);
 			

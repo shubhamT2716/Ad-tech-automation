@@ -5,9 +5,20 @@ featureCallsPositive: {
 
 
 featureKeysPositive: {
-  GAMAPADCall: { prev_scp: { y_asbkt: "v2"},}
+  GAMAPADCall: {
+    y_asbkt: "v2",
+   
+  },
+  AWLog: {
+    asbkt: "v2"
+  }
 }
 
 featureKeysNegative: {
-  GAMAPADCall: { prev_scp: { y_dnb: "1"},}
+  GAMAPADCall: {
+    y_dnb: "1",
+    gdpr: "0"
+
+    
+  },
 }

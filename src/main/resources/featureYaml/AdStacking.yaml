@@ -1,0 +1,24 @@
+featureCallsPositive: {
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+}
+
+
+featureKeysPositive: {
+  GAMAPADCall: {
+    y_asbkt: "v2",
+   
+  },
+  AWLog: {
+    asbkt: "v2"
+  }
+}
+
+featureKeysNegative: {
+  GAMAPADCall: {
+    y_dnb: "1",
+    gdpr: "0"
+
+    
+  },
+}

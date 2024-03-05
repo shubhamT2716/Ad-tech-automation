@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport;
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.BidexController;
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.TestMetaDataBidex;
-
+import net.media.emma.cop.testsuites.pagetests.FeatureReport;
 import net.media.emma.cop.testsuites.pagetests.TestCriteriaBo;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
@@ -66,7 +66,7 @@ public class BidExConfig {
     
 
     
-    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, List<Cookie> cookies, URLChecksReportModel model,BidexController bidexController) {
+    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, List<Cookie> cookies, URLChecksReportModel model,BidexController bidexController, FeatureReport featureReport) {
 
 //        if (bidExContent == null) {
 //           
@@ -99,7 +99,7 @@ public class BidExConfig {
         
 
         
-        return getFeaturesData(bidExContent, feature, yaml, harFile, cookies, model, bidexController);
+        return getFeaturesData(bidExContent, feature, yaml, harFile, cookies, model, bidexController, featureReport);
         
     }
 
@@ -402,7 +402,7 @@ public class BidExConfig {
     }
     
     
-    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, List<Cookie> cookies, URLChecksReportModel reportModel, BidexController bidexController){
+    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, List<Cookie> cookies, URLChecksReportModel reportModel, BidexController bidexController , FeatureReport featureReport){
  
     	 Map<String ,Object> featureTestResult=new HashMap<>();
     	
@@ -461,8 +461,7 @@ public class BidExConfig {
         bidexFeatureReport.setCookies(displayCookies(cookies));
         bidexFeatureReport.setUrlChecksReport(reportModel);
         bidexFeatureReport.setSlotsReport(getSlotsReport(reportModel, bidexContent));    
-           
-        
+        bidexFeatureReport.setFeatureReport(featureReport);        
 
         
         return bidexFeatureReport;

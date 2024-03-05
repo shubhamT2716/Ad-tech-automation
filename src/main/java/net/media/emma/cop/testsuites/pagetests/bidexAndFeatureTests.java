@@ -1,6 +1,7 @@
 package net.media.emma.cop.testsuites.pagetests;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
@@ -36,10 +38,13 @@ import net.media.emma.cop.components.BrowserFactory;
 
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.BidexController;
 import net.media.emma.cop.testsuites.yaml.PlAssestion;
+
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
+import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 import net.media.emma.utils.CommonBrowserUtil;
+import net.media.emma.utils.DomJsonUtils;
 import net.media.emma.utils.FileOperations;
 import net.media.emma.utils.URLDataProcessing;
 import net.media.emma.utils.YamlUtils;
@@ -49,7 +54,8 @@ import net.media.emma.utils.YamlUtils;
 @Service
 @Slf4j
 public class bidexAndFeatureTests {
-
+	
+	
 	BidExConfig bidExConfig = BidExConfig.builder().build();
 	
 	
@@ -98,6 +104,14 @@ public class bidexAndFeatureTests {
 	
 	@Autowired
 	private PlAssestion payloadAsserstions;
+	
+	@Autowired
+	private FeatureTestCriteria criteria;
+	
+	
+	@Autowired
+	DomJsonUtils domUtils;
+
 
     public BidexFeatureReport bidexTests(TestCriteriaBo yaml) throws JsonMappingException, JsonProcessingException{
 
@@ -115,6 +129,11 @@ public class bidexAndFeatureTests {
 			
 
 			page=replaceBidExUrl(page, yaml);
+			
+			if(yaml.getResponseSimulate()!=null)
+			{
+				page=attachResponseMocking(page, yaml);
+			}
 			
 			
 			page.onRequest(request ->{
@@ -155,15 +174,38 @@ public class bidexAndFeatureTests {
 		finalConfig = bidexResp.substring(startIndex-12);
 		 JsonNode bidexJson= mapper.readValue(finalConfig, JsonNode.class);
 
-		 featureChecks(urlFromNetworkTab, yaml);
+		 
 		
 		page.waitForTimeout(5000);
-		List<Cookie> cookies = page.context().cookies();
+		
+		
+		List<Cookie> cookies = getCookies(page, yaml.getPublisherUrl());
+		
+		URLChecksReportModel model=getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml);
+		
 		page.close();
-		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml),getBidexData(listOfReqest, yaml));
+		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, model,getBidexData(listOfReqest, yaml),featureChecks(urlFromNetworkTab, yaml,pageSlots,model));
     }
 
 
+    
+    
+    public List<Cookie> getCookies(Page page, String publisher)
+    {
+    	List<String> url=new ArrayList<>();
+    	
+    	url.add("https://hbx.media.net");
+    	url.add("https://hb.yhoo.net");
+    	url.add(publisher);
+    	
+    	
+    	
+    return page.context().cookies(url);
+    
+    	
+    }
+    
+    
 	private JsonNode slotsDataFromPage(Page page){
 		try {
 			Object pubSlots = page.evaluate(adSlotScraping());
@@ -297,106 +339,38 @@ public class bidexAndFeatureTests {
 	}
     
     
-    public void featureChecks(List<String> requestList, TestCriteriaBo criteriaBo) {
+    public FeatureReport featureChecks(List<String> requestList, TestCriteriaBo criteriaBo, JsonNode getSlotsData, URLChecksReportModel model) {
     	
     	
     	for(String requestUrl: requestList )
     	{
     		
-    		String urlData=positiveURLPatternExistsForFeature(requestUrl, criteriaBo);
+    		Map.Entry<String, String> urlData=positiveURLPatternExistsForFeature(requestUrl, criteriaBo);
     		
     		if(urlData!=null)
     		{
-    			criteriaBo.getFeatureKeysPositive().entrySet().forEach(entry->{
-    				
-    				String key=entry.getKey();
-    				
-    			Map<String, Map<String, String>> value =entry.getValue();
     			
-    			System.err.println("Key :  "+key);
+    			FeatureReport featureReport=this.criteria.featureTestCasePositvie(urlData, criteriaBo,model);
     			
-    			System.err.println("Value :  "+value);
-    			
-    			value.entrySet().forEach(valueEntry->{
-    				
-    				String vKey=valueEntry.getKey();
-    				
-    				Map<String, String> vValue= valueEntry.getValue();   
-    				
-    				if(urlData.contains(vKey))
-    				{
-    					System.out.println("vKey: "+ vKey);
-    					System.out.println("vValue: "+ vValue);
-    					
-    					vValue.entrySet().forEach(r->{
-    						
-    						String fKey=r.getKey();
-    						
-    						String fValue=r.getValue();
-    						
-    						
-    					int index=urlData.indexOf(vKey);
-    					
-    					String url=urlData.substring(index);
-    					
-    					int sIndex=url.indexOf(vKey);
-    					int eIndex=url.indexOf("&");
-    					
-    					url=url.substring(sIndex, eIndex);
-    					
-    					
-    					System.out.println("url : "+url);
-    					
-    					
-    					if(url.contains(fKey)) {
-    						
-    						
-    						Map<String, Object> map=new HashMap<>();
-    						
-    						 String[] keyValue = url.split("=");
-
-    						 
-    				            
-    				            try {
-									String  s= URLDecoder.decode(keyValue[0], "UTF-8");
-									
-									String v = URLDecoder.decode(keyValue[1], "UTF-8");
-									
-									map.put(s, v);
-									
-									Object vl=map.get(vKey);
-									
-									System.out.println(vl);
-									
-								} catch (UnsupportedEncodingException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-    				        
-    					}
-    					
-    					});
-    					
-    				}
-    				
-    			});
-    			
-    				
-    				
-    			});
+    			return featureReport;
     		}
     	
     	}
     	
+    	return null;
+    	
     }
     
-    private String positiveURLPatternExistsForFeature(String currentUrl, TestCriteriaBo testData) {
+    private Map.Entry<String, String> positiveURLPatternExistsForFeature(String currentUrl, TestCriteriaBo testData) {
 
 		for (Map.Entry<String, String> urlData : testData.getFeatureCallsPositive().entrySet()) {
 
 			if (currentUrl.startsWith(urlData.getValue())) {
+				
+				urlData.setValue(currentUrl);
+				
 
-				return currentUrl;
+				return urlData;
 			}
 		}
 
@@ -497,7 +471,29 @@ public class bidexAndFeatureTests {
 		
 		
 		
-	
+private Page attachResponseMocking(Page browserContext, net.media.emma.cop.testsuites.pagetests.TestCriteriaBo testData) {
+
+		
+		for (ResponseSimulateParams responseSim : testData.getResponseSimulate()) {
+
+			browserContext.route(responseSim.getUrlPattern(), route -> {
+
+				// String originalURl = route.request().url();
+
+				String responseBody = new String(route.fetch().body(), StandardCharsets.UTF_8);
+				String newResponseBody = domUtils.replaceInJson(responseBody, responseSim.getJsonPath(),
+						responseSim.getOverrideValue());
+
+				if (newResponseBody == responseBody) {
+					route.resume();
+				} else {
+					route.fulfill(new Route.FulfillOptions().setBody(newResponseBody));
+				}
+			});
+		}
+
+		return browserContext;
+	}
 	
 
 	private String adSlotScraping(){

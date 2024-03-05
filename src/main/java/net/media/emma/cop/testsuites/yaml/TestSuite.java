@@ -126,7 +126,7 @@ public class TestSuite implements GenericTestSuite {
 		// browserContext = injectDOM(browserContext, testData);
 
 		
-		BrowserContext context=replaceUrl(browserContext, testData);
+		
 		
 		
 		// list of arrays initialization
@@ -134,7 +134,7 @@ public class TestSuite implements GenericTestSuite {
 		List<Request> requestList = new ArrayList<>();
 		
 		
-		context.onRequest(request -> {
+		browserContext.onRequest(request -> {
 
 			urlFromNetworkTab.add(request.url());
 			requestList.add(request);
@@ -142,6 +142,8 @@ public class TestSuite implements GenericTestSuite {
 		});
 		
 		log.info("request "+requestList);
+		
+		log.info("TestData : "+testData);
 
 		// log.info(urlFromNetworkTab.toString());
 		// return urlFromNetworkTab;
@@ -153,13 +155,13 @@ public class TestSuite implements GenericTestSuite {
 
 		try {
 
-			context.setDefaultTimeout(90000); // 70 seconds
+			browserContext.setDefaultTimeout(90000); // 70 seconds
 			
 //			Desktop.getDesktop().browse(new URI(testData.getPublisherUrl()));
 			
 			
 			
-			Page page = context.newPage();
+			Page page = browserContext.newPage();
 			
 			consoleMessage = getConsoleErrors(page);
 			page.navigate(testData.getPublisherUrl());
@@ -184,6 +186,9 @@ public class TestSuite implements GenericTestSuite {
 		BidExController bidExController = getBidExData(requestList, testData);
 		
 		bidExController.setConsoleMessages(consoleMessage);
+		
+		
+		
 
 		TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
 				.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).testName("YAML Test Suite")
@@ -208,7 +213,7 @@ public class TestSuite implements GenericTestSuite {
 		}
 		
 
-		context.close();
+		browserContext.close();
 //		try {
 //
 //			return jsonWriter.writeValueAsString(testReport);
@@ -598,51 +603,7 @@ public class TestSuite implements GenericTestSuite {
 //	}
 	
 	
-	private BrowserContext replaceUrl(BrowserContext browserContext, TestCriteriaBo testData)
-	{
-
-		for (String currentHost : bidExHosts) {
-			for (String currentController : urlController) {
-
-				browserContext.route("**/" + currentHost + "/" + currentController + "*", route -> {
-
-					String replacedURL = "";
-					String originalURl = route.request().url();
-
-					for (String currentHostInner : bidExHosts) {
-						if (originalURl.contains(currentHostInner)) {
-							replacedURL = originalURl.replace(currentHost, testData.getEnvironment());
-							break;
-						}
-					}
-
-//					if(testData.getBidexReplaceString()!=null)
-//					{
-//						for (Entry<String, String> entry : testData.bidexReplaceString.entrySet()) {
-//							
-//							if(entry==null)
-//							{
-//								continue;
-//							}
-//							
-//							else  if (originalURl.contains(entry.getKey())) {
-//								replacedURL = replacedURL.replace(entry.getKey(), entry.getValue());
-//							}
-//						}
-//					}
-					
-					
-
-				log.info("replace Url  =  " + replacedURL);
-					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
-				});
-			}
-		}
-		
-		
-		return browserContext;
-		
-	}
+	
 
 
 	private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteriaBo testData) {

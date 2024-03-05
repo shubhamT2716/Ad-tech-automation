@@ -30,6 +30,7 @@
            <button onClick="displayAllCookies()" type="button" class="btn btn-secondary">Show All Cookies Data</button>
            <button onclick="displayBasicReport()" type="button" class="btn btn-secondary">Show Basic Report</button>
             <button onclick="displaySlotsReport()" type="button" class="btn btn-secondary">Show Slots Report</button>
+            <button onclick="displayFeatureReport()" type="button" class="btn btn-success">Show Feature Report</button>
 
             <!-- <code id="testReport" th:text="${message}"></code> -->
           <br>
@@ -89,7 +90,11 @@ var slotsReport = /*[[${slotsReport}]]*/ 'slotsReport';
 </script>
 
 
-
+<script th:inline="javascript">
+  /*<![CDATA[*/
+var featureReport = /*[[${featureReport}]]*/ 'featureReport';
+   /*]]>*/
+</script>
 
 
 <script type="text/javascript">
@@ -198,6 +203,18 @@ var slotsReport = /*[[${slotsReport}]]*/ 'slotsReport';
         document.getElementById("testReport").appendChild(pre);
         hljs.highlightAll();
       }
+
+      function displayFeatureReport() {
+  
+        const pre = document.createElement("pre");
+        const code = document.createElement("code");
+        code.classList.add("language-json");
+        code.innerHTML = JSON.stringify(featureReport, null, 2);
+        pre.appendChild(code);
+        document.getElementById("testReport").innerHTML = "";
+        document.getElementById("testReport").appendChild(pre);
+        hljs.highlightAll();
+      }
   		
   
     function display(status) {
@@ -214,6 +231,7 @@ var slotsReport = /*[[${slotsReport}]]*/ 'slotsReport';
             
     }
   
+    displayFeatureReport();
     displaySlotsReport();
     displayBasicReport(); 
     displayAllFeature();

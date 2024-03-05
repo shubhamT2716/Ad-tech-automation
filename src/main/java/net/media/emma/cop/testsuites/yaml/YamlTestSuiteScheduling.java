@@ -132,76 +132,93 @@ public class YamlTestSuiteScheduling {
 		{
 			
 			String[] publisher=pubs.trim().split(",");
-			for (String yaml : listOfYaml) {
-				TestCriteriaBo testCriteriaBo = null;
-
-				for (String commonYamls : commonFiles) {
-
-					ClassPathResource classPathResource = new ClassPathResource(autoTesterYamlFile + "/" + yaml);
-
-					String content = null;
-
-					try {
-						InputStream inputStream = classPathResource.getInputStream();
-
-						content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-
-						String commonContent = this.fileOperations.getCommonFile(commonYamls);
-
-						ObjectMapper yamlMapper = new YAMLMapper();
-
-						List<String> list = new ArrayList<>();
-						list.add(content);
-
-						String a[] = { content, commonContent };
-
-						testCriteriaBo = yamlUtils.buildYaml(a);
-
-						
-
-					} catch (Exception e) {
-						// Handle exceptions here
-						log.error("Error while reading YAML file", e);
-						continue; // Continue to the next iteration
-					}
-					
-				}
+TestCriteriaBo testCriteriaBo=null;
+			
+			
+			StringBuilder yamlBuilder=new StringBuilder();
+			
+			String combinedCommonContent = "";
+			for (String commonYamls : commonFiles) {
+			String commonContent = this.fileOperations.getCommonFile(commonYamls);
 				
-				for (String env : environments) {
-					for (String agent : userAgents) {
-						for(String pub: publisher)
-						{
+				yamlBuilder.append(commonContent).append("\n");
+//			 combinedCommonContent += commonContent;
+				
+				
+			}
+
+			
+		for (String yaml : listOfYaml) {  
+			for (String env : environments) {
+				for (String agent : userAgents) {
+					for(String pub: publisher) {
+				
+				ClassPathResource classPathResource = new ClassPathResource(autoTesterYamlFile + "/" + yaml);
+				
+				String content = null;
+
+				try {
+					InputStream inputStream = classPathResource.getInputStream();
+
+					content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+				
+			} catch (Exception e) {
+				// Handle exceptions here
+				log.error("Error while reading YAML file", e);
+				continue; // Continue to the next iteration
+			}
+				
 					
-						testCriteriaBo.setEnvironment(env);
-						testCriteriaBo.setUserAgent(agent);
-						testCriteriaBo.setPublisherUrl(pub);
+					ObjectMapper yamlMapper = new YAMLMapper();
 
-//		    					map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+					List<String> list = new ArrayList<>();
+					list.add(content);
 
-						map.put( env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-						listOfYamlEnv.add( env + "_" + agent);
+
+					String a[] = { content, yamlBuilder.toString() };
+					
+					testCriteriaBo = yamlUtils.buildYaml(a);
+					
+					
+					
+			
+					
+							testCriteriaBo.setUserAgent(agent);
+							testCriteriaBo.setEnvironment(env);
+							testCriteriaBo.setPublisherUrl(pub);							
+							
+							map.put(yaml+"_"+env , yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+							listOfYamlEnv.add(yaml+"_"+env );
+						}
 
 					}
-					}
-				}
+		
 			}
 			
 			
-			
+		}
 			
 		}else {
 			
 			TestCriteriaBo testCriteriaBo=null;
 			
-			List<TestCriteriaBo> li=new ArrayList<>();
 			
-			Map<String, List<TestCriteriaBo>> m=new HashMap<>();
-
-		for (String yaml : listOfYaml) {   
+			StringBuilder yamlBuilder=new StringBuilder();
 			
+			String combinedCommonContent = "";
 			for (String commonYamls : commonFiles) {
+			String commonContent = this.fileOperations.getCommonFile(commonYamls);
+				
+				yamlBuilder.append(commonContent).append("\n");
+//			 combinedCommonContent += commonContent;
 				
 				
+			}
+
+			
+		for (String yaml : listOfYaml) {  
+			for (String env : environments) {
+				for (String agent : userAgents) {
 				
 				ClassPathResource classPathResource = new ClassPathResource(yamlSmokeTestSuiteFilesPath + "/" + yaml);
 				
@@ -218,58 +235,35 @@ public class YamlTestSuiteScheduling {
 				continue; // Continue to the next iteration
 			}
 				
-					String commonContent = this.fileOperations.getCommonFile(commonYamls);
-
+					
 					ObjectMapper yamlMapper = new YAMLMapper();
 
 					List<String> list = new ArrayList<>();
 					list.add(content);
 
 
-					String a[] = { content, commonContent };
+					String a[] = { content, yamlBuilder.toString() };
 					
 					testCriteriaBo = yamlUtils.buildYaml(a);
 					
 					
-					li.add(testCriteriaBo);
 					
-					m.put(yaml, li);
-				
-				
+			
+					
+							testCriteriaBo.setUserAgent(agent);
+							testCriteriaBo.setEnvironment(env);
+							
+							
+							map.put(yaml+"_"+env , yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+							listOfYamlEnv.add(yaml+"_"+env );
+						}
+
+					}
+		
 			}
 			
 			
 		}
-			for(TestCriteriaBo bo : li)
-			{
-
-			for (String env : environments) {
-				for (String agent : userAgents) {
-				
-
-					System.out.println("ENV:  "+env);
-					
-					bo.setEnvironment(env);
-					bo.setUserAgent(agent);
-
-					System.out.println("BO: ENV:  "+bo.getEnvironment());
-
-					map.put(bo.getPublisherUrl()+"_"+env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(bo));
-					listOfYamlEnv.add(bo.getPublisherUrl()+"_"+env + "_" + agent);
-					
-
-				}
-
-			}
-		}
-								
-	
-		}
-		
-		
-		
-		System.err.println(" MAP : "+map);
-		
 		
 		// get values of Map into CompeletableFuture
 		CompletableFuture<Void> allFutures = CompletableFuture
@@ -287,7 +281,7 @@ public class YamlTestSuiteScheduling {
 			finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
 				try {
 					
-					System.err.println(" Result Value : "+e.getKey()+"  : "+ e.getValue().get());
+//					System.err.println(" Result Value : "+e.getKey()+"  : "+ e.getValue().get());
 					return e.getValue().get();
 				} catch (InterruptedException | ExecutionException e1) {
 					log.error("Error while getting result from CompletableFuture", e1);
@@ -314,6 +308,8 @@ public class YamlTestSuiteScheduling {
 		
 		
 		for (String yaml : listOfYamlEnv) {
+			
+			
 			Testdata testdata = new SmokeTestSummeryDto().new Testdata();
 
 			
