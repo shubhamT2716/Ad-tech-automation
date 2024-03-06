@@ -181,12 +181,13 @@ public class bidexAndFeatureTests {
 		
 		List<Cookie> cookies = getCookies(page, yaml.getPublisherUrl());
 		
+		
+		
 		URLChecksReportModel model=getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml);
 		
 		page.close();
 		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, model,getBidexData(listOfReqest, yaml),featureChecks(urlFromNetworkTab, yaml,pageSlots,model));
     }
-
 
     
     

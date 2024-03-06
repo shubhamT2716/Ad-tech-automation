@@ -36,13 +36,13 @@ public class FeatureTestCriteria {
 		log.info("urlData : "+urlData);
 		
 		
-		String rep=reportModel.getPositiveUrlChecks().toString();
 		
-		System.err.println(rep);
+		
+		
 		
 		Map<String,PositiveURLChecks> mapReport=reportModel.getPositiveUrlChecks();
 		
-		System.err.println(mapReport);
+		
 		
 		
 		FeatureReport report=FeatureReport.builder().build();
@@ -82,17 +82,6 @@ public class FeatureTestCriteria {
 			
 			
 		Map<String, String> value =entry.getValue();
-		
-		
-		log.info("Key From negative checks: "+key);
-		
-		
-		log.info("Value From negative checks: "+value);
-		
-		System.out.println(" Key : "+key );
-		
-		System.out.println("Value:  "+value);
-		
 		
 		
 		if(mapReport.containsKey(key))
@@ -164,8 +153,7 @@ public class FeatureTestCriteria {
 			        }
 			        
 			        
-			        System.out.println("m.get(vKey) : "+ m.get(vKey));
-			        
+			      
 			        if(m.get(vKey)!=null)
 					      {
 					    	  
@@ -190,12 +178,10 @@ public class FeatureTestCriteria {
 					    	  }
 					    	  
 					      }
-					
-					
+		
 					
 				}
-				
-				
+	
 				
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
@@ -235,10 +221,6 @@ public class FeatureTestCriteria {
 			
 		Map<String, String> value =entry.getValue();
 		
-		System.out.println(" Key : "+key );
-		
-		System.out.println("Value:  "+value);
-		
 		
 		
 		if(mapReport.containsKey(key))
@@ -248,11 +230,10 @@ public class FeatureTestCriteria {
 			
 			String vKey=valueEntry.getKey();
 			
-			System.err.println(" Urls:  "+vKey);
 			
 			String vValue= valueEntry.getValue();   
 			
-			System.err.println(" Urls:  "+vValue);
+			
 			
 			
 			if(urlQuesryStringMap.containsKey(vKey)&&urlQuesryStringMap.get(vKey).equals(vValue))
@@ -295,7 +276,6 @@ public class FeatureTestCriteria {
 			        }
 			        
 			        
-			        System.out.println("m.get(vKey) : "+ m.get(vKey));
 			        
 			        if(m.get(vKey)!=null)
 					      {

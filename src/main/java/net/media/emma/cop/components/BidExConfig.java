@@ -451,7 +451,7 @@ public class BidExConfig {
         
         BidexFeatureReport bidexFeatureReport=BidexFeatureReport.builder().testMetaDataBidex(TestMetaDataBidex.builder().dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
         		.testName("Auto Tester Report").environment(yaml.getEnvironment()).publisherUrl(yaml.getPublisherUrl()).harFileDownloadLink("harDownload/"+harFile ).userAgent(yaml.getUserAgent())
-        		.bidexController(bidexController).build()).build();
+        		.svr(getSvrFromBidex(bidexContent)).bidexController(bidexController).build()).build();
         
         
         bidexFeatureReport.setAllFeatureData(featureResult);
@@ -468,6 +468,15 @@ public class BidExConfig {
         
 
     }
+    
+    
+    public String getSvrFromBidex(JsonNode bidex)
+	{
+		JsonNode svr=bidex.get("SOURCE_CODE_VERSION");
+
+		return svr.textValue();
+		
+	}
 
    
 

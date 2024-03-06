@@ -45,6 +45,7 @@ public class BidexFeatureReport {
 		String userAgent;
 		String harFileDownloadLink;
 		BidexController bidexController;
+		String svr;
 	}
 	
 	@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
