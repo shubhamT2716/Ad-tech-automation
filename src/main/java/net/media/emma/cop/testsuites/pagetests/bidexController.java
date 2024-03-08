@@ -98,21 +98,8 @@ public class bidexController {
 
 		try {
 			
-			
-
-			ObjectMapper mapper = new YAMLMapper();
-			
-			
+						
 			TestCriteriaBo yamlTc = bidexAndFeatureTests.meargeYaml(yaml);
-			
-			
-			
-			
-			
-			// mav.addObject("message", yamlTc.getEnvironment());
-			// mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
-			// modelAndView.addObject("message", );
-			
 			
 			BidexFeatureReport bidexFeatureReport=bidexAndFeatureTests.bidexTests(yamlTc);
 			

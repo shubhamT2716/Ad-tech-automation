@@ -42,6 +42,9 @@ public class FileOperations {
 	@Value("${commonYamlFilePath}")
 	private String commonYaml;
 	
+	@Value("${featureTestFilePath}")
+	private String featureYaml;
+	
 	@Value("${yamlSmokeTestSuiteFilesPath}")
 	private String yamlSmokeTestSuiteFilesPath;
 	
@@ -176,6 +179,29 @@ public class FileOperations {
 		
 		
 	}
+	
+	
+	public String getFeatureFiles(String featureFiles)
+	{
+		ClassPathResource commonYamlClassPath=new ClassPathResource(featureYaml+"/"+featureFiles);
+		
+		 String commonContent=null;
+		 try {
+			 InputStream stream=commonYamlClassPath.getInputStream();
+			 
+			 commonContent=StreamUtils.copyToString(stream, StandardCharsets.UTF_8);
+			 
+			 return commonContent;
+		 }
+		 catch (Exception e) {
+			e.printStackTrace();
+			
+			return null;
+		}
+		
+		
+	}
+	
 	
 	
 	public String getYamlFileContent(String commonFile)

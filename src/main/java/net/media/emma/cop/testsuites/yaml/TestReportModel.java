@@ -48,10 +48,25 @@ public class TestReportModel {
 		String totalResponseTime;
 		@Builder.Default
 		List<String> consoleMessages = new ArrayList<>();
+		BidexData bidexData;
+		
 		// List of checks neededd
 		// Non 200 response
 		// js errors arising from this controller
 
+	}
+	
+	@Getter
+	@Setter
+	@Builder
+	@ToString
+	public static class BidexData{
+		
+		String svr;
+		String sugd;
+		String cid;
+		String itype;
+		
 	}
 
 	@Getter

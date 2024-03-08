@@ -1,5 +1,4 @@
 package net.media.emma.cop.testsuites.yaml;
-
 import java.awt.Desktop;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.BrowserContext;
@@ -32,6 +33,7 @@ import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.BidExController;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.TestMetaData;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
@@ -304,6 +306,9 @@ public class TestSuite implements GenericTestSuite {
 			}
 
 			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "b");
+			
+			bidexReport.setBidexData(getBidExData(request));
+			
 		}
 
 		if (bidExRequestObjects.size() == 0) {
@@ -316,6 +321,52 @@ public class TestSuite implements GenericTestSuite {
 
 		return bidexReport;
 
+	}
+
+	private BidexData getBidExData(Request request) {
+
+		BidexData bidexData = BidexData.builder().build();
+		
+		ObjectMapper mapper=new ObjectMapper();
+
+		//get data from request
+		// convert into request into json
+		String reponse=request.response().text();
+		
+		try {
+			
+		
+			 int startIndex=0;
+
+
+			 String startTarget = "{\"AaxDpCeiling\"";
+			if (reponse.contains(startTarget)) {
+				startIndex = reponse.indexOf(startTarget);
+				startIndex += 12;
+
+			}
+
+			//control in Bidexconfig.java
+			String finalString = reponse.substring(startIndex-12);
+			 JsonNode bidexJson= mapper.readValue(finalString, JsonNode.class);
+
+			
+			JsonNode envData=bidexJson.get("Environment");
+			
+			bidexData.setCid(envData.get("cid").asText());
+			bidexData.setSvr(envData.get("sver").asText());
+			bidexData.setSugd(envData.get("sugd").asText());
+			bidexData.setItype(envData.get("itype").asText());
+			
+		}
+		catch (Exception e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+
+		return bidexData;
 	}
 
 	private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, TestCriteriaBo testData) {

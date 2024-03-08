@@ -123,16 +123,12 @@ public class YamlTestSuiteScheduling {
 		String[] environments = environment.trim().split(",");
 		String[] userAgents = userAgent.trim().split(",");
 		;
-
-		
-		
-		
-		
+	
 		if(pubs!=null)
 		{
 			
 			String[] publisher=pubs.trim().split(",");
-TestCriteriaBo testCriteriaBo=null;
+			TestCriteriaBo testCriteriaBo=null;
 			
 			
 			StringBuilder yamlBuilder=new StringBuilder();

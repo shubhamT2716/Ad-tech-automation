@@ -32,6 +32,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
 
+import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
@@ -95,6 +96,10 @@ public class bidexAndFeatureTests {
 	
 	@Value("${commonYamlFilePath}")
 	private String commonYamlFile;
+	
+	@Value("${featureTestFilePath}")
+	private String featureYamlFile;
+	
 	
 	@Value("${jsonFile}")
     private String bidexConfigSampleFilePath;
@@ -259,18 +264,41 @@ public class bidexAndFeatureTests {
     public TestCriteriaBo meargeYaml(String yaml)
     {
     	Set<String> listofCommonYaml=fileOperations.listYamlFiles(commonYamlFile);
-      	
+    	
+    	Set<String> listOfFeautreYaml=fileOperations.listYamlFiles(featureYamlFile);
+    	
+    	StringBuilder yamlBuilder=new StringBuilder();
+		
+		
+		for (String commonYamls : listofCommonYaml) {
+		String commonContent = this.fileOperations.getCommonFile(commonYamls);
+			
+			yamlBuilder.append(commonContent).append("\n");
+
+			
+			
+		}
+		
+		
+		for (String featureYaml : listOfFeautreYaml) {
+			String commonContent = this.fileOperations.getFeatureFiles(featureYaml);
+				
+				yamlBuilder.append(commonContent).append("\n");
+
+				
+				
+			}
+    	
+    	
     	net.media.emma.cop.testsuites.pagetests.TestCriteriaBo criteria=null;
     	
-    	for(String commonFile: listofCommonYaml)
-    	{
-    		String yamlcontent=this.fileOperations.getCommonFile(commonFile);
+
     	
-    		String mearge[]= {yaml,yamlcontent};
+    		String mearge[]= {yaml,yamlBuilder.toString()};
     		
     		
     		 criteria=yamlUtils.buildAutoTesterYaml(mearge);
-       	}
+
     	
     	return criteria;
     }
