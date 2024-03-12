@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.microsoft.playwright.options.Cookie;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class BidexFeatureReport {
 	Map<String , Object> environmentDetails;
 	Map<String, List<SlotsData>> slotsDetected;
 	Map<String, Object> allFeatureData;
-	Map<String, String> cookies;
+	Map<String, Map<String, String>> cookies;
 	URLChecksReportModel urlChecksReport;
 	Map<String, Map<String, Map<List<String>, Boolean>>> slotsReport;
 	

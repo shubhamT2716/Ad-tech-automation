@@ -151,17 +151,21 @@ public class bidexAndFeatureTests {
 
 		
 		page.waitForTimeout(5000);
-		List<String> cookieUrls = Arrays.asList("https://hbx.media.net", "https://hb.yahoo.net", yaml.getPublisherUrl());
-		List<Cookie> cookies = null;
-		try{
-				cookies = page.context().cookies(cookieUrls);
+		List<String> cookieUrls = Arrays.asList("https://hbx.media.net", "https://hb.yahoo.net", ".yahoo.com", ".hb.yahoo.net", yaml.getPublisherUrl());
+		Map<String, List<Cookie>> urlWiseCookies = new HashMap<>();
+		try {
+			for (String url : cookieUrls) {
+
+		urlWiseCookies.put(url,page.context().cookies(url));
+
+			}
 		}
 		catch (Exception e) {
-			cookies = page.context().cookies();
+			urlWiseCookies.put(yaml.getPublisherUrl(),page.context().cookies());
 		}
 		page.close();
 
-		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies,  getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml),getBidexData(listOfReqest, yaml));
+		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, urlWiseCookies,  getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml),getBidexData(listOfReqest, yaml));
     }
 
 

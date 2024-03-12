@@ -66,7 +66,7 @@ public class BidExConfig {
     
 
     
-    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, List<Cookie> cookies, URLChecksReportModel model,BidexController bidexController) {
+    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, Map<String, List<Cookie>> cookies, URLChecksReportModel model,BidexController bidexController) {
 
 //        if (bidExContent == null) {
 //           
@@ -104,35 +104,30 @@ public class BidExConfig {
     }
 
 
-    public Map<String,  String> displayCookies(List<Cookie> cookies)
+    public Map<String, Map<String, String>> displayCookies(Map<String, List<Cookie>> cookies)
     {
-    	Map<String, String> allCookies=new HashMap<>();
-    	for(Cookie cookie : cookies){
-            allCookies.put(cookie.name, cookie.value);
-//    log.info("Cookie Name : " + cookie.name + " Cookie Value : " + cookie.value + " Cookie url : " + cookie.url+ " Cookie domain : " + cookie.domain+ " Cookie same site : "+cookie.sameSite);
+    	Map<String, Map<String, String>> listOfCookies=new HashMap<>();
 
-        }
-    	
-    	return allCookies;
+    	cookies.entrySet().forEach(entry->{
+
+    		Map<String, String> allCookies=new HashMap<>();
+
+
+    		for(Cookie cookie : entry.getValue()){
+
+
+                allCookies.put(cookie.name, cookie.value);
+
+            }
+
+    		listOfCookies.put(entry.getKey(), allCookies);
+
+    	});
+
+
+
+    	return listOfCookies;
     }
-
-//    public Map<String, Map<List<String>, List<String>>> displayCookies(List<Cookie> cookies, List<String> cookieurls)
-//    {
-//        Map<String, Map<List<String>, List<String>>> allCookies=new HashMap<>();
-//        for(String cookieurl : cookieurls){
-//            for(Cookie cookie: cookies)
-//            {
-//                String cookieurlnew = cookieurl.replace("https://", ".");
-//
-//                log.info("Outside!!!!  " + " " + "Cookie domain "+ cookie.domain + " Cookie name "+ cookie.name + " Cookie value "+ cookie.value + " Cookie url "+ cookie.url + " Cookie same site "+ cookie.sameSite);
-//                log.info("Cookie url in func " + cookieurlnew);
-//                if(cookie.domain.equals(cookieurlnew))
-//                {
-//                    log.info("Cookie domain "+ cookie.domain + " Cookie name "+ cookie.name + " Cookie value "+ cookie.value + " Cookie url "+ cookie.url + " Cookie same site "+ cookie.sameSite);
-//
-//                    allCookies.computeIfAbsent(cookie.domain, k->new HashMap<>()).put(Collections.singletonList(cookie.name), Collections.singletonList(cookie.value));
-//                }
-//            }
 
 
 
@@ -424,7 +419,7 @@ public class BidExConfig {
     }
     
     
-    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, List<Cookie> cookies, URLChecksReportModel reportModel, BidexController bidexController){
+    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, Map<String, List<Cookie>> cookies, URLChecksReportModel reportModel, BidexController bidexController){
  
     	 Map<String ,Object> featureTestResult=new HashMap<>();
     	
@@ -461,6 +456,7 @@ public class BidExConfig {
 
            featureResult.put(feature, featureMap);
         }
+
        
        Map<String, List<SlotsData>> solts=new HashMap<>();
         
@@ -492,7 +488,7 @@ public class BidExConfig {
 
     }
 
-   
+
 
     @Getter @Setter @Builder @ToString @NoArgsConstructor @AllArgsConstructor
     public static class SlotsData {
