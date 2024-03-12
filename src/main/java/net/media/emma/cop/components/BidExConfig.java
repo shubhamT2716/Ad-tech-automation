@@ -110,23 +110,23 @@ public class BidExConfig {
 
     	cookies.entrySet().forEach(entry->{
 
-    		Map<String, Map<String,String>> allcookiesdata = new HashMap<>();
+    		Map<String, Map<String,String>> allcookiesData = new HashMap<>();
             
     		for(Cookie cookie : entry.getValue()){
 
-                allcookiesdata.put(cookie.name, new HashMap<>());
-                allcookiesdata.get(cookie.name).put("value", cookie.value);
-                allcookiesdata.get(cookie.name).put("domain", cookie.domain);
-                allcookiesdata.get(cookie.name).put("path", cookie.path);
-                allcookiesdata.get(cookie.name).put("expires", cookie.expires.toString());
-                allcookiesdata.get(cookie.name).put("httpOnly", cookie.httpOnly.toString());
-                allcookiesdata.get(cookie.name).put("secure", cookie.secure.toString());
-                allcookiesdata.get(cookie.name).put("sameSite", cookie.sameSite.toString());
-                log.info("Cookie Name : "+cookie.name+" Cookie Domain : "+cookie.domain);
+                allcookiesData.put(cookie.name, new HashMap<>());
+                allcookiesData.get(cookie.name).put("value", cookie.value);
+                allcookiesData.get(cookie.name).put("domain", cookie.domain);
+                allcookiesData.get(cookie.name).put("path", cookie.path);
+                allcookiesData.get(cookie.name).put("expires", cookie.expires.toString());
+                allcookiesData.get(cookie.name).put("httpOnly", cookie.httpOnly.toString());
+                allcookiesData.get(cookie.name).put("secure", cookie.secure.toString());
+                allcookiesData.get(cookie.name).put("sameSite", cookie.sameSite.toString());
+                //log.info("Cookie Name : "+cookie.name+" Cookie Domain : "+cookie.domain);
 
             }
 
-    		listOfCookies.put(entry.getKey(), allcookiesdata);
+    		listOfCookies.put(entry.getKey(), allcookiesData);
 
     	});
 

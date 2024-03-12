@@ -153,7 +153,7 @@ public class bidexAndFeatureTests {
 		page.waitForTimeout(5000);
 		List<String> cookieUrls = Arrays.asList(".yahoo.com", ".hb.yahoo.net", yaml.getPublisherUrl());
 		Map<String, List<Cookie>> urlWiseCookies = new HashMap<>();
-//		urlWiseCookies.put(yaml.getPublisherUrl(),page.context().cookies());
+//
 		try {
 			for (String url : cookieUrls) {
 
