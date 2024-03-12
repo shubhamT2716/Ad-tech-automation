@@ -184,7 +184,7 @@ public class bidexAndFeatureTests {
 		page.waitForTimeout(5000);
 		
 		
-		List<Cookie> cookies = getCookies(page, yaml.getPublisherUrl());
+		Map<String, List<Cookie>> cookies = getCookies(page, yaml.getPublisherUrl());
 		
 		
 		
@@ -196,7 +196,7 @@ public class bidexAndFeatureTests {
 
     
     
-    public List<Cookie> getCookies(Page page, String publisher)
+    public Map<String, List<Cookie>> getCookies(Page page, String publisher)
     {
     	List<String> url=new ArrayList<>();
     	
@@ -205,8 +205,18 @@ public class bidexAndFeatureTests {
     	url.add(publisher);
     	
     	
+    	Map<String, List<Cookie>> mapOfCookie=new HashMap<>();
     	
-    return page.context().cookies(url);
+    	 for(String li : url)
+    	 {
+    		 List<Cookie> cookie=page.context().cookies(li);
+    		 
+    		 mapOfCookie.put(li, cookie);
+    		 
+    	 }
+    	
+    	
+    return  mapOfCookie;
     
     	
     }

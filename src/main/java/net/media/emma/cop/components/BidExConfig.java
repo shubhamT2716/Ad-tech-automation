@@ -66,7 +66,7 @@ public class BidExConfig {
     
 
     
-    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, List<Cookie> cookies, URLChecksReportModel model,BidexController bidexController, FeatureReport featureReport) {
+    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, Map<String, List<Cookie>> cookies, URLChecksReportModel model,BidexController bidexController, FeatureReport featureReport) {
 
 //        if (bidExContent == null) {
 //           
@@ -104,17 +104,31 @@ public class BidExConfig {
     }
 
 
-    public Map<String, String> displayCookies(List<Cookie> cookies)
+    public Map<String, Map<String, String>> displayCookies(Map<String, List<Cookie>> cookies)
     {
-    	Map<String, String> allCookies=new HashMap<>();
-    	for(Cookie cookie : cookies){
-
-            
-            allCookies.put(cookie.name, cookie.value);
-            
-        }
     	
-    	return allCookies;
+    	
+    	Map<String, Map<String, String>> listOfCookies=new HashMap<>();
+    	
+    	cookies.entrySet().forEach(entry->{
+    		
+    		Map<String, String> allCookies=new HashMap<>();
+    		
+    		
+    		for(Cookie cookie : entry.getValue()){
+
+                
+                allCookies.put(cookie.name, cookie.value);
+                
+            }
+    		
+    		listOfCookies.put(entry.getKey(), allCookies);
+    		
+    	});
+    	
+    	
+    	
+    	return listOfCookies;
     }
     public String getEnvironmentName(String envdata)
     {
@@ -402,7 +416,7 @@ public class BidExConfig {
     }
     
     
-    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, List<Cookie> cookies, URLChecksReportModel reportModel, BidexController bidexController , FeatureReport featureReport){
+    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, Map<String, List<Cookie>> cookies, URLChecksReportModel reportModel, BidexController bidexController , FeatureReport featureReport){
  
     	 Map<String ,Object> featureTestResult=new HashMap<>();
     	

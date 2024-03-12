@@ -272,7 +272,10 @@ public class ComplianceTestSuite {
     }
 
     private void pubsRefresh(Page page) {
-        page.evaluate("googletag.pubads().refresh(); timeFunction(); timeFunction(); function timeFunction() {setTimeout(function(){ googletag.pubads().refresh();}, 10000);}");
+//        page.evaluate("googletag.pubads().refresh(); timeFunction(); timeFunction(); function timeFunction() {setTimeout(function(){ googletag.pubads().refresh();}, 10000);}");
+   
+    page.evaluate("googletag.pubads().refresh()");
+    	
     }
 
     private void updateTestCriteriaGdprString(ComplianceTestCriteria testData, String updatedValue) {
