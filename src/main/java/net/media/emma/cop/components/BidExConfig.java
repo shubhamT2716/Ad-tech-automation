@@ -104,23 +104,29 @@ public class BidExConfig {
     }
 
 
-    public Map<String, Map<String, String>> displayCookies(Map<String, List<Cookie>> cookies)
+    public Map<String, Map<String, Map<String,String>>> displayCookies(Map<String, List<Cookie>> cookies)
     {
-    	Map<String, Map<String, String>> listOfCookies=new HashMap<>();
+    	Map<String, Map<String, Map<String,String>>> listOfCookies=new HashMap<>();
 
     	cookies.entrySet().forEach(entry->{
 
-    		Map<String, String> allCookies=new HashMap<>();
-
-
+    		Map<String, Map<String,String>> allcookiesdata = new HashMap<>();
+            
     		for(Cookie cookie : entry.getValue()){
 
-
-                allCookies.put(cookie.name, cookie.value);
+                allcookiesdata.put(cookie.name, new HashMap<>());
+                allcookiesdata.get(cookie.name).put("value", cookie.value);
+                allcookiesdata.get(cookie.name).put("domain", cookie.domain);
+                allcookiesdata.get(cookie.name).put("path", cookie.path);
+                allcookiesdata.get(cookie.name).put("expires", cookie.expires.toString());
+                allcookiesdata.get(cookie.name).put("httpOnly", cookie.httpOnly.toString());
+                allcookiesdata.get(cookie.name).put("secure", cookie.secure.toString());
+                allcookiesdata.get(cookie.name).put("sameSite", cookie.sameSite.toString());
+                log.info("Cookie Name : "+cookie.name+" Cookie Domain : "+cookie.domain);
 
             }
 
-    		listOfCookies.put(entry.getKey(), allCookies);
+    		listOfCookies.put(entry.getKey(), allcookiesdata);
 
     	});
 

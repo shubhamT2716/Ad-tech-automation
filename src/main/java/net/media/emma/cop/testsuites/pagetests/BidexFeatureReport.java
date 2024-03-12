@@ -26,7 +26,7 @@ public class BidexFeatureReport {
 	Map<String , Object> environmentDetails;
 	Map<String, List<SlotsData>> slotsDetected;
 	Map<String, Object> allFeatureData;
-	Map<String, Map<String, String>> cookies;
+	Map<String, Map<String, Map<String,String>>> cookies;
 	URLChecksReportModel urlChecksReport;
 	Map<String, Map<String, Map<List<String>, Boolean>>> slotsReport;
 	
