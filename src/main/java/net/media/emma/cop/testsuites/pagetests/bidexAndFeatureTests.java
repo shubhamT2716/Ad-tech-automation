@@ -151,7 +151,7 @@ public class bidexAndFeatureTests {
 
 		
 		page.waitForTimeout(5000);
-		List<String> cookieUrls = Arrays.asList(".yahoo.com", ".hb.yahoo.net", yaml.getPublisherUrl());
+		List<String> cookieUrls = Arrays.asList("https://hbx.media.net", "https://hb.yahoo.net","https://contextual.media.net", yaml.getPublisherUrl());
 		Map<String, List<Cookie>> urlWiseCookies = new HashMap<>();
 //
 		try {
@@ -162,6 +162,8 @@ public class bidexAndFeatureTests {
 			}
 		}
 		catch (Exception e) {
+			
+			e.printStackTrace();		
 			urlWiseCookies.put(yaml.getPublisherUrl(),page.context().cookies());
 		}
 		page.close();
