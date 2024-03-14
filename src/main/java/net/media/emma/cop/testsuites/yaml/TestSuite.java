@@ -250,16 +250,10 @@ public class TestSuite implements GenericTestSuite {
     	
     	 for(String li : url)
     	 {
-//    		 List<Cookie> cookie=page.context().cookies(li);
-    		 
     		List<Cookie> cookie= page.cookies(li);
-    		 
-    		 
     		 mapOfCookie.put(li, cookie);
     		 
     	 }
-    	
-    	
     return  mapOfCookie;
     
     	
