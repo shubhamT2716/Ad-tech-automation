@@ -2,6 +2,7 @@ package net.media.emma.cop.testsuites.yaml;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class TestReportModel {
 	BidExController bidExController;
 	URLChecksReportModel urlChecks;
 	NetworkAnalytics networkAnalytics;
+	Map<String, Map<String, String>> cookie;
 
 	@Getter
 	@Setter
@@ -69,6 +71,17 @@ public class TestReportModel {
 		
 	}
 
+	
+	@Getter
+	@Setter
+	@Builder
+	@ToString
+	public static class BrowserCookie{
+		
+		Map<String, Map<String, String>> cookie;
+		
+	}
+	
 	@Getter
 	@Setter
 	@Builder

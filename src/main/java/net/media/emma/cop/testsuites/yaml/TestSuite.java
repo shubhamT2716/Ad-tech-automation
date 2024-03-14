@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.testng.internal.Yaml;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +26,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
+import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.Timing;
 
@@ -190,6 +192,9 @@ public class TestSuite implements GenericTestSuite {
 		bidExController.setConsoleMessages(consoleMessage);
 		
 		
+		Map<String, List<Cookie>>  getCookies	=getCookies(browserContext, testData.getPublisherUrl());
+		
+		Map<String, Map<String, String>> cookies=displayCookies(getCookies);
 		
 
 		TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
@@ -198,7 +203,8 @@ public class TestSuite implements GenericTestSuite {
 				.userAgent(
 						testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
 				.harFileDownloadLink("harDownload/" + harFilePath).build()).build();
-
+		
+		testReport.setCookie(cookies);
 		testReport.setBidExController(bidExController);
 		try {
 		
@@ -230,6 +236,62 @@ public class TestSuite implements GenericTestSuite {
 	}
 	
 	
+	
+	public Map<String, List<Cookie>> getCookies(BrowserContext page, String publisher)
+    {
+    	List<String> url=new ArrayList<>();
+    	
+    	url.add("https://hbx.media.net");
+    	url.add("https://hb.yhoo.net");
+    	url.add(publisher);
+    	
+    	
+    	Map<String, List<Cookie>> mapOfCookie=new HashMap<>();
+    	
+    	 for(String li : url)
+    	 {
+//    		 List<Cookie> cookie=page.context().cookies(li);
+    		 
+    		List<Cookie> cookie= page.cookies(li);
+    		 
+    		 
+    		 mapOfCookie.put(li, cookie);
+    		 
+    	 }
+    	
+    	
+    return  mapOfCookie;
+    
+    	
+    }
+	
+	
+	public Map<String, Map<String, String>> displayCookies(Map<String, List<Cookie>> cookies)
+    {
+    	
+    	
+    	Map<String, Map<String, String>> listOfCookies=new HashMap<>();
+    	
+    	cookies.entrySet().forEach(entry->{
+    		
+    		Map<String, String> allCookies=new HashMap<>();
+    		
+    		
+    		for(Cookie cookie : entry.getValue()){
+
+                
+                allCookies.put(cookie.name, cookie.value);
+                
+            }
+    		
+    		listOfCookies.put(entry.getKey(), allCookies);
+    		
+    	});
+    	
+    	
+    	
+    	return listOfCookies;
+    }
 	
 	
 	
