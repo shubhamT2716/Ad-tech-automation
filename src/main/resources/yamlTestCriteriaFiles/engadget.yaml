@@ -1,5 +1,5 @@
 environment: hb.yahoo.net
-cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.engadget.com/?mnet_test=1"
 bidexAppendString: ""
@@ -35,7 +35,7 @@ keysToVerifyPositive: {
     svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
   },
-  
+
   APLog: {
     svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
@@ -55,6 +55,35 @@ keysToVerifyAnyOneOf: {
    aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
 
 }
+
+responseHeaders: {
+  YHB: {
+    # Cache-Control: max-age=0, no-cache, no-storese,
+    server: nginx,
+    #   content-Type: application/json,
+    #  cookie: visitor-id=3509139774772278000V10,
+  },
+  YPBJS: {
+    #Cache-Control: max-age=0, no-cache, no-storese,
+    content-Type: application/json,
+    # Set-Cookie: [SameSite: "None"]
+  },
+
+}
+
+requestHeaders: {
+  YHB: {
+    accept: '*/*',
+    user-agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
+    cookie: [visitor-id: "3515927955937478000V10"]
+  },
+  YPBJS: {
+    accept: '*/*',
+    user-agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
+  },
+
+}
+
 
 bidderDataUrls: {
   YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBL12EX",
@@ -76,7 +105,6 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner[1].w", value: "970" },
     { jsonPath: "x.imp[0].banner[1].h", value: "250" },
     { jsonPath: "x.imp[0].tagid", value: "534774365" },
-      # { jsonPath: "x.ext.bxLogs.svr", value: "" }
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -96,7 +124,7 @@ bidderDataAssertions: {
     {jsonPath: "x.imp[1].banner[1].w", value: "970"},
     {jsonPath: "x.imp[1].banner[1].h", value: "250"},
     {jsonPath: "x.imp[1].tagid", value: "888157941"},
-    {jsonPath: "x.ext.bxLogs.svr", value: ""},
+      # {jsonPath: "x.ext.bxLogs.svr", value: ""},
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -114,7 +142,6 @@ bidderDataAssertions: {
     {jsonPath: "x.imp[2].banner[0].w", value: "300"},
     {jsonPath: "x.imp[2].banner[0].h", value: "250"},
     {jsonPath: "x.imp[2].tagid", value: "667548672"},
-      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -134,7 +161,6 @@ bidderDataAssertions: {
     {jsonPath: "x.imp[3].banner[1].w", value: "300"},
     {jsonPath: "x.imp[3].banner[1].h", value: "250"},
     {jsonPath: "x.imp[3].tagid", value: "355218353"},
-      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -152,7 +178,6 @@ bidderDataAssertions: {
     {jsonPath: "x.imp[0].banner[0].w", value: ""},
     {jsonPath: "x.imp[0].banner[0].h", value: ""},
     {jsonPath: "x.imp[0].tagid", value: ""},
-      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -172,11 +197,10 @@ bidderDataAssertions: {
     {jsonPath: "x.imp[0].banner[1].w", value: "300"},
     {jsonPath: "x.imp[0].banner[1].h", value: "250"},
     {jsonPath: "x.imp[0].tagid", value: "355218353"},
-      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
     ],
     responseData: [
     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      #        { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
     ]
   },
   ],
@@ -196,7 +220,6 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
     ],
     responseData: [
-      #  { jsonPath: "", value: "" },
     ]
   },
   {
@@ -214,7 +237,6 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
     ],
     responseData: [
-      # { jsonPath: "", value: "" },
     ]
   },
   {
@@ -230,7 +252,6 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner.format[0].h", value: "250" },
     ],
     responseData: [
-      #  { jsonPath: "", value: "" },
     ]
   },
   {
@@ -248,7 +269,6 @@ bidderDataAssertions: {
     { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
     ],
     responseData: [
-      # { jsonPath: "", value: "" },
     ]
   },
   {

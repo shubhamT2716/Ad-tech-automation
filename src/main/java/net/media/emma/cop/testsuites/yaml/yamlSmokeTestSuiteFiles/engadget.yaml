@@ -76,6 +76,269 @@ keysToVerifyAnyOneOf: {
   aplog: { nbr: [ "45","3","69","0","1","99" ]},
 }
 
+bidderDataUrls: {
+  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBL12EX",
+  YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
+}
+
+bidderDataAssertions: {
+  YHB: [
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+      expectedValue: "LB-MULTI_ATF"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].all.cid", value: "8YHBL12EX" },
+    { jsonPath: "x.imp[0].all.crid", value: "534774365" },
+    { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+    { jsonPath: "x.imp[0].tagid", value: "534774365" },
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lmsid:;lu:0;pct:;pd:;pstaid:;pt:home;site:engadget;ver:carbon||1197802876||||eng-nl-hp-dis,privacy-footer|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "eng-nl-hp-dis,privacy-footer"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "top_center"},
+      # { jsonPath: "x.ext.bxLogs.svr", value: "" }
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[1].ortb2Imp.ext.data.divId",
+      expectedValue: "LB-MULTI_BTF"
+    },
+    requestData: [
+    {jsonPath: "x.imp[1].all.cid", value: "8YHBL12EX"},
+    {jsonPath: "x.imp[1].all.crid", value: "888157941"},
+    {jsonPath: "x.imp[1].banner[0].w", value: "728"},
+    {jsonPath: "x.imp[1].banner[0].h", value: "90"},
+    {jsonPath: "x.imp[1].banner[1].w", value: "970"},
+    {jsonPath: "x.imp[1].banner[1].h", value: "250"},
+    {jsonPath: "x.imp[1].tagid", value: "888157941"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lmsid:;lu:0;pct:;pd:;pstaid:;pt:home;site:engadget;ver:carbon||1197802876||||eng-nl-hp-dis,privacy-footer|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "eng-nl-hp-dis,privacy-footer"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "btm_center"},
+      # {jsonPath: "x.ext.bxLogs.svr", value: ""},
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[2].ortb2Imp.ext.data.divId",
+      expectedValue: "RR-MULTI_ATF"
+    },
+    requestData: [
+    {jsonPath: "x.imp[2].all.cid", value: "8YHBL12EX"},
+    {jsonPath: "x.imp[2].all.crid", value: "667548672"},
+    {jsonPath: "x.imp[2].banner[0].w", value: "300"},
+    {jsonPath: "x.imp[2].banner[0].h", value: "250"},
+    {jsonPath: "x.imp[2].tagid", value: "667548672"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lmsid:;lu:0;pct:;pd:;pstaid:;pt:home;site:engadget;ver:carbon||1197802876||||eng-nl-hp-dis,privacy-footer|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "eng-nl-hp-dis,privacy-footer"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "top_right"},
+      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[3].ortb2Imp.ext.data.divId",
+      expectedValue: "RR-MULTI_BTF"
+    },
+    requestData: [
+    {jsonPath: "x.imp[3].all.cid", value: "8YHBL12EX"},
+    {jsonPath: "x.imp[3].all.crid", value: "355218353"},
+    {jsonPath: "x.imp[3].banner[0].w", value: "300"},
+    {jsonPath: "x.imp[3].banner[0].h", value: "600"},
+    {jsonPath: "x.imp[3].banner[1].w", value: "300"},
+    {jsonPath: "x.imp[3].banner[1].h", value: "250"},
+    {jsonPath: "x.imp[3].tagid", value: "355218353"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lmsid:;lu:0;pct:;pd:;pstaid:;pt:home;site:engadget;ver:carbon||1197802876||||eng-nl-hp-dis,privacy-footer|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "eng-nl-hp-dis,privacy-footer"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "mid_right"},
+      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+      expectedValue: "RR-MULTI-2_BTF"
+    },
+    requestData: [
+    {jsonPath: "x.imp[0].all.cid", value: "8YHBL12EX"},
+    {jsonPath: "x.imp[0].all.crid", value: "355218353"},
+    {jsonPath: "x.imp[0].banner[0].w", value: "300"},
+    {jsonPath: "x.imp[0].banner[0].h", value: "600"},
+    {jsonPath: "x.imp[0].banner[1].w", value: "300"},
+    {jsonPath: "x.imp[0].banner[1].h", value: "250"},
+    {jsonPath: "x.imp[0].tagid", value: "355218353"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.key", value: "publisherblob"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k1.value", value: "lmsid:;lu:0;pct:;pd:;pstaid:;pt:home;site:engadget;ver:carbon||1197802876||||eng-nl-hp-dis,privacy-footer|"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.key", value: "bucket"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k2.value", value: "eng-nl-hp-dis,privacy-footer"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.key", value: "cobrand"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k3.value", value: "none"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.key", value: "lang"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k4.value", value: "en-US"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.key", value: "loc"},
+    { jsonPath: "x.imp[0].ortb2Imp.ext.kvs.k7.value", value: "mid_right_2"},
+      #{jsonPath: "x.ext.bxLogs.svr", value: ""},
+    ],
+    responseData: [
+    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+    ]
+  },
+  ],
+  YPBJS: [
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_eng_main_dt_top_center"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_center" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_top_center" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_top_center" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_center"},
+    ],
+    responseData: [
+      #  { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_eng_main_dt_btm_center"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "btm_center" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_btm_center" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_btm_center" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "728" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "970" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "btm_center"},
+    ],
+    responseData: [
+      # { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_eng_main_dt_top_right"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_right" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_top_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_top_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "top_right"},
+    ],
+    responseData: [
+      #  { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_eng_main_dt_mid_right"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "600" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right"},
+    ],
+    responseData: [
+      # { jsonPath: "", value: "" },
+    ]
+  },
+  {
+    matchingJsonPath: {
+      jsonPath: "x.imp[0].ext.dfp_ad_unit_code",
+      expectedValue: "us_eng_main_dt_mid_right"
+    },
+    requestData: [
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right_2" },
+    { jsonPath: "x.imp[0].ext.pos", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].tagid", value: "us_eng_main_dt_mid_right" },
+    { jsonPath: "x.imp[0].banner.format[0].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[0].h", value: "600" },
+    { jsonPath: "x.imp[0].banner.format[1].w", value: "300" },
+    { jsonPath: "x.imp[0].banner.format[1].h", value: "250" },
+    { jsonPath: "x.imp[0].ext.kvs.cobrand", value: "none"},
+    { jsonPath: "x.imp[0].ext.kvs.lang", value: "en-US"},
+    { jsonPath: "x.imp[0].ext.kvs.loc", value: "mid_right_2"},
+    ],
+    responseData: [
+      # { jsonPath: "", value: "" },
+    ]
+  },
+  ]
+}
+
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []
 domInject: []

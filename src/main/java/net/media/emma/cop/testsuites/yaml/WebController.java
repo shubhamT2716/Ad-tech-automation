@@ -1,23 +1,21 @@
 package net.media.emma.cop.testsuites.yaml;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -47,6 +46,7 @@ import net.media.emma.utils.FileOperations;
 @Controller("yamlTestSuiteController")
 @Slf4j
 @RequestMapping("/yamlTestSuite/")
+@RestController
 public class WebController {
 
 	@Autowired
@@ -175,6 +175,7 @@ public class WebController {
 		return mav;
 
 	}
+	
 
 	@GetMapping("/autoTest")
 	public ModelAndView getAutoTest() {
@@ -293,8 +294,7 @@ public class WebController {
 		return mav;
 	}
 
-	// @Value("${yamlFolderPath}")
-	// private String yamlFolderPath;
+	
 
 	@PostMapping("fileContent")
 	@ResponseBody

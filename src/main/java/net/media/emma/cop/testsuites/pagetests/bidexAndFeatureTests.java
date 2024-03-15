@@ -191,8 +191,28 @@ public class bidexAndFeatureTests {
 		URLChecksReportModel model=getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml);
 		
 		page.close();
+		
+		List<String> cookieUrls = Arrays.asList("https://hbx.media.net", "https://hb.yahoo.net","https://contextual.media.net", yaml.getPublisherUrl());
+		Map<String, List<Cookie>> urlWiseCookies = new HashMap<>();
+//
+		try {
+			for (String url : cookieUrls) {
+
+		urlWiseCookies.put(url,page.context().cookies(url));
+
+			}
+		}
+		catch (Exception e) {
+			
+			e.printStackTrace();		
+			urlWiseCookies.put(yaml.getPublisherUrl(),page.context().cookies());
+		}
+		page.close();
+
+
 		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, model,getBidexData(listOfReqest, yaml),featureChecks(urlFromNetworkTab, yaml,pageSlots,model));
-    }
+
+		    }
 
     
     

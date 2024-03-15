@@ -21,11 +21,12 @@ import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
 public class TestCriteriaBo {
 
 	String environment;
-	String userAgent;
-	String publisherUrl;
-	List<Map<String, String>> coockies;
-
-	Map<String, String> networkCallsPositive;
+    String userAgent;
+    String publisherUrl;
+    List<Map<String,String>> cookies;
+    
+    
+    Map<String, String> networkCallsPositive;
 	Map<String, String> networkCallsNegative;
 
 	Map<String, Map<String, Set<String>>> keysToVerifyPositive;

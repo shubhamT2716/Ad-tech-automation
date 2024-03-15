@@ -104,32 +104,40 @@ public class BidExConfig {
     }
 
 
-    public Map<String, Map<String, String>> displayCookies(Map<String, List<Cookie>> cookies)
+    public Map<String, Map<String, Map<String,String>>> displayCookies(Map<String, List<Cookie>> cookies)
     {
-    	
-    	
-    	Map<String, Map<String, String>> listOfCookies=new HashMap<>();
-    	
+    	Map<String, Map<String, Map<String,String>>> listOfCookies=new HashMap<>();
+
     	cookies.entrySet().forEach(entry->{
-    		
-    		Map<String, String> allCookies=new HashMap<>();
-    		
-    		
+
+    		Map<String, Map<String,String>> allcookiesData = new HashMap<>();
+            
     		for(Cookie cookie : entry.getValue()){
 
-                
-                allCookies.put(cookie.name, cookie.value);
-                
+                allcookiesData.put(cookie.name, new HashMap<>());
+                allcookiesData.get(cookie.name).put("value", cookie.value);
+                allcookiesData.get(cookie.name).put("domain", cookie.domain);
+                allcookiesData.get(cookie.name).put("path", cookie.path);
+                allcookiesData.get(cookie.name).put("expires", cookie.expires.toString());
+                allcookiesData.get(cookie.name).put("httpOnly", cookie.httpOnly.toString());
+                allcookiesData.get(cookie.name).put("secure", cookie.secure.toString());
+                allcookiesData.get(cookie.name).put("sameSite", cookie.sameSite.toString());
+                //log.info("Cookie Name : "+cookie.name+" Cookie Domain : "+cookie.domain);
+
             }
-    		
-    		listOfCookies.put(entry.getKey(), allCookies);
-    		
+
+    		listOfCookies.put(entry.getKey(), allcookiesData);
+
     	});
-    	
-    	
-    	
+
+
+
     	return listOfCookies;
     }
+
+
+
+
     public String getEnvironmentName(String envdata)
     {
         Map<String , Object> map =new HashMap<>();
@@ -237,6 +245,7 @@ public class BidExConfig {
 
     public void setCridAdunitPathMapping(JsonNode bidExContent) {
         List < String > crids = new ArrayList < String > ();
+
 
         JsonNode cridConfig = bidExContent.get("DfpPlacements");
         try {
@@ -453,6 +462,7 @@ public class BidExConfig {
 
            featureResult.put(feature, featureMap);
         }
+
        
        Map<String, List<SlotsData>> solts=new HashMap<>();
         
@@ -492,7 +502,7 @@ public class BidExConfig {
 		
 	}
 
-   
+
 
     @Getter @Setter @Builder @ToString @NoArgsConstructor @AllArgsConstructor
     public static class SlotsData {

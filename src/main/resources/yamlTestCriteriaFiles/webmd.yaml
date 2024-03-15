@@ -45,23 +45,51 @@ keysToVerifyPositive: {
   APLog: {
     svr: ["2023072110_141_080214_705_080214_668_ssp"],
     ugd: ["4"],
-  #usp_ldf: ["0","1"],
-   },
- }
+    #usp_ldf: ["0","1"],
+  },
+}
 
 #to_check_negative_keys
 keysToVerifyNegative: {
   belog: { name: ["ADS_DISABLED"]},
-  prlog: { snm : ["removed","error",], nbr : ["13"], usp_ldf : []},
+  prlog: { snm: ["removed","error",], nbr: ["13"], usp_ldf: []},
   aplog: { nbr: ["13"]},
   awlog: { ogbdp: ["0","-1","-2"]},
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { cid: ["8CULM0U5B", "8CU66J6"], snm: ["success", "nobid"], nbr : [ "45","3","69","0","1","99" ]},
- }
+  prlog: { nbr: [ "45","3","69","0","1","99" ]},
+  aplog: { cid: ["8CULM0U5B", "8CU66J6"], snm: ["success", "nobid"], nbr: [ "45","3","69","0","1","99" ]},
+}
+
+responseHeaders: {
+  YHB: {
+    Content-Type: image/gif,
+    Content-Length: '35',
+  },
+  YPBJS: {
+    Cache-Control: max-age=0, no-cache, no-storese,
+    Content-Type: image/gif,
+    cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+  },
+}
+
+requestHeaders: {
+  YHB: {
+    accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+    user-agent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',
+    #    cookie: [
+    #    {"visitor-Id": "295a8052-83a4-4bc7-06bd-b840f17d88f7"},
+    #   {"data-o": "295a8052-83a4-4bc7-06bd-b840f17d88f7"}
+    #   ],
+  },
+  YPBJS: {
+    Cache-Control: max-age=0, no-cache, no-store,
+    Content-Type: image/gif,
+    cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+  },
+}
 
 bidderDataUrls: {
   YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBL12EX",

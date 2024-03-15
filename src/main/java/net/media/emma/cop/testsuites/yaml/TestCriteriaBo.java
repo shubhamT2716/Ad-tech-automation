@@ -20,6 +20,7 @@ public class TestCriteriaBo {
 	String publisherUrl;
 	String environment;
 	String bidexAppendString;
+	String location;
 	Map<String, String> bidexReplaceString;
 
 	Map<String, String> networkCallsPositive;
@@ -28,6 +29,9 @@ public class TestCriteriaBo {
 	Map<String, Map<String, Set<String>>> keysToVerifyPositive;
 	Map<String, Map<String, Set<String>>> keysToVerifyNegative;
 	Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
+
+    Map<String, Map<String, Object>> requestHeaders;  // Use a map with Object type
+    Map<String, Map<String, Object>> responseHeaders; // Use a map with Object type
 
     Map<String, String> bidderDataUrls;
     Map<String, List<BidderDataAssertions>> bidderDataAssertions;

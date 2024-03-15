@@ -23,7 +23,7 @@ public class TestReportModel {
 	BidExController bidExController;
 	URLChecksReportModel urlChecks;
 	NetworkAnalytics networkAnalytics;
-	Map<String, Map<String, String>> cookie;
+	Map<String, Map<String, Map<String,String>>> cookie;
 
 	@Getter
 	@Setter
