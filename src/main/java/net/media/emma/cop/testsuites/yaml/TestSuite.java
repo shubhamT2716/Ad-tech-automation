@@ -17,6 +17,7 @@ import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.testng.internal.Yaml;
@@ -83,7 +84,7 @@ public class TestSuite implements GenericTestSuite {
     private static String windscribeLoc = "xpath=(//div[@aria-label='Loc'])[1]";
     private static String acceptAllBtn = "xpath=//span[text()='Accept all']";
 
-    private static BrowserContext browserContext;
+//    private static BrowserContext browserContext;
 
     String url = "chrome-extension://hnmpcagpplmpfojmgmnngilcnanddlhb/popup.html";
     String windScribeExtensionPath = System.getProperty("user.dir") + "/extensions/hnmpcagpplmpfojmgmnngilcnanddlhb/3.4.6_0";
@@ -118,10 +119,20 @@ public class TestSuite implements GenericTestSuite {
     @Async("yamlTestSuitePool")
     public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData) {
 
-        CompletableFuture<TestReportModel> future = new CompletableFuture<>();
-
-        future.complete(getTestResults(testData));
+    	CompletableFuture<TestReportModel> future = new CompletableFuture<>();
+        try {
+            TestReportModel testReport = getTestResults(testData); // Create a new browser context for each task
+            future.complete(testReport);
+        } catch (Exception e) {
+        	
+        	e.printStackTrace();         
+        	log.error("Error executing test: {}", e.getMessage());
+            future.completeExceptionally(e);
+        }
         return future;
+
+
+
 
     }
 
@@ -130,6 +141,11 @@ public class TestSuite implements GenericTestSuite {
 
         String harFilePath = CommonBrowserUtil.getFileNameForHar();
         String location = testData.getLocation();
+        
+     
+		BrowserContext browserContext=null;
+        
+        try {
 
         if (location != null) {
             browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(),
@@ -181,7 +197,6 @@ public class TestSuite implements GenericTestSuite {
         
 			browserContext.setDefaultTimeout(90000); // 70 seconds
 			
-//			Desktop.getDesktop().browse(new URI(testData.getPublisherUrl()));
 			
 			
 			
@@ -199,18 +214,7 @@ public class TestSuite implements GenericTestSuite {
         catch (Exception e) {
         	log.error("Error while navigating to publisher url: {}", e.getMessage());
 		}
-        // try {
-
-        //     browserContext.setDefaultTimeout(90000); // 90 seconds
-            
-        //     if (location != null) {
-        //         page = browserContext.newPage();
-        //         openWindscribe(page, testData.getLocation());
-        //         page.close();
-        //     }
-        //     page = browserContext.newPage();
-        //     consoleMessage = getConsoleErrors(page);
-        //     page.navigate(testData.getPublisherUrl());
+        
 
 	
 		
@@ -242,24 +246,22 @@ public class TestSuite implements GenericTestSuite {
 			testReport.setUrlChecks(model);
 		}catch (Exception e) {
 			
-//			e.printStackTrace();
-			
 			testReport.setUrlChecks(null);
 		}
 		
-
-		browserContext.close();
-//		try {
-//
-//			return jsonWriter.writeValueAsString(testReport);
-//
-//		} catch (JsonProcessingException e) {
-//
-//			log.error("Error while converting test report to json: {}", e.getMessage());
-//			return "Error while converting test report to json";
-//		}
-
+		
 		return testReport;
+		
+        }
+        catch (Exception e) {
+        	
+        	e.printStackTrace();
+			return null;
+		}
+		finally {
+			browserContext.close();
+		}
+		
 	}
 	
 	
