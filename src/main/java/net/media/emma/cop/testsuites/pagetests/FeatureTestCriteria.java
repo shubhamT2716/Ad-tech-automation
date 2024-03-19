@@ -92,11 +92,11 @@ public class FeatureTestCriteria {
 			
 			String vKey=valueEntry.getKey();
 			
-			System.err.println(" Urls:  "+vKey);
+			
 			
 			String vValue= valueEntry.getValue();   
 			
-			System.err.println(" Urls:  "+vValue);
+			
 			
 			
 			if(urlQuesryStringMap.containsKey(vKey)&&urlQuesryStringMap.get(vKey).equals(vValue))

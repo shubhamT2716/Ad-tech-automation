@@ -264,12 +264,15 @@ public class BidExConfig {
             String adUnitPathTrimmed = cridNode.toString().substring(cridNode.toString().lastIndexOf("/") + 1).replace('"', ' ').trim();
             SlotsData data=getSlotById(cridList.toString(),"DfpPlacements");
             data.setAdunitPath(adUnitPathTrimmed);
+            
+            
 //            data.setFeatureName("DfpPlacements");
             }catch(Exception e){
                 cridNode = cridConfig.get(cridList).get("div");
                 String adUnitPathTrimmed = cridNode.toString().substring(cridNode.toString().lastIndexOf("/") + 1).replace('"', ' ').trim();
                 SlotsData data=getSlotById(cridList.toString(),"DfpPlacements");
                 data.setAdunitPath(adUnitPathTrimmed);
+               
             }
 
         }
@@ -285,6 +288,8 @@ public class BidExConfig {
                 String cridKey = entry.getKey();
                 JsonNode cridNode = entry.getValue();
                 JsonNode getDcn = null;
+//                JsonNode getSize=null;
+                
 //                 log.info("cridNode " + cridNode.toString());
      
                
@@ -299,7 +304,10 @@ public class BidExConfig {
                         	 SlotsData  data=new SlotsData();
                           data=getSlotById(cridKey,"PlacementProviderRules");
                           data.setDcn(getDcn.toString());
-//                          data.setFeatureName("PlacementProviderRules");
+                          data.setSizes(getSize);
+                          //   data.setFeatureName("PlacementProviderRules");
+                          
+                        
                         }
 
                     } catch (Exception e) {
@@ -309,6 +317,9 @@ public class BidExConfig {
                         SlotsData  data=new SlotsData();
                         data=getSlotById(cridKey,"PlacementProviderRules");
                         data.setDcn(nullDcn);
+                        
+                       
+                        
                     }
                 }
             });
@@ -420,6 +431,8 @@ public class BidExConfig {
             SlotsData data=getSlotById(cridList.toString(),"InStreamVideoDfpPlacements" );
             data.setAdunitPath(adUnitPathTrimmed);
 //            data.setFeatureName("InStreamVideoDfpPlacements");
+            
+            System.err.println("In InStreamVideoDfpPlacements "+ data.getSizes());
         }        
         
     }
@@ -511,7 +524,7 @@ public class BidExConfig {
         public String crid;
         public String dcn;
         public String adunitPath;
-        public String sizes;
+        public Map<String, Object> sizes;
         public String mediaTypes;
         public String providerId;
 //        Map<String, Object> providerData=new HashMap<>();
