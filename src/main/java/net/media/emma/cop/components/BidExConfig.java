@@ -297,14 +297,55 @@ public class BidExConfig {
                 if (cridNode != null & cridNode.isObject()) {
                     try {
                       Map<String, Object> getSize= mapper.convertValue(cridNode, Map.class);
+                      
+                      Map<String, List<Map<String, Object>>> sizes=new HashMap<>();
                     	
                         getDcn = cridNode.get("25014").get("pp").get("dcn");
+                        
+                        getSize.entrySet().forEach(s->{
+                        	String k=s.getKey();
+                        	Object v=s.getValue();
+                        	
+                        	Map<String, Object> vl=mapper.convertValue(v, Map.class);
+                        	
+                        	Object object=vl.get("szs");
+                        	
+                        	List<Map<String, Object>>  getEpcSize=mapper.convertValue(object, List.class);
+                        	
+//                        	List<Map<String, Object>> listOfSize=new ArrayList<>();
+//                        	
+//                        	for(Map<String, Object> fm:getEpcSize)
+//                        	{
+//                        		Map<String, Object> getEpcAndSize=new HashMap<>();
+//                        		
+//                        		Object epc=fm.get("epcMap");
+//                        		Object siz=fm.get("sz");
+//                        		Object mediaType=fm.get("mediatype");
+//                        		
+//                        		
+//                        		
+//                        		
+//                        		System.err.println(epc+" "+siz+" "+mediaType);
+//                        		
+//                        		getEpcAndSize.put("sz", siz);
+//                        		
+//                        		getEpcAndSize.put("mediaType", mediaType);
+//                        		
+//                        		listOfSize.add(getEpcAndSize);
+//                        		listOfSize.add((Map<String, Object>) epc);
+//                        		
+//                        	}
+//                        	
+                        	sizes.put(k, getEpcSize);
+                        	
+                        	
+                        });
                         
                         if (getDcn.toString() != null) {
                         	 SlotsData  data=new SlotsData();
                           data=getSlotById(cridKey,"PlacementProviderRules");
                           data.setDcn(getDcn.toString());
-                          data.setSizes(getSize);
+                          data.setSizes(sizes);
                           //   data.setFeatureName("PlacementProviderRules");
                           
                         
@@ -524,7 +565,7 @@ public class BidExConfig {
         public String crid;
         public String dcn;
         public String adunitPath;
-        public Map<String, Object> sizes;
+        public Map<String, List<Map<String, Object>>> sizes;
         public String mediaTypes;
         public String providerId;
 //        Map<String, Object> providerData=new HashMap<>();
