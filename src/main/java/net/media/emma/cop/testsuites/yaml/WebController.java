@@ -117,7 +117,7 @@ public class WebController {
 
 	}
 	
-	@GetMapping("/smokeTestSuiteApi")
+	@GetMapping("/smokeTest")
 	@ResponseBody
 	public ResponseEntity<?>/*ModelAndView*/ smokeTestAPi(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
 			@RequestParam(value = "pubs", required = false) String pubs) {
