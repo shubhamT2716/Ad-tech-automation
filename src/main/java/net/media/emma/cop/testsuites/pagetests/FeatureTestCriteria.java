@@ -35,11 +35,6 @@ public class FeatureTestCriteria {
 		
 		log.info("urlData : "+urlData);
 		
-		
-		
-		
-		
-		
 		Map<String,PositiveURLChecks> mapReport=reportModel.getPositiveUrlChecks();
 		
 		
@@ -133,35 +128,57 @@ public class FeatureTestCriteria {
 			try {
 				String url =URLDecoder.decode(urls, "UTF-8");
 				
-				if(url.contains(vKey))
+				
+			int as=url.indexOf("prev_scp");
+			
+			url=url.substring(as);
+			
+			url=url.substring(9);
+			
+			System.out.println("prev URL: "+url);
+			
+			
+			String slots[]=url.split("\\|");
+			
+			
+			
+			for(String slot: slots)
+			{
+				System.out.println("slots: "+slot);
+				if(slot.contains(vKey))
 				{
 					
-					System.err.println(url);
+					String getValue[]=slot.split("&");
 					
-					int index=url.indexOf(vKey);
+					Map<String, String> mapOfSlotsData=new HashMap<>();
 					
-					String url1=url.substring(index);
-					int sIndex=url1.indexOf(vKey);
-					int eIndex=url1.indexOf("&");
+					for(String slotsVal: getValue)
+					{
+						
+						String keyVal[]=slotsVal.split("=");
+						if(keyVal.length==2)
+						{
+							mapOfSlotsData.put(keyVal[0], keyVal[1]);
+						}
+					}
 					
-					url1=url1.substring(sIndex, eIndex);
 					
-					Map<String, String> m = new HashMap<>();
-			        String[] keyValuePairs = url1.split("=");
-			        if (keyValuePairs.length == 2) {
-			            m.put(keyValuePairs[0], keyValuePairs[1]);
-			        }
+					
+					System.err.println("Map of slots"+ mapOfSlotsData);
+					
+					
 			        
 			        
 			      
-			        if(m.get(vKey)!=null)
+			        if(mapOfSlotsData.get(vKey)!=null)
 					      {
 					    	  
-					    	  if(m.get(vKey).equals(vValue))
+					    	  if(mapOfSlotsData.get(vKey).equals(vValue))
 					    	  {
+					    		  String loc=mapOfSlotsData.get("loc");
 //					    		 report.getPositiveFeatureChecks().setTestResult(TestStatus.PASS); 
 					    		  
-					    		  String msg="Negative Value Foound: "+m;
+					    		  String msg="Negative Value Found: "+ vKey +"="+ vValue +" at Location: "+loc;
 					    		  
 					    		  if(vKey.equals("y_dnb"))
 									 {
@@ -182,7 +199,7 @@ public class FeatureTestCriteria {
 					
 				}
 	
-				
+			}
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -258,30 +275,51 @@ public class FeatureTestCriteria {
 			try {
 				String url =URLDecoder.decode(urls, "UTF-8");
 				
-				if(url.contains(vKey))
+				int as=url.indexOf("prev_scp");
+				
+				url=url.substring(as);
+				
+				url=url.substring(9);
+				
+				System.out.println("prev URL: "+url);
+				
+				
+				String slots[]=url.split("\\|");
+				
+				for(String slot:slots)
 				{
 					
-					int index=url.indexOf(vKey);
+				
+				
+				if(slot.contains(vKey))
+				{
 					
-					String ur=url.substring(index);
-					int sIndex=ur.indexOf(vKey);
-					int eIndex=ur.indexOf("&");
+					String getValue[]=slot.split("&");
 					
-					ur=ur.substring(sIndex, eIndex);
+					Map<String, String> mapOfSlotsData=new HashMap<>();
 					
-					Map<String, String> m = new HashMap<>();
-			        String[] keyValuePairs = ur.split("=");
-			        if (keyValuePairs.length == 2) {
-			            m.put(keyValuePairs[0], keyValuePairs[1]);
-			        }
+					for(String slotsVal: getValue)
+					{
+						
+						String keyVal[]=slotsVal.split("=");
+						if(keyVal.length==2)
+						{
+							mapOfSlotsData.put(keyVal[0], keyVal[1]);
+						}
+					}
+					
+					
 			        
 			        
 			        
-			        if(m.get(vKey)!=null)
+			        if(mapOfSlotsData.get(vKey)!=null)
 					      {
 					    	  
-					    	  if(m.get(vKey).equals(vValue))
+					    	  if(mapOfSlotsData.get(vKey).equals(vValue))
 					    	  {
+					    		  
+					    		  
+					    		  String location=mapOfSlotsData.get("loc");
 //					    		 report.getPositiveFeatureChecks().setTestResult(TestStatus.PASS); 
 					    		  
 //					    		 positiveFeatureChecks.setMatchingUrls(matchingUrl);
@@ -290,7 +328,7 @@ public class FeatureTestCriteria {
 					    		 positiveFeatureChecks.setFeatureValuesChecks(value);
 					    		 
 					    		 
-					    		 String msg="Positive Check Pass "+vKey+" "+vValue;
+					    		 String msg="Positive Check Pass :"+vKey+"="+vValue+" at location :"+location;
 						    		
 					    		 
 					    		 message.add(msg);
@@ -303,7 +341,7 @@ public class FeatureTestCriteria {
 					
 					
 				}
-				
+				}
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -330,7 +368,7 @@ public class FeatureTestCriteria {
 		}
 		
 		
-		System.out.println(positiveReport.toString());
+		
 		
 		repo.put("AdStacking", positiveReport);
 		
