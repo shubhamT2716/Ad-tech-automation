@@ -94,13 +94,14 @@ public class WebController {
 	@ResponseBody
 	public ModelAndView runThreadPoolTest(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
 			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles,
-			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
+			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles,
+			@RequestParam(value = "email",required = false)String email) {
 		
 		
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null, false);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null,email, true);
 
 		try {
 			mav.addObject("message2", result.getSmokeReport());
@@ -120,7 +121,8 @@ public class WebController {
 	@GetMapping("/smokeTest")
 	@ResponseBody
 	public ResponseEntity<?>/*ModelAndView*/ smokeTestAPi(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
-			@RequestParam(value = "pubs", required = false) String pubs) {
+			@RequestParam(value = "pubs", required = false) String pubs,
+			@RequestParam(value = "email",required = false)String email) {
 //			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
 		
 		
@@ -131,7 +133,7 @@ public class WebController {
 		
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest,commonFile,pubs, false);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest,commonFile,pubs, email,true);
 
 		try {
 //			mav.addObject("message2", result.getSmokeReport());

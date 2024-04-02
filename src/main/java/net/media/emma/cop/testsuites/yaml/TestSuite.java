@@ -271,7 +271,8 @@ public class TestSuite implements GenericTestSuite {
     	List<String> url=new ArrayList<>();
     	
     	url.add("https://hbx.media.net");
-    	url.add("https://hb.yhoo.net");
+    	url.add("https://hb.yahoo.net");
+    	url.add("https://contextual.media.net");
     	url.add(publisher);
     	
     	
