@@ -12,6 +12,8 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.microsoft.playwright.Request;
+
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.pagetests.FeatureReport.FeatureChecks;
 import net.media.emma.cop.testsuites.pagetests.FeatureReport.TestStatus;
@@ -30,7 +32,7 @@ public class FeatureTestCriteria {
 	
 	boolean test=true;
 	
-	public FeatureReport featureTestCasePositvie(Map.Entry<String, String> urlData, TestCriteriaBo criteriaBo, URLChecksReportModel reportModel)
+	public FeatureReport featureTestCasePositvie(Map.Entry<String, String> urlData,List<Request> requests,TestCriteriaBo criteriaBo, URLChecksReportModel reportModel)
 	{
 		
 		log.info("urlData : "+urlData);
@@ -71,7 +73,7 @@ public class FeatureTestCriteria {
 			List<String> matchingUrls=mapReport.get(key).getMatchingUrls();
 			
 			for(String urls: matchingUrls) {
-				Map<String, String> urlQuesryStringMap=dataProcessing.getQueryStringMapFromUrl(urls);
+				Map<String, String> urlQuesryStringMap=dataProcessing.getQueryStringMapFromUrl(urls,requests);
 			
 			
 			
@@ -232,7 +234,7 @@ public class FeatureTestCriteria {
 			List<String> matchingUrls=mapReport.get(key).getMatchingUrls();
 			
 			for(String urls: matchingUrls) {
-				Map<String, String> urlQuesryStringMap=dataProcessing.getQueryStringMapFromUrl(urls);
+				Map<String, String> urlQuesryStringMap=dataProcessing.getQueryStringMapFromUrl(urls,requests);
 			
 			
 			

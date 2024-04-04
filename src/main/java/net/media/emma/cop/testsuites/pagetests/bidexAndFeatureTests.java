@@ -62,7 +62,7 @@ public class bidexAndFeatureTests {
 	
 	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
 			"hbx-stage.media.net");
-	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");// , "catchpoint_content.js",
+	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js");// , "catchpoint_content.js",
 		
 
 	String finalConfig = "";
@@ -210,7 +210,7 @@ public class bidexAndFeatureTests {
 		page.close();
 
 
-		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, model,getBidexData(listOfReqest, yaml),featureChecks(urlFromNetworkTab, yaml,pageSlots,model));
+		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, model,getBidexData(listOfReqest, yaml),featureChecks(urlFromNetworkTab,listOfReqest, yaml,pageSlots,model));
 
 		    }
 
@@ -358,7 +358,7 @@ public class bidexAndFeatureTests {
 							.urlPattern(urlData.getValue())
 							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
 							.queryStringMap(new ArrayList<HashMap<String, String>>(
-									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
+									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests))))
 							.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
 							.positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
 							.anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey())).build();
@@ -366,7 +366,7 @@ public class bidexAndFeatureTests {
 					urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
 				} else {
 					labelExists.getMatchingUrls().add(requestUrl);
-					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
+					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests));
 				}
 
 				continue;
@@ -398,7 +398,7 @@ public class bidexAndFeatureTests {
 	}
     
     
-    public FeatureReport featureChecks(List<String> requestList, TestCriteriaBo criteriaBo, JsonNode getSlotsData, URLChecksReportModel model) {
+    public FeatureReport featureChecks(List<String> requestList,List<Request> requests, TestCriteriaBo criteriaBo, JsonNode getSlotsData, URLChecksReportModel model) {
     	
     	
     	for(String requestUrl: requestList )
@@ -409,7 +409,7 @@ public class bidexAndFeatureTests {
     		if(urlData!=null)
     		{
     			
-    			FeatureReport featureReport=this.criteria.featureTestCasePositvie(urlData, criteriaBo,model);
+    			FeatureReport featureReport=this.criteria.featureTestCasePositvie(urlData, requests,criteriaBo,model);
     			
     			return featureReport;
     		}

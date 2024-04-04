@@ -1,4 +1,6 @@
 package net.media.emma.cop.testsuites.yaml;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import java.awt.Desktop;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -92,7 +94,7 @@ public class TestSuite implements GenericTestSuite {
     // List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
             "hbx-stage.media.net");
-    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");// , "catchpoint_content.js",
+    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js");// , "catchpoint_content.js",
     // "topics.js");
 
     private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
@@ -175,17 +177,23 @@ public class TestSuite implements GenericTestSuite {
         // list of arrays initialization
         List<String> urlFromNetworkTab = new ArrayList<>();
         List<Request> requestList = new ArrayList<>();
+        
+       
 
         if (location == null) {
             browserContext.onRequest(request -> {
             	
             	urlFromNetworkTab.add(request.url());
             	requestList.add(request);
+            
+            	
+            	
+            	
             });
 		
         }
         
-      
+        
 
 		List<String> consoleMessage = new ArrayList<>();
 		
@@ -227,6 +235,7 @@ public class TestSuite implements GenericTestSuite {
 		
 		Map<String, Map<String, Map<String,String>>> cookies=displayCookies(getCookies);
 		
+		mpCallAssertion(requestList);
 
 		TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
 				.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).testName("YAML Test Suite")
@@ -271,7 +280,7 @@ public class TestSuite implements GenericTestSuite {
     	List<String> url=new ArrayList<>();
     	
     	url.add("https://hbx.media.net");
-    	url.add("https://hb.yhoo.net");
+    	url.add("https://hb.yahoo.net");
     	url.add(publisher);
     	
     	
@@ -415,6 +424,25 @@ public class TestSuite implements GenericTestSuite {
 		return bidexReport;
 
 	}
+	
+	
+	
+	private void mpCallAssertion(List<Request> requests)
+	{
+		
+		for(Request request:requests)
+		{
+			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js"))
+			{
+				
+				System.err.println("URL : "+request.url());
+				
+				System.err.println(request.postData());
+				
+			}
+		}
+	}
+	
 
 	private BidexData getBidExData(Request request) {
 
@@ -521,7 +549,7 @@ public class TestSuite implements GenericTestSuite {
 							.urlPattern(urlData.getValue())
 							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
 							.queryStringMap(new ArrayList<HashMap<String, String>>(
-									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
+									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests))))
 							.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
 							.positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
 							.anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey())).build();
@@ -529,7 +557,7 @@ public class TestSuite implements GenericTestSuite {
 					urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
 				} else {
 					labelExists.getMatchingUrls().add(requestUrl);
-					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
+					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests));
 				}
 
 				continue;
