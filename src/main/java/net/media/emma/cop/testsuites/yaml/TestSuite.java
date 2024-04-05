@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;
@@ -235,7 +237,7 @@ public class TestSuite implements GenericTestSuite {
 		
 		Map<String, Map<String, Map<String,String>>> cookies=displayCookies(getCookies);
 		
-		mpCallAssertion(requestList);
+		
 
 		TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
 				.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).testName("YAML Test Suite")
@@ -427,21 +429,7 @@ public class TestSuite implements GenericTestSuite {
 	
 	
 	
-	private void mpCallAssertion(List<Request> requests)
-	{
-		
-		for(Request request:requests)
-		{
-			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js"))
-			{
-				
-				System.err.println("URL : "+request.url());
-				
-				System.err.println(request.postData());
-				
-			}
-		}
-	}
+	
 	
 
 	private BidexData getBidExData(Request request) {
@@ -452,23 +440,61 @@ public class TestSuite implements GenericTestSuite {
 
 		//get data from request
 		// convert into request into json
-		String reponse=request.response().text();
+		String response=request.response().text();
+		
+	
 		
 		try {
+		
 			
+			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js"))
+			{
+				
+				String target="new s.a({";
+				
+				if(response.contains(target))
+				{
+			
+					int in=response.indexOf(target);
+			
+					response=response.substring(in);
+					
+					Pattern pattern=Pattern.compile("new\\s+s\\.a\\((.*?)\\)");
+					
+					Matcher matcher=pattern.matcher(response);
+					
+					if(matcher.find())
+					{
+						String extractedData=matcher.group(1);
+						
+						JsonNode bidData=mapper.readValue(extractedData, JsonNode.class);
+						
+						bidexData.setCid(bidData.get("cid").asText());
+						bidexData.setSvr(bidData.get("sver").asText());
+						bidexData.setSugd(bidData.get("sugd").asText());
+//						bidexData.setItype(bidData.get("itype").asText());
+						
+						
+						return bidexData;
+					}
+		
+				}
+					
+			}
+
 		
 			 int startIndex=0;
 
 
 			 String startTarget = "{\"AaxDpCeiling\"";
-			if (reponse.contains(startTarget)) {
-				startIndex = reponse.indexOf(startTarget);
+			if (response.contains(startTarget)) {
+				startIndex = response.indexOf(startTarget);
 				startIndex += 12;
 
 			}
 
 			//control in Bidexconfig.java
-			String finalString = reponse.substring(startIndex-12);
+			String finalString = response.substring(startIndex-12);
 			 JsonNode bidexJson= mapper.readValue(finalString, JsonNode.class);
 
 			
