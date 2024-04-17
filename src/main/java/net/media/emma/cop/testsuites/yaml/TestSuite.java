@@ -62,6 +62,8 @@ public class TestSuite implements GenericTestSuite {
     DomJsonUtils domUtils;
     @Autowired
     ObjectWriter jsonWriter;
+	@Autowired
+	ObjectMapper jsonReader;
     @Autowired
     URLDataProcessing urlDataProcessing;
     @Autowired
@@ -214,7 +216,9 @@ public class TestSuite implements GenericTestSuite {
 			
 			consoleMessage = getConsoleErrors(page);
 			page.navigate(testData.getPublisherUrl());
-
+			JsonNode pbjsConfigData = getPbjsData(page);
+			String pbjsEvent = "beforeRequestBids";
+			JsonNode pbjsEventsData = getPbjsEvents(page ,pbjsEvent);
 //			 page.waitForLoadState(LoadState.NETWORKIDLE,new
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
@@ -225,6 +229,7 @@ public class TestSuite implements GenericTestSuite {
         	log.error("Error while navigating to publisher url: {}", e.getMessage());
 		}
         
+
 
 	
 		
@@ -274,9 +279,71 @@ public class TestSuite implements GenericTestSuite {
 		}
 		
 	}
+
+
+
+	public String returnPbjsConfig() {
+			return """
+				var pbjsVar = "";
+				function getPbjsData(){
+				if(window._pbjsGlobals){
+					pbjsVar = window._pbjsGlobals[0];
+					console.log(JSON.stringify(window[pbjsVar], null , 4));
+					return JSON.stringify(window[pbjsVar]);
+					}
+				}
+				getPbjsData();
+				
+					""";
+	}
 	
+	public String getPbjsEventsData(String pbjsEvent) {
+		
+		return """
+			getPbjsEvents();
+			function getPbjsEvents(){
+				if(window._pbjsGlobals){
+					var pbjsVar = window._pbjsGlobals[0];
+					var pbjsEventValue = "%s"; // Assigning the value of pbjsEvent
+					var pbjsEvents = window[pbjsVar].getEvents().filter(e => e.eventType === pbjsEventValue);
+					console.log(JSON.stringify(pbjsEvents, null , 4));
+					return JSON.stringify(pbjsEvents, null , 4);
+				}
+			}
+		""".formatted(pbjsEvent);
+	}
+
+
+	public JsonNode getPbjsEvents(Page page, String pbjsEvent){
+		try{
+		
+		Object eventsDataEVal=page.evaluate(getPbjsEventsData(pbjsEvent));
+		JsonNode eventsDataNode=jsonReader.readTree(eventsDataEVal.toString());
+		log.info("pbjsEvents: ", eventsDataNode.toString());
+		return null;
+		}catch(Exception e){
+			log.error("Error while getting pbjs events: ", e.getMessage());
+			return null;
+		}
+
+	}
+
+
 	
+	private JsonNode getPbjsData(Page page){
+		try{
+		Object pbjsConfigEval = page.evaluate(returnPbjsConfig());
+		JsonNode pbjsDataNode = jsonReader.readTree(pbjsConfigEval.toString()); 
+		log.info("pbjsConfig: ", pbjsDataNode.toString());
+		return null;
+	}catch(Exception e){
+		log.error("Error while getting pbjs data: ", e.getMessage());
+		return null;
+	}
+	}
 	
+
+
 	public Map<String, List<Cookie>> getCookies(BrowserContext page, String publisher)
     {
     	List<String> url=new ArrayList<>();
@@ -333,8 +400,9 @@ public class TestSuite implements GenericTestSuite {
 	    }
 	
 	
-	
-	
+
+		//get all pbjs features and events fired
+
 
 	
 
