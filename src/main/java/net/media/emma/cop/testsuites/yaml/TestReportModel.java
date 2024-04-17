@@ -1,8 +1,11 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,9 +24,12 @@ public class TestReportModel {
 
 	TestMetaData testMetaData;
 	BidExController bidExController;
+	Map<String, String> testSummery;
 	URLChecksReportModel urlChecks;
 	NetworkAnalytics networkAnalytics;
 	Map<String, Map<String, Map<String,String>>> cookie;
+	
+	JsonNode pbjs;
 
 	@Getter
 	@Setter
@@ -51,6 +57,8 @@ public class TestReportModel {
 		@Builder.Default
 		List<String> consoleMessages = new ArrayList<>();
 		BidexData bidexData;
+		
+		
 		
 		// List of checks neededd
 		// Non 200 response

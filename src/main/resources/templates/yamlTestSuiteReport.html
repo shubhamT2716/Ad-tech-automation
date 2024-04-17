@@ -14,7 +14,10 @@
     </div>
 
     <div class="container my-5">
-      <button onClick="display('FAIL')" type="button" class="btn btn-danger">Show Errors</button> <button onClick="display('PASS')" type="button" class="btn btn-success">Show Success</button> <button onClick="displayRaw()" type="button" class="btn btn-secondary">Show Raw Data</button>
+      <button onClick="display('FAIL')" type="button" class="btn btn-danger">Show Errors</button> 
+      <button onClick="display('PASS')" type="button" class="btn btn-success">Show Success</button>
+       <button onClick="displayRaw()" type="button" class="btn btn-secondary">Show Raw Data</button>
+       <button onClick="displayPbjs()" type="button" class="btn btn-secondary">Show Pbjs Data</button>
     </div>
 
     <div class="container my-5">
@@ -63,17 +66,37 @@
       return para;
   }
 
-  function displayRaw() {
-
+  function displayPbjs() {
     const pre = document.createElement("pre");
     const code = document.createElement("code");
     code.classList.add("language-json");
-    code.innerHTML = JSON.stringify(reportData, null, 2);
+    code.innerHTML = JSON.stringify(reportData.pbjs, null, 2);
     pre.appendChild(code);
     document.getElementById("testReport").innerHTML = "";
     document.getElementById("testReport").appendChild(pre);
     hljs.highlightAll();
   }
+
+  function displayRaw() {
+
+
+    //remove reportData.pbjs for raw data
+
+    // make a copy of the reportData object
+    const rawData = JSON.parse(JSON.stringify(reportData));
+
+    delete rawData.pbjs;
+    const pre = document.createElement("pre");
+    const code = document.createElement("code");
+    code.classList.add("language-json");
+    code.innerHTML = JSON.stringify(rawData, null, 2);
+    pre.appendChild(code);
+    document.getElementById("testReport").innerHTML = "";
+    document.getElementById("testReport").appendChild(pre);
+    hljs.highlightAll();
+  }
+
+  
 
   function display(status) {
 
@@ -89,7 +112,9 @@
           
   }
 
+  displayPbjs();
   displayRaw();
+ 
         
 </script>
 

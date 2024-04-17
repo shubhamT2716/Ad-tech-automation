@@ -68,6 +68,8 @@ public class TestSuite implements GenericTestSuite {
     PlAssestion payloadAsserstions;
     @Autowired
     HeadersAssertion headersAssertion;
+    
+  
 
     @Value("${harFileBasePath}")
     private String harFileBasePath;
@@ -148,6 +150,7 @@ public class TestSuite implements GenericTestSuite {
         
      
 		BrowserContext browserContext=null;
+		
         
         try {
 
@@ -200,6 +203,7 @@ public class TestSuite implements GenericTestSuite {
 		List<String> consoleMessage = new ArrayList<>();
 		
 		
+		JsonNode pbjsData=null;
 		
 
 		try {
@@ -219,6 +223,9 @@ public class TestSuite implements GenericTestSuite {
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
 //			 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
+			
+			pbjsData=getPbjsData(page);
+			
 			Thread.sleep(10000);
         }
         catch (Exception e) {
@@ -226,7 +233,7 @@ public class TestSuite implements GenericTestSuite {
 		}
         
 
-	
+		
 		
 		BidExController bidExController = getBidExData(requestList, testData);
 		
@@ -248,6 +255,9 @@ public class TestSuite implements GenericTestSuite {
 		
 		testReport.setCookie(cookies);
 		testReport.setBidExController(bidExController);
+		testReport.setPbjs(pbjsData);
+		
+		
 		try {
 		
 			URLChecksReportModel  model=getUrlAssertionsData(urlFromNetworkTab,requestList, testData);
@@ -255,6 +265,7 @@ public class TestSuite implements GenericTestSuite {
 //			getFeatureReport(harFilePath, urlFromNetworkTab);
 			
 			testReport.setUrlChecks(model);
+			testReport.setTestSummery(YamlTestSuiteScheduling.testResultSummery(model));
 		}catch (Exception e) {
 			
 			testReport.setUrlChecks(null);
@@ -334,7 +345,18 @@ public class TestSuite implements GenericTestSuite {
 	
 	
 	
-	
+	public JsonNode getPbjsData(Page page)
+	{
+		
+		ObjectMapper mapper=new ObjectMapper();
+		
+		Object pbjsAllData=page.evaluate("pbjs");
+		
+		JsonNode pbjsData =mapper.convertValue(pbjsAllData, JsonNode.class);
+		
+		return pbjsData;
+		
+	}
 
 	
 
@@ -623,7 +645,49 @@ public class TestSuite implements GenericTestSuite {
 	}
 	
 
-	
+	public String getMockingRule()
+	{
+		return "function modifyResponse(args) {\n"
+				+ "  const {\n"
+				+ "    method,\n"
+				+ "    url,\n"
+				+ "    response,\n"
+				+ "    responseType,\n"
+				+ "    requestHeaders,\n"
+				+ "    requestData,\n"
+				+ "    responseJSON,\n"
+				+ "  } = args;\n"
+				+ "  // Change response below depending upon request attributes received in args\n"
+				+ "  const resp = {\n"
+				+ "    id: requestData.id,\n"
+				+ "    seatbid: [\n"
+				+ "      {\n"
+				+ "        bid: [\n"
+				+ "          {\n"
+				+ "            id: requestData.id,\n"
+				+ "            impid: requestData.imp[0].id,\n"
+				+ "            price: 20,\n"
+				+ "            adm: '<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><VAST version=\"2.0\">\\n    <Ad id=\"Vidible\">\\n        <InLine>\\n            <AdSystem>Vidible</AdSystem>\\n            <AdTitle>\\n                <![CDATA[ SSP Passback VAST Test Creative [DO NOT DELETE] ]]>\\n            </AdTitle>\\n            <Description/>\\n            <Impression><![CDATA[https://ap-southeast-1-web-oao.ssp.yahoo.com/admax/adEvent.do?tidi=770927458&dcn=8a969516017a7a396ec539d97f540011&posi=1544503&grp=%3F%3F%3F&nl=1697627333264&rts=1697627333239&pix=1&et=1&a=8187ab43-b46b-45ca-bab7-d4e2238b844a&m=aXAtMTAtMjItMTMxLTE5OA..&b=MTMxMDc7UHVibGlzaGVyIFBhc3NiYWNrIFNlYXQ7Pz8_Ozs7OzAyZjFlMGE3Y2E2YzRjZDZiYzgwYjNmZWJjNjMwNTMxOzMwNTI2OTU1Oy0xOzswOzswOztwYXNzYmFjay0xMjU2Mzs7MjsxOw..&uid=y-Z2kr3XpE2rNrYmGbrsFmf0BB4IaCi0KVLdDcEHg9QrkO2XC6TAR9ZrrmOObczd3PvjtmA9w9gXkLIgTM%7EA&xdi=Pz8_fD8_P3w_Pz98N3xEZXNrdG9w&xoi=MHxJTkQ.&hb=true&type=2&hbp=252&af=7&dety=5]]></Impression><Impression>\\n                <![CDATA[ https://trk.vidible.tv/trk/vast-impression.gif?vid=60f689d84d33307c015c051a&bcid=56d5921ce4b0f5991ad44713&vtid=60f68a56b881e366382a3e2a ]]>\\n            </Impression>\\n            <Creatives>\\n                <Creative>\\n                    <Linear>\\n                        <Duration>00:00:17</Duration>\\n                        <TrackingEvents>\\n                            <Tracking event=\"creativeView\">\\n                                <![CDATA[ https://trk.vidible.tv/trk/vast-view.gif?vid=60f689d84d33307c015c051a&bcid=56d5921ce4b0f5991ad44713&vtid=60f68a56b881e366382a3e2a ]]>\\n                            </Tracking>\\n                            <Tracking event=\"start\">\\n                                <![CDATA[ https://trk.vidible.tv/trk/vast-play.gif?vid=60f689d84d33307c015c051a&bcid=56d5921ce4b0f5991ad44713&vtid=60f68a56b881e366382a3e2a ]]>\\n                            </Tracking>\\n                            <Tracking event=\"firstQuartile\">\\n                                <![CDATA[ https://trk.vidible.tv/trk/vast-quartile.gif?vid=60f689d84d33307c015c051a&q=1&bcid=56d5921ce4b0f5991ad44713&vtid=60f68a56b881e366382a3e2a ]]>\\n                            </Tracking>\\n                            <Tracking event=\"midpoint\">\\n                                <![CDATA[ https://trk.vidible.tv/trk/vast-quartile.gif?vid=60f689d84d33307c015c051a&q=2&bcid=56d5921ce4b0f5991ad44713&vtid=60f68a56b881e366382a3e2a ]]>\\n                            </Tracking>\\n                            <Tracking event=\"thirdQuartile\">\\n                                <![CDATA[ https://trk.vidible.tv/trk/vast-quartile.gif?vid=60f689d84d33307c015c051a&q=3&bcid=56d5921ce4b0f5991ad44713&vtid=60f68a56b881e366382a3e2a ]]>\\n                            </Tracking>\\n                            <Tracking event=\"complete\">\\n                                <![CDATA[ https://trk.vidible.tv/trk/vast-quartile.gif?vid=60f689d84d33307c015c051a&q=4&bcid=56d5921ce4b0f5991ad44713&vtid=60f68a56b881e366382a3e2a ]]>\\n                            </Tracking>\\n                        <Tracking event=\"start\"><![CDATA[https://ap-southeast-1-web-oao.ssp.yahoo.com/admax/adEngEvent?tidi=770927458&dcn=8a969516017a7a396ec539d97f540011&posi=1544503&uid=y-Z2kr3XpE2rNrYmGbrsFmf0BB4IaCi0KVLdDcEHg9QrkO2XC6TAR9ZrrmOObczd3PvjtmA9w9gXkLIgTM%7EA&xdi=Pz8_fD8_P3w_Pz98N3xEZXNrdG9w&xoi=MHxJTkQ.&b=MTMxMDc7UHVibGlzaGVyIFBhc3NiYWNrIFNlYXQ7Pz8_Ozs7OzAyZjFlMGE3Y2E2YzRjZDZiYzgwYjNmZWJjNjMwNTMxOzMwNTI2OTU1Oy0xOzswOzswOztwYXNzYmFjay0xMjU2Mzs7MjsxOw..&hb=true&type=2&hbp=252&a=8187ab43-b46b-45ca-bab7-d4e2238b844a&rts=1697627333239&eet=1]]></Tracking><Tracking event=\"firstQuartile\"><![CDATA[https://ap-southeast-1-web-oao.ssp.yahoo.com/admax/adEngEvent?tidi=770927458&dcn=8a969516017a7a396ec539d97f540011&posi=1544503&uid=y-Z2kr3XpE2rNrYmGbrsFmf0BB4IaCi0KVLdDcEHg9QrkO2XC6TAR9ZrrmOObczd3PvjtmA9w9gXkLIgTM%7EA&xdi=Pz8_fD8_P3w_Pz98N3xEZXNrdG9w&xoi=MHxJTkQ.&b=MTMxMDc7UHVibGlzaGVyIFBhc3NiYWNrIFNlYXQ7Pz8_Ozs7OzAyZjFlMGE3Y2E2YzRjZDZiYzgwYjNmZWJjNjMwNTMxOzMwNTI2OTU1Oy0xOzswOzswOztwYXNzYmFjay0xMjU2Mzs7MjsxOw..&hb=true&type=2&hbp=252&a=8187ab43-b46b-45ca-bab7-d4e2238b844a&rts=1697627333239&eet=2]]></Tracking><Tracking event=\"midpoint\"><![CDATA[https://ap-southeast-1-web-oao.ssp.yahoo.com/admax/adEngEvent?tidi=770927458&dcn=8a969516017a7a396ec539d97f540011&posi=1544503&uid=y-Z2kr3XpE2rNrYmGbrsFmf0BB4IaCi0KVLdDcEHg9QrkO2XC6TAR9ZrrmOObczd3PvjtmA9w9gXkLIgTM%7EA&xdi=Pz8_fD8_P3w_Pz98N3xEZXNrdG9w&xoi=MHxJTkQ.&b=MTMxMDc7UHVibGlzaGVyIFBhc3NiYWNrIFNlYXQ7Pz8_Ozs7OzAyZjFlMGE3Y2E2YzRjZDZiYzgwYjNmZWJjNjMwNTMxOzMwNTI2OTU1Oy0xOzswOzswOztwYXNzYmFjay0xMjU2Mzs7MjsxOw..&hb=true&type=2&hbp=252&a=8187ab43-b46b-45ca-bab7-d4e2238b844a&rts=1697627333239&eet=3]]></Tracking><Tracking event=\"thirdQuartile\"><![CDATA[https://ap-southeast-1-web-oao.ssp.yahoo.com/admax/adEngEvent?tidi=770927458&dcn=8a969516017a7a396ec539d97f540011&posi=1544503&uid=y-Z2kr3XpE2rNrYmGbrsFmf0BB4IaCi0KVLdDcEHg9QrkO2XC6TAR9ZrrmOObczd3PvjtmA9w9gXkLIgTM%7EA&xdi=Pz8_fD8_P3w_Pz98N3xEZXNrdG9w&xoi=MHxJTkQ.&b=MTMxMDc7UHVibGlzaGVyIFBhc3NiYWNrIFNlYXQ7Pz8_Ozs7OzAyZjFlMGE3Y2E2YzRjZDZiYzgwYjNmZWJjNjMwNTMxOzMwNTI2OTU1Oy0xOzswOzswOztwYXNzYmFjay0xMjU2Mzs7MjsxOw..&hb=true&type=2&hbp=252&a=8187ab43-b46b-45ca-bab7-d4e2238b844a&rts=1697627333239&eet=4]]></Tracking><Tracking event=\"complete\"><![CDATA[https://ap-southeast-1-web-oao.ssp.yahoo.com/admax/adEngEvent?tidi=770927458&dcn=8a969516017a7a396ec539d97f540011&posi=1544503&uid=y-Z2kr3XpE2rNrYmGbrsFmf0BB4IaCi0KVLdDcEHg9QrkO2XC6TAR9ZrrmOObczd3PvjtmA9w9gXkLIgTM%7EA&xdi=Pz8_fD8_P3w_Pz98N3xEZXNrdG9w&xoi=MHxJTkQ.&b=MTMxMDc7UHVibGlzaGVyIFBhc3NiYWNrIFNlYXQ7Pz8_Ozs7OzAyZjFlMGE3Y2E2YzRjZDZiYzgwYjNmZWJjNjMwNTMxOzMwNTI2OTU1Oy0xOzswOzswOztwYXNzYmFjay0xMjU2Mzs7MjsxOw..&hb=true&type=2&hbp=252&a=8187ab43-b46b-45ca-bab7-d4e2238b844a&rts=1697627333239&eet=5]]></Tracking></TrackingEvents>\\n                        <VideoClicks>\\n                            <ClickTracking>\\n                                <![CDATA[ https://trk.vidible.tv/trk/vast-click.gif?vid=60f689d84d33307c015c051a&bcid=56d5921ce4b0f5991ad44713&vtid=60f68a56b881e366382a3e2a ]]>\\n                            </ClickTracking>\\n                        </VideoClicks>\\n                        <MediaFiles>\\n                            <MediaFile bitrate=\"300\" height=\"270\" type=\"video/mp4\" width=\"480\">\\n                                <![CDATA[ https://cdn.vidible.tv/prod/2021-07/22/60f935c0ffa52f1fafd58132_v1.mp4 ]]>\\n                            </MediaFile>\\n                        </MediaFiles>\\n                    </Linear>\\n                </Creative>\\n            </Creatives>\\n        <Error><![CDATA[https://ap-southeast-1-web-oao.ssp.yahoo.com/admax/adEngEvent?tidi=770927458&dcn=8a969516017a7a396ec539d97f540011&posi=1544503&uid=y-Z2kr3XpE2rNrYmGbrsFmf0BB4IaCi0KVLdDcEHg9QrkO2XC6TAR9ZrrmOObczd3PvjtmA9w9gXkLIgTM%7EA&xdi=Pz8_fD8_P3w_Pz98N3xEZXNrdG9w&xoi=MHxJTkQ.&b=MTMxMDc7UHVibGlzaGVyIFBhc3NiYWNrIFNlYXQ7Pz8_Ozs7OzAyZjFlMGE3Y2E2YzRjZDZiYzgwYjNmZWJjNjMwNTMxOzMwNTI2OTU1Oy0xOzswOzswOztwYXNzYmFjay0xMjU2Mzs7MjsxOw..&hb=true&type=2&hbp=252&a=8187ab43-b46b-45ca-bab7-d4e2238b844a&rts=1697627333239&eet=6&vec=[ERRORCODE]]]></Error></InLine>\\n    </Ad>\\n</VAST>',\n"
+				+ "            adomain: [\"www.demoads.co\"],\n"
+				+ "            w: 300,\n"
+				+ "            h: 250,\n"
+				+ "            crid: \"473512742\",\n"
+				+ "            creativeType: \"VIDEO\",\n"
+				+ "            nurl: \"https://ap-southeast-1-web-oao.ssp.yahoo.com/admax/adEngEvent?tidi=770927458&dcn=8a969516017a7a396ec539d97f540011&posi=1544503&uid=y-Z2kr3XpE2rNrYmGbrsFmf0BB4IaCi0KVLdDcEHg9QrkO2XC6TAR9ZrrmOObczd3PvjtmA9w9gXkLIgTM~A&xdi=Pz8_fD8_P3w_Pz98N3xEZXNrdG9w&xoi=MHxJTkQ.&b=MTMxMDc7UHVibGlzaGVyIFBhc3NiYWNrIFNlYXQ7Pz8_Ozs7OzAyZjFlMGE3Y2E2YzRjZDZiYzgwYjNmZWJjNjMwNTMxOzMwNTI2OTU1Oy0xOzswOzswOztwYXNzYmFjay0xMjU2Mzs7MjsxOw..&hb=true&type=2&hbp=252&a=8187ab43-b46b-45ca-bab7-d4e2238b844a&rts=1697627333239&eet=7\",\n"
+				+ "          },\n"
+				+ "        ],\n"
+				+ "        seat: \"13107\",\n"
+				+ "      },\n"
+				+ "    ],\n"
+				+ "  };\n"
+				+ "  console.log(\n"
+				+ "    \"25014\",\n"
+				+ "    resp,\n"
+				+ "    \"25014\"\n"
+				+ "  );\n"
+				+ "  return JSON.stringify(resp);\n"
+				+ "}";
+	}
 	
 	
 

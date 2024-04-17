@@ -13,7 +13,7 @@ networkCallsPositive: {
 }
 
 networkCallsNegative: {
- nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+ nerrPing: "https://hblg.media.net/nerrping.php",
  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
  mnetcall: ".*media.net.*"
 }
@@ -21,12 +21,8 @@ networkCallsNegative: {
 keysToVerifyPositive: {
 
  checksync: {
-   #gdpr: ["0"],
-   gpp: ["DBAA"],
-   gpp_sid: ["-1"],
+   #gdpr: ["0"],   
    usp_status: ["1"],
-   usp_consent: ["1"],
-   uspstring: ["1YNN"],
    axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
  },
 

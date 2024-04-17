@@ -32,6 +32,7 @@ import ch.qos.logback.core.net.SyslogOutputStream;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.yaml.SmokeTestSummeryDto.Testdata;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.BidExController;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.CommonBrowserUtil;
@@ -361,7 +362,7 @@ public class YamlTestSuiteScheduling {
 
 		dto.setRawDataLink("zipDownload/" + zipFile);
 		dto.setTestdatas(testdataResult);
-		dto.setTestResultSummery(testResultSummery(reportModel));
+		dto.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
 
 		rawDataDto.setRawData(finalResult);
 		rawDataDto.setSmokeReport(dto);
@@ -375,23 +376,31 @@ public class YamlTestSuiteScheduling {
 	
 	
 	
-	public Map<String, String> testResultSummery(TestReportModel result)
+	public static Map<String, String> testResultSummery(URLChecksReportModel result)
 	{
 		Map<String, String> testResult=new HashMap<>();
 		
-		Map<String, PositiveURLChecks> positiveReport=result.getUrlChecks().getPositiveUrlChecks();
+		Map<String, PositiveURLChecks> positiveReport=result.getPositiveUrlChecks();
+		
+		Map<String, NegativeURLChecks>  negativeReport=result.getNegativeUrlChecks();
 		
 		positiveReport.entrySet().forEach(entry->{
 			String key=entry.getKey();
 			PositiveURLChecks value=entry.getValue();
 			
-			System.err.println(" key : "+key);
-			
-			System.out.println("Result: "+value.getTestResult());
 			
 			testResult.put(key, value.getTestResult().toString());
 			
 			
+			
+		});
+		
+		negativeReport.entrySet().forEach(entry->{
+			String key=entry.getKey();
+			NegativeURLChecks value=entry.getValue();
+			
+	
+			testResult.put(key, value.getTestResult().toString());
 			
 		});
 		

@@ -41,11 +41,22 @@ public class PlAssestion {
             List<Pair<Object, String>> allImpAndResponsePairs = new ArrayList<>();
             for (Request request : matchingRequests) {
                 String postData = getPostData(request);
+                
                 String responseData = getResponseData(request);
+               
+                
                 ReadContext readContext = com.jayway.jsonpath.JsonPath.parse(postData);
+               
                 try {
                     List<Object> impObjects = readContext.read("$.imp");
+                    
+                    
+                    
+                    
                     for (Object imp : impObjects) {
+                    	
+                    	
+                    	
                         allImpAndResponsePairs.add(new Pair<>(imp, responseData));
                     }
                 } catch (PathNotFoundException e) {
@@ -160,6 +171,7 @@ public class PlAssestion {
     }
 
     public String removeJsonPathIndexForImp(String jsonPath) {
+    	
         return jsonPath.replaceFirst("imp\\[\\d+\\].", "");
     }
 
