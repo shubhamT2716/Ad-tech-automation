@@ -4,6 +4,7 @@ userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.daily.co.jp/?medianet_test=1"
 bidexAppendString: ""
 bidexReplaceString: { "": "" }
+pbjsEvents: "bidResponse"
 
 networkCallsPositive: {
  checksync: "https://hbx.media.net/checksync.php?",

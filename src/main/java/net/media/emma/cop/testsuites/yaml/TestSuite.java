@@ -201,7 +201,9 @@ public class TestSuite implements GenericTestSuite {
 
 		List<String> consoleMessage = new ArrayList<>();
 		
+		JsonNode pbjsEventsData=null;
 		
+		JsonNode pbjsConfigData=null;
 		
 
 		try {
@@ -216,9 +218,16 @@ public class TestSuite implements GenericTestSuite {
 			
 			consoleMessage = getConsoleErrors(page);
 			page.navigate(testData.getPublisherUrl());
-			JsonNode pbjsConfigData = getPbjsData(page);
-			String pbjsEvent = "beforeRequestBids";
-			JsonNode pbjsEventsData = getPbjsEvents(page ,pbjsEvent);
+			 pbjsConfigData = getPbjsData(page);
+			
+			if(testData.getPbjsEvents()!=null|| !testData.getPbjsEvents().isEmpty())
+			{
+				
+				 pbjsEventsData = getPbjsEvents(page ,testData.getPbjsEvents());		
+			}
+			
+			
+			System.err.println("pbjsEventsData: "+pbjsEventsData);
 //			 page.waitForLoadState(LoadState.NETWORKIDLE,new
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
@@ -253,6 +262,10 @@ public class TestSuite implements GenericTestSuite {
 		
 		testReport.setCookie(cookies);
 		testReport.setBidExController(bidExController);
+		testReport.setPbjs(pbjsConfigData);
+		testReport.setPbjsEvents(pbjsEventsData);
+		
+		
 		try {
 		
 			URLChecksReportModel  model=getUrlAssertionsData(urlFromNetworkTab,requestList, testData);
@@ -311,6 +324,8 @@ public class TestSuite implements GenericTestSuite {
 				}
 			}
 		""".formatted(pbjsEvent);
+		
+		
 	}
 
 
@@ -320,8 +335,10 @@ public class TestSuite implements GenericTestSuite {
 		Object eventsDataEVal=page.evaluate(getPbjsEventsData(pbjsEvent));
 		JsonNode eventsDataNode=jsonReader.readTree(eventsDataEVal.toString());
 		log.info("pbjsEvents: ", eventsDataNode.toString());
-		return null;
+		return eventsDataNode;
 		}catch(Exception e){
+			
+			e.printStackTrace();
 			log.error("Error while getting pbjs events: ", e.getMessage());
 			return null;
 		}
@@ -335,7 +352,7 @@ public class TestSuite implements GenericTestSuite {
 		Object pbjsConfigEval = page.evaluate(returnPbjsConfig());
 		JsonNode pbjsDataNode = jsonReader.readTree(pbjsConfigEval.toString()); 
 		log.info("pbjsConfig: ", pbjsDataNode.toString());
-		return null;
+		return pbjsDataNode;
 	}catch(Exception e){
 		log.error("Error while getting pbjs data: ", e.getMessage());
 		return null;
