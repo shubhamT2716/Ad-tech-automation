@@ -10,7 +10,7 @@ import net.media.emma.cop.testsuites.yaml.TestReportModel;
 @Service
 public interface GenericTestSuite {
 
-	public TestReportModel getTestResults(TestCriteriaBo testData);
+	public TestReportModel getTestResults(TestCriteriaBo testData, String url, String response);
 
 	public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData);
 }

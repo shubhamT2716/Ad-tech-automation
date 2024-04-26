@@ -1,25 +1,25 @@
-environment: hb.yahoo.net
+environment: hbx-stage.media.net
 cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://sg.hb.yahoo.net/test/dev/umerq/outstream-using-gam.html?mnet_test=1"
+publisherUrl: "https://hbx-stage.media.net/test/src/hb2/8CU3668WZ/mnetgam.html?itype=HB2&mnet_test=all"
 bidexAppendString: ""
 bidexReplaceString: { "": "" }
 
 networkCallsPositive: {
-    APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
-    PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
-    AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+    APLog: "https://hblg.media.net/log?logid=aplog",
+    PRLog: "https://hblg.media.net/log?logid=prlog",
+    AWLog: "https://hblg.media.net/log?logid=awlog",
     BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog",
 
-    VIDEO_PERF: "https://lg1.hb.yahoo.net/log?logid=kfke&evtid=video_perf",
+    VIDEO_PERF: "https://hblg.media.net/log?logid=kfke&evtid=video_perf",
     project_events: "https://lg1.hb.yahoo.net/log?cid=8YHB28RSN&event=VIDEO_AD_TEMPLATE_LOADED&evtid=projectevents&logid=kfk",
 
-    bidExchangescript: "https://hb.yahoo.net/bidexchange.js",
+    bidExchangescript: "https://hbx-stage.media.net/bidexchange.js",
     gptjsscript: "https://securepubads.g.doubleclick.net/tag/js/gpt.js",
 
-    ucreative: "https://hb.yahoo.net/ucreative.php?cv=1",
-    player.js: "https://hb.yahoo.net/ss/nes/player.js",
-    checksync: "https://hb.yahoo.net/checksync.php?",
+    ucreative: "https://hbx.media.net/ucreative.php?cv=1",
+    player.js: "https://hbx.media.net/ss/nes/player.js",
+    checksync: "https://hbx.media.net/checksync.php",
     
     gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads",
 }

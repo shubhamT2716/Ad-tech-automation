@@ -19,6 +19,9 @@ import java.util.regex.Pattern;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
@@ -30,10 +33,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
-import com.microsoft.playwright.BrowserContext;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Request;
-import com.microsoft.playwright.Route;
 import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.Timing;
@@ -50,6 +49,7 @@ import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.DomJsonUtils;
+import net.media.emma.utils.ResponseMocking;
 import net.media.emma.utils.URLDataProcessing;
 
 @Service
@@ -68,6 +68,9 @@ public class TestSuite implements GenericTestSuite {
     PlAssestion payloadAsserstions;
     @Autowired
     HeadersAssertion headersAssertion;
+    
+    @Autowired
+    private ResponseMocking mocking;
     
   
 
@@ -100,6 +103,12 @@ public class TestSuite implements GenericTestSuite {
             "hbx-stage.media.net");
     List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js");// , "catchpoint_content.js",
     // "topics.js");
+    
+    
+    
+    Object id;
+	
+	JSONArray jsonArray;
 
     private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
 
@@ -127,7 +136,7 @@ public class TestSuite implements GenericTestSuite {
 
     	CompletableFuture<TestReportModel> future = new CompletableFuture<>();
         try {
-            TestReportModel testReport = getTestResults(testData); // Create a new browser context for each task
+            TestReportModel testReport = getTestResults(testData, null,null); // Create a new browser context for each task
             future.complete(testReport);
         } catch (Exception e) {
         	
@@ -143,7 +152,7 @@ public class TestSuite implements GenericTestSuite {
     }
 
     @Override
-    public TestReportModel getTestResults(TestCriteriaBo testData) {
+    public TestReportModel getTestResults(TestCriteriaBo testData, String url, String response) {
 
         String harFilePath = CommonBrowserUtil.getFileNameForHar();
         String location = testData.getLocation();
@@ -210,30 +219,47 @@ public class TestSuite implements GenericTestSuite {
 
         
 			browserContext.setDefaultTimeout(90000); // 70 seconds
-			
-			
-			
-			
+	
 			Page page = browserContext.newPage();
 			
+			try {
+				
+				pbjsData=getPbjsData(page);
+			}
+			catch (Exception e) {
+				pbjsData=null;
+			}
+			
 			consoleMessage = getConsoleErrors(page);
-			page.navigate(testData.getPublisherUrl());
+			
+			if(url!=null&& response!=null)
+			{
+				
+				page=mocking.responseMocking(page, url, response);
+				
+			}
+
+			consoleMessage = getConsoleErrors(page);
+				page.navigate(testData.getPublisherUrl());
+	
+			
+			page.reload();
 
 //			 page.waitForLoadState(LoadState.NETWORKIDLE,new
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
 //			 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
 			
-			pbjsData=getPbjsData(page);
 			
-			Thread.sleep(10000);
+//			page.wait(100000);
+			
+			Thread.sleep(50000);
         }
         catch (Exception e) {
         	log.error("Error while navigating to publisher url: {}", e.getMessage());
 		}
         
 
-		
 		
 		BidExController bidExController = getBidExData(requestList, testData);
 		

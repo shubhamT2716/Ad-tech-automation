@@ -154,6 +154,12 @@ public class WebController {
 	
 	
 	
+	public ModelAndView featureController()
+	{
+		return null;
+	}
+	
+	
 	 
 	
 	
@@ -200,7 +206,7 @@ public class WebController {
 					ObjectMapper objectMapper = new YAMLMapper();
 					TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
 
-					TestReportModel message = yamlTestSuite.getTestResults(testCriteria);
+					TestReportModel message = yamlTestSuite.getTestResults(testCriteria,null, null);
 
 					JsonNode jsonNode = yamlMapper.convertValue(message, JsonNode.class);
 
@@ -267,7 +273,9 @@ public class WebController {
 	}
 
 	@PostMapping
-	public ModelAndView yamlTestSuite(@RequestParam String yaml) {
+	public ModelAndView yamlTestSuite(@RequestParam String yaml,
+			@RequestParam(name = "url", required = false)String url,
+			@RequestParam(name = "response", required =  false)String response) {
 
 		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
 
@@ -278,7 +286,7 @@ public class WebController {
 			
 			TestCriteriaBo yamlTc = mapper.readValue(yaml, TestCriteriaBo.class);
 
-			TestReportModel message = yamlTestSuite.getTestResults(yamlTc);
+			TestReportModel message = yamlTestSuite.getTestResults(yamlTc,url,response);
 
 			// mav. addObject("message2", message);
 
