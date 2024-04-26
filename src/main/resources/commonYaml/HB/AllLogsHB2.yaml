@@ -1,0 +1,53 @@
+networkCallsPositive: {
+  checksync: "https://hbx.media.net/checksync.php?cid=8CUDF88I8",
+  PRLog: "https://hblg.media.net/log?logid=prlog&itype=HB2",
+  APLog: "https://hblg.media.net/log?logid=aplog&itype=HB2",
+  AWLog: "https://hblg.media.net/log?logid=awlog&itype=HB2",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+
+}
+networkCallsNegative: {
+  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  mnetcall: ".*media.net.*"
+}
+
+
+keysToVerifyPositive: {
+
+  checksync: {
+    #gdpr: ["0"],
+    gpp: ["DBAA"],
+    gpp_sid: ["-1"]
+  },
+
+  PRLog: {
+    cid: ["8YHBL12EX"],
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
+    ugd: ["4"],
+  },
+
+  APLog: {
+    svr: ["2023072110_140_072412_696_072412_658_ssp"],
+    ugd: ["4"],
+  },
+}
+
+#to_check_negative_keys
+keysToVerifyNegative: {
+  PRLog: { snm : ["removed","error",], nbr : ["13"]},
+  APLog: { nbr: ["13","",null], mpvid: [], abs: []},
+  AWLog: { ogbdp : ["0","-1","-2"]},
+}
+
+#to_check_any_keys_among_these
+keysToVerifyAnyOneOf: {
+  prlog: { nbr : [ "45","3","69","0","1","99" ]},
+  aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+
+}
+
+
+
+

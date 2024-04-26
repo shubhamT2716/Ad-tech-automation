@@ -93,7 +93,7 @@ public class YamlTestSuiteScheduling {
 
 		boolean flagForMail = true;
 
-		getAutoTest(environment, userAgent, list, null, null, flagForMail);
+		getAutoTest(environment, userAgent, list, null, null,  null, flagForMail);
 
 	}
 
@@ -104,7 +104,7 @@ public class YamlTestSuiteScheduling {
 	}
 
 	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
-			List<String> commonFiles, String pubs, boolean flagForMail) {
+			List<String> commonFiles, String pubs,String itype, boolean flagForMail) {
 
 		// if (selectedFiles == null || selectedFiles.isEmpty()) {
 		// return new HashMap<>();
@@ -135,7 +135,7 @@ public class YamlTestSuiteScheduling {
 			
 			String combinedCommonContent = "";
 			for (String commonYamls : commonFiles) {
-			String commonContent = this.fileOperations.getCommonFile(commonYamls);
+			String commonContent = this.fileOperations.getCommonFile(itype+"/"+commonYamls);
 				
 				yamlBuilder.append(commonContent).append("\n");
 //			 combinedCommonContent += commonContent;

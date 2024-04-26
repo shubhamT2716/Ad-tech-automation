@@ -100,7 +100,7 @@ public class WebController {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null, false);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null, null,false);
 
 		try {
 			mav.addObject("message2", result.getSmokeReport());
@@ -120,18 +120,22 @@ public class WebController {
 	@GetMapping("/smokeTest")
 	@ResponseBody
 	public ResponseEntity<?>/*ModelAndView*/ smokeTestAPi(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
-			@RequestParam(value = "pubs", required = false) String pubs) {
+			
+			@RequestParam(value = "pubs", required = false) String pubs,
+			@RequestParam(value = "itype", required = false)String itype) {
 //			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
 		
 		
-		List<String> commonFile=new ArrayList<>(getCommonFilesForSmokeTest());
+		System.out.println(itype);
+		
+		List<String> commonFile=new ArrayList<>(getCommonFilesForApi(itype));
 		
 		List<String> autoTest=new ArrayList<>(getAutoTesterFilesTest());
 		
 		
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest,commonFile,pubs, false);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest,commonFile,pubs,itype, false);
 
 		try {
 //			mav.addObject("message2", result.getSmokeReport());
@@ -382,6 +386,14 @@ public class WebController {
 		
 		return fileName;
 	}
+	
+	private Set<String> getCommonFilesForApi(String itype)
+	{
+		Set<String> fileName=fileOperations.listYamlFiles(commonYamlFile+"/"+itype);
+		
+		return fileName;
+	}
+	
 	
 	private Set<String> getAutoTesterFilesTest()
 	{
