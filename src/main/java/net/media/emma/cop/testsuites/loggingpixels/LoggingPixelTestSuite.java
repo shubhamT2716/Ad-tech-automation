@@ -45,7 +45,7 @@ public class LoggingPixelTestSuite
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net");
     List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");
 
-    private JsonNode buildReport(LoggingPixelTestDataModel testCriteria, List<String> allUrl, String harFilePath)
+    private JsonNode buildReport(LoggingPixelTestDataModel testCriteria, List<String> allUrl,List<Request> requests, String harFilePath)
     {
 
         // log.info("all Url Data: " + allUrl.toString());
@@ -71,7 +71,7 @@ public class LoggingPixelTestSuite
         {
             Map<String, String> urlParams;
             // get key-val map "urlUtil.getQueryMap(currentUrl.toString());"
-            urlParams = urlUtil.getQueryStringMapFromUrl(url);;//  UrlQueryBuild.getQueryMap(url.toString());
+            urlParams = urlUtil.getQueryStringMapFromUrl(url,requests);;//  UrlQueryBuild.getQueryMap(url.toString());
             //verify key related data present in yaml against data present in url key query
 
             testReportV2.getNetworkCalls().put(url, verifyKeyDetails(urlParams, testData));
@@ -272,7 +272,7 @@ public class LoggingPixelTestSuite
 
             bc.close();
 
-            return buildReport(testCriteria, urlFromNetworkTab, harFilePath);
+            return buildReport(testCriteria, urlFromNetworkTab, requestList,harFilePath);
         }
 
         private boolean matchRegex (String regex, String keyValue)

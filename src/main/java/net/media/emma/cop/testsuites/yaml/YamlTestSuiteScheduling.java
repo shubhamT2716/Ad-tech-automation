@@ -340,7 +340,11 @@ public class YamlTestSuiteScheduling {
 			testdata.setHarFileDownloadLink(reportModel.getTestMetaData().getHarFileDownloadLink());
 			testdata.setPublisherUrl(reportModel.getTestMetaData().getPublisherUrl());
 			testdata.setMatchingUrls(reportModel.getBidExController().getMatchingUrls());
+			testdata.setBidexData(reportModel.getBidExController().getBidexData());
+			
 
+			
+			
 			testdataResult.add(testdata);
 
 		}
@@ -357,14 +361,43 @@ public class YamlTestSuiteScheduling {
 
 		dto.setRawDataLink("zipDownload/" + zipFile);
 		dto.setTestdatas(testdataResult);
+		dto.setTestResultSummery(testResultSummery(reportModel));
 
 		rawDataDto.setRawData(finalResult);
 		rawDataDto.setSmokeReport(dto);
 		rawDataDto.setBidExReport(bidExReport);
 		rawDataDto.setErrorMessage(error);
+		
 
 		return rawDataDto;
 
+	}
+	
+	
+	
+	public Map<String, String> testResultSummery(TestReportModel result)
+	{
+		Map<String, String> testResult=new HashMap<>();
+		
+		Map<String, PositiveURLChecks> positiveReport=result.getUrlChecks().getPositiveUrlChecks();
+		
+		positiveReport.entrySet().forEach(entry->{
+			String key=entry.getKey();
+			PositiveURLChecks value=entry.getValue();
+			
+			System.err.println(" key : "+key);
+			
+			System.out.println("Result: "+value.getTestResult());
+			
+			testResult.put(key, value.getTestResult().toString());
+			
+			
+			
+		});
+		
+		return testResult;
+		
+		
 	}
 	
 	

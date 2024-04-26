@@ -1,4 +1,6 @@
 package net.media.emma.cop.testsuites.yaml;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import java.awt.Desktop;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +14,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;
@@ -58,6 +62,8 @@ public class TestSuite implements GenericTestSuite {
     DomJsonUtils domUtils;
     @Autowired
     ObjectWriter jsonWriter;
+	@Autowired
+	ObjectMapper jsonReader;
     @Autowired
     URLDataProcessing urlDataProcessing;
     @Autowired
@@ -92,7 +98,7 @@ public class TestSuite implements GenericTestSuite {
     // List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
             "hbx-stage.media.net");
-    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clienttag.js");// , "catchpoint_content.js",
+    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js");// , "catchpoint_content.js",
     // "topics.js");
 
     private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
@@ -175,21 +181,29 @@ public class TestSuite implements GenericTestSuite {
         // list of arrays initialization
         List<String> urlFromNetworkTab = new ArrayList<>();
         List<Request> requestList = new ArrayList<>();
+        
+       
 
         if (location == null) {
             browserContext.onRequest(request -> {
             	
             	urlFromNetworkTab.add(request.url());
             	requestList.add(request);
+            
+            	
+            	
+            	
             });
 		
         }
         
-      
+        
 
 		List<String> consoleMessage = new ArrayList<>();
 		
+		JsonNode pbjsEventsData=null;
 		
+		JsonNode pbjsConfigData=null;
 		
 
 		try {
@@ -204,7 +218,16 @@ public class TestSuite implements GenericTestSuite {
 			
 			consoleMessage = getConsoleErrors(page);
 			page.navigate(testData.getPublisherUrl());
-
+			 pbjsConfigData = getPbjsData(page);
+			
+			if(testData.getPbjsEvents()!=null|| !testData.getPbjsEvents().isEmpty())
+			{
+				
+				 pbjsEventsData = getPbjsEvents(page ,testData.getPbjsEvents());		
+			}
+			
+			
+			System.err.println("pbjsEventsData: "+pbjsEventsData);
 //			 page.waitForLoadState(LoadState.NETWORKIDLE,new
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
@@ -215,6 +238,7 @@ public class TestSuite implements GenericTestSuite {
         	log.error("Error while navigating to publisher url: {}", e.getMessage());
 		}
         
+
 
 	
 		
@@ -227,6 +251,7 @@ public class TestSuite implements GenericTestSuite {
 		
 		Map<String, Map<String, Map<String,String>>> cookies=displayCookies(getCookies);
 		
+		
 
 		TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
 				.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).testName("YAML Test Suite")
@@ -237,6 +262,10 @@ public class TestSuite implements GenericTestSuite {
 		
 		testReport.setCookie(cookies);
 		testReport.setBidExController(bidExController);
+		testReport.setPbjs(pbjsConfigData);
+		testReport.setPbjsEvents(pbjsEventsData);
+		
+		
 		try {
 		
 			URLChecksReportModel  model=getUrlAssertionsData(urlFromNetworkTab,requestList, testData);
@@ -263,15 +292,81 @@ public class TestSuite implements GenericTestSuite {
 		}
 		
 	}
+
+
+
+	public String returnPbjsConfig() {
+			return """
+				var pbjsVar = "";
+				function getPbjsData(){
+				if(window._pbjsGlobals){
+					pbjsVar = window._pbjsGlobals[0];
+					console.log(JSON.stringify(window[pbjsVar], null , 4));
+					return JSON.stringify(window[pbjsVar]);
+					}
+				}
+				getPbjsData();
+				
+					""";
+	}
 	
+	public String getPbjsEventsData(String pbjsEvent) {
+		
+		return """
+			getPbjsEvents();
+			function getPbjsEvents(){
+				if(window._pbjsGlobals){
+					var pbjsVar = window._pbjsGlobals[0];
+					var pbjsEventValue = "%s"; // Assigning the value of pbjsEvent
+					var pbjsEvents = window[pbjsVar].getEvents().filter(e => e.eventType === pbjsEventValue);
+					console.log(JSON.stringify(pbjsEvents, null , 4));
+					return JSON.stringify(pbjsEvents, null , 4);
+				}
+			}
+		""".formatted(pbjsEvent);
+		
+		
+	}
+
+
+	public JsonNode getPbjsEvents(Page page, String pbjsEvent){
+		try{
+		
+		Object eventsDataEVal=page.evaluate(getPbjsEventsData(pbjsEvent));
+		JsonNode eventsDataNode=jsonReader.readTree(eventsDataEVal.toString());
+		log.info("pbjsEvents: ", eventsDataNode.toString());
+		return eventsDataNode;
+		}catch(Exception e){
+			
+			e.printStackTrace();
+			log.error("Error while getting pbjs events: ", e.getMessage());
+			return null;
+		}
+
+	}
+
+
 	
+	private JsonNode getPbjsData(Page page){
+		try{
+		Object pbjsConfigEval = page.evaluate(returnPbjsConfig());
+		JsonNode pbjsDataNode = jsonReader.readTree(pbjsConfigEval.toString()); 
+		log.info("pbjsConfig: ", pbjsDataNode.toString());
+		return pbjsDataNode;
+	}catch(Exception e){
+		log.error("Error while getting pbjs data: ", e.getMessage());
+		return null;
+	}
+	}
 	
+
+
 	public Map<String, List<Cookie>> getCookies(BrowserContext page, String publisher)
     {
     	List<String> url=new ArrayList<>();
     	
     	url.add("https://hbx.media.net");
-    	url.add("https://hb.yhoo.net");
+    	url.add("https://hb.yahoo.net");
     	url.add(publisher);
     	
     	
@@ -322,8 +417,9 @@ public class TestSuite implements GenericTestSuite {
 	    }
 	
 	
-	
-	
+
+		//get all pbjs features and events fired
+
 
 	
 
@@ -415,6 +511,11 @@ public class TestSuite implements GenericTestSuite {
 		return bidexReport;
 
 	}
+	
+	
+	
+	
+	
 
 	private BidexData getBidExData(Request request) {
 
@@ -424,23 +525,61 @@ public class TestSuite implements GenericTestSuite {
 
 		//get data from request
 		// convert into request into json
-		String reponse=request.response().text();
+		String response=request.response().text();
+		
+	
 		
 		try {
+		
 			
+			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js"))
+			{
+				
+				String target="new s.a({";
+				
+				if(response.contains(target))
+				{
+			
+					int in=response.indexOf(target);
+			
+					response=response.substring(in);
+					
+					Pattern pattern=Pattern.compile("new\\s+s\\.a\\((.*?)\\)");
+					
+					Matcher matcher=pattern.matcher(response);
+					
+					if(matcher.find())
+					{
+						String extractedData=matcher.group(1);
+						
+						JsonNode bidData=mapper.readValue(extractedData, JsonNode.class);
+						
+						bidexData.setCid(bidData.get("cid").asText());
+						bidexData.setSvr(bidData.get("sver").asText());
+						bidexData.setSugd(bidData.get("sugd").asText());
+//						bidexData.setItype(bidData.get("itype").asText());
+						
+						
+						return bidexData;
+					}
+		
+				}
+					
+			}
+
 		
 			 int startIndex=0;
 
 
 			 String startTarget = "{\"AaxDpCeiling\"";
-			if (reponse.contains(startTarget)) {
-				startIndex = reponse.indexOf(startTarget);
+			if (response.contains(startTarget)) {
+				startIndex = response.indexOf(startTarget);
 				startIndex += 12;
 
 			}
 
 			//control in Bidexconfig.java
-			String finalString = reponse.substring(startIndex-12);
+			String finalString = response.substring(startIndex-12);
 			 JsonNode bidexJson= mapper.readValue(finalString, JsonNode.class);
 
 			
@@ -521,7 +660,7 @@ public class TestSuite implements GenericTestSuite {
 							.urlPattern(urlData.getValue())
 							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
 							.queryStringMap(new ArrayList<HashMap<String, String>>(
-									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
+									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests))))
 							.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
 							.positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
 							.anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey())).build();
@@ -529,7 +668,7 @@ public class TestSuite implements GenericTestSuite {
 					urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
 				} else {
 					labelExists.getMatchingUrls().add(requestUrl);
-					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
+					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests));
 				}
 
 				continue;

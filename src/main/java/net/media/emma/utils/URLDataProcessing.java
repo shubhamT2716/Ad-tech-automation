@@ -140,11 +140,24 @@ public class URLDataProcessing {
 		return queryStringMap;
 	}
 
-	public HashMap<String, String> getQueryStringMapFromUrl(String url) {
+	public HashMap<String, String> getQueryStringMapFromUrl(String url, List<Request> requests) {
 
 		try {
 			
 			URL urlObj = new URL(url);
+			
+			if(urlObj.getQuery()==null)
+			{
+				for(Request req:requests)
+				{
+					if(req.url().startsWith(url))
+					{
+						return queryStringToMap(req.postData());
+					}
+				}
+			}
+			
+			
 			return queryStringToMap(urlObj.getQuery());
 
 		} catch (MalformedURLException e) {

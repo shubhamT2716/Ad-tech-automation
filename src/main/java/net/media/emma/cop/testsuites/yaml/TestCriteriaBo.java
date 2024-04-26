@@ -22,6 +22,8 @@ public class TestCriteriaBo {
 	String bidexAppendString;
 	String location;
 	Map<String, String> bidexReplaceString;
+	String pbjsEvents;
+	
 
 	Map<String, String> networkCallsPositive;
 	Map<String, String> networkCallsNegative;

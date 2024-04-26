@@ -97,7 +97,7 @@ public class ComplianceTestSuite {
 
         updateTestCriteriaGdprString(testData,gdprString);
 
-        String results = getNetworkCallAssertions3(allCookies,urlFromNetworkTab, testData);
+        String results = getNetworkCallAssertions3(allCookies,urlFromNetworkTab, requestList,testData);
 
         page.close();
         browserContext.close();
@@ -154,7 +154,7 @@ public class ComplianceTestSuite {
         page.close();
     }
 
-    private String getNetworkCallAssertions3(List<Cookie> allCookies,List<String> requestList, ComplianceTestCriteria testData) {
+    private String getNetworkCallAssertions3(List<Cookie> allCookies,List<String> requestList, List<Request> requests, ComplianceTestCriteria testData) {
 
         ComplianceURLChecksReportModel urlChecks = ComplianceURLChecksReportModel.builder().build();
 
@@ -171,7 +171,7 @@ public class ComplianceTestSuite {
                     ComplianceURLChecksReportModel.PositiveURLChecks puc = ComplianceURLChecksReportModel.PositiveURLChecks.builder().label(urlData.getKey())
                             .urlPattern(urlData.getValue())
                             .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
-                            .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl))))
+                            .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests))))
                             //  .negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
                             .positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
                             .anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey()))
@@ -180,7 +180,7 @@ public class ComplianceTestSuite {
                     urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
                 } else {
                     labelExists.getMatchingUrls().add(requestUrl);
-                    labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl));
+                    labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests));
                 }
 
                 continue;
