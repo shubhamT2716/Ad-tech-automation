@@ -93,18 +93,26 @@ public class YamlTestSuiteScheduling {
 
 		boolean flagForMail = true;
 
-		getAutoTest(environment, userAgent, list, null, null,  null, flagForMail);
+		// getAutoTest(environment, userAgent, list, null, null,  null, flagForMail);
+		getAutoTest(environment, userAgent, list, null, null,  null,null,flagForMail);
 
 	}
 
-	public String getTestResult() {
+	public String getTestResult(Map<String, Map<String, List<String>>> error) {
 		// here we have to add some condition based requirement to handle result
-
-		return "fail";
+		
+		if(error==null)
+		{
+			return "pass";
+		}
+		else {
+			return "fail";
+		}
+		
 	}
 
 	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
-			List<String> commonFiles, String pubs,String itype, boolean flagForMail) {
+			List<String> commonFiles, String pubs, String itype,String email,boolean flagForMail) {
 
 		// if (selectedFiles == null || selectedFiles.isEmpty()) {
 		// return new HashMap<>();
@@ -351,10 +359,10 @@ public class YamlTestSuiteScheduling {
 
 		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
 
-		String testResult = getTestResult();
+		String testResult = getTestResult(error);
 
-		if (flagForMail == true) {
-			this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList,
+		if (flagForMail == true && email!=null && !email.isBlank()&& !email.isEmpty()) {
+			this.mailServiceImpl.sendMail(email, email, testReportModelList,
 					zipFile, testResult);
 
 		}

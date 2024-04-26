@@ -26,7 +26,7 @@ keysToVerifyPositive: {
  APPR: {
    lgtp: ["APPR"],
    gdpr: ["0"],
-   dn: ["www.fox13now.com"]
+   
  },
  RA: {
    lgtp: ["RA"],
