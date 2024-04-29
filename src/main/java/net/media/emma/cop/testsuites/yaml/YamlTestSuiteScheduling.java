@@ -435,8 +435,12 @@ public class YamlTestSuiteScheduling {
 	}
 
 	public JsonNode readDataFromZip(String fileName) {
+		
+		System.err.println(fileName);
 
 		String filePath = zipFilePath + fileName;
+		
+		System.err.println(filePath);
 
 		JsonNode resultData = CommonBrowserUtil.readDataFromZip(filePath);
 

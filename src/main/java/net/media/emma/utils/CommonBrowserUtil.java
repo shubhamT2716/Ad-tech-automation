@@ -1,12 +1,15 @@
 package net.media.emma.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -94,12 +98,26 @@ public class CommonBrowserUtil {
 			ZipEntry entry = file.entries().nextElement();
 
 			InputStream inputStream = file.getInputStream(entry);
+//
+//			ObjectMapper mapper = new YAMLMapper();
+//			
+////			ObjectMapper mapper=new ObjectMapper();
+//
+////			JsonNode model = mapper.readTree(inputStream);
+//			
+//			Object model=mapper.convertValue(inputStream, String.class);
+//			
+//			JsonNode jn=mapper.convertValue(model, JsonNode.class);
+			
+			 // Read the input stream as a String
+	        String data = new BufferedReader(new InputStreamReader(inputStream))
+	                .lines().collect(Collectors.joining("\n"));
 
-			ObjectMapper mapper = new YAMLMapper();
+	        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+	        JsonNode jsonNode = mapper.readTree(data);
+			
 
-			JsonNode model = mapper.readTree(inputStream);
-
-			return model;
+			return jsonNode;
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

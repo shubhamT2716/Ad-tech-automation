@@ -13,7 +13,7 @@
 				<p>
                    <!-- FinalReportLink: <span><a href="http://localhost:8080/yamlTestSuite/smokeTestSuite/${ZipFile}">finalReportLink</a></span>-->
                    <!-- FinalReportLink:<a href="http://localhost:8080/yamlTestSuite/smokeTestSuite/"th:text="${ZipFile}"></a>-->
-                    FinalReportLink: <a th:href="'http://localhost:8080/yamlTestSuite/smokeTestSuite/' + ${ZipFile}" th:text="${ZipFile}"></a>
+                    FinalReportLink: <a th:href="'/yamlTestSuite/smokeTestSuite/' + ${ZipFile}" th:text="${ZipFile}"></a>
 
                 </p>
              <div th:each="context : ${contextList}">
