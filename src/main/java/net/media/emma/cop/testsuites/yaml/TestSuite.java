@@ -222,6 +222,13 @@ public class TestSuite implements GenericTestSuite {
 	
 			Page page = browserContext.newPage();
 			
+			if(url!=null&& response!=null)
+			{
+				
+				page=mocking.responseMocking(page, url, response);
+				
+			}
+			
 			try {
 				
 				pbjsData=getPbjsData(page);
@@ -232,18 +239,15 @@ public class TestSuite implements GenericTestSuite {
 			
 			consoleMessage = getConsoleErrors(page);
 			
-			if(url!=null&& response!=null)
-			{
-				
-				page=mocking.responseMocking(page, url, response);
-				
-			}
+		
 
 			consoleMessage = getConsoleErrors(page);
 				page.navigate(testData.getPublisherUrl());
 	
 			
 			page.reload();
+			
+			
 
 //			 page.waitForLoadState(LoadState.NETWORKIDLE,new
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
