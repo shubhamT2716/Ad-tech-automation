@@ -199,6 +199,18 @@ public class TestSuite implements GenericTestSuite {
             	
             	urlFromNetworkTab.add(request.url());
             	requestList.add(request);
+            	
+            	
+            	if(request.url().equals(url))
+            	{
+            		String postData=request.postData();
+    				
+    				JSONObject jsonObject=new JSONObject(postData);
+    				
+    				id=jsonObject.get("id");
+    				
+    				jsonArray =jsonObject.getJSONArray("imp");
+            	}
             
             	
             	
@@ -211,6 +223,8 @@ public class TestSuite implements GenericTestSuite {
 
 		List<String> consoleMessage = new ArrayList<>();
 		
+		System.out.println("ID: "+id);
+		System.out.println("imp: "+jsonArray);
 		
 		JsonNode pbjsData=null;
 		

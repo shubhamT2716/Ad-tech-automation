@@ -2,17 +2,14 @@ package net.media.emma.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
+
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Route;
@@ -53,7 +50,7 @@ public class ResponseMocking {
 			
 			APIResponse apiResponse=route.fetch();
 			
-			byte [] body=apiResponse.body();
+		
 			
 			for(int i=0;i<jsonArray.length();i++)
 			{
@@ -67,20 +64,14 @@ public class ResponseMocking {
 			
 		
 			
-			ObjectMapper mapper=new ObjectMapper();
-			
 			try {
 				
 				JSONObject jo=new JSONObject(response);
-				
-				jo.put("id",id);
-				
-				
+		
 				JSONArray bidListArray=jo.getJSONArray("bidList");
 				
-				Object ext=jo.get("ext");
-				
-				
+//				Object ext=jo.get("ext");
+		
 				List<Object> li=new ArrayList<>();
 				
 				for(int i=0;i<bidListArray.length();i++)
@@ -90,12 +81,11 @@ public class ResponseMocking {
 					bidObject.put("requestId", listOfImp.get(i));
 					
 					li.add(bidObject);		
-					
-					
+		
 				}
-				
+				jo.put("id", id);
 				jo.put("bidList", li);
-				jo.put("ext", ext);
+//				jo.put("ext", ext);
 				
 
 				//convert JSONObject to String
