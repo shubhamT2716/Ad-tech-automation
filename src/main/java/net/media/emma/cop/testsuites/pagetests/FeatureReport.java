@@ -55,7 +55,7 @@ public class FeatureReport {
 //		List<String> matchingUrls = new ArrayList<>();
 		
 		
-		Map<String, String> featureValuesChecks=new HashMap<>();
+		Map<String, Set<String>> featureValuesChecks=new HashMap<>();
 		
 		
 	}

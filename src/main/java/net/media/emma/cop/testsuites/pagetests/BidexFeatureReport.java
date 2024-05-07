@@ -22,14 +22,14 @@ import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 public class BidexFeatureReport {
 
 	TestMetaDataBidex testMetaDataBidex;
-	Map<String, Object> businessFeaturesDetected;
+	Map<String, Boolean> businessFeaturesDetected;
 	Map<String , Object> environmentDetails;
 	Map<String, List<SlotsData>> slotsDetected;
 	Map<String, Object> allFeatureData;
 	Map<String, Map<String, Map<String,String>>> cookies;
-	URLChecksReportModel urlChecksReport;
+	Map<String, URLChecksReportModel> urlChecksReport;
 	Map<String, Map<String, Map<List<String>, Boolean>>> slotsReport;
-	FeatureReport featureReport;
+	List<FeatureReport> featureReport;
 	
 //	BusinessFeaturesDetected  businessFeaturesDetected;
 //	EnvironmentDetails environmentDetails;
@@ -52,7 +52,7 @@ public class BidexFeatureReport {
 	@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
 	public static class TestDataResult{
 		TestMetaDataBidex bidex;
-		Map<String, Object> businessFeaturesDetected;
+		Map<String, Boolean> businessFeaturesDetected;
 		Map<String , Object> environmentDetails;
 		
 	}

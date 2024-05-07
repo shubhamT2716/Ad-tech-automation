@@ -99,9 +99,12 @@ public class bidexController {
 		try {
 			
 						
-			TestCriteriaBo yamlTc = bidexAndFeatureTests.meargeYaml(yaml);
+//			TestCriteriaBo yamlTc = bidexAndFeatureTests.meargeYaml(yaml);
 			
-			BidexFeatureReport bidexFeatureReport=bidexAndFeatureTests.bidexTests(yamlTc);
+			TestCriteriaBo yamlTc=bidexAndFeatureTests.simpleBuildYaml(yaml);
+			
+			
+			BidexFeatureReport bidexFeatureReport=bidexAndFeatureTests.bidexTests(yaml);
 			
 			 TestDataResult dataResult=TestDataResult.builder().businessFeaturesDetected(bidexFeatureReport.getBusinessFeaturesDetected()).environmentDetails(bidexFeatureReport.getEnvironmentDetails()).bidex(bidexFeatureReport.getTestMetaDataBidex()).build();
 			 

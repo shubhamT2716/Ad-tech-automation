@@ -86,7 +86,24 @@ public class FileOperations {
 		}
 
 		return yamlFiles;
+	}
+	
+	public Set<String> listYamlFeatureFiles(String dir, String fileName)
+	{
+		Set<String> yamlFiles = new HashSet<String>();
+		try {
+			ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+			Resource[] resources = resolver.getResources(dir +"/"+ fileName+".yaml");
+			for (Resource resource : resources) {
+				yamlFiles.add(resource.getFilename());
+			}
+		} catch (IOException e) {
+			loggers.standardLogger().error("YAML List Failed", e);
+		}
+
+		return yamlFiles;
 	}	
+	
 
 	// loadFileAsResource
 	public Resource loadFileAsResource(String fileName) {

@@ -34,8 +34,8 @@ public class TestCriteriaBo {
 	Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
 
 	Map<String, String> featureCallsPositive;
-	Map<String, Map<String, String>> featureKeysPositive;
-	Map<String, Map<String, String>> featureKeysNegative;
+	Map<String, Map<String, Set<String>>> featureKeysPositive;
+	Map<String, Map<String, Set<String>>> featureKeysNegative;
 
 	Map<String, String> bidderDataUrls;
 	Map<String, List<BidderDataAssertions>> bidderDataAssertions;

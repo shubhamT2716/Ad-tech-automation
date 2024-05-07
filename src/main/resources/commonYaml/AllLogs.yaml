@@ -1,14 +1,14 @@
 networkCallsPositive: {
-  checksync: "https://hb.yahoo.net/checksync.php?",
-  PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
-  APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
-  AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+  checksync: "https://hbx.media.net/checksync.php?",
+  PRLog: "https://hblg.media.net/log?logid=prlog",
+  APLog: "https://hblg.media.net/log?logid=aplog",
+  AWLog: "https://hblg.media.net/log?logid=awlog",
   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 
 }
 networkCallsNegative: {
-  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+  nerrPing: "https://hblg.media.net/nerrping.php?",
   Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
   mnetcall: ".*media.net.*"
 }
@@ -50,7 +50,6 @@ keysToVerifyAnyOneOf: {
 
 
 bidderDataUrls: {
-  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBL12EX",
-  YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
+ 
 }
 

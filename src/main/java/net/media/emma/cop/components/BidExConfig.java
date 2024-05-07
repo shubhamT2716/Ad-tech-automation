@@ -6,9 +6,11 @@ package net.media.emma.cop.components;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.microsoft.playwright.Request;
 import com.microsoft.playwright.options.Cookie;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,12 +28,18 @@ import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.BidexControlle
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.TestMetaDataBidex;
 import net.media.emma.cop.testsuites.pagetests.FeatureReport;
 import net.media.emma.cop.testsuites.pagetests.TestCriteriaBo;
+import net.media.emma.cop.testsuites.pagetests.bidexAndFeatureTests;
 import net.media.emma.utils.CommonBrowserUtil;
+import net.media.emma.utils.FileOperations;
 import net.media.emma.utils.URLDataProcessing;
+import net.media.emma.utils.YamlUtils;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 
-@Builder @Getter @Setter @Slf4j @ToString
+//@Builder @Getter @Setter @Slf4j @ToString
+
+@Component
+@Slf4j
 public class BidExConfig {
 
     @Autowired
@@ -50,7 +58,7 @@ public class BidExConfig {
     public List < SlotsData > slotsData = new ArrayList < SlotsData > ();
     
     
-    public List<Map<String, List<SlotsData>>> slots=new ArrayList<>();
+  
 
 
     @Builder.Default
@@ -60,13 +68,24 @@ public class BidExConfig {
     @Autowired
     CommonBrowserUtil browserUtil;
     
-    
-
   
     
-
+    @Autowired
+    private FileOperations fileOperations;
     
-    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, Map<String, List<Cookie>> cookies, URLChecksReportModel model,BidexController bidexController, FeatureReport featureReport) {
+    @Autowired
+	private YamlUtils yamlUtils;
+    
+    @Autowired
+    private bidexAndFeatureTests bidexAndFeatureTests;
+    
+ 
+    
+    
+    
+//    public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile, String jsonPathFile, Map<String, List<Cookie>> cookies, URLChecksReportModel model,BidexController bidexController, FeatureReport featureReport) {
+
+    	public BidexFeatureReport loadBidExConfig(JsonNode bidExContent, List<String> feature, TestCriteriaBo yaml, String harFile,  String jsonPathFile,Map<String, List<Cookie>> cookies,BidexController bidexController, String yamlTc, List<String> urlNetworkTab, List<Request>  requests) {
 
 //        if (bidExContent == null) {
 //           
@@ -77,6 +96,7 @@ public class BidExConfig {
 //        	
 //        	
 //        	try {
+    		
 //        		
 //        		InputStream sample=classPathResource.getInputStream();
 //        		
@@ -99,7 +119,8 @@ public class BidExConfig {
         
 
         
-        return getFeaturesData(bidExContent, feature, yaml, harFile, cookies, model, bidexController, featureReport);
+//        return getFeaturesData(bidExContent, feature, yaml, harFile, cookies, model, bidexController, featureReport);
+        return getFeaturesData(bidExContent, feature, yaml, harFile, cookies, bidexController,yamlTc, urlNetworkTab,requests);
         
     }
 
@@ -157,21 +178,21 @@ public class BidExConfig {
    {
    	Map<String, String> featureMap=new HashMap<>();
 
-   	featureMap.put("osrm", "Outstream Video");
-   	featureMap.put("InStreamVideoDfpPlacements","Instream Video");
-   	featureMap.put("InsertSlotInLargeSlot", "AdStacking 1.0 - insertslots_in_largeslots");
-   	featureMap.put("CridSizeMapForMultiAd", "AdStacking 1.0 - crid_size_map_for_multi_ad");
-   	featureMap.put("hb_ad_stacking_features", "AdStacking 1.0 - hb_ad_stacking_features");
-   	featureMap.put("MultiAdConfig", "AdStacking 2.0 - multi_ad_config");
-   	featureMap.put("MultiAdSzComb", "AdStacking 2.0 - multi_ad_size_combinations");
-   	featureMap.put("FloorPrice", "Floor Data");
-	featureMap.put("KeyValuePairAssociations", "Key Value Detected");
-	featureMap.put("DfpPlacements", "DfpPlacements Value");
-	featureMap.put("PlacementProviderRules", "Placement Provider Rules Value Detected");
-	featureMap.put("fpd", "fpd Value Detected ");
-	featureMap.put("cwrs", "cwrs Value Detected ");
-    featureMap.put("sizes", "Sizes Value Detected ");
-    featureMap.put("Mediatypes", "MediaTypes Value Detected ");
+   	featureMap.put("osrm","OutStream");
+//   	featureMap.put("InStreamVideoDfpPlacements","Instream Video");
+//   	featureMap.put("InsertSlotInLargeSlot", "AdStacking 1.0 - insertslots_in_largeslots");
+//   	featureMap.put("CridSizeMapForMultiAd", "AdStacking 1.0 - crid_size_map_for_multi_ad");
+//   	featureMap.put("hb_ad_stacking_features", "AdStacking 1.0 - hb_ad_stacking_features");
+//   	featureMap.put("MultiAdConfig", "AdStacking 2.0 - multi_ad_config");
+//   	featureMap.put("MultiAdSzComb", "AdStacking 2.0 - multi_ad_size_combinations");
+//   	featureMap.put("FloorPrice", "Floor Data");
+//	featureMap.put("KeyValuePairAssociations", "Key Value Detected");
+//	featureMap.put("DfpPlacements", "DfpPlacements Value");
+//	featureMap.put("PlacementProviderRules", "Placement Provider Rules Value Detected");
+//	featureMap.put("fpd", "fpd Value Detected ");
+//	featureMap.put("cwrs", "cwrs Value Detected ");
+//    featureMap.put("sizes", "Sizes Value Detected ");
+//    featureMap.put("Mediatypes", "MediaTypes Value Detected ");
 
     String value=(String) featureMap.get(name);
     
@@ -479,50 +500,125 @@ public class BidExConfig {
     }
     
     
-    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, Map<String, List<Cookie>> cookies, URLChecksReportModel reportModel, BidexController bidexController , FeatureReport featureReport){
+//    private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, Map<String, List<Cookie>> cookies, URLChecksReportModel reportModel, BidexController bidexController , FeatureReport featureReport){
  
-    	 Map<String ,Object> featureTestResult=new HashMap<>();
+    	 private BidexFeatureReport getFeaturesData(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, Map<String, List<Cookie>> cookies, BidexController bidexController, String yamlTc, List<String> urls, List<Request> requests){
+    		 
+    	
     	
        Map<String ,Object> featureResult=new HashMap<>();
        
-      
-       for(String feature : listOfFeatures)
-        {
-          
-        	JsonNode basedOnFeature = bidexContent.get(feature);
+       Map<String ,Boolean> featureTestResult=new HashMap<>();
+  	 
+  	 for(String feature : listOfFeatures)
+       {
+         
+       	JsonNode basedOnFeature = bidexContent.get(feature);
+      	
+       	String featureName=getFeatureName(feature);
        	
-        	String featureName=getFeatureName(feature);
-        	
-        	if(basedOnFeature ==null)
-        	{
-        		featureTestResult.put(featureName, false);
-        	}
-        	else {
-        		
-        		 basedOnFeature.fields().forEachRemaining(entry->{
-              		
-              		if(entry.getKey()==null )
-              		{
-              			featureTestResult.put(featureName, false);
-              		}
-              		else {
-              			featureTestResult.put(featureName, true);
-              		}
-              		
-              	});
-        	}
-        	
-            Object featureMap=mapper.convertValue(basedOnFeature, Object.class);
+       	System.err.println(featureName);
+       	
+       	System.err.println("Based on feature : "+basedOnFeature);
+       	
+       	if(basedOnFeature ==null)
+       	{
+       		
+       		
+       		System.err.println("in if condition");
+       		featureTestResult.put(featureName, false);
+       	}
+       	else {
+       		
+//       		 basedOnFeature.fields().forEachRemaining(entry->{
+//             		
+//       			System.err.println("in else   condition"+ entry.getKey()+ "  "+entry.getValue());
+//       			 
+//             		if(entry.getKey()==null )
+//             		{
+//             			System.err.println("in else if  condition"+ entry.getKey()+ "  "+entry.getValue());
+//             			featureTestResult.put(featureName, false);
+//             		}
+//             		else {
+//             			
+//             			System.out.println("In else condition");
+//             			
+//             			featureTestResult.put(featureName, true);
+//             		}
+//             		
+//             	});
+       		
+       		
+       		
+       		featureTestResult.put(featureName, true);
+       		
+       		
+       	}
+       	
+           Object featureMap=mapper.convertValue(basedOnFeature, Object.class);
 
-           featureResult.put(feature, featureMap);
-        }
+          featureResult.put(feature, featureMap);
+       }
+//       
+  	 
+  	 System.err.println("Feature Report: "+featureResult);
+  	 
+  	 System.err.println("Feature Data: "+featureTestResult);
 
+    	
+//    	Map<String, Object> featureResult=getAllFeatureDetails(listOfFeatures, bidexContent);
+//    	
+//    	Map<String, Boolean> featureTestResult=getFeatureDetected(listOfFeatures, bidexContent);
+    	
+    	Map<String, URLChecksReportModel> urlChecks=new HashMap<>();
+    	
+//    	Map<String, FeatureReport> featuresReport=new HashMap<>();
+    	
+    	List<FeatureReport> listOfFeatureReport=new ArrayList<>();
+    	
+    	
+    	featureTestResult.entrySet().forEach(entry->{
+    		
+    		System.err.println("Key : "+entry.getKey()+" Result: "+entry.getValue());    		
+    		if(entry.getValue()==true)
+    		{
+    			String feature=entry.getKey();
+    			
+    			
+    			
+    			TestCriteriaBo tesCriteria=bidexAndFeatureTests.buildTestCriteriaOnFeature( feature, yamlTc);
+    			
+    			
+    			URLChecksReportModel reportModel=bidexAndFeatureTests.getUrlAssertionsData(urls, requests, tesCriteria);
+    			
+    			
+//    			System.err.println("Report Model: "+reportModel);
+    			
+    			FeatureReport featureReport=this.bidexAndFeatureTests.featureChecks(urls, requests, tesCriteria, reportModel,feature);
+    			
+    			urlChecks.put(feature, reportModel);
+    			
+    			listOfFeatureReport.add(featureReport);
+    			
+    			
+    			
+    			
+    		}
+//    		else {
+//    			
+//    			
+//    			
+//    			URLChecksReportModel reportModel=bidexAndFeatureTests.getUrlAssertionsData(urls, requests, tesCriteria);
+//    			
+//    		}
+    		
+    	});
+    	
        
        Map<String, List<SlotsData>> solts=new HashMap<>();
         
         for(SlotsData data: slotsData)
         {
-//        	log.info("slotsData : "+slotsData);
         	solts.computeIfAbsent(data.getCrid(), k -> new ArrayList<>()).add(data);
         }
         
@@ -533,18 +629,87 @@ public class BidExConfig {
         
         
         bidexFeatureReport.setAllFeatureData(featureResult);
+        
         bidexFeatureReport.setBusinessFeaturesDetected(featureTestResult);
         bidexFeatureReport.setEnvironmentDetails(getEnvironment(bidexContent));
         bidexFeatureReport.setSlotsDetected(solts);
         bidexFeatureReport.setCookies(displayCookies(cookies));
-        bidexFeatureReport.setUrlChecksReport(reportModel);
-        bidexFeatureReport.setSlotsReport(getSlotsReport(reportModel, bidexContent));    
-        bidexFeatureReport.setFeatureReport(featureReport);        
+        bidexFeatureReport.setUrlChecksReport(urlChecks);
+//        bidexFeatureReport.setSlotsReport(getSlotsReport(reportModel, bidexContent));    
+        bidexFeatureReport.setFeatureReport(listOfFeatureReport);        
 
         
         return bidexFeatureReport;
         
 
+    }
+    
+    
+   
+    
+    
+    
+    private Map<String , Object> getAllFeatureDetails(List<String> listOfFeaures, JsonNode bidexContent)
+    {
+    	Map<String ,Object> featureResult=new HashMap<>();
+    	
+    	
+    	for(String feature : listOfFeaures)
+    	{
+    		JsonNode basedOnFeature=bidexContent.get(feature);
+    		
+    		 Object featureMap=mapper.convertValue(basedOnFeature, Object.class);
+
+          featureResult.put(feature, featureMap);
+
+    		
+    	}
+    	
+    	return featureResult;
+    }
+    
+    
+    
+    
+    private Map<String , Boolean> getFeatureDetected(List<String> listOfFeatures,JsonNode bidexContent)
+    {
+    	 Map<String ,Boolean> featureTestResult=new HashMap<>();
+    	 
+    	 for(String feature : listOfFeatures)
+         {
+           
+         	JsonNode basedOnFeature = bidexContent.get(feature);
+        	
+         	String featureName=getFeatureName(feature);
+         	
+         	if(basedOnFeature ==null)
+         	{
+         		featureTestResult.put(featureName, false);
+         	}
+         	else {
+         		
+         		 basedOnFeature.fields().forEachRemaining(entry->{
+               		
+               		if(entry.getKey()==null )
+               		{
+               			featureTestResult.put(featureName, false);
+               		}
+               		else {
+               			featureTestResult.put(featureName, true);
+               		}
+               		
+               	});
+         	}
+         	
+//             Object featureMap=mapper.convertValue(basedOnFeature, Object.class);
+
+//            featureResult.put(feature, featureMap);
+         }
+    	 
+    	 
+    	 return featureTestResult;
+    	 
+    	 
     }
     
     

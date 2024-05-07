@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import java.util.Set;import java.util.stream.Collector;
+import java.util.Set;
 
 
 import com.microsoft.playwright.options.Cookie;
@@ -25,14 +25,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.microsoft.playwright.BrowserContext;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
 
-import lombok.val;
+
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
@@ -57,7 +56,8 @@ import net.media.emma.utils.YamlUtils;
 public class bidexAndFeatureTests {
 	
 	
-	BidExConfig bidExConfig = BidExConfig.builder().build();
+	@Autowired
+	BidExConfig bidExConfig;
 	
 	
 	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
@@ -116,10 +116,15 @@ public class bidexAndFeatureTests {
 	
 	@Autowired
 	DomJsonUtils domUtils;
+	
+	
 
 
-    public BidexFeatureReport bidexTests(TestCriteriaBo yaml) throws JsonMappingException, JsonProcessingException{
+    public BidexFeatureReport bidexTests(String yamlTc) throws JsonMappingException, JsonProcessingException{
 
+    	
+    	TestCriteriaBo yaml=simpleBuildYaml(yamlTc);
+    	
     	
     	List<String> urlFromNetworkTab=new ArrayList<>();
 		List<Request> listOfReqest=new ArrayList<>();
@@ -135,10 +140,10 @@ public class bidexAndFeatureTests {
 
 			page=replaceBidExUrl(page, yaml);
 			
-			if(yaml.getResponseSimulate()!=null)
-			{
-				page=attachResponseMocking(page, yaml);
-			}
+//			if(yaml.getResponseSimulate()!=null)
+//			{
+//				page=attachResponseMocking(page, yaml);
+//			}
 			
 			
 			page.onRequest(request ->{
@@ -158,7 +163,7 @@ public class bidexAndFeatureTests {
 			}
         });
         page.navigate(yaml.getPublisherUrl());
-        Thread.sleep(4000);
+        Thread.sleep(15000);
 	
 		} catch (Exception e) {
 			log.info("Bidex not found");
@@ -181,20 +186,20 @@ public class bidexAndFeatureTests {
 
 		 
 		
-		page.waitForTimeout(5000);
+		page.waitForTimeout(7000);
 		
 		
 		Map<String, List<Cookie>> cookies = getCookies(page, yaml.getPublisherUrl());
 		
 		
 		
-		URLChecksReportModel model=getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml);
+//		URLChecksReportModel model=getUrlAssertionsData(urlFromNetworkTab, listOfReqest, yaml);
 		
-		page.close();
+	
 		
 		List<String> cookieUrls = Arrays.asList("https://hbx.media.net", "https://hb.yahoo.net","https://contextual.media.net", yaml.getPublisherUrl());
 		Map<String, List<Cookie>> urlWiseCookies = new HashMap<>();
-//
+
 		try {
 			for (String url : cookieUrls) {
 
@@ -209,8 +214,10 @@ public class bidexAndFeatureTests {
 		}
 		page.close();
 
+		
+		
 
-		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, model,getBidexData(listOfReqest, yaml),featureChecks(urlFromNetworkTab,listOfReqest, yaml,pageSlots,model));
+		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, getBidexData(listOfReqest, yaml),yamlTc, urlFromNetworkTab, listOfReqest);
 
 		    }
 
@@ -291,6 +298,23 @@ public class bidexAndFeatureTests {
 	}
     
     
+    public TestCriteriaBo simpleBuildYaml(String yaml)
+    {
+    	ObjectMapper mapper=new YAMLMapper();
+    	
+    	try {
+			TestCriteriaBo criteriaBo=mapper.readValue(yaml, TestCriteriaBo.class);
+			
+			return criteriaBo;
+		} 
+    	catch (Exception e) {
+			return null;
+		}
+    	
+    	
+    }
+    
+    
     public TestCriteriaBo meargeYaml(String yaml)
     {
     	Set<String> listofCommonYaml=fileOperations.listYamlFiles(commonYamlFile);
@@ -333,7 +357,7 @@ public class bidexAndFeatureTests {
     	return criteria;
     }
     
-    private URLChecksReportModel getUrlAssertionsData(List<String> requestList,List<Request> requests, TestCriteriaBo testData) {
+    public  URLChecksReportModel getUrlAssertionsData(List<String> requestList,List<Request> requests, TestCriteriaBo testData) {
 
 		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
 
@@ -345,6 +369,8 @@ public class bidexAndFeatureTests {
 //				
 //				continue;
 //			}
+			
+			testData=updateTestCriteria(testData);
 			
 			Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
 
@@ -398,7 +424,21 @@ public class bidexAndFeatureTests {
 	}
     
     
-    public FeatureReport featureChecks(List<String> requestList,List<Request> requests, TestCriteriaBo criteriaBo, JsonNode getSlotsData, URLChecksReportModel model) {
+    public TestCriteriaBo updateTestCriteria(TestCriteriaBo testData)
+    {
+    	
+    	testData.getNetworkCallsPositive().putAll(testData.getFeatureCallsPositive());
+    	
+    	testData.getKeysToVerifyPositive().putAll(testData.getFeatureKeysPositive());
+    	
+    	testData.getKeysToVerifyNegative().putAll(testData.getFeatureKeysNegative());
+    	
+    	return testData;
+    	
+    }
+    
+    
+    public FeatureReport featureChecks(List<String> requestList,List<Request> requests, TestCriteriaBo criteriaBo, URLChecksReportModel model, String feature) {
     	
     	
     	for(String requestUrl: requestList )
@@ -409,7 +449,7 @@ public class bidexAndFeatureTests {
     		if(urlData!=null)
     		{
     			
-    			FeatureReport featureReport=this.criteria.featureTestCasePositvie(urlData, requests,criteriaBo,model);
+    			FeatureReport featureReport=this.criteria.featureTestCasePositvie(urlData, requests,criteriaBo,model,feature);
     			
     			return featureReport;
     		}
@@ -446,6 +486,18 @@ public class bidexAndFeatureTests {
 				return urlData;
 			}
 		}
+		
+		
+//		for (Map.Entry<String, String> urlData : testData.getFeatureCallsPositive().entrySet()) {
+//
+//			if (currentUrl.startsWith(urlData.getValue())) {
+//
+//				return urlData;
+//			}
+//		}
+		
+		
+		
 
 		return null;
 	}
@@ -577,6 +629,66 @@ private Page attachResponseMocking(Page browserContext, net.media.emma.cop.tests
 				getAdUnitJs();
 				""";
 	}
+	
+	
+	
+	
+	 public TestCriteriaBo buildTestCriteriaOnFeature(String feature , String yaml)
+	    {
+	    	
+	    	StringBuilder yamlBuilder=new StringBuilder();
+	    	
+	    	System.err.println(" fileName: "+feature);
+	    	
+	    	Set<String> featureYamlFiles =fileOperations.listYamlFiles(featureYamlFile);
+	    	
+	    	Set<String> listofCommonYaml=fileOperations.listYamlFiles(commonYamlFile);
+	    	
+	    	System.err.println("Feature Yaml File : "+featureYamlFiles);
+	    	
+	    	
+	    	for (String commonYamls : listofCommonYaml) {
+	    		String commonContent = this.fileOperations.getCommonFile(commonYamls);
+	    			
+	    			yamlBuilder.append(commonContent).append("\n");
+
+	    			
+	    			
+	    		}
+	    	
+	    	
+	    	for (String featureYaml : featureYamlFiles) {
+	    		
+	    		System.err.println("Feature  File : "+featureYaml);
+	    		
+	    		if(featureYaml.startsWith(feature))
+	    		{
+	    			
+	    			System.err.println("File : "+featureYaml);
+	    			
+	    			String commonContent = this.fileOperations.getFeatureFiles(featureYaml);
+					
+					yamlBuilder.append(commonContent).append("\n");
+
+	    			
+	    		}
+	    		
+				}
+	    	
+	    	
+	    	net.media.emma.cop.testsuites.pagetests.TestCriteriaBo criteria=null;
+	    	
+
+	    	
+	    		String mearge[]= {yaml,yamlBuilder.toString()};
+	    		
+	    		
+	    		 criteria=yamlUtils.buildAutoTesterYaml(mearge);
+	    		 
+	   
+	    	return criteria;
+	    }
+	    
     
     
     
