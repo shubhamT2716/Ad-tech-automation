@@ -366,15 +366,30 @@ public class YamlTestSuiteScheduling {
 					zipFile, testResult);
 
 		}
+		
+		
+		Map<String, String> testReport=new HashMap<>();
+		
 
 		dto.setRawDataLink("zipDownload/" + zipFile);
 		dto.setTestdatas(testdataResult);
 		dto.setTestResultSummery(testResultSummery(reportModel));
+		
+		testReport.put("testResult", testResult);
+		String reportLink="http://10.2.64.124:8080/yamlTestSuite/smokeTestSuite/"+ zipFile;
+		
+		String link="<a href=\"" + reportLink + "\">Show Report</a>";
+		
+		testReport.put("fullReport", link);
 
+		rawDataDto.setTestResult(testReport);
 		rawDataDto.setRawData(finalResult);
 		rawDataDto.setSmokeReport(dto);
 		rawDataDto.setBidExReport(bidExReport);
 		rawDataDto.setErrorMessage(error);
+		
+		
+		
 		
 
 		return rawDataDto;

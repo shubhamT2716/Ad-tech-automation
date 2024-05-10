@@ -22,5 +22,9 @@ public class SmokeTestRawDataDto {
 	private Map<String, BidExController> bidExReport;
 
 	private Map<String, Map<String, List<String>>> errorMessage;
-
+	
+	private Map<String, String> testResult;
+	
+	
+ 
 }
