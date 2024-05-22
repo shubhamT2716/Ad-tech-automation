@@ -28,8 +28,8 @@ public class TestReportModel {
 	URLChecksReportModel urlChecks;
 	NetworkAnalytics networkAnalytics;
 	Map<String, Map<String, Map<String,String>>> cookie;
-	
 	JsonNode pbjs;
+	JsonNode pbjsEvents;
 
 	@Getter
 	@Setter
@@ -43,6 +43,7 @@ public class TestReportModel {
 		String environment;
 		String userAgent;
 		String harFileDownloadLink;
+		String downloadReport;		
 	}
 
 	@Getter
@@ -76,6 +77,7 @@ public class TestReportModel {
 		String sugd;
 		String cid;
 		String itype;
+		String ct;
 		
 	}
 

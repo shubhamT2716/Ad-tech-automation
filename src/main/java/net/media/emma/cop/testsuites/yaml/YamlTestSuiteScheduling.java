@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.yaml.SmokeTestSummeryDto.Testdata;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.BidExController;
@@ -94,23 +95,34 @@ public class YamlTestSuiteScheduling {
 
 		boolean flagForMail = true;
 
-		getAutoTest(environment, userAgent, list, null, null, flagForMail);
+		// getAutoTest(environment, userAgent, list, null, null,  null, flagForMail);
+		getAutoTest(environment, userAgent, list, null, null,  null,null,flagForMail);
 
 	}
 
-	public String getTestResult() {
+	public String getTestResult(Map<String, Map<String, List<String>>> error) {
 		// here we have to add some condition based requirement to handle result
-
-		return "fail";
+		
+		if(error==null)
+		{
+			return "pass";
+		}
+		else {
+			return "fail";
+		}
+		
 	}
 
 	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
-			List<String> commonFiles, String pubs, boolean flagForMail) {
+			List<String> commonFiles, String pubs, String itype,String email,boolean flagForMail) {
 
 		// if (selectedFiles == null || selectedFiles.isEmpty()) {
 		// return new HashMap<>();
 		// }
 
+		
+		
+		
 		SmokeTestRawDataDto rawDataDto = new SmokeTestRawDataDto();
 
 		Map<String, CompletableFuture<TestReportModel>> map = new HashMap<>();
@@ -136,7 +148,7 @@ public class YamlTestSuiteScheduling {
 			
 			String combinedCommonContent = "";
 			for (String commonYamls : commonFiles) {
-			String commonContent = this.fileOperations.getCommonFile(commonYamls);
+			String commonContent = this.fileOperations.getCommonFile(itype+"/"+commonYamls);
 				
 				yamlBuilder.append(commonContent).append("\n");
 //			 combinedCommonContent += commonContent;
@@ -202,64 +214,81 @@ public class YamlTestSuiteScheduling {
 			
 			StringBuilder yamlBuilder=new StringBuilder();
 			
-			String combinedCommonContent = "";
-			for (String commonYamls : commonFiles) {
-			String commonContent = this.fileOperations.getCommonFile(commonYamls);
-				
-				yamlBuilder.append(commonContent).append("\n");
-//			 combinedCommonContent += commonContent;
-				
-				
+			if(itype.equalsIgnoreCase("all")) {
+			
+				for (String commonYamls : commonFiles) {
+					String commonContent = this.fileOperations.getCommonFile(commonYamls);
+						
+						yamlBuilder.append(commonContent).append("\n");
+//					 combinedCommonContent += commonContent;
+						
+						
+					}
+			}
+			else {
+				for (String commonYamls : commonFiles) {
+					String commonContent = this.fileOperations.getCommonFile(itype + "/" + commonYamls);
+
+					yamlBuilder.append(commonContent).append("\n");
+//					 combinedCommonContent += commonContent;
+
+				}
 			}
 
-			
-		for (String yaml : listOfYaml) {  
-			for (String env : environments) {
-				for (String agent : userAgents) {
-				
-				ClassPathResource classPathResource = new ClassPathResource(yamlSmokeTestSuiteFilesPath + "/" + yaml);
-				
-				String content = null;
+//			String combinedCommonContent = "";
 
-				try {
-					InputStream inputStream = classPathResource.getInputStream();
+			for (String yaml : listOfYaml) {
+				for (String env : environments) {
+					for (String agent : userAgents) {
 
-					content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-				
-			} catch (Exception e) {
-				// Handle exceptions here
-				log.error("Error while reading YAML file", e);
-				continue; // Continue to the next iteration
-			}
-				
-					
-					ObjectMapper yamlMapper = new YAMLMapper();
+						String filesPath;
 
-					List<String> list = new ArrayList<>();
-					list.add(content);
-
-
-					String a[] = { content, yamlBuilder.toString() };
-					
-					testCriteriaBo = yamlUtils.buildYaml(a);
-					
-					
-					
-			
-					
-							testCriteriaBo.setUserAgent(agent);
-							testCriteriaBo.setEnvironment(env);
-							
-							
-							map.put(yaml+"_"+env , yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-							listOfYamlEnv.add(yaml+"_"+env );
+						if (itype.equalsIgnoreCase("all")) {
+							filesPath = yamlSmokeTestSuiteFilesPath + "/" + yaml;
+						} else {
+							filesPath = yamlSmokeTestSuiteFilesPath + "/" + itype + "/" + yaml;
 						}
 
+						ClassPathResource classPathResource = new ClassPathResource(filesPath);
+
+						String content = null;
+
+						try {
+							InputStream inputStream = classPathResource.getInputStream();
+
+							content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+
+						} catch (Exception e) {
+							// Handle exceptions here
+							log.error("Error while reading YAML file", e);
+							continue; // Continue to the next iteration
+						}
+
+//						ObjectMapper yamlMapper = new YAMLMapper();
+
+//						List<String> list = new ArrayList<>();
+//						list.add(content);
+
+//						System.out.println(content);
+						
+						String a[] = { content, yamlBuilder.toString() };
+
+						testCriteriaBo = yamlUtils.buildYaml(a);
+
+						testCriteriaBo.setUserAgent(agent);
+						testCriteriaBo.setEnvironment(env);
+	
+						System.err.println(testCriteriaBo.getPublisherUrl()+" :  "+testCriteriaBo.getKeysToVerifyPositive());
+						System.out.println();
+
+						map.put(yaml + "_" + env, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+						listOfYamlEnv.add(yaml + "_" + env);
 					}
-		
+
+				}
+
 			}
-			
-			
+
 		}
 		
 		// get values of Map into CompeletableFuture
@@ -352,22 +381,38 @@ public class YamlTestSuiteScheduling {
 
 		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
 
-		String testResult = getTestResult();
+		String testResult = getTestResult(error);
 
-		if (flagForMail == true) {
-			this.mailServiceImpl.sendMail("rathnakar.ko@media.net", "rathnakar.ko@media.net", testReportModelList,
+		if (flagForMail == true && email!=null && !email.isBlank()&& !email.isEmpty()) {
+			this.mailServiceImpl.sendMail(email, email, testReportModelList,
 					zipFile, testResult);
 
 		}
+		
+		
+		Map<String, String> testReport=new HashMap<>();
+		
 
 		dto.setRawDataLink("zipDownload/" + zipFile);
 		dto.setTestdatas(testdataResult);
 		dto.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
+		// dto.setTestResultSummery(testResultSummery(reportModel));
+		
+		testReport.put("testResult", testResult);
+		String reportLink="http://10.2.64.124:8080/yamlTestSuite/smokeTestSuite/"+ zipFile;
+		
+//		String link="<a href=\"" + reportLink + "\">Show Report</a>";
+		
+		testReport.put("fullReport", reportLink);
 
+		rawDataDto.setTestResult(testReport);
 		rawDataDto.setRawData(finalResult);
 		rawDataDto.setSmokeReport(dto);
 		rawDataDto.setBidExReport(bidExReport);
 		rawDataDto.setErrorMessage(error);
+		
+		
+		
 		
 
 		return rawDataDto;
@@ -436,8 +481,12 @@ public class YamlTestSuiteScheduling {
 	}
 
 	public JsonNode readDataFromZip(String fileName) {
+		
+		System.err.println(fileName);
 
 		String filePath = zipFilePath + fileName;
+		
+		System.err.println(filePath);
 
 		JsonNode resultData = CommonBrowserUtil.readDataFromZip(filePath);
 

@@ -1,8 +1,8 @@
 networkCallsPositive: {
-  checksync: "https://hbx.media.net/checksync.php?",
-  PRLog: "https://hblg.media.net/log?logid=prlog",
-  APLog: "https://hblg.media.net/log?logid=aplog",
-  AWLog: "https://hblg.media.net/log?logid=awlog",
+  checksync: "https://hbx.media.net/checksync.php?cid=8CUDF88I8",
+  PRLog: "https://hblg.media.net/log?logid=prlog&itype=HB2",
+  APLog: "https://hblg.media.net/log?logid=aplog&itype=HB2",
+  AWLog: "https://hblg.media.net/log?logid=awlog&itype=HB2",
   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 
@@ -49,7 +49,4 @@ keysToVerifyAnyOneOf: {
 }
 
 
-bidderDataUrls: {
- 
-}
 

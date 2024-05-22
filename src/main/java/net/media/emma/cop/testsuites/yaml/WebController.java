@@ -14,6 +14,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import org.springframework.http.HttpHeaders;
@@ -36,8 +37,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
-import de.sstoehr.harreader.model.HttpStatus;
-import lombok.val;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.service.GenericTestSuite;
@@ -75,6 +77,9 @@ public class WebController {
 	@Value("${autoTestFilePath}")
 	private String autoTesterYamlFile;
 	
+	@Value("${reportFileBasePath}")
+	private String reportFilePath;
+	
 	
 
 	@Autowired
@@ -89,18 +94,51 @@ public class WebController {
 		return mav;
 
 	}
+	
+	@GetMapping("smokeTestSuiteItype")
+	public Map<String, Set<String>> getFilesOnItypeForForm(@RequestParam(name = "itype",required = false)String itype) {
+
+//		ModelAndView mav = new ModelAndView("smokeTestSuite");
+		
+		Map<String, Set<String>> mav=new HashMap<>();
+//		
+		if(!itype.equalsIgnoreCase("all"))
+		{
+////			mav.addObject("fileNames", new ArrayList<>(getFileNamesForSmokeTest()));
+////			mav.addObject("commonFile", new ArrayList<>(getCommonFilesForSmokeTest()));
+		
+		mav.put("fileNames", getFileNamesForSmokeTestItype(itype));
+		mav.put("commonFile", getCommonFilesForApi(itype));
+			
+		}
+		else {
+//			mav.addObject("fileNames", new ArrayList<>(getFileNamesForSmokeTestItype(itype)));
+//			mav.addObject("commonFile", new ArrayList<>(getCommonFilesForApi(itype)));
+			
+			
+			mav.put("fileNames", getFileNamesForSmokeTest());
+			mav.put("commonFile", getCommonFilesForSmokeTest());
+		}
+		
+	
+		return mav;
+
+	}
 
 	@PostMapping("/smokeTestSuite")
 	@ResponseBody
 	public ModelAndView runThreadPoolTest(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
 			@RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles,
-			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
+			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles,
+			@RequestParam(value = "email",required = false)String email,
+			@RequestParam(value = "itype",required = false)String itype) {
 		
 		
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null, false);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null, itype,email,false);
+		// SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null,email, true);
 
 		try {
 			mav.addObject("message2", result.getSmokeReport());
@@ -120,18 +158,22 @@ public class WebController {
 	@GetMapping("/smokeTest")
 	@ResponseBody
 	public ResponseEntity<?>/*ModelAndView*/ smokeTestAPi(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
-			@RequestParam(value = "pubs", required = false) String pubs) {
+			@RequestParam(value = "pubs", required = false) String pubs,
+			@RequestParam(value = "email",required = false)String email,
+			@RequestParam(value = "itype", required = false)String itype) {
 //			@RequestParam(value = "commonFiles",required = false)List<String> commonFiles) {
 		
 		
-		List<String> commonFile=new ArrayList<>(getCommonFilesForSmokeTest());
+		
+		List<String> commonFile=new ArrayList<>(getCommonFilesForApi(itype));
 		
 		List<String> autoTest=new ArrayList<>(getAutoTesterFilesTest());
 		
 		
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest,commonFile,pubs, false);
+		// SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest,commonFile,pubs,itype, false);
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest,commonFile,pubs,itype, email,true);
 
 		try {
 //			mav.addObject("message2", result.getSmokeReport());
@@ -184,7 +226,7 @@ public class WebController {
 	
 
 	@GetMapping("/autoTest")
-	public ModelAndView getAutoTest() {
+	public ModelAndView getAutoTest(HttpServletResponse response) {
 
 		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
 
@@ -227,29 +269,32 @@ public class WebController {
 	
 	
 	@GetMapping("/userAgent")
-	public ModelAndView getUserAgent()
+	public Map<String, String> getUserAgent()
 	{
 		
-		ModelAndView mav=new ModelAndView("UserAgent");
-		try {
-			
-			Map<String, String> map=BrowserFactory.browserContexts; 
-			
-			
-			
-			JsonNode jsonNode=yamlMapper.convertValue(map, JsonNode.class);
-			
-			
-			
-			mav.addObject("userAgent", jsonNode);
-				
-		}
-		catch (Exception e) {
-			
-			mav.addObject("message1", e.getMessage());
-		}
+//		ModelAndView mav=new ModelAndView("UserAgent");
+//		try {
+//			
+//			Map<String, String> map=BrowserFactory.browserContexts; 
+//			
+//			
+//			
+//			JsonNode jsonNode=yamlMapper.convertValue(map, JsonNode.class);
+//			
+//			
+//			
+//			mav.addObject("userAgent", jsonNode);
+//				
+//		}
+//		catch (Exception e) {
+//			
+//			mav.addObject("message1", e.getMessage());
+//		}
 		
-		return mav;
+		
+		Map<String, String> map=BrowserFactory.browserContexts;
+		
+		return map;
 	}
 
 	
@@ -376,10 +421,38 @@ public class WebController {
 				.body(resource);
 
 	}
+	
+	@GetMapping("/downloadFile")
+	public  ResponseEntity<?> getExelFiles(@RequestParam String fileName)
+	{
+		
+		String filepath=reportFilePath+fileName;
+	        // Load the Excel file
+	        Resource resource = new FileSystemResource(filepath);
+
+	        // Set the appropriate headers for Excel file download
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
+	        headers.setContentDispositionFormData("attachment", fileName);
+
+	        return ResponseEntity.ok()
+	                .headers(headers)
+	                .body(resource);
+	}
+
+
+
 
 	private Set<String> getFileNamesForSmokeTest() {
 		// Fetch the list of YAML file names from the directory
 		Set<String> fileNames = fileOperations.listYamlFiles(yamlSmokeTestSuiteFilesPath);
+		// Add additional filtering logic if needed (e.g., exclude specific files)
+		return fileNames;
+	}
+	
+	private Set<String> getFileNamesForSmokeTestItype(String itype ) {
+		// Fetch the list of YAML file names from the directory
+		Set<String> fileNames = fileOperations.listYamlFiles(yamlSmokeTestSuiteFilesPath+"/"+itype);
 		// Add additional filtering logic if needed (e.g., exclude specific files)
 		return fileNames;
 	}
@@ -390,6 +463,14 @@ public class WebController {
 		
 		return fileName;
 	}
+	
+	private Set<String> getCommonFilesForApi(String itype)
+	{
+		Set<String> fileName=fileOperations.listYamlFiles(commonYamlFile+"/"+itype);
+		
+		return fileName;
+	}
+	
 	
 	private Set<String> getAutoTesterFilesTest()
 	{

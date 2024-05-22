@@ -3,6 +3,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import java.awt.Desktop;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,9 +35,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.options.Cookie;
+import com.microsoft.playwright.options.Geolocation;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.Timing;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
@@ -62,6 +65,8 @@ public class TestSuite implements GenericTestSuite {
     DomJsonUtils domUtils;
     @Autowired
     ObjectWriter jsonWriter;
+	@Autowired
+	ObjectMapper jsonReader;
     @Autowired
     URLDataProcessing urlDataProcessing;
     @Autowired
@@ -78,6 +83,9 @@ public class TestSuite implements GenericTestSuite {
     private String harFileBasePath;
     @Value("${browserPath}")
     private String browserPath;
+    
+    @Autowired
+    private FileHandling fileHandling;
 
     private static String windscribeLogin = "xpath=//button[text()='Login']";
     private static String windscribeUsername = "xpath=//input[@name='username']";
@@ -132,7 +140,7 @@ public class TestSuite implements GenericTestSuite {
 
     // async with future string
     @Async("yamlTestSuitePool")
-    public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData) {
+    public CompletableFuture<TestReportModel> getTestResultsThreadPool( TestCriteriaBo testData) {
 
     	CompletableFuture<TestReportModel> future = new CompletableFuture<>();
         try {
@@ -227,13 +235,21 @@ public class TestSuite implements GenericTestSuite {
 		System.out.println("imp: "+jsonArray);
 		
 		JsonNode pbjsData=null;
+		JsonNode pbjsEventsData=null;
+		
+		JsonNode pbjsConfigData=null;
 		
 
 		try {
 
+			
+			
         
 			browserContext.setDefaultTimeout(90000); // 70 seconds
-	
+			
+			
+
+			
 			Page page = browserContext.newPage();
 			
 			if(url!=null&& response!=null)
@@ -253,16 +269,19 @@ public class TestSuite implements GenericTestSuite {
 			
 			consoleMessage = getConsoleErrors(page);
 			
-		
-
-			consoleMessage = getConsoleErrors(page);
-				page.navigate(testData.getPublisherUrl());
-	
+			page.navigate(testData.getPublisherUrl());
+			page.evaluate(googleRefresh());
 			
-			page.reload();
+			 pbjsConfigData = getPbjsData(page);
+			
+			if(testData.getPbjsEvents()!=null|| !testData.getPbjsEvents().isEmpty())
+			{
+				
+				 pbjsEventsData = getPbjsEvents(page ,testData.getPbjsEvents());		
+			}
 			
 			
-
+			System.err.println("pbjsEventsData: "+pbjsEventsData);
 //			 page.waitForLoadState(LoadState.NETWORKIDLE,new
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
@@ -276,7 +295,6 @@ public class TestSuite implements GenericTestSuite {
         catch (Exception e) {
         	log.error("Error while navigating to publisher url: {}", e.getMessage());
 		}
-        
 
 		
 		BidExController bidExController = getBidExData(requestList, testData);
@@ -297,23 +315,41 @@ public class TestSuite implements GenericTestSuite {
 						testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
 				.harFileDownloadLink("harDownload/" + harFilePath).build()).build();
 		
+		
+		
+		
 		testReport.setCookie(cookies);
 		testReport.setBidExController(bidExController);
-		testReport.setPbjs(pbjsData);
-		
-		
-		try {
-		
+		testReport.setPbjs(pbjsConfigData);
+		testReport.setPbjsEvents(pbjsEventsData);
+try {
+			
 			URLChecksReportModel  model=getUrlAssertionsData(urlFromNetworkTab,requestList, testData);
 			
-//			getFeatureReport(harFilePath, urlFromNetworkTab);
+
 			
 			testReport.setUrlChecks(model);
 			testReport.setTestSummery(YamlTestSuiteScheduling.testResultSummery(model));
+			
+		
+			
+			String fileName=this.fileHandling.setReportToFile(testData, model);
+			
+			String downloadUrl = "/downloadFile?fileName=" + URLEncoder.encode(fileName, "UTF-8");
+			
+			testReport.getTestMetaData().setDownloadReport(downloadUrl);
+
+			
 		}catch (Exception e) {
 			
 			testReport.setUrlChecks(null);
+			
+			testReport.getTestMetaData().setDownloadReport(null);
 		}
+		
+		
+		
+		
 		
 		
 		return testReport;
@@ -329,15 +365,87 @@ public class TestSuite implements GenericTestSuite {
 		}
 		
 	}
+
+    
+    public String googleRefresh()
+    {
+    	return "googletag.pubads().refresh()";
+    }
+
+
+	public String returnPbjsConfig() {
+			return """
+				var pbjsVar = "";
+				function getPbjsData(){
+				if(window._pbjsGlobals){
+					pbjsVar = window._pbjsGlobals[0];
+					console.log(JSON.stringify(window[pbjsVar], null , 4));
+					return JSON.stringify(window[pbjsVar]);
+					}
+				}
+				getPbjsData();
+				
+					""";
+	}
 	
+	public String getPbjsEventsData(String pbjsEvent) {
+		
+		return """
+			getPbjsEvents();
+			function getPbjsEvents(){
+				if(window._pbjsGlobals){
+					var pbjsVar = window._pbjsGlobals[0];
+					var pbjsEventValue = "%s"; // Assigning the value of pbjsEvent
+					var pbjsEvents = window[pbjsVar].getEvents().filter(e => e.eventType === pbjsEventValue);
+					console.log(JSON.stringify(pbjsEvents, null , 4));
+					return JSON.stringify(pbjsEvents, null , 4);
+				}
+			}
+		""".formatted(pbjsEvent);
+		
+		
+	}
+
+
+	public JsonNode getPbjsEvents(Page page, String pbjsEvent){
+		try{
+		
+		Object eventsDataEVal=page.evaluate(getPbjsEventsData(pbjsEvent));
+		JsonNode eventsDataNode=jsonReader.readTree(eventsDataEVal.toString());
+		log.info("pbjsEvents: ", eventsDataNode.toString());
+		return eventsDataNode;
+		}catch(Exception e){
+			
+			e.printStackTrace();
+			log.error("Error while getting pbjs events: ", e.getMessage());
+			return null;
+		}
+
+	}
+
+
 	
+	private JsonNode getPbjsData(Page page){
+		try{
+		Object pbjsConfigEval = page.evaluate(returnPbjsConfig());
+		JsonNode pbjsDataNode = jsonReader.readTree(pbjsConfigEval.toString()); 
+		log.info("pbjsConfig: ", pbjsDataNode.toString());
+		return pbjsDataNode;
+	}catch(Exception e){
+		log.error("Error while getting pbjs data: ", e.getMessage());
+		return null;
+	}
+	}
 	
+
+
 	public Map<String, List<Cookie>> getCookies(BrowserContext page, String publisher)
     {
     	List<String> url=new ArrayList<>();
     	
     	url.add("https://hbx.media.net");
     	url.add("https://hb.yahoo.net");
+    	url.add("https://contextual.media.net");
     	url.add(publisher);
     	
     	
@@ -388,19 +496,9 @@ public class TestSuite implements GenericTestSuite {
 	    }
 	
 	
-	
-	public JsonNode getPbjsData(Page page)
-	{
-		
-		ObjectMapper mapper=new ObjectMapper();
-		
-		Object pbjsAllData=page.evaluate("pbjs");
-		
-		JsonNode pbjsData =mapper.convertValue(pbjsAllData, JsonNode.class);
-		
-		return pbjsData;
-		
-	}
+
+		//get all pbjs features and events fired
+
 
 	
 
@@ -570,7 +668,7 @@ public class TestSuite implements GenericTestSuite {
 			bidexData.setSvr(envData.get("sver").asText());
 			bidexData.setSugd(envData.get("sugd").asText());
 			bidexData.setItype(envData.get("itype").asText());
-			
+			bidexData.setCt(envData.get("ip2ct").asText())	;		
 		}
 		catch (Exception e) {
 			

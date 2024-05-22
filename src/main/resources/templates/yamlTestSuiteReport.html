@@ -18,10 +18,15 @@
       <button onClick="display('PASS')" type="button" class="btn btn-success">Show Success</button>
        <button onClick="displayRaw()" type="button" class="btn btn-secondary">Show Raw Data</button>
        <button onClick="displayPbjs()" type="button" class="btn btn-secondary">Show Pbjs Data</button>
+        <button onClick="displayPbjsEvents()" type="button" class="btn btn-secondary">Show Pbjs Events Data</button>  
+
+      
+      <!-- <span id="customizeButton"></span> -->
+
     </div>
 
     <div class="container my-5">
-      <div id="testReport" />
+      <div id="testReport" ></div>
     </div>
 		
 
@@ -30,6 +35,27 @@
          var reportData = /*[[${message1}]]*/ 'User Name';
        /*]]>*/
   </script> 
+
+   <!-- <script>
+
+    function getRawData(rawData){
+
+      // check if the rawData.pbjs is not empty
+     if(rawData.pbjs!=null)
+     {
+        document.createElement("button", "customizeButton");
+        document.getElementById("customizeButton").innerHTML = "<button onClick='displayPbjs()' type='button' class='btn btn-secondary'>Show Pbjs Data</button>";
+     }
+     if(rawData.pbjsEvents!=null)
+     {
+        document.createElement("button", "customizeButton");
+        document.getElementById("customizeButton").innerHTML = "<button onClick='displayPbjsEvents()' type='button' class='btn btn-secondary'>Show Pbjs Events Data</button>";
+     }
+    
+
+    }
+
+  </script>  -->
 
     <script type="text/javascript">
 	
@@ -67,10 +93,43 @@
   }
 
   function displayPbjs() {
+
     const pre = document.createElement("pre");
     const code = document.createElement("code");
     code.classList.add("language-json");
     code.innerHTML = JSON.stringify(reportData.pbjs, null, 2);
+    pre.appendChild(code);
+    document.getElementById("testReport").innerHTML = "";
+    document.getElementById("testReport").appendChild(pre);
+    hljs.highlightAll();
+  }
+
+
+  function displayPbjsEvents() {
+
+    const pre = document.createElement("pre");
+    const code = document.createElement("code");
+    code.classList.add("language-json");
+    code.innerHTML = JSON.stringify(reportData.pbjsEvents, null, 2);
+    pre.appendChild(code);
+    document.getElementById("testReport").innerHTML = "";
+    document.getElementById("testReport").appendChild(pre);
+    hljs.highlightAll();
+  }
+
+  function displayRaw() {
+
+
+    const rawData = JSON.parse(JSON.stringify(reportData));
+
+    delete rawData.pbjs;
+    delete rawData.pbjsEvents;
+
+
+    const pre = document.createElement("pre");
+    const code = document.createElement("code");
+    code.classList.add("language-json");
+    code.innerHTML = JSON.stringify(rawData, null, 2);
     pre.appendChild(code);
     document.getElementById("testReport").innerHTML = "";
     document.getElementById("testReport").appendChild(pre);
@@ -112,8 +171,9 @@
           
   }
 
+ displayRaw();
   displayPbjs();
-  displayRaw();
+  displayPbjsEvents();
  
         
 </script>
