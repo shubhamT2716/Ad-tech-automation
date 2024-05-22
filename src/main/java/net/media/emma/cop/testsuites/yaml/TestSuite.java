@@ -3,6 +3,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import java.awt.Desktop;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,9 +36,11 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
 import com.microsoft.playwright.options.Cookie;
+import com.microsoft.playwright.options.Geolocation;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.Timing;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
@@ -75,6 +78,9 @@ public class TestSuite implements GenericTestSuite {
     private String harFileBasePath;
     @Value("${browserPath}")
     private String browserPath;
+    
+    @Autowired
+    private FileHandling fileHandling;
 
     private static String windscribeLogin = "xpath=//button[text()='Login']";
     private static String windscribeUsername = "xpath=//input[@name='username']";
@@ -123,11 +129,12 @@ public class TestSuite implements GenericTestSuite {
 
     // async with future string
     @Async("yamlTestSuitePool")
-    public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData) {
+    public CompletableFuture<TestReportModel> getTestResultsThreadPool( TestCriteriaBo testData) {
 
     	CompletableFuture<TestReportModel> future = new CompletableFuture<>();
         try {
             TestReportModel testReport = getTestResults(testData); // Create a new browser context for each task
+            Thread.sleep(10000);
             future.complete(testReport);
         } catch (Exception e) {
         	
@@ -208,16 +215,21 @@ public class TestSuite implements GenericTestSuite {
 
 		try {
 
+			
+			
         
 			browserContext.setDefaultTimeout(90000); // 70 seconds
 			
 			
-			
+
 			
 			Page page = browserContext.newPage();
 			
 			consoleMessage = getConsoleErrors(page);
+			
 			page.navigate(testData.getPublisherUrl());
+			page.evaluate(googleRefresh());
+			
 			 pbjsConfigData = getPbjsData(page);
 			
 			if(testData.getPbjsEvents()!=null|| !testData.getPbjsEvents().isEmpty())
@@ -237,10 +249,7 @@ public class TestSuite implements GenericTestSuite {
         catch (Exception e) {
         	log.error("Error while navigating to publisher url: {}", e.getMessage());
 		}
-        
 
-
-	
 		
 		BidExController bidExController = getBidExData(requestList, testData);
 		
@@ -260,23 +269,40 @@ public class TestSuite implements GenericTestSuite {
 						testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
 				.harFileDownloadLink("harDownload/" + harFilePath).build()).build();
 		
+		
+		
+		
 		testReport.setCookie(cookies);
 		testReport.setBidExController(bidExController);
 		testReport.setPbjs(pbjsConfigData);
 		testReport.setPbjsEvents(pbjsEventsData);
-		
-		
-		try {
-		
+try {
+			
 			URLChecksReportModel  model=getUrlAssertionsData(urlFromNetworkTab,requestList, testData);
 			
-//			getFeatureReport(harFilePath, urlFromNetworkTab);
+
 			
 			testReport.setUrlChecks(model);
+			
+		
+			
+			String fileName=this.fileHandling.setReportToFile(testData, model);
+			
+			String downloadUrl = "/downloadFile?fileName=" + URLEncoder.encode(fileName, "UTF-8");
+			
+			testReport.getTestMetaData().setDownloadReport(downloadUrl);
+
+			
 		}catch (Exception e) {
 			
 			testReport.setUrlChecks(null);
+			
+			testReport.getTestMetaData().setDownloadReport(null);
 		}
+		
+		
+		
+		
 		
 		
 		return testReport;
@@ -293,6 +319,11 @@ public class TestSuite implements GenericTestSuite {
 		
 	}
 
+    
+    public String googleRefresh()
+    {
+    	return "googletag.pubads().refresh()";
+    }
 
 
 	public String returnPbjsConfig() {
@@ -590,7 +621,7 @@ public class TestSuite implements GenericTestSuite {
 			bidexData.setSvr(envData.get("sver").asText());
 			bidexData.setSugd(envData.get("sugd").asText());
 			bidexData.setItype(envData.get("itype").asText());
-			
+			bidexData.setCt(envData.get("ip2ct").asText())	;		
 		}
 		catch (Exception e) {
 			

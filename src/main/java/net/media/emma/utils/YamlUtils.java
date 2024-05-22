@@ -22,7 +22,7 @@ import net.media.emma.cop.testsuites.yaml.TestCriteriaBo;
 public class YamlUtils {
 	
 	
-	static Map<String, Object> files =new HashMap<>();
+	 Map<String, Object> files =new HashMap<>();
 	
 
     public  TestCriteriaBo buildYaml(String [] yamlFiles)
@@ -109,59 +109,107 @@ try {
 		}
     }
     
+    Map<String , Object> yaml=new HashMap<>();
     
-    public static Map<String, Object> meargeYaml(Map<String, Object>yamlFile, Map<String,Object> commonfiles)
+    public  Map<String, Object> meargeYaml(Map<String, Object>yamlFile, Map<String,Object> commonfiles)
     {
     	
-    	Map<String , Object> yaml=new HashMap<>();
+////    	yaml.clear();
+//    	
+////    	Map<String , Object> yaml=new HashMap<>();
+//    	
+//    	for (Map.Entry<String, Object> entry : commonfiles.entrySet()) {
+//            String key = entry.getKey();
+//            Object value = entry.getValue();
+//         
+//            
+//           
+//            List<Map<String, Object>> list=new ArrayList<>();
+//
+//            if (value instanceof Map) {
+//            	
+//            	
+//                // If the value is another map, recursively merge it
+//                if (yamlFile.containsKey(key) && yamlFile.get(key) instanceof Map) {
+//                	
+////                	meargeYaml((Map<String, Object>) yamlFile.get(key), (Map<String, Object>) value);
+//                	
+//                	
+////                	  files  = yamlFile.containsKey(key) ?
+////                              (Map<String, Object>) yamlFile.get(key) : new HashMap<>();
+////                	  yamlFile.put(key, meargeYaml(files, (Map<String, Object>) value));
+//                	  
+//                	yaml  = yamlFile.containsKey(key) ?
+//                              (Map<String, Object>) yamlFile.get(key) : new HashMap<>();
+//                	  yamlFile.put(key, meargeYaml(yaml, (Map<String, Object>) value));
+//                	
+//                } else {
+//                    // If the key doesn't exist in the target, or if it's not a map, just put it
+//                	
+//                 // if the key doesn't exist in the target then don't want overwrite the target value
+//                
+//                 
+//                 
+//                 if (!yaml.containsKey(key)) {
+//                	 yaml.put(key, value);
+//                 }
+//                	
+//                }
+//            } else {
+//                // For non-map values, simply overwrite the target value
+////            	 if (!yaml.containsKey(key)) {
+////            	yaml.put(key, value);
+////                 }
+////            	 else {
+////            		 yaml.put(key, value);
+////            	 }
+//            	
+//            	yaml.put(key, value);
+//            }
+//            
+//            
+//        }
+//    	
+//    	return yaml;
+    	
+    	
     	
     	for (Map.Entry<String, Object> entry : commonfiles.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-         
-            
-           
-            List<Map<String, Object>> list=new ArrayList<>();
 
+           
             if (value instanceof Map) {
-            	
-            	
                 // If the value is another map, recursively merge it
+            	
+            	
+            	
                 if (yamlFile.containsKey(key) && yamlFile.get(key) instanceof Map) {
+                    // Recursively merge the nested maps
                 	
-//                	meargeYaml((Map<String, Object>) yamlFile.get(key), (Map<String, Object>) value);
                 	
-                	
-                	  files  = yamlFile.containsKey(key) ?
-                              (Map<String, Object>) yamlFile.get(key) : new HashMap<>();
-                	  yamlFile.put(key, meargeYaml(files, (Map<String, Object>) value));
-                	
+                    Map<String, Object> nestedYamlFile = (Map<String, Object>) yamlFile.get(key);
+                    
+                    Map<String, Object> nestedCommonFiles = (Map<String, Object>) value;
+                     
+                    
+                    yamlFile.put(key, meargeYaml(nestedYamlFile, nestedCommonFiles));
                 } else {
-                    // If the key doesn't exist in the target, or if it's not a map, just put it
-                	
-                 // if the key doesn't exist in the target then don't want overwrite the target value
-                
-                 
-                 
-                 if (!files.containsKey(key)) {
-                	 files.put(key, value);
-                 }
-                	
-                	
+                    // If the key doesn't exist in the target, or if it's not a map, just put the new map
+                    yamlFile.put(key, new HashMap<>((Map<String, Object>) value));
                 }
             } else {
-            	
-            	
-                // For non-map values, simply overwrite the target value
-//            	 if (!files.containsKey(key)) {
-            		 files.put(key, value);
-//                 }
+                // For non-map values, simply overwrite the target value if the key does not exist
+                if (!yamlFile.containsKey(key)) {
+                    yamlFile.put(key, value);
+                }
             }
             
+           
             
         }
+        return yamlFile;
     	
-    	return files;
     	
     }
     

@@ -41,6 +41,7 @@ public class TestReportModel {
 		String environment;
 		String userAgent;
 		String harFileDownloadLink;
+		String downloadReport;		
 	}
 
 	@Getter
@@ -72,6 +73,7 @@ public class TestReportModel {
 		String sugd;
 		String cid;
 		String itype;
+		String ct;
 		
 	}
 

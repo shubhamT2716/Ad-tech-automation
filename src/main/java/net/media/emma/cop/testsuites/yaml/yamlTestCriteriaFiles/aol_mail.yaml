@@ -5,26 +5,28 @@ password : "QWEasd!@#123"
 environment: hb.yahoo.net
 cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://mail.aol.com/d/folders/1&force_hbtest=all"
+publisherUrl: "https://mail.aol.com/d/folders/1&force_hbtest=all&mnet_test=1"
+bidexAppendString: "&hb_test=1"
+bidexReplaceString: { "bidexchange.js": "bidexchange.php" }
 
 
 networkCallsPositive: {
-    checksync: "https://hb.yahoo.net/checksync.php?cid=8YHB8EU59",
-    PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
-    APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
-    AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
+     checksync: "https://hb.yahoo.net/checksync.php?cid=8YHB8EU59",
+     PRLog: "https://lg1.hb.yahoo.net/log?logid=prlog",
+     APLog: "https://lg1.hb.yahoo.net/log?logid=aplog",
+     AWLog: "https://lg1.hb.yahoo.net/log?logid=awlog",
     RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-    GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+     GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
     ucreative: "https://hb.yahoo.net/ucreative.php?cv=1",
     tcb: "https://contextual.media.net/tcb.js?&cb=window.advBidxc.nativetemplatefetch&v=1",
     #location: "New York Empire"
  }
 
 networkCallsNegative: {
-    nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+     nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
     Flog: "https://lg1.hb.yahoo.net/log?logid=flog",
-    BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog"
- }
+     BELog: "https://lg1.hb.yahoo.net/log?logid=kfk&evtid=belog"
+  }
 
 keysToVerifyPositive: {
 
@@ -51,9 +53,9 @@ keysToVerifyPositive: {
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-    prlog: { snm : ["removed"], nbr : ["13"]},
-    aplog: { nbr: ["13"], aucTic: []},
-    awlog: { ogbdp : ["0","-1","-2"]},
+     prlog: { snm : ["removed"], nbr : ["13"]},
+     aplog: { nbr: ["13"], aucTic: []},
+     awlog: { ogbdp : ["0","-1","-2"]},
     belog: { name : ["DFS_PERF","NO_DOMINANT_BID_ERROR","DFST","ADS_DISABLED"]},
     
  }
@@ -63,6 +65,12 @@ keysToVerifyAnyOneOf: {
     prlog: { nbr : [ "45","3","69","0","1","99" ]},
     aplog: { pvid: ["-3", "25014", "25015", "25016"], svr: ["2023072709_174_080108_34_080108_46_ssp", "2023072709_174_080112_702_080112_665_ssp"], nbr : [ "45","3","69","0","1","99" ], snm : ["success", "response_after_auction", "nobid","error"]}
  }
+
+bidderDataUrls: {
+}
+
+bidderDataAssertions: {
+}
 
 # ------------------------------ignore the lines below--rats---------------------
 responseSimulate: []

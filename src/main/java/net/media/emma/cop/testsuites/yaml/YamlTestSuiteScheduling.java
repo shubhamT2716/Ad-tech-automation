@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.yaml.SmokeTestSummeryDto.Testdata;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.BidExController;
@@ -118,6 +119,9 @@ public class YamlTestSuiteScheduling {
 		// return new HashMap<>();
 		// }
 
+		
+		
+		
 		SmokeTestRawDataDto rawDataDto = new SmokeTestRawDataDto();
 
 		Map<String, CompletableFuture<TestReportModel>> map = new HashMap<>();
@@ -209,64 +213,81 @@ public class YamlTestSuiteScheduling {
 			
 			StringBuilder yamlBuilder=new StringBuilder();
 			
-			String combinedCommonContent = "";
-			for (String commonYamls : commonFiles) {
-			String commonContent = this.fileOperations.getCommonFile(commonYamls);
-				
-				yamlBuilder.append(commonContent).append("\n");
-//			 combinedCommonContent += commonContent;
-				
-				
+			if(itype.equalsIgnoreCase("all")) {
+			
+				for (String commonYamls : commonFiles) {
+					String commonContent = this.fileOperations.getCommonFile(commonYamls);
+						
+						yamlBuilder.append(commonContent).append("\n");
+//					 combinedCommonContent += commonContent;
+						
+						
+					}
+			}
+			else {
+				for (String commonYamls : commonFiles) {
+					String commonContent = this.fileOperations.getCommonFile(itype + "/" + commonYamls);
+
+					yamlBuilder.append(commonContent).append("\n");
+//					 combinedCommonContent += commonContent;
+
+				}
 			}
 
-			
-		for (String yaml : listOfYaml) {  
-			for (String env : environments) {
-				for (String agent : userAgents) {
-				
-				ClassPathResource classPathResource = new ClassPathResource(yamlSmokeTestSuiteFilesPath + "/" + yaml);
-				
-				String content = null;
+//			String combinedCommonContent = "";
 
-				try {
-					InputStream inputStream = classPathResource.getInputStream();
+			for (String yaml : listOfYaml) {
+				for (String env : environments) {
+					for (String agent : userAgents) {
 
-					content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-				
-			} catch (Exception e) {
-				// Handle exceptions here
-				log.error("Error while reading YAML file", e);
-				continue; // Continue to the next iteration
-			}
-				
-					
-					ObjectMapper yamlMapper = new YAMLMapper();
+						String filesPath;
 
-					List<String> list = new ArrayList<>();
-					list.add(content);
-
-
-					String a[] = { content, yamlBuilder.toString() };
-					
-					testCriteriaBo = yamlUtils.buildYaml(a);
-					
-					
-					
-			
-					
-							testCriteriaBo.setUserAgent(agent);
-							testCriteriaBo.setEnvironment(env);
-							
-							
-							map.put(yaml+"_"+env , yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-							listOfYamlEnv.add(yaml+"_"+env );
+						if (itype.equalsIgnoreCase("all")) {
+							filesPath = yamlSmokeTestSuiteFilesPath + "/" + yaml;
+						} else {
+							filesPath = yamlSmokeTestSuiteFilesPath + "/" + itype + "/" + yaml;
 						}
 
+						ClassPathResource classPathResource = new ClassPathResource(filesPath);
+
+						String content = null;
+
+						try {
+							InputStream inputStream = classPathResource.getInputStream();
+
+							content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+
+						} catch (Exception e) {
+							// Handle exceptions here
+							log.error("Error while reading YAML file", e);
+							continue; // Continue to the next iteration
+						}
+
+//						ObjectMapper yamlMapper = new YAMLMapper();
+
+//						List<String> list = new ArrayList<>();
+//						list.add(content);
+
+//						System.out.println(content);
+						
+						String a[] = { content, yamlBuilder.toString() };
+
+						testCriteriaBo = yamlUtils.buildYaml(a);
+
+						testCriteriaBo.setUserAgent(agent);
+						testCriteriaBo.setEnvironment(env);
+	
+						System.err.println(testCriteriaBo.getPublisherUrl()+" :  "+testCriteriaBo.getKeysToVerifyPositive());
+						System.out.println();
+
+						map.put(yaml + "_" + env, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+						listOfYamlEnv.add(yaml + "_" + env);
 					}
-		
+
+				}
+
 			}
-			
-			
+
 		}
 		
 		// get values of Map into CompeletableFuture
@@ -378,9 +399,9 @@ public class YamlTestSuiteScheduling {
 		testReport.put("testResult", testResult);
 		String reportLink="http://10.2.64.124:8080/yamlTestSuite/smokeTestSuite/"+ zipFile;
 		
-		String link="<a href=\"" + reportLink + "\">Show Report</a>";
+//		String link="<a href=\"" + reportLink + "\">Show Report</a>";
 		
-		testReport.put("fullReport", link);
+		testReport.put("fullReport", reportLink);
 
 		rawDataDto.setTestResult(testReport);
 		rawDataDto.setRawData(finalResult);

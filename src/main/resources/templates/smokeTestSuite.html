@@ -20,6 +20,13 @@
         display: none;
         margin-bottom: 10px;
     }
+    
+     #dropdown {
+        width:200px;
+        padding: 10px;
+        font-size: 12px;
+        margin-top: 10px;
+    }
 </style>
 </head>
 <body>
@@ -32,54 +39,134 @@
             <input type="text" class="form-control" id="env" name="env" aria-describedby="emailHelp" placeholder="hbx-stage.media.net">
             <small id="emailHelp" class="form-text text-muted">Please enter the Host Name of the stage, istage, or live.</small>
         </div>
-        <div class="form-group">
-            <label for="ua">User Agent:</label>
-            <input type="text" class="form-control" id="ua" name="ua" aria-describedby="emailHelp" placeholder="Desktop.Mac">
-            <small id="emailHelp" class="form-text text-muted">User Agent identifier click <a href="/yamlTestSuite/userAgent">here</a> to show user agent</small>
-        </div>
-        <br>
-        <div class="toggle-container">
-        <label for="toggle" class="toggle-label">select checkbox if you want report in mail</label>
-        <input type="checkbox" id="toggle">
+        <!--<div class="form-group">
+           <!-- <label for="ua">User Agent:</label>-->
+           <!-- <label for="dropdown">User Agent:</label>
+           <!-- <input type="text" class="form-control" id="ua" name="ua" aria-describedby="emailHelp" placeholder="Desktop.Mac">
+            <small id="emailHelp" class="form-text text-muted">User Agent identifier click <a href="/yamlTestSuite/userAgent">here</a> to show user agent</small>-->
+            <!--<select class="form-control" id="dropdown" placeholder="Desktop.Mac"></select>
+            <input class="form-control" type="text" id="displayValue" readonly/>
+        </div>-->
+        
+         <div class="form-group">
+        <label for="dropdown">User Agent:</label>
+        <select class="form-control" id="dropdown" name="ua">
+            <option value="">Select an option</option>
+        </select>
+        <input class="form-control" type="text" id="displayValue" readonly/>
     </div>
-    <div class="input-box">
-       <label for="email">Email:</label>
-            <input type="text" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="please enter your email">
+        
+        
+   <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            const dropdown = document.getElementById("dropdown");
+            const displayValue = document.getElementById("displayValue");
 
-    </div>
+            fetch("/yamlTestSuite/userAgent")
+            .then(response => response.json())
+            .then(data => {
+                for (const [key, value] of Object.entries(data)) {
+                    const option = document.createElement("option");
+                    option.text = key;
+                    option.value = value;
+                    dropdown.appendChild(option);
+                }
 
-    <script>
-        const toggleSwitch = document.getElementById('toggle');
-        const inputBox = document.querySelector('.input-box');
-
-        toggleSwitch.addEventListener('change', function () {
-            if (this.checked) {
-                inputBox.style.display = 'block';
-            } else {
-                inputBox.style.display = 'none';
-            }
+                dropdown.addEventListener("change", function(){
+                    displayValue.value = this.value;
+                });
+            })
+            .catch(error => console.log('Error in fetching data', error));
         });
     </script>
-        <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div><br>
-        <label>Select YAML files to execute:</label>
-        <div class="form-check">
-            <label class="form-check-label" for="selectAll">Select All</label>
-            <input class="form-check-input" type="checkbox" id="selectAll" onchange="toggleCheckboxes(this)">
+    
+        
+        <br>
+        <div class="toggle-container">
+            <label for="toggle" class="toggle-label">Select checkbox if you want report in mail</label>
+            <input type="checkbox" id="toggle">
         </div>
-        <div class="form-check" th:each="fileName : ${fileNames}">
-            <label class="form-check-label" th:text="${fileName}"></label>
+    
+        <div class="input-box">
+            <label for="email">Email:</label>
+            <input type="text" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Please enter your email">
+        </div>
+
+
+
+
+
+        <script>
+            const toggleSwitch = document.getElementById('toggle');
+            const inputBox = document.querySelector('.input-box');
+
+            toggleSwitch.addEventListener('change', function () {
+                if (this.checked) {
+                    inputBox.style.display = 'block';
+                } else {
+                    inputBox.style.display = 'none';
+                }
+            });
+        </script>
+
+        <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+        <br>
+     
+        
+        <div class="form-group">
+    <label for="itype"> itype:</label>
+    <select class="form-select" id="itype" name="itype" aria-label="itype Files" onchange="itypeFiles()" onclick="handleClick()">
+        <option value="all">All</option>
+        <option value="HB">HB</option>
+        <option value="MP">MP</option>
+    </select>
+</div>
+
+       
+
+      <!--  <label>Select YAML files to execute:</label>
+        <div class="form-check">
+            <label class="form-check-label" for="selectAllSelectedFiles">Select All</label>
+            <input class="form-check-input" type="checkbox" id="selectAllSelectedFiles" onchange="toggleCheckboxes('selectedFiles', this)">
+        </div>
+        <div id="selectedFilesContainer" class="form-check" th:each="fileName : ${fileNames}">
+            <!-- <label class="form-check-label" th:text="${fileName}" th:attr="data-itype=${fileitype}"></label>
+            <input class="form-check-input" type="checkbox" name="selectedFiles" th:value="${fileName}" th:attr="data-itype=${fileitype}"> -->
+          <!--  <label class="form-check-label" th:text="${fileName}"></label>
             <input class="form-check-input" type="checkbox" name="selectedFiles" th:value="${fileName}">
+
         </div>
         
-        <label>Select common  YAML files to execute:</label>
+        <label>Select common YAML files to execute:</label>
         <div class="form-check">
-            <label class="form-check-label" for="selectAll">Select All</label>
-            <input class="form-check-input" type="checkbox" id="selectAll" onchange="toggleCheckboxes(this)">
+            <label class="form-check-label" for="selectAllCommonFiles">Select All</label>
+            <input class="form-check-input" type="checkbox" id="selectAllCommonFiles" onchange="toggleCheckboxes('commonFiles', this)">
         </div>
-        <div class="form-check" th:each="fileName : ${commonFile}">
-            <label class="form-check-label" th:text="${fileName}"></label>
-            <input class="form-check-input" type="checkbox" name="commonFiles" th:value="${fileName}">
-        </div>
+        <div id="commonFilesContainer" class="form-check" th:each="fileName : ${commonFile}">
+            <!-- <label class="form-check-label" th:text="${fileName}" th:attr="data-itype=${fileitype}"></label>
+            <input class="form-check-input" type="checkbox" name="commonFiles" th:value="${fileName}" th:attr="data-itype=${fileitype}"> -->
+           <!-- <label class="form-check-label" th:text="${fileName}"></label>
+            <input class="form-check-input" type="checkbox" name="commonFile" th:value="${fileName}">
+
+        </div>-->
+        
+        <label>Select YAML files to execute:</label>
+<div class="form-check">
+    <label class="form-check-label" for="selectAllSelectedFiles">Select All</label>
+    <input class="form-check-input" type="checkbox" id="selectAllSelectedFiles" onchange="toggleCheckboxes('selectedFiles', this)">
+</div>
+<div id="selectedFilesContainer" class="form-check">
+    <!-- Dynamically insert YAML files here -->
+</div>
+
+<label>Select common YAML files to execute:</label>
+<div class="form-check">
+    <label class="form-check-label" for="selectAllCommonFiles">Select All</label>
+    <input class="form-check-input" type="checkbox" id="selectAllCommonFiles" onchange="toggleCheckboxes('commonFiles', this)">
+</div>
+<div id="commonFilesContainer" class="form-check">
+    <!-- Dynamically insert common YAML files here -->
+</div>
         
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
@@ -89,10 +176,10 @@
 <script>
     function validateForm() {
         const selectedFiles = document.querySelectorAll('input[name="selectedFiles"]:checked');
-         const commonFiles = document.querySelectorAll('input[name="commonFiles"]:checked');
+        const commonFiles = document.querySelectorAll('input[name="commonFiles"]:checked');
         const errorMessage = document.getElementById('error-message');
-        if (selectedFiles.length === 0 || commonFiles.length=== 0)  {
-            errorMessage.textContent = 'Please select at least one YAML or common yaml file to execute.';
+        if (selectedFiles.length === 0 || commonFiles.length === 0) {
+            errorMessage.textContent = 'Please select at least one YAML or common YAML file to execute.';
             errorMessage.style.display = 'block';
             return false; // Prevent form submission
         }
@@ -100,22 +187,145 @@
         return true; // Allow form submission
     }
 
-
-    // JavaScript function to toggle all checkboxes
-    function toggleCheckboxes(selectAllCheckbox) {
-        const checkboxes = document.querySelectorAll('input[name="selectedFiles"]');
+    function toggleCheckboxes(name, selectAllCheckbox) {
+        const checkboxes = document.querySelectorAll(`input[name="${name}"]`);
         checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
     }
-
-    function toggleCheckboxes(selectAllCheckbox) {
-        const checkboxes = document.querySelectorAll('input[name="commonFiles"]');
-        checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
-    }
-
-
     
     
+//     function handleClick() {
+//   // var itypeValue = document.getElementById('itype').value;
+
+//     // Make AJAX request to Spring Boot controller
+//     //var xhr = new XMLHttpRequest();
+//     //xhr.open('GET', '/smokeTestSuite?itype=' + itypeValue, true);
+//     //xhr.onreadystatechange = function () {
+//       //  if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+//         //    var responseData = JSON.parse(xhr.responseText);
+//             // Update your frontend UI with responseData
+//           //  console.log(responseData); // Log the response for testing
+//      //   }
+//     //};
+//     //xhr.send();
     
+//      var xhr = new XMLHttpRequest();
+//     xhr.open('GET', '/smokeTestSuiteItype?itype=' + itypeValue, true);
+//     xhr.onreadystatechange = function () {
+//         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+//             var responseData = JSON.parse(xhr.responseText);
+
+//             // Update the selectedFilesContainer
+//             var selectedFilesContainer = document.getElementById('selectedFilesContainer');
+//             selectedFilesContainer.innerHTML = "<h3>YAML Files:</h3><ul>" +
+//                 responseData.yamlFiles.map(function (file) {
+//                     return "<li>" + file + "</li>";
+//                 }).join("") + "</ul>";
+
+//             // Update the commonFilesContainer
+//             var commonFilesContainer = document.getElementById('commonFilesContainer');
+//             commonFilesContainer.innerHTML = "<h3>Common YAML Files:</h3><ul>" +
+//                 responseData.commonYamlFiles.map(function (file) {
+//                     return "<li>" + file + "</li>";
+//                 }).join("") + "</ul>";
+//         }
+//     };
+//     xhr.send();
+// }
+
+
+function handleClick() {
+    var itypeValue = document.getElementById('itype').value;
+
+    // Make AJAX request to Spring Boot controller
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/yamlTestSuite/smokeTestSuiteItype?itype=' + itypeValue, true);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            var responseData = JSON.parse(xhr.responseText);
+            // Update your frontend UI with responseData
+            console.log(responseData); // Log the response for testing
+
+            //var yamlFilesList = responseData.yamlFiles;
+            //var commonYamlFilesList = responseData.commonYamlFiles;
+            
+             var yamlFilesList = responseData["fileNames"];
+            var commonYamlFilesList = responseData["commonFile"];
+
+            var selectedFilesContainer = document.getElementById('selectedFilesContainer');
+            selectedFilesContainer.innerHTML = ""; // Clear previous content
+
+            yamlFilesList.forEach(function (file) {
+                var label = document.createElement('label');
+                label.className = 'form-check-label';
+                label.textContent = file;
+
+                var checkbox = document.createElement('input');
+                checkbox.className = 'form-check-input';
+                checkbox.type = 'checkbox';
+                checkbox.name = 'selectedFiles';
+                checkbox.value = file;
+
+                var div = document.createElement('div');
+                div.className = 'form-check';
+                div.appendChild(label);
+                div.appendChild(checkbox);
+
+                selectedFilesContainer.appendChild(div);
+            });
+
+            var commonFilesContainer = document.getElementById('commonFilesContainer');
+            commonFilesContainer.innerHTML = ""; // Clear previous content
+
+            commonYamlFilesList.forEach(function (file) {
+                var label = document.createElement('label');
+                label.className = 'form-check-label';
+                label.textContent = file;
+
+                var checkbox = document.createElement('input');
+                checkbox.className = 'form-check-input';
+                checkbox.type = 'checkbox';
+                checkbox.name = 'commonFiles';
+                checkbox.value = file;
+
+                var div = document.createElement('div');
+                div.className = 'form-check';
+                div.appendChild(label);
+                div.appendChild(checkbox);
+
+                commonFilesContainer.appendChild(div);
+            });
+        }
+    };
+    xhr.send();
+}
+
+function toggleCheckboxes(containerId, masterCheckbox) {
+    var container = document.getElementById(containerId);
+    var checkboxes = container.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(function (checkbox) {
+        checkbox.checked = masterCheckbox.checked;
+    });
+}
+
+
+    // document.getElementById('itype').addEventListener('change', function() {
+    //     const itypeValue = this.value;
+    //     itypeFiles('selectedFilesContainer', itypeValue);
+    //     itypeFiles('commonFilesContainer', itypeValue);
+    // });
+
+    // function itypeFiles(containerId, itypeValue) {
+    //     const container = document.getElementById(containerId);
+    //     const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+    //     checkboxes.forEach(checkbox => {
+    //         const fileitype = checkbox.getAttribute('data-itype');
+    //         if (itypeValue === 'all' || fileitype === itypeValue) {
+    //             checkbox.parentElement.style.display = 'block';
+    //         } else {
+    //             checkbox.parentElement.style.display = 'none';
+    //         }
+    //     });
+    // }
 </script>
 
 </body>
