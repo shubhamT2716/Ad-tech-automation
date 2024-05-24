@@ -134,7 +134,7 @@ public class YamlTestSuiteScheduling {
 				.collect(Collectors.toSet());
 
 		String[] environments = environment.trim().split(",");
-		String[] userAgents = userAgent.trim().split(",");
+//		String[] userAgents = userAgent.trim().split(",");
 		;
 	
 		if(pubs!=null)
@@ -159,7 +159,7 @@ public class YamlTestSuiteScheduling {
 			
 		for (String yaml : listOfYaml) {  
 			for (String env : environments) {
-				for (String agent : userAgents) {
+//				for (String agent : userAgents) {
 					for(String pub: publisher) {
 				
 				ClassPathResource classPathResource = new ClassPathResource(autoTesterYamlFile + "/" + yaml);
@@ -192,13 +192,13 @@ public class YamlTestSuiteScheduling {
 					
 			
 					
-							testCriteriaBo.setUserAgent(agent);
+							testCriteriaBo.setUserAgent(userAgent);
 							testCriteriaBo.setEnvironment(env);
 							testCriteriaBo.setPublisherUrl(pub);							
 							
 							map.put(yaml+"_"+env , yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
 							listOfYamlEnv.add(yaml+"_"+env );
-						}
+//						}
 
 					}
 		
@@ -239,7 +239,7 @@ public class YamlTestSuiteScheduling {
 
 			for (String yaml : listOfYaml) {
 				for (String env : environments) {
-					for (String agent : userAgents) {
+//					for (String agent : userAgents) {
 
 						String filesPath;
 
@@ -275,15 +275,18 @@ public class YamlTestSuiteScheduling {
 
 						testCriteriaBo = yamlUtils.buildYaml(a);
 
-						testCriteriaBo.setUserAgent(agent);
+						System.err.println("Agnet: "+userAgent);
+						
+						testCriteriaBo.setUserAgent(userAgent);
 						testCriteriaBo.setEnvironment(env);
 	
 						System.err.println(testCriteriaBo.getPublisherUrl()+" :  "+testCriteriaBo.getKeysToVerifyPositive());
 						System.out.println();
+						System.out.println(testCriteriaBo.getUserAgent());
 
 						map.put(yaml + "_" + env, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
 						listOfYamlEnv.add(yaml + "_" + env);
-					}
+//					}
 
 				}
 
@@ -382,6 +385,8 @@ public class YamlTestSuiteScheduling {
 		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
 
 		String testResult = getTestResult(error);
+		
+		
 
 		if (flagForMail == true && email!=null && !email.isBlank()&& !email.isEmpty()) {
 			this.mailServiceImpl.sendMail(email, email, testReportModelList,

@@ -81,6 +81,8 @@ public class BrowserFactory {
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/18.17763");
 
 			put("Chrome.Desktop.Windows", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36");
+		
+			put("Other", "");
 		}
 	};
 
@@ -153,6 +155,13 @@ public class BrowserFactory {
 		if (browserType.contains("Chrome")) {
 			return getPlaywrightObj().chromium().launchPersistentContext(Paths.get(browserPath),
 					getSystemBrowserContextOptions(browserContexts.get(browserType), browserType.contains("Mobile"),
+							extension, fileName));
+		}
+		
+		if(browserType.contains("Other"))
+		{
+			return getPlaywrightObj().chromium().launchPersistentContext(Paths.get(browserPath),
+					getSystemBrowserContextOptions(browserType, browserType.contains("Mobile"),
 							extension, fileName));
 		}
 

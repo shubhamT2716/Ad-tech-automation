@@ -136,8 +136,9 @@ public class WebController {
 		
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
-
-		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null, itype,email,false);
+		
+		
+		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null, itype,email,true);
 		// SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null,email, true);
 
 		try {
