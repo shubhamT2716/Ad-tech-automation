@@ -231,8 +231,7 @@ public class TestSuite implements GenericTestSuite {
 
 		List<String> consoleMessage = new ArrayList<>();
 		
-		System.out.println("ID: "+id);
-		System.out.println("imp: "+jsonArray);
+		
 		
 		JsonNode pbjsData=null;
 		JsonNode pbjsEventsData=null;
@@ -245,7 +244,7 @@ public class TestSuite implements GenericTestSuite {
 			
 			
         
-			browserContext.setDefaultTimeout(90000); // 70 seconds
+			browserContext.setDefaultTimeout(95000); // 70 seconds
 			
 			
 
@@ -290,7 +289,7 @@ public class TestSuite implements GenericTestSuite {
 			
 //			page.wait(100000);
 			
-			Thread.sleep(50000);
+			Thread.sleep(60000);
         }
         catch (Exception e) {
         	log.error("Error while navigating to publisher url: {}", e.getMessage());

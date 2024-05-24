@@ -2,16 +2,25 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Emma - COP Test Automation Tool</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="/highlight/styles/default.min.css">
-    <script src="/highlight/highlight.min.js"></script>
+    <script src="/highlight/highlight.min.js"></script>-->
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 </head>
 <body>
     <div class="container my-5">
         <h1>YAML Test Suite Report</h1>
     </div>
+
+   
+  
+    
 
     <div class="container my-5">
       <button onClick="display('FAIL')" type="button" class="btn btn-danger">Show Errors</button> 
@@ -24,6 +33,14 @@
       <!-- <span id="customizeButton"></span> -->
 
     </div>
+    
+    <div class="container my-5"> 
+    <button id="downloadButton" type="button" class="btn btn-primary">Download Report</button>
+    <button id="downloadHar" type="button" class="btn btn-primary">Download Har File</button>
+	</div>
+
+
+   
 
     <div class="container my-5">
       <div id="testReport" ></div>
@@ -56,6 +73,34 @@
     }
 
   </script>  -->
+  
+  <script>
+      document.getElementById("downloadButton").addEventListener("click", function() {
+          const link = document.createElement("a");
+
+          // get download link from reportData.testMetaData.downloadReport
+          link.href = "/yamlTestSuite"+reportData.testMetaData.downloadReport;  // specify the path to your file
+          // link.href = "/yamlTestSuite/"+reportData.testMetaData.;  // specify the path to your file
+          // report is excel file not pdf
+        //  link.download = "report.xls";  // specify the default file name
+          // link.download = "report.pdf";  // specify the default file name
+          link.click();
+      });
+  </script>
+
+<script>
+  document.getElementById("downloadHar").addEventListener("click", function() {
+      const link = document.createElement("a");
+
+      // get download link from reportData.testMetaData.downloadReport
+      link.href = "/yamlTestSuite/"+reportData.testMetaData.harFileDownloadLink;  // specify the path to your file
+      // link.href = "/yamlTestSuite/"+reportData.testMetaData.;  // specify the path to your file
+      // report is excel file not pdf
+    //  link.download = "report.xls";  // specify the default file name
+      // link.download = "report.pdf";  // specify the default file name
+      link.click();
+  });
+</script>
 
     <script type="text/javascript">
 	
@@ -103,6 +148,8 @@
     document.getElementById("testReport").appendChild(pre);
     hljs.highlightAll();
   }
+  
+  
 
 
   function displayPbjsEvents() {
@@ -116,6 +163,8 @@
     document.getElementById("testReport").appendChild(pre);
     hljs.highlightAll();
   }
+
+  
 
   function displayRaw() {
 
@@ -170,6 +219,9 @@
         }
           
   }
+
+
+
 
  displayRaw();
   displayPbjs();

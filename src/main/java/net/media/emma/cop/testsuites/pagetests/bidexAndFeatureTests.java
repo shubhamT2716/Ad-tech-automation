@@ -174,6 +174,9 @@ public class bidexAndFeatureTests {
 
 
 		 String startTarget = "{\"AaxDpCeiling\"";
+		 
+		 //System.err.println(bidexResp);
+		 
 		if (bidexResp.contains(startTarget)) {
 			startIndex = bidexResp.indexOf(startTarget);
 			startIndex += 12;
