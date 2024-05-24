@@ -1,8 +1,8 @@
 networkCallsPositive: {
-  checksync: "https://hbx.media.net/checksync.php?cid=8CUDF88I8",
-  PRLog: "https://hblg.media.net/log?logid=prlog&itype=HB2",
-  APLog: "https://hblg.media.net/log?logid=aplog&itype=HB2",
-  AWLog: "https://hblg.media.net/log?logid=awlog&itype=HB2",
+  checksync: "https://hbx.media.net/checksync.php",
+  PRLog: "https://hblg.media.net/log?logid=prlog",
+  APLog: "https://hblg.media.net/log?logid=aplog",
+  AWLog: "https://hblg.media.net/log?logid=awlog",
   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 
@@ -10,7 +10,6 @@ networkCallsPositive: {
 networkCallsNegative: {
   nerrPing: "https://hblg.media.net/nerrping.php?",
   Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
-  mnetcall: ".*media.net.*"
 }
 
 
@@ -43,8 +42,8 @@ keysToVerifyNegative: {
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+  PRLog: { nbr : [ "45","3","69","0","1","99" ]},
+  APLog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
 
 }
 

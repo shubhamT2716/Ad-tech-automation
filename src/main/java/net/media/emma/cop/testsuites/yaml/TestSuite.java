@@ -340,6 +340,7 @@ try {
 			
 		}
 		catch (Exception e) {
+			
 			testReport.getTestMetaData().setDownloadReport(null);
 		}
 

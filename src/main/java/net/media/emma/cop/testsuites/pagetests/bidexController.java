@@ -109,11 +109,11 @@ public class bidexController {
 			 TestDataResult dataResult=TestDataResult.builder().businessFeaturesDetected(bidexFeatureReport.getBusinessFeaturesDetected()).environmentDetails(bidexFeatureReport.getEnvironmentDetails()).bidex(bidexFeatureReport.getTestMetaDataBidex()).build();
 			 
 			modelAndView.addObject("rawData",dataResult);
-			modelAndView.addObject("slotsData", bidexFeatureReport.getSlotsDetected());
+//			modelAndView.addObject("slotsData", bidexFeatureReport.getSlotsDetected());
 			modelAndView.addObject("allFeatureData", bidexFeatureReport.getAllFeatureData());
 			modelAndView.addObject("allCookiesData", bidexFeatureReport.getCookies());
 			modelAndView.addObject("basicReport", bidexFeatureReport.getUrlChecksReport());
-			modelAndView.addObject("slotsReport",bidexFeatureReport.getSlotsReport());
+//			modelAndView.addObject("slotsReport",bidexFeatureReport.getSlotsReport());
 			modelAndView.addObject("featureReport", bidexFeatureReport.getFeatureReport());
 		} catch (JsonProcessingException e) {
 			log.error("YAML Processing Error", e);
