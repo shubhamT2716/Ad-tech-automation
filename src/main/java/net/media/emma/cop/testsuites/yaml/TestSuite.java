@@ -330,13 +330,18 @@ try {
 			testReport.setUrlChecks(model);
 			testReport.setTestSummery(YamlTestSuiteScheduling.testResultSummery(model));
 			
-		
+		try {
 			
 			String fileName=this.fileHandling.setReportToFile(testData, model);
 			
 			String downloadUrl = "/downloadFile?fileName=" + URLEncoder.encode(fileName, "UTF-8");
 			
 			testReport.getTestMetaData().setDownloadReport(downloadUrl);
+			
+		}
+		catch (Exception e) {
+			testReport.getTestMetaData().setDownloadReport(null);
+		}
 
 			
 		}catch (Exception e) {
