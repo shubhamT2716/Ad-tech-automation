@@ -1,15 +1,15 @@
 networkCallsPositive: {
   checksync: "https://hbx.media.net/checksync.php",
-  PRLog: "https://hblg.media.net/log?logid=prlog",
-  APLog: "https://hblg.media.net/log?logid=aplog",
-  AWLog: "https://hblg.media.net/log?logid=awlog",
+  prlogs: "https://hblg.media.net/log?logid=prlog",
+  aplogs: "https://hblg.media.net/log?logid=aplog",
+  awlogs: "https://hblg.media.net/log?logid=awlog",
   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
-  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 
 }
 networkCallsNegative: {
   nerrPing: "https://hblg.media.net/nerrping.php?",
-  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
 }
 
 
@@ -21,13 +21,13 @@ keysToVerifyPositive: {
     gpp_sid: ["-1"]
   },
 
-  PRLog: {
+  prlogs: {
     cid: ["8YHBL12EX"],
     svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
   },
 
-  APLog: {
+  aplogs: {
     svr: ["2023072110_140_072412_696_072412_658_ssp"],
     ugd: ["4"],
   },
@@ -35,15 +35,15 @@ keysToVerifyPositive: {
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  PRLog: { snm : ["removed","error",], nbr : ["13"]},
-  APLog: { nbr: ["13","",null], mpvid: [], abs: []},
-  AWLog: { ogbdp : ["0","-1","-2"]},
+  prlogs: { snm : ["removed","error",], nbr : ["13"]},
+  aplogs: { nbr: ["13","",null], mpvid: [], abs: []},
+  awlogs: { ogbdp : ["0","-1","-2"]},
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  PRLog: { nbr : [ "45","3","69","0","1","99" ]},
-  APLog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+  prlogs: { nbr : [ "45","3","69","0","1","99" ]},
+  aplogs: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
 
 }
 

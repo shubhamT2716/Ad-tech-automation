@@ -6,21 +6,21 @@ bidexAppendString: ""
 bidexReplaceString: { "": "" }
 
 networkCallsPositive: {
-  PRLog: "https://hblg.media.net/log?logid=prlog",
-  APLog: "https://hblg.media.net/log?logid=aplog",
-  AWLog: "https://hblg.media.net/log?logid=awlog",
+  prlogs: "https://hblg.media.net/log?logid=prlog",
+  aplogs: "https://hblg.media.net/log?logid=aplog",
+  awlogs: "https://hblg.media.net/log?logid=awlog",
   RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
   checksync: "https://hbx.media.net/checksync.php?cid=8CU66J63J",
   hb: "https://hb-pb.media.net/rtb/hb?cid=8CU66J63J",
   ucreative: "https://hbx.media.net/__media__/js/ucreative.js?cv=1",
   tcb: "https://contextual.media.net/tcb.js?",
-  belog: "https://hblg.media.net/log?logid=kfk&evtid=belog",
+  belogs: "https://hblg.media.net/log?logid=kfk&evtid=belog",
   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 }
 
 networkCallsNegative: {
   nerrPing: "https://hblg.media.net/nerrping.php?",
-  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
 }
 
 keysToVerifyPositive: {
@@ -41,28 +41,28 @@ keysToVerifyPositive: {
     cid: ["8CU66J63J", "8CULM0U5B"]
   },
 
-  PRLog: {
+  prlogs: {
     pvid: ["99", "23", "79", "29", "3012", "3054", "441", "3007", "3", "345", "126", "326", "3003", "327", "107", "208", "54"],
     svr: ["2023091809_218_100912_20_100912_42_ssp"],
     ugd: ["4"],
   },
 
-  APLog: {
+  aplogs: {
     svr: ["2023091809_218_100912_20_100912_42_ssp"],
     ugd: ["4"]
   },
 }
 
 keysToVerifyNegative: {
-  belog: { name: ["ADS_DISABLED"]},
-  prlog: { snm : ["removed","error",], nbr : ["13"], usp_ldf : []},
-  aplog: { nbr: ["13"]},
-  awlog: { ogbdp: ["0","-1","-2"]},
+  belogs: { name: ["ADS_DISABLED"]},
+  prlogs: { snm : ["removed","error",], nbr : ["13"], usp_ldf : []},
+  aplogs: { nbr: ["13"]},
+  awlogs: { ogbdp: ["0","-1","-2"]},
 }
 
 keysToVerifyAnyOneOf: {
-  prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { cid: ["8CULM0U5B", "8CU66J6"], snm: ["success", "nobid"], nbr : [ "45","3","69","0","1","99" ]},
+  prlogs: { nbr : [ "45","3","69","0","1","99" ]},
+  aplogs: { cid: ["8CULM0U5B", "8CU66J6"], snm: ["success", "nobid"], nbr : [ "45","3","69","0","1","99" ]},
 }
 
 bidderDataUrls: {
