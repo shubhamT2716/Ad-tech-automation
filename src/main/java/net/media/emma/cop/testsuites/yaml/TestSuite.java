@@ -615,25 +615,43 @@ try {
 		
 		try {
 		
+		
 			
 			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js"))
 			{
 				
-				String target="new s.a({";
 				
-				if(response.contains(target))
+				String responseMP=request.response().text();
+				
+//				String target="new s.a({";
+				String target="new r.a({";
+				
+				
+				
+				String targetForSvr="";
+				
+		
+				if(responseMP.contains(target))
 				{
-			
-					int in=response.indexOf(target);
-			
-					response=response.substring(in);
 					
-					Pattern pattern=Pattern.compile("new\\s+s\\.a\\((.*?)\\)");
+		
+					int in=responseMP.indexOf(target);
+			
+					responseMP=responseMP.substring(in);
 					
-					Matcher matcher=pattern.matcher(response);
+					
+					System.out.println(responseMP);
+					
+								
+					
+					Pattern pattern=Pattern.compile("new\\s+r\\.a\\((.*?)\\)");
+					
+					Matcher matcher=pattern.matcher(responseMP);
 					
 					if(matcher.find())
 					{
+						
+						
 						String extractedData=matcher.group(1);
 						
 						JsonNode bidData=mapper.readValue(extractedData, JsonNode.class);
@@ -650,6 +668,7 @@ try {
 				}
 					
 			}
+			else {
 
 		
 			 int startIndex=0;
@@ -674,6 +693,7 @@ try {
 			bidexData.setSugd(envData.get("sugd").asText());
 			bidexData.setItype(envData.get("itype").asText());
 			bidexData.setCt(envData.get("ip2ct").asText())	;		
+		}
 		}
 		catch (Exception e) {
 			
