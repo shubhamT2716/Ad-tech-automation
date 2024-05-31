@@ -269,7 +269,7 @@ public class TestSuite implements GenericTestSuite {
 			consoleMessage = getConsoleErrors(page);
 			
 			page.navigate(testData.getPublisherUrl());
-			page.evaluate(googleRefresh());
+//			page.evaluate(googleRefresh());
 			
 			 pbjsConfigData = getPbjsData(page);
 			
@@ -449,7 +449,7 @@ try {
     	List<String> url=new ArrayList<>();
     	
     	url.add("https://hbx.media.net");
-    	url.add("https://hb.yahoo.net");
+//    	url.add("https://hb.yahoo.net");
     	url.add("https://contextual.media.net");
     	url.add(publisher);
     	
@@ -639,11 +639,6 @@ try {
 			
 					responseMP=responseMP.substring(in);
 					
-					
-					System.out.println(responseMP);
-					
-								
-					
 					Pattern pattern=Pattern.compile("new\\s+r\\.a\\((.*?)\\)");
 					
 					Matcher matcher=pattern.matcher(responseMP);
@@ -654,10 +649,45 @@ try {
 						
 						String extractedData=matcher.group(1);
 						
+						String svr = null;
+						
+						if(responseMP.contains("const i"))
+						{
+							int svrIndex=responseMP.indexOf("const i");
+							
+							responseMP=responseMP.substring(svrIndex);
+							
+//							System.out.println(responseMP);
+							
+							Pattern pattern2=Pattern.compile("const i=\"([^\"]+)\"");
+							
+							Matcher matcher2=pattern2.matcher(responseMP);
+							
+							if(matcher2.find())
+							{
+								
+								System.out.println("match found");
+								
+								 svr = matcher2.group(1);
+								
+								log.info(svr);
+								
+							}
+							
+						}
+						
 						JsonNode bidData=mapper.readValue(extractedData, JsonNode.class);
 						
 						bidexData.setCid(bidData.get("cid").asText());
-						bidexData.setSvr(bidData.get("sver").asText());
+						
+						if(svr==null)
+						{
+							bidexData.setSvr(bidData.get("sver").asText());	
+						}else {
+							bidexData.setSvr(svr);
+						}
+						
+//						bidexData.setSvr(bidData.get("sver").asText());
 						bidexData.setSugd(bidData.get("sugd").asText());
 //						bidexData.setItype(bidData.get("itype").asText());
 						
