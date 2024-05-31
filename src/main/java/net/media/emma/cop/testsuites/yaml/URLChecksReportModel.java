@@ -42,8 +42,8 @@ public class URLChecksReportModel {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PositiveURLChecks {
-        String label;
-        String urlPattern;
+//        String label;
+//        String urlPattern;
 
         @Builder.Default
         TestResult testResult = TestResult.PASS;
@@ -151,14 +151,18 @@ public class URLChecksReportModel {
 
         testData.getNetworkCallsPositive().forEach((key, value) -> {
             if (!positiveUrlChecks.containsKey(key)) {
-                positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL)
-                        .testMessages(Arrays.asList("Call not fired")).urlPattern(value).build());
+                positiveUrlChecks.put(key, PositiveURLChecks.builder().testResult(TestResult.FAIL)
+                        .testMessages(Arrays.asList("Call not fired")).build());
             }
         });
 
         testData.getNetworkCallsNegative().forEach((key, value) -> {
             if (!negativeUrlChecks.containsKey(key)) {
+//                negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
+                
                 negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
+                
+            
             } else {
                 negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
                 negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
@@ -386,8 +390,8 @@ public class URLChecksReportModel {
 		
 		testData.getNetworkCallsPositive().forEach((key,value)-> {
 			if(!positiveUrlChecks.containsKey(key)) {
-				positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL)
-						.testMessages(Arrays.asList("call not fired")).urlPattern(value).build());
+				positiveUrlChecks.put(key, PositiveURLChecks.builder().testResult(TestResult.FAIL)
+						.testMessages(Arrays.asList("call not fired")).build());
 			}
 		});
 		

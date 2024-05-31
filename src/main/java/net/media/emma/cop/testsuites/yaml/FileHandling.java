@@ -96,8 +96,8 @@ public class FileHandling {
 			
 			XSSFRow dataRow=sheet.createRow(dataIndexRow);
 			dataRow.createCell(0).setCellValue("positiveURLChecks");
-			dataRow.createCell(1).setCellValue(positiveURLChecks.getLabel());
-			dataRow.createCell(2).setCellValue(positiveURLChecks.getUrlPattern());
+			dataRow.createCell(1).setCellValue(key);
+			dataRow.createCell(2).setCellValue(positiveURLChecks.getMatchingUrls().get(0));
 			dataRow.createCell(3).setCellValue(positiveURLChecks.getTestResult().toString());
 			dataRow.createCell(4).setCellValue(positiveURLChecks.getTestMessages().toString());
 			dataIndexRow++;
