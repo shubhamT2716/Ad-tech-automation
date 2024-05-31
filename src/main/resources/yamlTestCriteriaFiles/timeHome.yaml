@@ -1,0 +1,294 @@
+environment: hbx.media.net
+cookies: [visitor - id: 3249269632710602062 V1, data - o: f88043f8 - 7631 - 0195 - 18 cf - d9b1ff3a7344~~1]
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://time.com/?mnet_test=1"
+bidexAppendString: ""
+bidexReplaceString:
+  {
+    "": ""
+  }
+
+networkCallsPositive:
+  {
+    aplogs: "https://hblg.media.net/log?logid=aplog",
+    prlogs: "https://hblg.media.net/log?logid=prlog",
+    awlogs: "https://hblg.media.net/log?logid=awlog",
+    checksync: "https://hbx.media.net/checksync.php?cid=8CUDF88I8",
+    #rtbscall: "https://xch.media.net/AdExchange/rtbsspub",
+    gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads",
+    bidExchange: "https://hbx.media.net/bidexchange.js",
+    gpt: "https://securepubads.g.doubleclick.net/tag/js/gpt.js",
+    l1log: "https://hblg.media.net/log?logid=kfk&evtid=l1log",
+    adxLog: "https://hblg.media.net/log?logid=kfk&evtid=adx",
+    tcb: "https://contextual.media.net/tcb.js",
+    belog: "https://hblg.media.net/log?logid=kfk&evtid=belog",
+    hb2: "https://hb2.media.net/rtb/hb2?cid=8CUDF88I8",
+    prebid: "https://prebid.media.net/rtb/prebid?cid=8CU8QX590",
+    ucreative: "https://hbx.media.net/ucreative.php?cv=1",
+  }
+
+networkCallsNegative:
+  {
+    nerrPing: "https://hblg.media.net/nerrping.php",
+    fLog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+    elLog: "https://hblg.media.net/log?logid=kfk&evtid=ellog"
+  }
+
+keysToVerifyPositive:
+  {
+    checksync:
+      {
+        cid: ["8CUDF88I8"],
+        cs: ["1"],
+        cv: ["37"],
+        hb: ["1"],
+        vsSync: ["1"],
+        gdpr: ["0"],
+        gdprconsent: ["0"],
+        coppa: ["0"]
+      },
+    prlogs:
+      {
+        pvid: ["25000","-3","25022","25011","25013","25020","-2","25019","25004","25005"],
+        cid: ["8CUDF88I8"],
+        
+      },
+    aplogs:
+      {
+        pvid: ["25000","-3","25022","25011","25013","25020","-2","25019","25004","25005",],
+        ugd: ["4"],
+      },
+      awlogs:
+      {
+        pvid: ["25000","-3","25022","25011","25013","25020","-2","25019","25004","25005",],
+        ugd: ["4"],
+        nbr: ["0"],
+        snm: ["success"],
+      },
+
+  }
+
+keysToVerifyNegative:
+  {
+    belog:
+      {
+        name: ["ADS_DISABLED"]
+      },
+    prlog:
+      {
+        snm: ["removed", "error", ],
+        nbr: ["13"]
+      },
+    aplog:
+      {
+        nbr: ["13"]
+      },
+    awlog:
+      {
+        ogbdp: ["-1", "-2"]
+      }
+  }
+
+keysToVerifyAnyOneOf:
+  {
+    prlogs:
+      {
+        nbr: ["45", "3", "69", "0", "1", "99"],
+        snm: ["success", "nobid","nobid_after_auction","response_after_auction"],
+        req_size: ["970x250 ","728x90","300x600","300x250","160x600"],
+        size: ["970x250 ","728x90","300x600","300x250","160x600"],
+      },
+    aplogs:
+      {
+        snm: ["success", "nobid","nobid_after_auction","response_after_auction"],
+        nbr: ["45", "3", "69", "0", "1", "99","2204"],
+        adtype: ["BANNER", "NATIVE", "VIDEO"],
+        req_size: ["970x250 ","728x90","300x600","300x250","160x600"],
+        size: ["970x250 ","728x90","300x600","300x250","160x600"],
+      },
+      awlogs:
+      {
+        adtype: ["BANNER", "NATIVE", "VIDEO"],
+        req_size: ["970x250 ","728x90","300x600","300x250","160x600"],
+        size: ["970x250 ","728x90","300x600","300x250","160x600"],
+      }
+  }
+
+bidderDataUrls:
+  {
+    hb2: "https://hb2.media.net/rtb/hb2?cid=8CUDF88I8",
+    prebid: "https://prebid.media.net/rtb/prebid?cid=8CU8QX590",
+  }
+
+bidderDataAssertions:
+  {
+    hb2: [
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "leaderboard-ad-1"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "745673024" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+        { jsonPath: "x.imp[0].banner[1].w", value: "970" },
+        { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CUDF88I8&itype=HB2&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "rightrail-ad-1"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "464355535" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "300" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "50" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CUDF88I8&itype=HB2&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "inline-ad-1"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "925473326" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CUDF88I8&itype=HB2&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "inline-ad-2"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "221126254" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CUDF88I8&itype=HB2&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "inline-ad-2"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "883142256" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CUDF88I8&itype=HB2&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+  ],
+
+  prebid: [
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.gpid",
+        expectedValue: "21801468956/time/home/leaderboard1"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "577374656" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+        { jsonPath: "x.imp[0].banner[1].w", value: "970" },
+        { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CUDF88I8&itype=HB2&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.gpid",
+        expectedValue: "21801468956/time/home/rightrail1"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "238384483" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "300" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "50" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CUDF88I8&itype=HB2&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.gpid",
+        expectedValue: "21801468956/time/home/inline1"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "445361632" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CUDF88I8&itype=HB2&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.gpid",
+        expectedValue: "21801468956/time/home/inline2"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "445429754" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CUDF88I8&itype=HB2&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "21801468956/time/home/inline3"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "735184164" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CUDF88I8&itype=HB2&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+  ]
+  }

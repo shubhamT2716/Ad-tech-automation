@@ -162,8 +162,9 @@ document.getElementById('email').addEventListener('input', function() {
         <div class="form-group">
    <b><label for="itype"> ITYPE:</label></b>
     <select class="form-select" id="itype" name="itype" aria-label="itype Files" onchange="itypeFiles()" onclick="handleClick()">
-        <option value="all">All</option>
+       <!-- <option value="all">All</option>-->
         <option value="HB">HB</option>
+        <option value="HB2">HB2</option>
         <option value="MP">MP</option>
     </select>
 </div>
@@ -239,44 +240,6 @@ document.getElementById('email').addEventListener('input', function() {
     }
     
     
-//     function handleClick() {
-//   // var itypeValue = document.getElementById('itype').value;
-
-//     // Make AJAX request to Spring Boot controller
-//     //var xhr = new XMLHttpRequest();
-//     //xhr.open('GET', '/smokeTestSuite?itype=' + itypeValue, true);
-//     //xhr.onreadystatechange = function () {
-//       //  if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-//         //    var responseData = JSON.parse(xhr.responseText);
-//             // Update your frontend UI with responseData
-//           //  console.log(responseData); // Log the response for testing
-//      //   }
-//     //};
-//     //xhr.send();
-    
-//      var xhr = new XMLHttpRequest();
-//     xhr.open('GET', '/smokeTestSuiteItype?itype=' + itypeValue, true);
-//     xhr.onreadystatechange = function () {
-//         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-//             var responseData = JSON.parse(xhr.responseText);
-
-//             // Update the selectedFilesContainer
-//             var selectedFilesContainer = document.getElementById('selectedFilesContainer');
-//             selectedFilesContainer.innerHTML = "<h3>YAML Files:</h3><ul>" +
-//                 responseData.yamlFiles.map(function (file) {
-//                     return "<li>" + file + "</li>";
-//                 }).join("") + "</ul>";
-
-//             // Update the commonFilesContainer
-//             var commonFilesContainer = document.getElementById('commonFilesContainer');
-//             commonFilesContainer.innerHTML = "<h3>Common YAML Files:</h3><ul>" +
-//                 responseData.commonYamlFiles.map(function (file) {
-//                     return "<li>" + file + "</li>";
-//                 }).join("") + "</ul>";
-//         }
-//     };
-//     xhr.send();
-// }
 
 
 function handleClick() {
@@ -353,25 +316,6 @@ function toggleCheckboxes(containerId, masterCheckbox) {
     });
 }
 
-
-    // document.getElementById('itype').addEventListener('change', function() {
-    //     const itypeValue = this.value;
-    //     itypeFiles('selectedFilesContainer', itypeValue);
-    //     itypeFiles('commonFilesContainer', itypeValue);
-    // });
-
-    // function itypeFiles(containerId, itypeValue) {
-    //     const container = document.getElementById(containerId);
-    //     const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-    //     checkboxes.forEach(checkbox => {
-    //         const fileitype = checkbox.getAttribute('data-itype');
-    //         if (itypeValue === 'all' || fileitype === itypeValue) {
-    //             checkbox.parentElement.style.display = 'block';
-    //         } else {
-    //             checkbox.parentElement.style.display = 'none';
-    //         }
-    //     });
-    // }
 </script>
 
 </body>
