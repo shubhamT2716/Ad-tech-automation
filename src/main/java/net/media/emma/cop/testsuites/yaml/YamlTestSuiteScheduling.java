@@ -161,6 +161,8 @@ public class YamlTestSuiteScheduling {
 			for (String env : environments) {
 //				for (String agent : userAgents) {
 					for(String pub: publisher) {
+						
+						
 				
 				ClassPathResource classPathResource = new ClassPathResource(autoTesterYamlFile + "/" + yaml);
 				

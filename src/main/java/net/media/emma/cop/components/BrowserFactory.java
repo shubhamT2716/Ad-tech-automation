@@ -2,6 +2,7 @@ package net.media.emma.cop.components;
 
 import java.awt.Desktop;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.Geolocation;
 import com.microsoft.playwright.options.HarMode;
 
 public class BrowserFactory {
@@ -202,7 +204,9 @@ public class BrowserFactory {
 				storageStateOptions.setPath(Paths.get("emma-working-directory/browser-context-storage/state.json")));
 
 		newBc.setDefaultNavigationTimeout(120000);
-
+		Geolocation geolocation=new Geolocation(48.8575, 2.3514);
+		newBc.setGeolocation(geolocation);
+		newBc.grantPermissions(Arrays.asList("geolocation"));
 		return newBc;
 	}
 

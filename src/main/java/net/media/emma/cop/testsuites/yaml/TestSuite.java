@@ -240,16 +240,29 @@ public class TestSuite implements GenericTestSuite {
 		
 
 		try {
+			
+			
+//			browserContext.setGeolocation(41.890221, 12.492348);
+//			browserContext.setPermissions(Arrays.asList("geolocation")));
 
 			
 			
         
 			browserContext.setDefaultTimeout(95000); // 70 seconds
+			Geolocation geolocation=new Geolocation(48.8575, 2.3514);// latitude and logitude
+			log.info("location:  "+geolocation);
+			browserContext.setGeolocation(geolocation);
+//			browserContext.grantPermissions(new String[]{"geolocation"});
+			
 			
 			
 
 			
 			Page page = browserContext.newPage();
+			
+			
+			
+			
 			
 			if(url!=null&& response!=null)
 			{
@@ -267,6 +280,16 @@ public class TestSuite implements GenericTestSuite {
 			}
 			
 			consoleMessage = getConsoleErrors(page);
+			
+//			if(testData.getUserAgent().startsWith("Chrome"))
+//			{
+//				page.navigate("chrome-extension://hnmpcagpplmpfojmgmnngilcnanddlhb/popup.html");
+//				
+//				setLocationInWindscribe(page, "Paris");
+////				page.locator("//*[@id=\"app-frame\"]/div/div[4]/div[1]/div/div[1]/div/div[3]/button").click();				
+//				
+//				
+//			}
 			
 			page.navigate(testData.getPublisherUrl());
 //			page.evaluate(googleRefresh());
@@ -625,10 +648,6 @@ try {
 				
 //				String target="new s.a({";
 				String target="new r.a({";
-				
-				
-				
-				String targetForSvr="";
 				
 		
 				if(responseMP.contains(target))
