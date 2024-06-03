@@ -151,7 +151,7 @@ public class URLChecksReportModel {
 
         testData.getNetworkCallsPositive().forEach((key, value) -> {
             if (!positiveUrlChecks.containsKey(key)) {
-                positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL)
+                positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).urlPattern(value).testResult(TestResult.FAIL)
                         .testMessages(Arrays.asList("Call not fired")).build());
             }
         });
@@ -390,7 +390,7 @@ public class URLChecksReportModel {
 		
 		testData.getNetworkCallsPositive().forEach((key,value)-> {
 			if(!positiveUrlChecks.containsKey(key)) {
-				positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL)
+				positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).urlPattern(value).testResult(TestResult.FAIL)
 						.testMessages(Arrays.asList("call not fired")).build());
 			}
 		});
