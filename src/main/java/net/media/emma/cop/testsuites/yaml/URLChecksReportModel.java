@@ -42,8 +42,8 @@ public class URLChecksReportModel {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PositiveURLChecks {
-//        String label;
-//        String urlPattern;
+        String label;
+        String urlPattern;
 
         @Builder.Default
         TestResult testResult = TestResult.PASS;
@@ -151,7 +151,7 @@ public class URLChecksReportModel {
 
         testData.getNetworkCallsPositive().forEach((key, value) -> {
             if (!positiveUrlChecks.containsKey(key)) {
-                positiveUrlChecks.put(key, PositiveURLChecks.builder().testResult(TestResult.FAIL)
+                positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL)
                         .testMessages(Arrays.asList("Call not fired")).build());
             }
         });
@@ -390,7 +390,7 @@ public class URLChecksReportModel {
 		
 		testData.getNetworkCallsPositive().forEach((key,value)-> {
 			if(!positiveUrlChecks.containsKey(key)) {
-				positiveUrlChecks.put(key, PositiveURLChecks.builder().testResult(TestResult.FAIL)
+				positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL)
 						.testMessages(Arrays.asList("call not fired")).build());
 			}
 		});

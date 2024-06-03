@@ -384,7 +384,7 @@ public class bidexAndFeatureTests {
 				if (labelExists == null) {
 
 					PositiveURLChecks puc = PositiveURLChecks.builder()
-							
+							.urlPattern(urlData.getValue())
 							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
 							.queryStringMap(new ArrayList<HashMap<String, String>>(
 									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests))))

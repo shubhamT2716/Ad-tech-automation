@@ -330,13 +330,24 @@ public class TestSuite implements GenericTestSuite {
 		
 		
 
+		
+		String userAgent=BrowserFactory.browserContexts.get(testData.getUserAgent());
+		
 		TestReportModel testReport = TestReportModel.builder().testMetaData(TestMetaData.builder()
 				.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())).testName("YAML Test Suite")
 				.publisherUrl(testData.getPublisherUrl()).environment(testData.getEnvironment())
-				.userAgent(
-						testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
+//				.userAgent(
+//						testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
 				.harFileDownloadLink("harDownload/" + harFilePath).build()).build();
 		
+		
+		if(userAgent!=null)
+		{
+			testReport.getTestMetaData().setUserAgent(testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()));
+		}
+		else {
+			testReport.getTestMetaData().setUserAgent(testData.getUserAgent());
+		}
 		
 		
 		
@@ -810,7 +821,8 @@ try {
 				if (labelExists == null) {
 
 					PositiveURLChecks puc = PositiveURLChecks.builder()
-							
+							.label(urlData.getKey())
+							.urlPattern(urlData.getValue())
 							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
 							.queryStringMap(new ArrayList<HashMap<String, String>>(
 									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests))))
