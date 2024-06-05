@@ -651,7 +651,7 @@ try {
 		
 		
 			
-			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js"))
+			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx.media.net/js/tags/clientag.js"))
 			{
 				
 				
