@@ -109,7 +109,7 @@ public class TestSuite implements GenericTestSuite {
     // List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
             "hbx-stage.media.net");
-    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js");// , "catchpoint_content.js",
+    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js","ss/nes/bidexl2.js");// , "catchpoint_content.js",
     // "topics.js");
     
     
@@ -375,6 +375,9 @@ try {
 		}
 		catch (Exception e) {
 			
+			log.info("ExcelReport Error: "+e.getMessage());			
+			e.printStackTrace();
+			
 			testReport.getTestMetaData().setDownloadReport(null);
 		}
 
@@ -383,7 +386,7 @@ try {
 			
 			testReport.setUrlChecks(null);
 			
-			testReport.getTestMetaData().setDownloadReport(null);
+//			testReport.getTestMetaData().setDownloadReport(null);
 		}
 		
 		
@@ -728,7 +731,7 @@ try {
 				}
 					
 			}
-			else {
+			else if(request.url().contains("**/bidexchange.js?")){
 
 		
 			 int startIndex=0;
