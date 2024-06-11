@@ -654,7 +654,7 @@ try {
 		
 		
 			
-			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx.media.net/js/tags/clientag.js"))
+			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js")|| request.url().startsWith("**//**/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx.media.net/js/tags/clientag.js"))
 			{
 				
 				
@@ -759,6 +759,8 @@ try {
 		}
 		}
 		catch (Exception e) {
+			
+			log.error("Error in fetch Svr: "+e.getMessage());
 			
 			e.printStackTrace();
 			

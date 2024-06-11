@@ -14,7 +14,10 @@ import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Route;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class ResponseMocking {
 
 	
@@ -102,7 +105,7 @@ public class ResponseMocking {
 			
 				route.fulfill(new Route.FulfillOptions().setResponse(apiResponse).setBody(message));
 
-				
+				log.info("response mocking done by emma");
 				
 			
 			} catch (Exception e) {

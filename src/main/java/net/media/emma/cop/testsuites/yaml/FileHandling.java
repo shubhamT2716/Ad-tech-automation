@@ -14,8 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
+
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 
@@ -127,6 +126,7 @@ public class FileHandling {
 		return "YAML_TEST_SUITE_REPORT" + timeStamp + "-" + random + ".xls";
 		// smoke test report
 	}
+	
 	
 	
 }
