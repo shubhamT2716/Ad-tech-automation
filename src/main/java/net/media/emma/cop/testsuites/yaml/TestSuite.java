@@ -108,7 +108,7 @@ public class TestSuite implements GenericTestSuite {
 
     // List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
-            "hbx-stage.media.net");
+            "hbx-stage.media.net","hbx-stage-2.media.net","hbx-stage-3.media.net","hbx-stage-4.media.net");
     List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js","ss/nes/bidexl2.js");// , "catchpoint_content.js",
     // "topics.js");
     
@@ -651,10 +651,14 @@ try {
 	
 		
 		try {
-		
+			
+			List<String> clientagController=Arrays.asList("js/tags/clientag.js","clientag.js");	
+			String regexForMp= ".*/(" + String.join("|", bidExHosts) + ")/("
+	                + String.join("|", clientagController) + ").*";
 		
 			
-			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js")|| request.url().startsWith("**//**/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx.media.net/js/tags/clientag.js"))
+			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js")|| request.url().startsWith("**//**/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-2.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-3.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-4.media.net/js/tags/clientag.js"))
+//			if(request.url().startsWith(regexForMp))
 			{
 				
 				
@@ -731,7 +735,7 @@ try {
 				}
 					
 			}
-			else if(request.url().contains("**/bidexchange.js?")){
+			else if(request.url().contains("**/bidexchange.js?")|| request.url().startsWith("https://hbx-stage-2.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-3.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-4.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage.media.net//bidexchange.js")|| request.url().startsWith("https://hbx.media.net//bidexchange.js")){
 
 		
 			 int startIndex=0;

@@ -30,7 +30,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -56,14 +56,14 @@ public class CronForBidex {
 
 	
 //	@Scheduled(cron = "0 0 */1 * * *")// runs every one hour
-	@Scheduled(cron = "0 */2 * * * *")
+//	@Scheduled(cron = "0 */2 * * * *")
 	public void getBidexSize() {
 		Map<String, List<String>> listOfUrls = new HashMap<>();
 
 //		List<String> hbUrls = Arrays.asList("https://www.nutritionix.com/brands/restaurant?mnet_test=1",
 //				"https://time.com/?mnet_test=1", "https://www.webmd.com/?mnet_test=1");
 		
-		List<String> hbUrls = Arrays.asList("https://www.nutritionix.com/brands/restaurant?mnet_test=1");
+		List<String> hbUrls = Arrays.asList("https://www.webmd.com/?mnet_test=1");
 //				"https://time.com/?mnet_test=1", "https://www.webmd.com/?mnet_test=1"
 
 		listOfUrls.put("HB", hbUrls);
@@ -128,8 +128,13 @@ public class CronForBidex {
 					
 					
 					
-
+					try {	
 					page.navigate(urls);
+					}
+					catch (Exception e) {
+						
+						System.out.println(e.getMessage());
+					}
 					
 					try {
 						Thread.sleep(90000);
@@ -171,11 +176,13 @@ public class CronForBidex {
 
 						while (iterator.hasNext()) {
 							Row row = iterator.next();
-
+							lastRow = row;
+							
+							
 							if (rowNumber == 0) {
 								rowNumber++;
 
-								lastRow = row;
+								
 								
 
 								System.err.println("get row:  "+rowNumber+" "+sheet.getLastRowNum());
@@ -184,12 +191,14 @@ public class CronForBidex {
 
 							}
 							
-						
+						}
 							
 							System.err.println("after rowNumber");
 
 							
-							Iterator<Cell> cells = row.iterator();
+							System.err.println(lastRow.getRowNum());
+							
+							Iterator<Cell> cells = lastRow.iterator();
 							
 							int cid = 0;
 							
@@ -268,7 +277,7 @@ public class CronForBidex {
 								
 								
 
-							}
+							
 						
 						System.err.println("excel data get:  "+excelData.getItype()+" : "+excelData.getSize()+excelData.getUrls());
 						
