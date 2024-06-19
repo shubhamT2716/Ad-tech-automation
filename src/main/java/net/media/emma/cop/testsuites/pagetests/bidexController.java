@@ -3,8 +3,9 @@ package net.media.emma.cop.testsuites.pagetests;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.TestDataResult;
 import net.media.emma.utils.FileOperations;
 
-@Controller("bidexController")
+@RestController("bidexController")
 @RequestMapping("/autoTester/")
 @Slf4j
 public class bidexController {
@@ -69,6 +71,9 @@ public class bidexController {
 	// browserRemote.injectDom(url, xPath, forceHtmlElement, append);
 
 	// }
+	
+	List<ResponseMocking> listOfResponseMocking=new ArrayList<>();
+	
 	private static final Map<String, String> listOfTestSuites = new LinkedHashMap<>() {
 		{
 			put("YAML Config Based Tests (Simple)", "/yamlTestSuite/");
@@ -124,6 +129,36 @@ public class bidexController {
 	}
 	
 	
+	@GetMapping("response")
+	public List<ResponseMocking> getAllResponseMokcing()
+	{
+		return listOfResponseMocking;
+	}
+	
+	
+	@PostMapping("responseMocking")
+	public String getDetailsOfModal(@RequestParam(name = "feature", required = false)String name,
+			@RequestParam(name = "url",required = false )String url,
+			@RequestParam(name = "response", required = false)String response)
+	{
+		
+		System.err.println("get Value : "+name);
+		
+		System.err.println("get Value : "+url);
+		
+		ResponseMocking mocking=new ResponseMocking();
+
+		mocking.setName(name);
+		mocking.setUrls(url);
+		mocking.setResponse(response);
+		
+		listOfResponseMocking.add(mocking);
+		
+		
+		return name;
+		
+		
+	}
 	
 
 	@PostMapping("fileContent")

@@ -619,6 +619,8 @@ try {
 			
 			bidexReport.setBidexData(getBidExData(request));
 			
+			
+			
 		}
 
 		if (bidExRequestObjects.size() == 0) {
@@ -726,6 +728,8 @@ try {
 						
 //						bidexData.setSvr(bidData.get("sver").asText());
 						bidexData.setSugd(bidData.get("sugd").asText());
+						bidexData.setCt(bidData.get("ip2ct").asText());
+						
 //						bidexData.setItype(bidData.get("itype").asText());
 						
 						
@@ -735,7 +739,7 @@ try {
 				}
 					
 			}
-			else if(request.url().contains("**/bidexchange.js?")|| request.url().startsWith("https://hbx-stage-2.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-3.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-4.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage.media.net//bidexchange.js")|| request.url().startsWith("https://hbx.media.net//bidexchange.js")){
+			else if(request.url().contains("**/bidexchange.js?")|| request.url().startsWith("https://hbx-stage-2.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-3.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-4.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage.media.net//bidexchange.js")|| request.url().startsWith("https://hbx.media.net//bidexchange.js?")|| request.url().startsWith("https://hbx.media.net/bidexchange.js?")){
 
 		
 			 int startIndex=0;

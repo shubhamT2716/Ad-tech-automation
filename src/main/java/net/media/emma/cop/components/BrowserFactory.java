@@ -88,6 +88,7 @@ public class BrowserFactory {
 		}
 	};
 
+	
 	private static NewContextOptions getCommonBrowserContext(String userAgent, Boolean isMobile, String harFileName) {
 
 		NewContextOptions newContextOptions = new NewContextOptions().setUserAgent(userAgent)
@@ -196,8 +197,11 @@ public class BrowserFactory {
 
 	public static BrowserContext getBc(String browserType, List<Map<String, String>> cookies, String harFileName) {
 
+//		getPlaywrightObj().chromium().launchPersistentContext(
+//				getSystemBrowserContextOptions(browserType, browserType.contains("Mobile")));
+		
 		BrowserContext newBc = getBrowserByType(browserType).newContext(
-				getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile"), harFileName));
+					getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile"), harFileName));
 
 		BrowserContext.StorageStateOptions storageStateOptions = new BrowserContext.StorageStateOptions();
 		newBc.storageState(
