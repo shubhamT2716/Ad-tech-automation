@@ -3,105 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Page Level Tests - Emma</title>
-   <!-- <link rel="stylesheet" href="/highlight/styles/default.min.css">
-    <script src="/highlight/highlight.min.js"></script>
-    <script>
-        hljs.highlightAll();
-    </script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>-->
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>AutoTester - Emma</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <style>
+        .error {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
 
-    .error {
-        color: red;
-        display: none;
-        margin-top: 10px;
-    }
-
-    button {
-        padding: 10px 20px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-top: 5px;
-        border-radius: 5px;
-    }
-
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-content {
-        background-color: white;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        min-width: 500px;
-        max-width: 900px;
-        text-align: center;
-    }
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        margin-left:90%;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    } 
-
-    .input-box{
-        text-align:left;
-    }
-    .errorUrl {
-		color: red;
-		display: none;
-		margin-top: 10px;
-	}
-
-	.errorJson {
-		color: red;
-		display: none;
-		margin-top: 10px;
-	} 
-    #submitButton {
-		display: block;
-		width: 250px;
-		padding: 10px;
-		margin-top: 20px;
-		background-color: #333;
-		color: #fff;
-		border: none;
-		cursor: pointer;
-	} 
-    #resultSpan {
-      margin-top: 10px;
-      font-size: 18px;
-      color: blue;
-    }
-    
-    #submitButton1 {
+        #submitButton {
             display: block;
             width: 150px;
             padding: 10px;
@@ -112,18 +26,64 @@
             cursor: pointer;
         }
 
-        #or {
-            text-align: left;
-            align-content: normal;
-            display: block;
-            font-weight: bold;
-        }
-
-        #submitButton1:disabled {
+        #submitButton:disabled {
             background-color: #ccc;
             cursor: not-allowed;
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            min-width: 500px;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            margin-left: 90%;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .response-rule {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .response-rule input {
+            margin-right: 10px;
+        }
+
+        .remove-rule {
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+        }
     </style>
     <script>
         $(document).ready(function () {
@@ -140,9 +100,9 @@
                 }
 
                 if (isValidYaml && yamlValue.trim() !== '') {
-                    $('#submitButton1').prop('disabled', false);
+                    $('#submitButton').prop('disabled', false);
                 } else {
-                    $('#submitButton1').prop('disabled', true);
+                    $('#submitButton').prop('disabled', true);
                 }
             });
 
@@ -156,14 +116,75 @@
                         data: selectedFile,
                         success: function (response) {
                             $('#yamlInput').val(response);
-                            $('#submitButton1').prop('disabled', false);
+                            $('#submitButton').prop('disabled', false);
                             $('.error').hide();
                         }
                     });
                 } else {
                     $('#yamlInput').val('');
-                    $('#submitButton1').prop('disabled', true);
+                    $('#submitButton').prop('disabled', true);
                 }
+            });
+
+            $('#openModalBtn').on('click', function (e) {
+                e.preventDefault();
+                $('#myModal').css('display', 'block');
+            });
+
+            $('.close').on('click', function () {
+                $('#myModal').css('display', 'none');
+            });
+
+            $(window).on('click', function (event) {
+                if (event.target.id == 'myModal') {
+                    $('#myModal').css('display', 'none');
+                }
+            });
+
+            $('#modalForm').on('submit', function (e) {
+                e.preventDefault();
+
+                var urlValue = $('#url').val().trim();
+                var responseValue = $('#response').val().trim();
+                var featureValue = $('#feature').val().trim();
+
+                if (urlValue !== '' && isValidURL(urlValue) && responseValue !== '' && isValidJSON(responseValue)) {
+                    $.ajax({
+                        url: '/autoTester/responseMocking',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            url: urlValue,
+                            response: responseValue,
+                            feature: featureValue
+                        }),
+                        success: function (data) {
+                            $('#myModal').css('display', 'none');
+                            if (data.name) {
+                                var responseRuleHtml = '<div class="response-rule"><input type="text" class="form-control" name="rules" value="' + data.name + '" readonly><span class="remove-rule">&times;</span></div>';
+                                $('#responseRules').append(responseRuleHtml);
+                            }
+                        }
+                    });
+                }
+            });
+
+            function isValidURL(url) {
+                var urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+                return urlRegex.test(url);
+            }
+
+            function isValidJSON(jsonString) {
+                try {
+                    JSON.parse(jsonString);
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            $(document).on('click', '.remove-rule', function () {
+                $(this).closest('.response-rule').remove();
             });
         });
     </script>
@@ -174,12 +195,8 @@
         <h1>Auto Tester</h1>
         <form id="testForm" method="POST" target="_blank" style="width: 100%;">
             <label for="file-dropdown">Select Yaml File: </label>
-
             <select class="form-control" id="file-dropdown">
                 <option value="">-- Select --</option>
-                <!-- <option value="forbes.yaml">forbes.yaml</option>
-                <option value="nutritionix.yaml">nutritionix.yaml</option>
-                <option value="webmd.yaml">webmd.yaml</option> -->
                 <option th:each="fileName : ${files}" th:value="${fileName}" th:text="${fileName}"></option>
             </select>
             <br>
@@ -188,198 +205,43 @@
             <label for="yamlInput">Enter YAML:</label>
             <textarea class="form-control" rows="20" id="yamlInput" name="yaml"></textarea>
             <p class="error">Invalid YAML format</p>
+            <br>
+            <button id="openModalBtn" class="btn btn-primary">Add Response Mocking</button>
 
-            <!-- <button id="openModalBtn">Open Modal</button> -->
+            <div id="responseRules" class="my-3"></div>
 
-            <button class="form-control" id="submitButton1" disabled>Execute Tests</button>
+            <input class="form-control" id="submitButton" type="submit" value="Execute Tests" disabled>
         </form>
 
-        <button id="openModalBtn">Open Modal</button>
-        
-    </div>
-    
-
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <form class="modalForm" target="_blank" action="/autoTester/responseMocking" method="POST">
-                <div id="response-input-container">
-                    <div class="input-box">
-                        <div class="mb-3 row" >
-                            <label for="feature" class="col-sm-2 col-form-label">Feature to mock:</label>
-                            <div class="col-sm-10">
-                              <input type="text" class="form-control" id="feature" placeholder="Name of the feature to be mock" required>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form id="modalForm">
+                    <div id="response-input-container">
+                        <div class="input-box">
+                            <div class="mb-3 row">
+                                <label for="feature" class="col-sm-2 col-form-label">Feature to mock:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="feature" name="feature" placeholder="Name of the feature to be mock" required>
+                                </div>
                             </div>
+                            <div class="mb-3 row">
+                                <label for="url" class="col-sm-2 col-form-label">Url:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="url" name="url" placeholder="Please add URL" required>
+                                    <p class="errorUrl">Invalid URL or Empty</p>
+                                </div>
+                            </div>
+                            <label for="response">Response:</label>
+                            <textarea class="form-control" rows="20" id="response" name="response" required></textarea>
+                            <p class="errorJson">Invalid JSON format</p>
                         </div>
-                        <div class="mb-3 row">
-                            <label for="url" class="col-sm-2 col-form-label">Url:</label>
-                        <div class="col-sm-10">
-                           <input type="text" class="form-control" id="url" name="url" aria-describedby="emailHelp"
-                            placeholder="please add URL" required>
-                        </div>
-                            <p class="errorUrl">Invalid URL or Empty</p>
-                        </div>
-    
-                        <label for="response" >Response:</label>
-                        <textarea class="form-control" rows="20" id="response" name="response" required></textarea>
-                        <p class="errorJson">Invalid JSON format</p>
-                        
+                        <button class="form-control btn btn-primary" id="submitButton1">Execute Requestly</button>
                     </div>
-    
-                    <button class="form-control" id="submitButton">Execute Requestly</button>
-                    
-                </div>
-                
-            </form>
+                </form>
+            </div>
         </div>
-        
     </div>
-  
-
-    <!-- </form> -->
-    <span id="resultSpan"></span>
-    <button class="btn btn-primary" id="editBtn">Edit your response</button>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-        const modal = document.getElementById("myModal");
-        const btn = document.getElementById("openModalBtn");
-        const editBtn = document.getElementById("editBtn");
-        const span = document.getElementsByClassName("close")[0];
-        var modalForm = document.querySelector('.modalForm');
-        var urlInput = document.getElementById('url');
-        var responseTextarea = document.getElementById('response');
-        var errorUrl = document.querySelector('.errorUrl');
-        var errorJson = document.querySelector('.errorJson');
-        var submitButton = document.getElementById('submitButton');
-        var featureInput = document.getElementById('feature');
-        var resultSpan = document.getElementById('resultSpan');
-
-        btn.onclick = function() {
-            modal.style.display = "block";
-            modalForm.reset();
-        }
-        editBtn.onclick = function() {
-            if(responseTextarea.value !== '' && urlInput.value !== '') {
-                modal.style.display = "block";
-            }
-        }
-
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-        
-        // Function to validate URL format
-        function isValidURL(url) {
-            var urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
-            return urlRegex.test(url);
-        }
-
-        // Function to validate JSON format
-        function isValidJSON(jsonString) {
-            try {
-            JSON.parse(jsonString);
-            return true;
-            } catch (error) {
-            return false;
-            }
-        }
-        
-        function validateInputs() {
-            var urlValue = urlInput.value.trim();
-            var jsonValue = responseTextarea.value.trim();
-            
-            var isUrlValid = urlValue !== '' && isValidURL(urlValue);
-            var isJsonValid = jsonValue !== '' && isValidJSON(jsonValue);
-            
-            if (isUrlValid && isJsonValid) {
-            submitButton.disabled = false;
-            } else {
-            submitButton.disabled = true;
-            }
-        }
-
-        
-        urlInput.addEventListener('blur', function() {
-            var urlValue = urlInput.value.trim();
-            if (urlValue === '' || !isValidURL(urlValue)) {
-            errorUrl.style.display = 'block';
-            } else {
-            errorUrl.style.display = 'none';
-            }
-        });
-
-        // featureInput.addEventListener('blur', function() {
-        //     var inputVal = featureInput.value.trim();
-        //     if (inputVal !== '') {
-        //         resultSpan.textContent = inputVal;
-        //         console.log(resultSpan.textContent);
-        //     }else{
-        //         resultSpan.style.display = 'none';
-        //     }
-        // });
-
-    
-        // function displayFeature(){
-        //     resultSpan.textContent = featureInput.value;
-        //     console.log(resultSpan.textContent);
-        // }
-
-        // submitButton.addEventListener('click', displayFeature);
- 
-        // function displayInput(){
-        //     resultSpan.textContent = generalInput.value;
-        //     console.log(resultSpan.textContent);
-        // }
-
-        // yamlButton.addEventListener('click', displayInput);
-        
-         
-        submitButton.addEventListener('click', function(event) {
-            var jsonValue = responseTextarea.value.trim();
-            //var inputValue = featureInput.value.trim(); 
-            if (jsonValue === '' || !isValidJSON(jsonValue)) {
-                errorJson.style.display = 'block';
-                event.preventDefault(); // Prevent form submission if JSON is invalid
-            } else {
-                errorJson.style.display = 'none';
-                modal.style.display = "none";
-                var featureValue = featureInput.value.trim();
-                resultSpan.style.display = 'block';
-                resultSpan.textContent = `Feature to mock: ${featureValue}`;
-                console.log(resultSpan.textContent);
-            }
-        });
-
-        var form = document.querySelector('form');
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            modal.style.display = "none";
-        });
-
-    });
-    
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-   <script th:if="!${message}">
-        document.getElementById("msg").innerHTML = "Test Results will appear here!";
-    </script>
-     <script>
-   function changeText() {
-   document.getElementById("msg").innerHTML = "Your tests are running! Results will be displayed soon";
-}
-    </script> 
-
-
-    
-
 </body>
 
 </html>
