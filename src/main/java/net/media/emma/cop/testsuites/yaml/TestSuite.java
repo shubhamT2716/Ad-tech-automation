@@ -14,21 +14,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.LoadState;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.NonNull;
+
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.testng.internal.Yaml;
+
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,10 +36,10 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.Geolocation;
-import com.microsoft.playwright.options.LoadState;
+
 import com.microsoft.playwright.options.Timing;
 
-import jakarta.servlet.http.HttpServletResponse;
+
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
@@ -86,6 +86,9 @@ public class TestSuite implements GenericTestSuite {
     
     @Autowired
     private FileHandling fileHandling;
+    
+
+    BidexData bd=new  BidexData();
 
     private static String windscribeLogin = "xpath=//button[text()='Login']";
     private static String windscribeUsername = "xpath=//input[@name='username']";
@@ -108,7 +111,7 @@ public class TestSuite implements GenericTestSuite {
 
     // List of strings "1", "2"
     List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
-            "hbx-stage.media.net","hbx-stage-2.media.net","hbx-stage-3.media.net","hbx-stage-4.media.net");
+            "hbx-stage.media.net","hbx-stage-2.media.net","hbx-stage-3.media.net","hbx-stage-4.media.net","hbx-stage-1.media.net","ssp-stage-hb.media.net","ssp-stage-hb-1.media.net","ssp-stage-hb-2.media.net","ssp-stage-hb-3.media.net","ssp-stage-hb-4.media.net");
     List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js","ss/nes/bidexl2.js");// , "catchpoint_content.js",
     // "topics.js");
     
@@ -576,9 +579,10 @@ try {
         // String controllerRegex = "**/" + bidExControlers + "/**";
         String controllerRegex = ".*/(" + String.join("|", bidExControlers) + ").*";
 
+        
         page.onConsoleMessage(consoleMessage -> {
 
-            if (consoleMessage.type().equals("error") && consoleMessage.location().matches(controllerRegex)) {
+            if ((consoleMessage.type().equals("error")|| consoleMessage.type().equals("warning")|| consoleMessage.type().equals("log"))&& consoleMessage.location().matches(controllerRegex)) {
                 consoleErrors.add(consoleMessage.text());
             }
         });
@@ -657,10 +661,18 @@ try {
 			List<String> clientagController=Arrays.asList("js/tags/clientag.js","clientag.js");	
 			String regexForMp= ".*/(" + String.join("|", bidExHosts) + ")/("
 	                + String.join("|", clientagController) + ").*";
+			
+			List<String> bibex1=Arrays.asList("bidexchange.js");
+			String regexForBidex1=".*/(" + String.join("|", bidExHosts) + ")/("
+	                + String.join("|", bibex1) + ").*";
+			
+			List<String> bidex2=Arrays.asList("ss/nes/bidexl2.js?");
+			String regexForBidex2=".*/(" + String.join("|", bidExHosts) + ")/("
+	                + String.join("|", bidex2) + ").*";
 		
 			
-			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js")|| request.url().startsWith("**//**/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-2.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-3.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-4.media.net/js/tags/clientag.js"))
-//			if(request.url().startsWith(regexForMp))
+//			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js")|| request.url().startsWith("**//**/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-2.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-3.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-4.media.net/js/tags/clientag.js")|| request.url().startsWith("https://ssp-stage-hb.media.net/js/tags/clientag.js")|| request.url().startsWith("https://ssp-stage-hb-1.media.net/js/tags/clientag.js")|| request.url().startsWith("https://ssp-stage-hb-2.media.net/js/tags/clientag.js")|| request.url().startsWith("https://ssp-stage-hb-3.media.net/js/tags/clientag.js")|| request.url().startsWith("https://ssp-stage-hb-4.media.net/js/tags/clientag.js"))
+		if(request.url().matches(regexForMp))
 			{
 				
 				
@@ -739,8 +751,9 @@ try {
 				}
 					
 			}
-			else if(request.url().contains("**/bidexchange.js?")|| request.url().startsWith("https://hbx-stage-2.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-3.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-4.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage.media.net//bidexchange.js")|| request.url().startsWith("https://hbx.media.net//bidexchange.js?")|| request.url().startsWith("https://hbx.media.net/bidexchange.js?")){
-
+//			else if(request.url().contains("**/bidexchange.js?")|| request.url().startsWith("https://hbx-stage-2.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-3.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-4.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage.media.net//bidexchange.js")|| request.url().startsWith("https://hbx.media.net//bidexchange.js?")|| request.url().startsWith("https://hbx.media.net/bidexchange.js?")|| request.url().startsWith("https://ssp-stage-hb.media.net/bidexchange.js?")|| request.url().startsWith("https://ssp-stage-hb-1.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-2.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-3.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-4.media.net//bidexchange.js")){
+		else if(request.url().matches(regexForBidex1))
+		{
 		
 			 int startIndex=0;
 
@@ -763,8 +776,37 @@ try {
 			bidexData.setSvr(envData.get("sver").asText());
 			bidexData.setSugd(envData.get("sugd").asText());
 			bidexData.setItype(envData.get("itype").asText());
-			bidexData.setCt(envData.get("ip2ct").asText())	;		
+			bidexData.setCt(envData.get("ip2ct").asText())	;	
+			
+			bd.setCid(envData.get("cid").asText());
+			bd.setCt(envData.get("ip2ct").asText());
+			bd.setSvr(envData.get("sver").asText());	
+			bd.setSugd(envData.get("sugd").asText());
+			bd.setItype(envData.get("itype").asText());
 		}
+			
+//			if(request.url().startsWith("https://hbx-stage-1.media.net/ss/nes/bidexl2.js?")|| request.url().startsWith("https://hbx-stage-2.media.net/ss/nes/bidexl2.js?"))
+			
+		if(request.url().matches(regexForBidex2))
+		{
+				
+				
+				
+				bidexData.setCid(bd.getCid());
+				bidexData.setSvr(bd.getSvr());
+				bidexData.setCt(bd.getCt());
+				bidexData.setItype(bd.getItype());
+				bidexData.setSugd(bd.getSugd());	
+				
+//				bd.setCid();
+//				bd.setCt(envData.get("ip2ct").asText());
+//				bd.setSvr(envData.get("sver").asText());	
+//				bd.setSugd(envData.get("sugd").asText());
+//				bd.setItype(envData.get("itype").asText());
+			}
+		
+		
+			
 		}
 		catch (Exception e) {
 			

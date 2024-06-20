@@ -71,6 +71,8 @@ public class TestReportModel {
 	@Setter
 	@Builder
 	@ToString
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class BidexData{
 		
 		String svr;
