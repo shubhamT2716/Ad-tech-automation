@@ -71,12 +71,19 @@
                 <small class="form-text text-muted">Please enter the Host Name of the stage, or live.</small>
             </div>
 
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="dropdown"><strong>USER AGENT:</strong></label>
                 <select class="form-control" id="dropdown" name="ua">
                     <option value="">Select an option</option>
                 </select>
                 <input class="form-control mt-2" type="text" id="userAgentInput" name="uaInput"/>
+            </div> -->
+
+            <div class="form-group">
+                <label for="dropdown"><strong>USER AGENT:</strong></label>
+                <select class="form-control" id="dropdown" name="ua" multiple="multiple">
+                    <option value="">Select an option</option>
+                </select>
             </div>
 
             <div class="form-check">
@@ -133,32 +140,61 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     handleClick(); // Call handleClick on page load, this is to ensure that on page refresh the contents of HB is preloaded @shubham
+
+    //     $('#env').select2({
+    //         placeholder: "Select server environments"
+    //     });
+
+    //     const dropdown = document.getElementById("dropdown");
+    //     const userAgentInput = document.getElementById("userAgentInput");
+
+    //     fetch("/yamlTestSuite/userAgent")
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             for (const [key, value] of Object.entries(data)) {
+    //                 const option = document.createElement("option");
+    //                 option.text = key;
+    //                 option.value = value;
+    //                 dropdown.appendChild(option);
+    //             }
+
+    //             dropdown.addEventListener("change", function() {
+    //                 userAgentInput.value = this.value;
+    //             });
+    //         })
+    //         .catch(error => console.log('Error in fetching data', error));
+    // });
+
     document.addEventListener('DOMContentLoaded', function() {
-        handleClick(); // Call handleClick on page load, this is to ensure that on page refresh the contents of HB is preloaded @shubham
+    handleClick(); // Call handleClick on page load, this is to ensure that on page refresh the contents of HB is preloaded @shubham
 
-        $('#env').select2({
-            placeholder: "Select server environments"
-        });
-
-        const dropdown = document.getElementById("dropdown");
-        const userAgentInput = document.getElementById("userAgentInput");
-
-        fetch("/yamlTestSuite/userAgent")
-            .then(response => response.json())
-            .then(data => {
-                for (const [key, value] of Object.entries(data)) {
-                    const option = document.createElement("option");
-                    option.text = key;
-                    option.value = value;
-                    dropdown.appendChild(option);
-                }
-
-                dropdown.addEventListener("change", function() {
-                    userAgentInput.value = this.value;
-                });
-            })
-            .catch(error => console.log('Error in fetching data', error));
+    $('#env').select2({
+        placeholder: "Select server environments"
     });
+
+    $('#dropdown').select2({
+        placeholder: "Select user agents"
+    });
+
+    fetch("/yamlTestSuite/userAgent")
+        .then(response => response.json())
+        .then(data => {
+            for (const [key, value] of Object.entries(data)) {
+                const option = document.createElement("option");
+                option.text = key;
+                // option.value = value;
+                dropdown.appendChild(option);
+            }
+
+            $('#dropdown').on("change", function() {
+                const selectedValues = $(this).val();
+                console.log("Selected user agents: ", selectedValues);
+            });
+        })
+        .catch(error => console.log('Error in fetching data', error));
+});
 
     document.getElementById('email').addEventListener('input', function() {
         const email = this.value;

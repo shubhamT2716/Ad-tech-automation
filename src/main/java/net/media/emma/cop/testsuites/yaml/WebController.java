@@ -137,6 +137,10 @@ public class WebController {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 		
+		System.err.println("Env: "+environment);
+		
+		System.err.println("Ua = "+userAgent);
+		
 		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null, itype,email,true);
 		// SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null,email, true);
 

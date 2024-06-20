@@ -134,7 +134,7 @@ public class YamlTestSuiteScheduling {
 				.collect(Collectors.toSet());
 
 		String[] environments = environment.trim().split(",");
-//		String[] userAgents = userAgent.trim().split(",");
+		String[] userAgents = userAgent.trim().split(",");
 		;
 	
 		if(pubs!=null)
@@ -159,7 +159,7 @@ public class YamlTestSuiteScheduling {
 			
 		for (String yaml : listOfYaml) {  
 			for (String env : environments) {
-//				for (String agent : userAgents) {
+				for (String agent : userAgents) {
 					for(String pub: publisher) {
 						
 						
@@ -194,13 +194,13 @@ public class YamlTestSuiteScheduling {
 					
 			
 					
-							testCriteriaBo.setUserAgent(userAgent);
+							testCriteriaBo.setUserAgent(agent);
 							testCriteriaBo.setEnvironment(env);
 							testCriteriaBo.setPublisherUrl(pub);							
 							
-							map.put(yaml+"_"+env , yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-							listOfYamlEnv.add(yaml+"_"+env );
-//						}
+							map.put(yaml+"_"+env+"_"+agent , yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+							listOfYamlEnv.add(yaml+"_"+env +"_"+agent);
+					}
 
 					}
 		
@@ -241,7 +241,7 @@ public class YamlTestSuiteScheduling {
 
 			for (String yaml : listOfYaml) {
 				for (String env : environments) {
-//					for (String agent : userAgents) {
+				for (String agent : userAgents) {
 
 						String filesPath;
 
@@ -277,18 +277,18 @@ public class YamlTestSuiteScheduling {
 
 						testCriteriaBo = yamlUtils.buildYaml(a);
 
-						System.err.println("Agnet: "+userAgent);
+						System.err.println("Agnet: "+agent);
 						
-						testCriteriaBo.setUserAgent(userAgent);
+						testCriteriaBo.setUserAgent(agent);
 						testCriteriaBo.setEnvironment(env);
 	
 						System.err.println(testCriteriaBo.getPublisherUrl()+" :  "+testCriteriaBo.getKeysToVerifyPositive());
 						System.out.println();
 						System.out.println(testCriteriaBo.getUserAgent());
 
-						map.put(yaml + "_" + env, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-						listOfYamlEnv.add(yaml + "_" + env);
-//					}
+						map.put(yaml + "_" + env+"_"+agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+						listOfYamlEnv.add(yaml + "_" + env+"_"+agent);
+					}
 
 				}
 
