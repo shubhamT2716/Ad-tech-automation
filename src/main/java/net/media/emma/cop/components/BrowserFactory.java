@@ -161,12 +161,12 @@ public class BrowserFactory {
 							extension, fileName));
 		}
 		
-		if(browserType.contains("Other"))
-		{
-			return getPlaywrightObj().chromium().launchPersistentContext(Paths.get(browserPath),
-					getSystemBrowserContextOptions(browserType, browserType.contains("Mobile"),
-							extension, fileName));
-		}
+//		if(browserType.contains("Other"))
+//		{
+//			return getPlaywrightObj().chromium().launchPersistentContext(Paths.get(browserPath),
+//					getSystemBrowserContextOptions(browserType, browserType.contains("Mobile"),
+//							extension, fileName));
+//		}
 
 		return getPlaywrightObj().webkit().launchPersistentContext(Paths.get(browserPath));
 	}

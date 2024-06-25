@@ -49,7 +49,11 @@ public class ComplianceTestSuite {
     private static String windscribeSearchLocation = "xpath=//div//i";
     private static String windscribeSearchbox = "xpath=//input[contains(@class,'css-1c1txoj')]";
     private static String windscribeParisLoc = "xpath=(//div[@aria-label='Paris'])[1]";
-    private static String acceptAllBtn = "xpath=//button[text()='I Accept']";
+//    private static String acceptAllBtn = "xpath=//button[text()='I Accept']";
+    
+    private static String acceptAllBtn="xpath=//*[@id=\"onetrust-accept-btn-handler\"]";
+    
+  //*[@id="onetrust-accept-btn-handler"]
 
 
     String url = "chrome-extension://hnmpcagpplmpfojmgmnngilcnanddlhb/popup.html";
@@ -60,10 +64,19 @@ public class ComplianceTestSuite {
         String harFileName = harFileBasePath + CommonBrowserUtil.getFileNameForHar();
         BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(), harFileName, browserPath);
         browserContext.clearCookies();
-
+        
         //list of arrays initialization
         List<String> urlFromNetworkTab = new ArrayList<>();
         List<Request> requestList = new ArrayList<>();
+        
+        
+        browserContext.onRequest(request -> {
+
+            urlFromNetworkTab.add(request.url());
+            requestList.add(request);
+        });
+        
+        browserContext.setDefaultNavigationTimeout(90000);//90 s
 
         Page page = browserContext.newPage();
         openWindscribe(page);
@@ -72,37 +85,50 @@ public class ComplianceTestSuite {
         page.navigate(testData.getPublisherUrl());
 
 
-        browserContext.onRequest(request -> {
-
-            urlFromNetworkTab.add(request.url());
-            requestList.add(request);
-        });
+        try {
 
         page.locator(acceptAllBtn).click();
-        page.waitForLoadState(LoadState.NETWORKIDLE);
-        Thread.sleep(1000);
+//        page.waitForLoadState(LoadState.NETWORKIDLE);
+        Thread.sleep(10000);
 
         List<Cookie> allCookies = browserContext.cookies();
-        HashMap<String, String> tcfResponse = getTcfApiResponse(page);
-        String gdprString = tcfResponse.get("tcString");
+       Object tcfResponse = getTcfApiResponse(page);
+       
+//       System.err.println("tcfresponse :  "+tcfResponse);
+       
+       log.info("tcf Response: "+tcfResponse);
+       
+      Map<String, String> map=(Map<String, String>)tcfResponse;
+       
+        String gdprString = map.get("tcString");
 
-        browserContext.onRequest(request -> {
 
-            urlFromNetworkTab.add(request.url());
-            requestList.add(request);
-        });
-
-        pubsRefresh(page);
-        page.waitForLoadState(LoadState.NETWORKIDLE);
+//        pubsRefresh(page);
+//        page.waitForLoadState(LoadState.NETWORKIDLE);
 
         updateTestCriteriaGdprString(testData,gdprString);
 
         String results = getNetworkCallAssertions3(allCookies,urlFromNetworkTab, requestList,testData);
-
-        page.close();
-        browserContext.close();
-
+        
         return results;
+        
+        }
+        catch (Exception e) {
+        	
+        	e.printStackTrace();
+        	
+        	return e.getMessage();
+			
+		}
+        finally {
+        	 page.close();
+             browserContext.close();
+		}
+       
+        
+       
+
+       
     }
 
     public List<String> getExtensionList() {
@@ -115,7 +141,7 @@ public class ComplianceTestSuite {
     public void openWindscribe(Page page) throws InterruptedException
     {
         page.navigate(url);
-        page.waitForTimeout(2000);
+        page.waitForTimeout(20000);
         if (page.isVisible(windscribeLogin))
         {
             try
@@ -238,10 +264,11 @@ public class ComplianceTestSuite {
             }
         }
 
+
         return null;
     }*/
 
-    private LinkedHashMap<String, String> getTcfApiResponse(Page page) {
+    private Object getTcfApiResponse(Page page) {
     	try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -249,14 +276,27 @@ public class ComplianceTestSuite {
 			e.printStackTrace();
 		}
     	
-    	Object d = page.waitForFunction("() => {\n" +
-                "  return new Promise((resolve) => {\n" +
-                "    window.__tcfapi(\"addEventListener\", 2, (tcfApiInfo, success) => {\n" +
-                "      if (success && isSet(tcfApiInfo)) {\n" +
-                "        resolve(tcfApiInfo);\n" +
-                "      }\n" +
-                "    });\n" +	
-                "  });\n" +
+//    	Object d = page.waitForFunction("() => {\n" +
+//                "  return new Promise((resolve) => {\n" +
+//                "    window.__tcfapi(\"addEventListener\", 2, (tcfApiInfo, success) => {\n" +
+//                "      if (success && isSet(tcfApiInfo)) {\n" +
+//                "        resolve(tcfApiInfo);\n" +
+//                "      }\n" +
+//                "    });\n" +	
+//                "  });\n" +
+//                "}");
+    	
+        Object tcData = page.evaluate("() => {" +
+                "return new Promise((resolve, reject) => {" +
+                "    __tcfapi('addEventListener', 2, (tcData, success) => {" +
+                "        if (success) {" +
+                "            console.log(tcData);" +
+                "            resolve(tcData);" +
+                "        } else {" +
+                "            reject('Failed to retrieve tcData');" +
+                "        }" +
+                "    });" +
+                "});" +
                 "}");
 
 //        Object d = page.evaluate("() => {\n" +
@@ -268,7 +308,7 @@ public class ComplianceTestSuite {
 //                "    });\n" +
 //                "  });\n" +
 //                "}");
-        return (LinkedHashMap<String, String>) d;
+        return  tcData;
     }
 
     private void pubsRefresh(Page page) {

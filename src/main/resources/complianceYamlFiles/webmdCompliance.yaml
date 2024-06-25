@@ -2,8 +2,8 @@ environment: hbx.media.net
 cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
 cookiesToVerify: [VisitorId: "notnull" ,  gdpr: "notnull", visitor-id: "notnull", ad-privacy: "0", xyzzzyzy: "notnull"]
 userAgent: Chrome.Desktop.Mac
-publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
-location: paris
+publisherUrl: "https://www.webmd.com/?mnet_test=1"
+location: Paris
 
 networkCallsPositive: {
   bidExchange: "https://hbx.media.net/bidexchange.js?cid=8CU66J63J",
