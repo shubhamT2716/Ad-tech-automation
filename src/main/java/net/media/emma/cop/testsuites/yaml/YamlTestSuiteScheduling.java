@@ -28,8 +28,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-import jakarta.servlet.http.HttpServletResponse;
+
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.yaml.SmokeTestSummeryDto.Testdata;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.BidExController;
@@ -45,7 +44,7 @@ import net.media.emma.utils.YamlUtils;
 @Service
 @ComponentScan
 @EnableScheduling
-public class YamlTestSuiteScheduling {
+public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 
 	@Autowired
 	private FileOperations fileOperations;
@@ -68,8 +67,8 @@ public class YamlTestSuiteScheduling {
 	@Autowired
 	private TemplateEngine engine;
 
-	@Autowired
-	private ObjectMapper yamlMapper;
+//	@Autowired
+//	private ObjectMapper yamlMapper;
 
 	@Value("${zipFileBasePath}")
 	private String zipFilePath;
@@ -113,6 +112,7 @@ public class YamlTestSuiteScheduling {
 		
 	}
 
+	@Override
 	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
 			List<String> commonFiles, String pubs, String itype,String email,boolean flagForMail) {
 
@@ -129,8 +129,6 @@ public class YamlTestSuiteScheduling {
 		List<String> listOfYamlEnv = new ArrayList<>();
 
 		Set<String> listOfYaml = selectedFiles.stream()
-				// .filter(x -> !x.contains("aol") && !x.contains("tech") &&
-				// !x.contains("webmd")).limit(2)
 				.collect(Collectors.toSet());
 
 		String[] environments = environment.trim().split(",");
@@ -146,7 +144,7 @@ public class YamlTestSuiteScheduling {
 			
 			StringBuilder yamlBuilder=new StringBuilder();
 			
-			String combinedCommonContent = "";
+			
 			for (String commonYamls : commonFiles) {
 			String commonContent = this.fileOperations.getCommonFile(itype+"/"+commonYamls);
 				
@@ -180,7 +178,7 @@ public class YamlTestSuiteScheduling {
 			}
 				
 					
-					ObjectMapper yamlMapper = new YAMLMapper();
+					
 
 					List<String> list = new ArrayList<>();
 					list.add(content);
@@ -382,6 +380,8 @@ public class YamlTestSuiteScheduling {
 			
 			testdataResult.add(testdata);
 
+			dto.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
+			
 		}
 
 		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
@@ -402,7 +402,7 @@ public class YamlTestSuiteScheduling {
 
 		dto.setRawDataLink("zipDownload/" + zipFile);
 		dto.setTestdatas(testdataResult);
-		dto.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
+		
 		// dto.setTestResultSummery(testResultSummery(reportModel));
 		
 		testReport.put("testResult", testResult);

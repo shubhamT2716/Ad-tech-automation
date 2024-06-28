@@ -1,8 +1,6 @@
 package net.media.emma.cop.testsuites.yaml;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-import java.awt.Desktop;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -283,16 +281,6 @@ public class TestSuite implements GenericTestSuite {
 			}
 			
 			consoleMessage = getConsoleErrors(page);
-			
-//			if(testData.getUserAgent().startsWith("Chrome"))
-//			{
-//				page.navigate("chrome-extension://hnmpcagpplmpfojmgmnngilcnanddlhb/popup.html");
-//				
-//				setLocationInWindscribe(page, "Paris");
-////				page.locator("//*[@id=\"app-frame\"]/div/div[4]/div[1]/div/div[1]/div/div[3]/button").click();				
-//				
-//				
-//			}
 			
 			page.navigate(testData.getPublisherUrl());
 //			page.evaluate(googleRefresh());
@@ -674,10 +662,46 @@ try {
 //			if(request.url().startsWith("https://warp.media.net/js/tags/clientag.js")|| request.url().startsWith("**//**/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-2.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-3.media.net/js/tags/clientag.js")|| request.url().startsWith("https://hbx-stage-4.media.net/js/tags/clientag.js")|| request.url().startsWith("https://ssp-stage-hb.media.net/js/tags/clientag.js")|| request.url().startsWith("https://ssp-stage-hb-1.media.net/js/tags/clientag.js")|| request.url().startsWith("https://ssp-stage-hb-2.media.net/js/tags/clientag.js")|| request.url().startsWith("https://ssp-stage-hb-3.media.net/js/tags/clientag.js")|| request.url().startsWith("https://ssp-stage-hb-4.media.net/js/tags/clientag.js"))
 		if(request.url().matches(regexForMp))
 			{
+			
+			
+			String responseMP=request.response().text();
+			
+				List<String> sspMp=Arrays.asList("ssp-stage-hb.media.net","ssp-stage-hb-1.media.net","ssp-stage-hb-2.media.net","ssp-stage-hb-3.media.net","ssp-stage-hb-4.media.net");
+			
+				String regexForSSPMp= ".*/(" + String.join("|", sspMp) + ")/("
+		                + String.join("|", clientagController) + ").*";
 				
 				
-				String responseMP=request.response().text();
-				
+				if(request.url().matches(regexForSSPMp))
+				{
+					String target="function createErrorObject(error) {";
+					
+					int in=responseMP.indexOf(target);
+					
+					responseMP=responseMP.substring(in);					
+					
+					Pattern pattern=Pattern.compile("servername\\s*:\\s*\"([^\"]*)\"");
+					
+					Matcher matcher=pattern.matcher(responseMP);
+					
+					if(matcher.find())
+					{
+						
+						
+						
+//						String svr=matcher.group();
+						
+						String svr=matcher.group(1);
+						
+						
+						bidexData.setSvr(svr);
+						
+					}
+					
+							
+				}
+				else {
+					
 //				String target="new s.a({";
 				String target="new r.a({";
 				
@@ -721,7 +745,7 @@ try {
 								
 								 svr = matcher2.group(1);
 								
-								log.info(svr);
+								
 								
 							}
 							
@@ -749,6 +773,7 @@ try {
 					}
 		
 				}
+			}
 					
 			}
 //			else if(request.url().contains("**/bidexchange.js?")|| request.url().startsWith("https://hbx-stage-2.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-3.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-4.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage.media.net//bidexchange.js")|| request.url().startsWith("https://hbx.media.net//bidexchange.js?")|| request.url().startsWith("https://hbx.media.net/bidexchange.js?")|| request.url().startsWith("https://ssp-stage-hb.media.net/bidexchange.js?")|| request.url().startsWith("https://ssp-stage-hb-1.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-2.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-3.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-4.media.net//bidexchange.js")){

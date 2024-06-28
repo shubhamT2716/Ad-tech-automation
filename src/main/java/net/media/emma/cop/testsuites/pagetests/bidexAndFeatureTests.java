@@ -33,7 +33,8 @@ import com.microsoft.playwright.Route;
 
 
 import lombok.extern.slf4j.Slf4j;
-import net.media.emma.cop.components.BidExConfig;
+import net.media.emma.cop.components.AutoTesterSreviceIn;
+//import net.media.emma.cop.components.BidExConfig;
 import net.media.emma.cop.components.BrowserFactory;
 
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.BidexController;
@@ -53,16 +54,20 @@ import net.media.emma.utils.YamlUtils;
 
 @Service
 @Slf4j
-public class bidexAndFeatureTests {
+public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 	
 	
-	@Autowired
-	BidExConfig bidExConfig;
+//	@Autowired
+//	BidExConfig bidExConfig;
 	
 	
-	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
-			"hbx-stage.media.net");
-	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js");// , "catchpoint_content.js",
+//	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
+//			"hbx-stage.media.net");
+//	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js");// , "catchpoint_content.js",
+	
+    List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
+            "hbx-stage.media.net","hbx-stage-2.media.net","hbx-stage-3.media.net","hbx-stage-4.media.net","hbx-stage-1.media.net","ssp-stage-hb.media.net","ssp-stage-hb-1.media.net","ssp-stage-hb-2.media.net","ssp-stage-hb-3.media.net","ssp-stage-hb-4.media.net");
+    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js","ss/nes/bidexl2.js");
 		
 
 	String finalConfig = "";
@@ -110,8 +115,11 @@ public class bidexAndFeatureTests {
 	@Autowired
 	private PlAssestion payloadAsserstions;
 	
+//	@Autowired
+//	private FeatureTestCriteria criteria;
+	
 	@Autowired
-	private FeatureTestCriteria criteria;
+	private AutoTesterSreviceIn autoTesterSrevice;
 	
 	
 	@Autowired
@@ -119,7 +127,10 @@ public class bidexAndFeatureTests {
 	
 	
 
+	String bidexOrClientag="";
 
+	
+	@Override
     public BidexFeatureReport bidexTests(String yamlTc) throws JsonMappingException, JsonProcessingException{
 
     	
@@ -151,8 +162,14 @@ public class bidexAndFeatureTests {
 				listOfReqest.add(request);
 			});
 			
+			
+		
+			
+			
 		page.onResponse(response -> {
 			if(response.url().contains("bidexchange.js?")){
+				
+				bidexOrClientag=response.url();
 			try {
 				if(response.status()==200){
 				bidexResp = response.text();
@@ -172,6 +189,11 @@ public class bidexAndFeatureTests {
 		JsonNode pageSlots = slotsDataFromPage(page);
 		 int startIndex=0;
 
+		 
+		if(bidexOrClientag.contains("bidexchange.js?"))
+		{
+			
+		
 
 		 String startTarget = "{\"AaxDpCeiling\"";
 		 
@@ -200,7 +222,7 @@ public class bidexAndFeatureTests {
 		
 	
 		
-		List<String> cookieUrls = Arrays.asList("https://hbx.media.net", "https://hb.yahoo.net","https://contextual.media.net", yaml.getPublisherUrl());
+		List<String> cookieUrls = Arrays.asList("https://hbx.media.net","https://contextual.media.net", yaml.getPublisherUrl());
 		Map<String, List<Cookie>> urlWiseCookies = new HashMap<>();
 
 		try {
@@ -217,14 +239,40 @@ public class bidexAndFeatureTests {
 		}
 		page.close();
 
+
+		return autoTesterSrevice.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile, cookies,yamlTc, urlFromNetworkTab, listOfReqest, getConsoleErrors(page));
+
 		
 		
+		}
+		
+		else {
+		
+			page.waitForTimeout(7000);
+			
+			page.close();
+			
+			return autoTesterSrevice.loadBidExConfig(null, urlFromNetworkTab, yaml, harFile, getCookies(page, yaml.getPublisherUrl()),  yamlTc, urlFromNetworkTab, listOfReqest, getConsoleErrors(page));		
+			
+		}
+		
+    }
 
-		return bidExConfig.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile,bidexConfigSampleFilePath, cookies, getBidexData(listOfReqest, yaml),yamlTc, urlFromNetworkTab, listOfReqest);
+    private List<String> getConsoleErrors(Page page) {
+        List<String> consoleErrors = new ArrayList<>();
 
-		    }
+        // String controllerRegex = "**/" + bidExControlers + "/**";
+        String controllerRegex = ".*/(" + String.join("|", bidExControlers) + ").*";
 
-    
+        
+        page.onConsoleMessage(consoleMessage -> {
+
+            if ((consoleMessage.type().equals("error")|| consoleMessage.type().equals("warning")|| consoleMessage.type().equals("log"))&& consoleMessage.location().matches(controllerRegex)) {
+                consoleErrors.add(consoleMessage.text());
+            }
+        });
+        return consoleErrors;
+    }
     
     public Map<String, List<Cookie>> getCookies(Page page, String publisher)
     {
@@ -441,27 +489,7 @@ public class bidexAndFeatureTests {
     }
     
     
-    public FeatureReport featureChecks(List<String> requestList,List<Request> requests, TestCriteriaBo criteriaBo, URLChecksReportModel model, String feature) {
-    	
-    	
-    	for(String requestUrl: requestList )
-    	{
-    		
-    		Map.Entry<String, String> urlData=positiveURLPatternExistsForFeature(requestUrl, criteriaBo);
-    		
-    		if(urlData!=null)
-    		{
-    			
-    			FeatureReport featureReport=this.criteria.featureTestCasePositvie(urlData, requests,criteriaBo,model,feature);
-    			
-    			return featureReport;
-    		}
-    	
-    	}
-    	
-    	return null;
-    	
-    }
+    
     
     private Map.Entry<String, String> positiveURLPatternExistsForFeature(String currentUrl, TestCriteriaBo testData) {
 
@@ -525,63 +553,7 @@ public class bidexAndFeatureTests {
 	}
 	
 	
-	private BidexController getBidexData(List<Request> listOfRequest, TestCriteriaBo criteriaBo)
-	{
-		BidexFeatureReport report=new BidexFeatureReport();
-		
-		BidexFeatureReport.BidexController bidexController=new BidexController();
-		
-		
-		
-		String regEx = ".*/(" + String.join("|", bidExHosts) + "|" + criteriaBo.getEnvironment() + ")/("
-				+ String.join("|", bidExControlers) + ").*";
-
-		List<Request> bidexRequest=new ArrayList<>();
-		
-		for(Request request:listOfRequest)
-		{
-			if(request.url().matches(regEx))
-			{
-				bidexRequest.add(request);
-			}
-		}
-
-		for(Request request: bidexRequest)
-		{
-			bidexController.getListOfMatchingUrls().add(request.url());
-
-			if(null != request.failure())
-			{
-				bidexController.getConsoleMessage().add(request.failure().toString());
-				continue;
-			}
-
-			Timing timing = request.timing();
-
-
-			if (null != timing) {
-				Date date = new Date((long) (timing.responseEnd - timing.responseStart));
-				bidexController.setTotalResponsetime(date.getTime() + "ms");
-			} else {
-				bidexController.setTotalResponsetime("Not Available");
-			}
-
-			bidexController.setTotalSize(request.sizes().responseBodySize + "b");
-		}
-
-		 if (bidexRequest.size() == 0) {
-			 bidexController.getConsoleMessage().add("No bidex request found");
-		 }
-
-		 if (bidexRequest.size() > 1) {
-			 bidexController.getConsoleMessage().add("Multiple bidex request found");
-		}
-
-		return bidexController;
-
-
-
-		}
+	
 		
 		
 		

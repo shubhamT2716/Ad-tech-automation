@@ -29,5 +29,7 @@ src/main/resources/yaml/TestData.yaml
 test-output/*
 *.DS_Store
 emma-working-directory/har-files/
+emma-working-directory/report-files/
+emma-working-directory/zip-files/
 emma-working-directory/temp/
 emma-working-directory/temp/BrowserMetrics-spare.pma

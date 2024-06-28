@@ -10,7 +10,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.media.emma.cop.components.BidExConfig.SlotsData;
+
+import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.TestStatus;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 
@@ -23,8 +24,8 @@ public class BidexFeatureReport {
 
 	TestMetaDataBidex testMetaDataBidex;
 	Map<String, Boolean> businessFeaturesDetected;
-	Map<String , Object> environmentDetails;
-	Map<String, List<SlotsData>> slotsDetected;
+//	Map<String , Object> environmentDetails;
+//	Map<String, List<SlotsData>> slotsDetected;
 	Map<String, Object> allFeatureData;
 	Map<String, Map<String, Map<String,String>>> cookies;
 	Map<String, URLChecksReportModel> urlChecksReport;
@@ -46,7 +47,7 @@ public class BidexFeatureReport {
 		String userAgent;
 		String harFileDownloadLink;
 		BidexController bidexController;
-		String svr;
+		
 	}
 	
 	@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
@@ -59,12 +60,20 @@ public class BidexFeatureReport {
 	
 	@Getter @Setter @Builder @AllArgsConstructor @NoArgsConstructor
 	public static class BidexController{
+//		@Builder.Default
+//		List<String> listOfMatchingUrls=new ArrayList<>();
+//		String totalSize;
+//		String totalResponsetime;
+//		@Builder.Default
+//		List<String> consoleMessage=new ArrayList<>();
+		
 		@Builder.Default
-		List<String> listOfMatchingUrls=new ArrayList<>();
-		String totalSize;
-		String totalResponsetime;
+		List<String> matchingUrls = new ArrayList<>();
+		String totalSizeDownloaded;
+		String totalResponseTime;
 		@Builder.Default
-		List<String> consoleMessage=new ArrayList<>();
+		List<String> consoleMessages = new ArrayList<>();
+		BidexData bidexData;
 	}
 	
 //	

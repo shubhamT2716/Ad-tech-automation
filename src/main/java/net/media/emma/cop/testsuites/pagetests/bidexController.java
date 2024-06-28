@@ -111,7 +111,7 @@ public class bidexController {
 			
 			BidexFeatureReport bidexFeatureReport=bidexAndFeatureTests.bidexTests(yaml);
 			
-			 TestDataResult dataResult=TestDataResult.builder().businessFeaturesDetected(bidexFeatureReport.getBusinessFeaturesDetected()).environmentDetails(bidexFeatureReport.getEnvironmentDetails()).bidex(bidexFeatureReport.getTestMetaDataBidex()).build();
+			 TestDataResult dataResult=TestDataResult.builder().businessFeaturesDetected(bidexFeatureReport.getBusinessFeaturesDetected()).bidex(bidexFeatureReport.getTestMetaDataBidex()).build();
 			 
 			modelAndView.addObject("rawData",dataResult);
 //			modelAndView.addObject("slotsData", bidexFeatureReport.getSlotsDetected());

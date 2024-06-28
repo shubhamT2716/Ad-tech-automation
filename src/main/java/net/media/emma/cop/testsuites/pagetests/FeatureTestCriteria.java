@@ -23,13 +23,14 @@ import net.media.emma.utils.URLDataProcessing;
 
 @Component
 @Slf4j
-public class FeatureTestCriteria {
+public class FeatureTestCriteria implements FeatureTestServiceIn{
 
 	@Autowired
 	private URLDataProcessing dataProcessing;
 
 	boolean test = true;
 
+	@Override
 	public FeatureReport featureTestCasePositvie(Map.Entry<String, String> urlData, List<Request> requests,
 			TestCriteriaBo criteriaBo, URLChecksReportModel reportModel, String feature) {
 

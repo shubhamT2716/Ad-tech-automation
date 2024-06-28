@@ -44,7 +44,7 @@ public class ComplianceTestSuite {
     private static String windscribeSkip = "xpath=//div[text()='Skip']";
     private static String username = "mohib1233";
     private static String password = "mohib123";
-    private static String locationParis = "Paris";
+//    private static String locationParis = "Paris";
     private static String windscribeLocations = "xpath=//button[@aria-label='Locations']";
     private static String windscribeSearchLocation = "xpath=//div//i";
     private static String windscribeSearchbox = "xpath=//input[contains(@class,'css-1c1txoj')]";
@@ -86,8 +86,16 @@ public class ComplianceTestSuite {
 
 
         try {
+        	
+        	
+        	try {
+        		page.locator(acceptAllBtn).click();
+        	}catch (Exception e) {
+				
+        		System.out.println(e.getMessage());
+			}
 
-        page.locator(acceptAllBtn).click();
+        
 //        page.waitForLoadState(LoadState.NETWORKIDLE);
         Thread.sleep(10000);
 
@@ -141,7 +149,7 @@ public class ComplianceTestSuite {
     public void openWindscribe(Page page) throws InterruptedException
     {
         page.navigate(url);
-        page.waitForTimeout(20000);
+        page.waitForTimeout(2000);
         if (page.isVisible(windscribeLogin))
         {
             try
@@ -175,7 +183,7 @@ public class ComplianceTestSuite {
         page.locator(windscribeLocations).click();
         page.locator(windscribeSearchLocation).click();
         page.locator(windscribeSearchbox).click();
-        page.locator(windscribeSearchbox).fill(locationParis);
+        page.locator(windscribeSearchbox).fill("Paris");
         page.locator(windscribeParisLoc).click();
         page.close();
     }
