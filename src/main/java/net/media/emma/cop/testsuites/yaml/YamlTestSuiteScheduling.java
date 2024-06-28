@@ -400,7 +400,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 		Map<String, String> testReport=new HashMap<>();
 		
 
-		dto.setRawDataLink("zipDownload/" + zipFile);
+//		sdto.setRawDataLink("zipDownload/" + zipFile);
 		dto.setTestdatas(testdataResult);
 		
 		// dto.setTestResultSummery(testResultSummery(reportModel));

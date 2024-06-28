@@ -20,7 +20,7 @@ import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
 @AllArgsConstructor
 public class SmokeTestSummeryDto {
 
-	private String rawDataLink;
+//	private String rawDataLink;
 
 	private List<Testdata> testdatas;
 	
