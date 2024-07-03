@@ -21,13 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 public class ResponseMocking {
 
 	
-	Object id;
+	 static Object id;
 	
-	JSONArray jsonArray;
+	static JSONArray jsonArray;
 	
-	public Page responseMocking(Page page, String url , String response )
+	public static  Page responseMocking(Page page, String url , String response )
 	{
 		
+		log.info("added Requestly");
 		
 		
 		List<Object> listOfImp=new ArrayList<>();
@@ -97,24 +98,33 @@ public class ResponseMocking {
 
 				System.err.println(message);
 				
-				listOfImp.clear();
+				
 				
 				
 //				Thread.sleep(10000);
 				
-			
-				route.fulfill(new Route.FulfillOptions().setResponse(apiResponse).setBody(message));
-
-				log.info("response mocking done by emma");
+				
 				
 			
+//				route.fulfill(new Route.FulfillOptions().setResponse(apiResponse).setBody(message));
+				
+				route.fulfill(new Route.FulfillOptions().setBody(message));
+				
+				listOfImp.clear();
+
+				log.info("response mocking done by emma");
+			
 			} catch (Exception e) {
-				// TODO: handle exception
+				e.printStackTrace();
+				
+				log.info("error while response mocking "+e.getMessage());
 			}
 			
 			
 			
 		});
+		
+		log.info("completed response mocking");
 		
 	
 		return page;

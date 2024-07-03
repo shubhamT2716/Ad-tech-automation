@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public interface BidexAndFeatureTestsService {
 	
 	
-	public BidexFeatureReport bidexTests(String yamlTc) throws JsonMappingException, JsonProcessingException;
+	public BidexFeatureReport bidexTests(String yamlTc, ResponseMocking mocking) throws JsonMappingException, JsonProcessingException;
 	
 	
 

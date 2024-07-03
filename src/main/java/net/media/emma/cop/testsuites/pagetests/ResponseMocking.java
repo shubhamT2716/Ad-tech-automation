@@ -11,9 +11,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResponseMocking {
 
-	private String name;
+	private String feature;
 	
-	private String urls;
+	private String url;
 	
 	private String response;
 	

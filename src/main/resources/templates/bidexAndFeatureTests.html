@@ -8,7 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-    <style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+
+    <!-- <style>
         .error {
             color: red;
             display: none;
@@ -39,13 +44,13 @@
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
+            overflow: hidden; /* Prevent scrolling */
             background-color: rgba(0, 0, 0, 0.5);
         }
 
         .modal-content {
             background-color: white;
-            margin: 15% auto;
+            margin: auto;
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
@@ -59,7 +64,6 @@
             float: right;
             font-size: 28px;
             font-weight: bold;
-            margin-left: 90%;
         }
 
         .close:hover,
@@ -84,7 +88,162 @@
             color: red;
             font-weight: bold;
         }
+
+        #responseMessage {
+            margin-top: 20px;
+            color: green;
+        }
+
+      
+
+#featureDisplayContainer {
+    display: none;
+    align-items: center;
+    margin: auto;
+}
+
+#featureDisplay {
+    flex: 1;
+    display: none;
+    margin-right: 10px;
+}
+
+#editableField {
+    display: none;
+    flex: 2;
+    margin-right: 10px;
+}
+
+#deleteButton {
+    display: none;
+    flex: 0;
+    padding: 5px 10px;
+}
+
+
+        
+    </style> -->
+
+    <style>
+
+.errorUrl{
+            color: red;
+            display: none;
+            margin-top: 10px;
+}
+.errorJson{
+            color: red;
+            display: none;
+            margin-top: 10px;
+}
+
+        .error {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
+
+        #submitButton {
+            display: block;
+            width: 150px;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #submitButton:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevent scrolling */
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            min-width: 500px;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .response-rule {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .response-rule input {
+            margin-right: 10px;
+        }
+
+        .remove-rule {
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+        }
+
+        #responseMessage {
+            margin-top: 20px;
+            color: green;
+        }
+
+        #responseMockinginput{
+            display: none;
+        }
+
+        #featureDisplayContainer {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#featureDisplay {
+    flex: 1;
+    margin-right: 10px;
+}
+
+#editableField {
+    display: flex;
+    align-items: center;
+}
+
+#deleteButton {
+    display: none;
+    margin-left: 10px;
+}
+
     </style>
+
     <script>
         $(document).ready(function () {
             $('#yamlInput').on('input', function () {
@@ -148,26 +307,115 @@
                 var responseValue = $('#response').val().trim();
                 var featureValue = $('#feature').val().trim();
 
-                if (urlValue !== '' && isValidURL(urlValue) && responseValue !== '' && isValidJSON(responseValue)) {
+//                 if (urlValue !== '' && isValidURL(urlValue) && responseValue !== '' && isValidJSON(responseValue)) {
+//     var requestData = {
+//         url: urlValue,
+//         response: responseValue,
+//         feature: featureValue
+//     };
+
+//     $.ajax({
+//         url: '/autoTester/responseMocking',
+//         method: 'POST',
+//         contentType: 'application/json',
+//         data: JSON.stringify(requestData),
+//         success: function (data) {
+//             $('#myModal').css('display', 'none');
+//             if (data.name) {
+//                 var responseRuleHtml = '<div class="response-rule"><input type="text" class="form-control" name="rules" value="' + data.name + '" readonly><span class="remove-rule">&times;</span></div>';
+//                 $('#responseRules').append(responseRuleHtml);
+//                 $('#responseMessage').html('<strong>Response added:</strong> ' + data.name);
+//             }
+//             // Display the feature name in the input box
+//             $('#featureDisplay').val(featureValue);
+//         },
+//         error: function () {
+//             $('#responseMessage').text('Error adding response.');
+//         }
+//     });
+// }
+
+
+if (urlValue !== '' && isValidURL(urlValue) && responseValue !== '' && isValidJSON(responseValue)) {
+    var requestData = {
+        url: urlValue,
+        response: responseValue,
+        feature: featureValue
+    };
+
+    $.ajax({
+        url: '/autoTester/responseMocking',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(requestData),
+        success: function (data) {
+            $('#myModal').css('display', 'none');
+            if (data.name) {
+                var responseRuleHtml = '<div class="response-rule"><input type="text" class="form-control" name="rules" value="' + data.name + '" readonly><span class="remove-rule">&times;</span></div>';
+                $('#responseRules').append(responseRuleHtml);
+                $('#responseMessage').html('<strong>Response added:</strong> ' + data.name);
+
+                // Set feature name and display the container
+               
+            } 
+            $('#featureDisplay').val(featureValue);
+                console.log('Feature Value:', featureValue); // Debugging
+                $('#responseMockinginput').css('display','block');
+                $('#featureDisplayContainer').css('display', 'block');
+                $('#featureDisplay').css('display', 'block');
+                $('#editableField').css('display', 'block');
+                $('#editableField').data('feature', requestData);
+
+        },
+        error: function (xhr, status, error) {
+            $('#responseMessage').text('Error adding response.');
+            console.error('Error:', status, error); // Debugging
+        }
+    });
+}
+
+if (urlValue === '' || !isValidURL(urlValue)) {
+            $('.errorUrl').css('display', 'block');
+            return;
+        } else {
+            $('.errorUrl').css('display', 'none');
+        }
+
+        // Validate JSON
+        if (responseValue === '' || !isValidJSON(responseValue)) {
+            $('.errorJson').css('display', 'block');
+            return;
+        } else {
+            $('.errorJson').css('display', 'none');
+        }
+
+
+            });
+
+
+            $('#editableField').on('click', function (e) {
+                e.preventDefault(); // Prevent form submission
+                var featureData = $(this).data('feature');
+                if (featureData) {
                     $.ajax({
-                        url: '/autoTester/responseMocking',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({
-                            url: urlValue,
-                            response: responseValue,
-                            feature: featureValue
-                        }),
-                        success: function (data) {
-                            $('#myModal').css('display', 'none');
-                            if (data.name) {
-                                var responseRuleHtml = '<div class="response-rule"><input type="text" class="form-control" name="rules" value="' + data.name + '" readonly><span class="remove-rule">&times;</span></div>';
-                                $('#responseRules').append(responseRuleHtml);
-                            }
+                        url: '/autoTester/responseMock', // Replace with your API endpoint
+                        method: 'GET',
+                        data: { feature: featureData.feature },
+                        success: function (response) {
+                            $('#feature').val(response.feature);
+                            $('#url').val(response.url);
+                            $('#response').val(response.response);
+                            $('#myModal').css('display', 'block');
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error fetching feature details:', status, error);
                         }
                     });
                 }
             });
+
+
+            
 
             function isValidURL(url) {
                 var urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
@@ -188,6 +436,17 @@
             });
         });
     </script>
+    <!-- <script>
+        document.getElementById('editableField').addEventListener('click', function() {
+            // Get the feature details and populate the modal (for demo purposes, using static data)
+            var featureName = document.getElementById('featureDisplay').value;
+            document.getElementById('featureName').value = featureName;
+            
+            // Show the modal
+            $('#myModal').modal('show');
+        });
+        </script> -->
+
 </head>
 
 <body>
@@ -208,10 +467,41 @@
             <br>
             <button id="openModalBtn" class="btn btn-primary">Add Response Mocking</button>
 
-            <div id="responseRules" class="my-3"></div>
+			<!--<div id="responseRules" class="my-3"></div>-->
+			<!-- Add this element where you want to display the feature name -->
+			<!-- <div id="featureDisplay"></div> -->
+			<!-- Add this input field where you want to display the feature name -->
+			<!-- <div id="featureDisplayContainer">
+                <input type="text" id="featureDisplay" class="form-control" readonly>
+            </div> -->
 
+            <!-- <div id="featureDisplayContainer" style="display: flex; align-items: center;">
+                <input type="text" id="featureDisplay" class="form-control" style="flex: 1; margin-right: 10px;" readonly>
+                <input type="text" id="editableField" class="form-control" style="flex: 2; margin-right: 10px;">
+                <button id="deleteButton" class="btn btn-danger" style="flex: 0;">Delete</button>
+            </div> -->
+            
+            <!-- <div id="featureDisplayContainer" style="display: flex; align-items: center;">
+                <input type="text" id="featureDisplay" class="form-control" size="7" maxlength="7" style="flex: 1; margin-right: 10px;" readonly>
+                <i class="fas fa-edit" id="editableField" style="margin-right: 10px; cursor: pointer;"></i>
+                <i class="fas fa-trash" id="deleteButton" style="cursor: pointer;"></i>
+            </div>
+        -->
+        <br>
+
+        <div id="responseMockinginput">
+        <div id="featureDisplayContainer">
+            <input type="text" id="featureDisplay" name="featureMocking" class="form-control" style="width: 70%; margin-right: 10px;" readonly>
+            <button id="editableField" class="btn btn-primary" style="display: flex; align-items: center;">
+                <i class="fas fa-edit"></i>
+            </button>
+        </div>
+    </div>
+
+            
             <input class="form-control" id="submitButton" type="submit" value="Execute Tests" disabled>
         </form>
+       
 
         <div id="myModal" class="modal">
             <div class="modal-content">
@@ -229,12 +519,12 @@
                                 <label for="url" class="col-sm-2 col-form-label">Url:</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" id="url" name="url" placeholder="Please add URL" required>
-                                    <p class="errorUrl">Invalid URL or Empty</p>
+                                    <p class="errorUrl" style="display: none;">Invalid URL or Empty</p>
                                 </div>
                             </div>
                             <label for="response">Response:</label>
-                            <textarea class="form-control" rows="20" id="response" name="response" required></textarea>
-                            <p class="errorJson">Invalid JSON format</p>
+                            <textarea class="form-control" rows="10" id="response" name="response" required></textarea>
+                            <p class="errorJson" style="display: none;">Invalid JSON response or Empty</p>
                         </div>
                         <button class="form-control btn btn-primary" id="submitButton1">Execute Requestly</button>
                     </div>

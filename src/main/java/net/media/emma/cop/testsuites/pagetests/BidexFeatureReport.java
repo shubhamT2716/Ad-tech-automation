@@ -54,7 +54,7 @@ public class BidexFeatureReport {
 	public static class TestDataResult{
 		TestMetaDataBidex bidex;
 		Map<String, Boolean> businessFeaturesDetected;
-		Map<String , Object> environmentDetails;
+//		Map<String , Object> environmentDetails;
 		
 	}
 	

@@ -128,10 +128,13 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 	
 
 	String bidexOrClientag="";
+	
+	@Autowired
+	private net.media.emma.utils.ResponseMocking mocking;
 
 	
 	@Override
-    public BidexFeatureReport bidexTests(String yamlTc) throws JsonMappingException, JsonProcessingException{
+    public BidexFeatureReport bidexTests(String yamlTc, ResponseMocking responseMocking) throws JsonMappingException, JsonProcessingException{
 
     	
     	TestCriteriaBo yaml=simpleBuildYaml(yamlTc);
@@ -156,6 +159,9 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 //				page=attachResponseMocking(page, yaml);
 //			}
 			
+			
+			
+			page=net.media.emma.utils.ResponseMocking.responseMocking(page, responseMocking.getUrl(), responseMocking.getResponse());
 			
 			page.onRequest(request ->{
 				urlFromNetworkTab.add(request.url());

@@ -1,6 +1,8 @@
 package net.media.emma.cop.testsuites.yaml;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -71,12 +73,7 @@ public class TestSuite implements GenericTestSuite {
     PlAssestion payloadAsserstions;
     @Autowired
     HeadersAssertion headersAssertion;
-    
-    @Autowired
-    private ResponseMocking mocking;
-    
-  
-
+   
     @Value("${harFileBasePath}")
     private String harFileBasePath;
     @Value("${browserPath}")
@@ -268,7 +265,7 @@ public class TestSuite implements GenericTestSuite {
 			if(url!=null&& response!=null)
 			{
 				
-				page=mocking.responseMocking(page, url, response);
+				page=ResponseMocking.responseMocking(page, url, response);
 				
 			}
 			
@@ -341,7 +338,7 @@ public class TestSuite implements GenericTestSuite {
 		}
 		
 		
-		
+		testReport.setGamSlots(addGamAssertion(requestList));		
 		testReport.setCookie(cookies);
 		testReport.setBidExController(bidExController);
 		testReport.setPbjs(pbjsConfigData);
@@ -350,7 +347,8 @@ try {
 			
 			URLChecksReportModel  model=getUrlAssertionsData(urlFromNetworkTab,requestList, testData);
 			
-
+			
+//			model=addGamAssertion(model);
 			
 			testReport.setUrlChecks(model);
 			testReport.setTestSummery(YamlTestSuiteScheduling.testResultSummery(model));
@@ -398,6 +396,63 @@ try {
 		}
 		
 	}
+    
+    
+    public Map<String , String> addGamAssertion(List<Request > urls)
+    {
+    	
+    	Map<String, String> mapOfSlotsData = new HashMap<>();
+    	
+    	for(Request request: urls) 
+    	{
+    		
+    		
+    		if(request.url().contains("https://securepubads.g.doubleclick.net/gampad/ads?"))
+    		{
+    			
+    			String gamUrl;
+    			try {
+    				gamUrl = URLDecoder.decode(request.url(), "UTF-8");
+    				
+    				
+    				int as = gamUrl.indexOf("prev_scp");
+
+    				gamUrl = gamUrl.substring(as);
+
+    				gamUrl = gamUrl.substring(9);
+
+    				System.out.println("prev URL: " + gamUrl);
+
+    				String slots[] = gamUrl.split("\\|");
+    				
+    				for(String slot:slots)
+    				{
+    					String getValue[] = slot.split("&");
+    					
+    					
+
+    					for (String slotsVal : getValue) {
+
+    						String keyVal[] = slotsVal.split("=");
+    						if (keyVal.length == 2) {
+    							mapOfSlotsData.put(keyVal[0], keyVal[1]);
+    						}
+    					}
+    				}
+    	
+    			} catch (UnsupportedEncodingException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    			
+    		}
+ 
+
+    	}
+
+    	return mapOfSlotsData;
+    			
+    }
 
     
     public String googleRefresh()
@@ -674,30 +729,127 @@ try {
 				
 				if(request.url().matches(regexForSSPMp))
 				{
-					String target="function createErrorObject(error) {";
 					
-					int in=responseMP.indexOf(target);
+					boolean svrFind=false;
 					
-					responseMP=responseMP.substring(in);					
+//					String regex = "var i =.*(mp|ssp)";
+//					
+//					Pattern pattern=Pattern.compile(regex);
+//					
+//					Matcher matcher=pattern.matcher(responseMP);
 					
-					Pattern pattern=Pattern.compile("servername\\s*:\\s*\"([^\"]*)\"");
+					String t="new o.a({";
 					
-					Matcher matcher=pattern.matcher(responseMP);
 					
-					if(matcher.find())
+					if(responseMP.contains(t))
+					{
+						int index=responseMP.indexOf(t);
+						
+						responseMP=responseMP.substring(index);
+						
+						Pattern pattern=Pattern.compile("new\\s+o\\.a\\((.*?)\\)");
+						
+						Matcher matcher=pattern.matcher(responseMP);
+						
+						if(matcher.find())
+						{
+							
+							
+							String extractedData=matcher.group(1);
+							
+							String svr = null;
+							
+							if(responseMP.contains("var i"))
+							{
+								int svrIndex=responseMP.indexOf("var i");
+								
+								responseMP=responseMP.substring(svrIndex);
+								
+//								System.out.println(responseMP);
+								
+								Pattern pattern2=Pattern.compile("var i=\"([^\"]+)\"");
+								
+								Matcher matcher2=pattern2.matcher(responseMP);
+								
+								if(matcher2.find())
+								{
+									
+									System.out.println("match found");
+									
+									 svr = matcher2.group(1);
+									
+									
+									
+								}
+								
+							}
+							
+							JsonNode bidData=mapper.readValue(extractedData, JsonNode.class);
+							
+							bidexData.setCid(bidData.get("cid").asText());
+							
+							if(svr==null)
+							{
+								bidexData.setSvr(bidData.get("sver").asText());	
+							}else {
+								bidexData.setSvr(svr);
+							}
+							
+//							bidexData.setSvr(bidData.get("sver").asText());
+							bidexData.setSugd(bidData.get("sugd").asText());
+							bidexData.setCt(bidData.get("ip2ct").asText());
+							
+//							bidexData.setItype(bidData.get("itype").asText());
+							
+							
+							return bidexData;
+					}
+					
+					
+					}	
+					
+					
+					if(svrFind==false)
 					{
 						
+						String target="function createErrorObject(error) {";
 						
+						int in=responseMP.indexOf(target);
 						
-//						String svr=matcher.group();
+						responseMP=responseMP.substring(in);					
 						
-						String svr=matcher.group(1);
+						Pattern pattern1=Pattern.compile("svr\\s*:\\s*\"([^\"]*)\"");
 						
+						Matcher matcher1=pattern1.matcher(responseMP);
 						
-						bidexData.setSvr(svr);
+						if(matcher1.find())
+						{
+							
+							
+						System.out.println(responseMP);
+//							
+						System.err.println(matcher1);
+							
+						String svr=matcher1.group();
+						
+						System.out.println(svr);
+							
+							String svr1=matcher1.group(1);
+							
+							
+//							System.out.println(svr);
+							
+							System.err.println(svr1);
+							
+							
+							bidexData.setSvr(svr1);
+							
+						}
+						
 						
 					}
 					
+
 							
 				}
 				else {
@@ -891,6 +1043,9 @@ try {
 //				
 //				continue;
 //			}
+			
+			
+			
 			
 			Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
 

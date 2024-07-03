@@ -178,9 +178,9 @@ public class FeatureTestCriteria implements FeatureTestServiceIn{
 
 				String key = entry.getKey();
 
-				System.out.println("Report : " + mapReport);
-
-				System.err.println("key: " + key);
+//				System.out.println("Report : " + mapReport);
+//
+//				System.err.println("key: " + key);
 
 				if (mapReport.containsKey(key)) {
 

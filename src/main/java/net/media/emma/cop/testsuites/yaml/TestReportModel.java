@@ -25,6 +25,7 @@ public class TestReportModel {
 	TestMetaData testMetaData;
 	BidExController bidExController;
 	Map<String, String> testSummery;
+	Map<String, String> gamSlots;
 	URLChecksReportModel urlChecks;
 	NetworkAnalytics networkAnalytics;
 	Map<String, Map<String, Map<String,String>>> cookie;

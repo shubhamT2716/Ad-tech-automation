@@ -4,10 +4,15 @@ package net.media.emma.cop.testsuites.pagetests;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
+import org.apache.poi.hssf.record.PageBreakRecord.Break;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -43,6 +48,10 @@ public class bidexController {
 
 	@Autowired
 	bidexAndFeatureTests bidexAndFeatureTests; 
+	
+	@Autowired
+	BidexAndFeatureTestsService bidexAndFeatureTestsService;
+	
 	@Autowired
 	ObjectMapper genericObjectMapper;
 	@Autowired
@@ -72,7 +81,7 @@ public class bidexController {
 
 	// }
 	
-	List<ResponseMocking> listOfResponseMocking=new ArrayList<>();
+	Set<ResponseMocking> listOfResponseMocking=new LinkedHashSet<>();
 	
 	private static final Map<String, String> listOfTestSuites = new LinkedHashMap<>() {
 		{
@@ -97,19 +106,30 @@ public class bidexController {
 	}
 
 	@PostMapping
-	public ModelAndView getBidexLevelTestResults(@RequestParam String yaml) {
+	public ModelAndView getBidexLevelTestResults(@RequestParam String yaml, @RequestParam String featureMocking) {
 
 		ModelAndView modelAndView = new ModelAndView("bidexAndFeatureTestsDataReport");
 
 		try {
 			
+			
+			ResponseMocking mocking=new ResponseMocking();
+			
+			for(ResponseMocking rm:listOfResponseMocking)
+			{
+				mocking.setFeature(rm.getFeature());
+				mocking.setResponse(rm.getResponse());
+				mocking.setUrl(rm.getUrl());
+			}
+			
+			System.err.println("feature : "+featureMocking);
 						
 //			TestCriteriaBo yamlTc = bidexAndFeatureTests.meargeYaml(yaml);
 			
 			TestCriteriaBo yamlTc=bidexAndFeatureTests.simpleBuildYaml(yaml);
 			
 			
-			BidexFeatureReport bidexFeatureReport=bidexAndFeatureTests.bidexTests(yaml);
+			BidexFeatureReport bidexFeatureReport=bidexAndFeatureTestsService.bidexTests(yaml,mocking);
 			
 			 TestDataResult dataResult=TestDataResult.builder().businessFeaturesDetected(bidexFeatureReport.getBusinessFeaturesDetected()).bidex(bidexFeatureReport.getTestMetaDataBidex()).build();
 			 
@@ -129,33 +149,65 @@ public class bidexController {
 	}
 	
 	
-	@GetMapping("response")
-	public List<ResponseMocking> getAllResponseMokcing()
+//	@GetMapping("response")
+//	public Set<ResponseMocking> getAllResponseMokcing()
+//	{
+//		return listOfResponseMocking;
+//	}
+	
+	@GetMapping("responseMock")
+	public ResponseMocking getMocking(@RequestParam String feature)
 	{
-		return listOfResponseMocking;
+		ResponseMocking mocking=new ResponseMocking();
+		
+		listOfResponseMocking.forEach(e->{
+			if(e.getFeature().equalsIgnoreCase(feature))
+			{
+				mocking.setFeature(e.getFeature());
+				mocking.setResponse(e.getResponse());
+				mocking.setUrl(e.getUrl());
+				
+			}
+		});
+		
+		
+		return mocking;
+		
 	}
 	
 	
+	
 	@PostMapping("responseMocking")
-	public String getDetailsOfModal(@RequestParam(name = "feature", required = false)String name,
-			@RequestParam(name = "url",required = false )String url,
-			@RequestParam(name = "response", required = false)String response)
+	public String getDetailsOfModal(@RequestBody ResponseMocking responseMocking)
 	{
 		
-		System.err.println("get Value : "+name);
+		System.err.println("get Value : "+responseMocking.getFeature());
 		
-		System.err.println("get Value : "+url);
+		System.err.println("get Value : "+responseMocking.getUrl());
+
 		
 		ResponseMocking mocking=new ResponseMocking();
 
-		mocking.setName(name);
-		mocking.setUrls(url);
-		mocking.setResponse(response);
+		for(ResponseMocking  rm:listOfResponseMocking)
+		{
+			if(rm.getFeature().equalsIgnoreCase(responseMocking.getFeature())) {
+				
+				listOfResponseMocking.remove(rm);
+				
+				break;
+			}
+		}
 		
-		listOfResponseMocking.add(mocking);
+		mocking.setFeature(responseMocking.getFeature());
+		mocking.setUrl(responseMocking.getUrl());
+		mocking.setResponse(responseMocking.getResponse());
 		
+		listOfResponseMocking.add(responseMocking);
+	
+		System.out.println("List"+listOfResponseMocking);
+
 		
-		return name;
+		return responseMocking.getFeature();
 		
 		
 	}
