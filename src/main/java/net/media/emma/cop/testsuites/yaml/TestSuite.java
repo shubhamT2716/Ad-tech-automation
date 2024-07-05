@@ -82,6 +82,9 @@ public class TestSuite implements GenericTestSuite {
     @Autowired
     private FileHandling fileHandling;
     
+    @Autowired
+    private ResponseMocking mocking;
+    
 
     BidexData bd=new  BidexData();
 
@@ -265,7 +268,7 @@ public class TestSuite implements GenericTestSuite {
 			if(url!=null&& response!=null)
 			{
 				
-				page=ResponseMocking.responseMocking(page, url, response);
+				page=mocking.responseMocking(page, url, response);
 				
 			}
 			
@@ -421,7 +424,7 @@ try {
 
     				gamUrl = gamUrl.substring(9);
 
-    				System.out.println("prev URL: " + gamUrl);
+//    				System.out.println("prev URL: " + gamUrl);
 
     				String slots[] = gamUrl.split("\\|");
     				

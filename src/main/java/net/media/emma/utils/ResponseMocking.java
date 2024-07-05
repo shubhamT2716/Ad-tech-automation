@@ -21,11 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ResponseMocking {
 
 	
-	 static Object id;
+	  Object id;
 	
-	static JSONArray jsonArray;
+	 JSONArray jsonArray;
 	
-	public static  Page responseMocking(Page page, String url , String response )
+	public   Page responseMocking(Page page, String url , String response )
 	{
 		
 		log.info("added Requestly");

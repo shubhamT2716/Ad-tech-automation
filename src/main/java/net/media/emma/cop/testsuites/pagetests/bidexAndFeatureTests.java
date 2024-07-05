@@ -134,10 +134,14 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 
 	
 	@Override
-    public BidexFeatureReport bidexTests(String yamlTc, ResponseMocking responseMocking) throws JsonMappingException, JsonProcessingException{
+    public BidexFeatureReport bidexTests(String yamlTc, List<ResponseMocking> responseMocking) throws JsonMappingException, JsonProcessingException{
 
     	
     	TestCriteriaBo yaml=simpleBuildYaml(yamlTc);
+    	
+    	System.err.println("Yaml Build: "+yaml);
+    	
+    	System.out.println("urls: "+yaml.getPublisherUrl());
     	
     	
     	List<String> urlFromNetworkTab=new ArrayList<>();
@@ -151,17 +155,31 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
 		try {
 			
-
 			page=replaceBidExUrl(page, yaml);
 			
-//			if(yaml.getResponseSimulate()!=null)
+			
+			
+//			if(responseMocking.getUrl() !=null && responseMocking.getResponse()!=null)
 //			{
-//				page=attachResponseMocking(page, yaml);
+//				page=this.mocking.responseMocking(page, responseMocking.getUrl(), responseMocking.getResponse());
 //			}
 			
 			
+			if(responseMocking!=null)
+			{
+				for(ResponseMocking rm: responseMocking)
+				{
+					if(rm.getUrl()!=null&&rm.getResponse()!=null)
+					{
+						page=this.mocking.responseMocking(page, rm.getUrl(), rm.getResponse());
+					}
+				}
+			}
 			
-			page=net.media.emma.utils.ResponseMocking.responseMocking(page, responseMocking.getUrl(), responseMocking.getResponse());
+			
+
+
+			
 			
 			page.onRequest(request ->{
 				urlFromNetworkTab.add(request.url());
@@ -169,7 +187,7 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 			});
 			
 			
-		
+
 			
 			
 		page.onResponse(response -> {
@@ -185,11 +203,15 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 			}
 			}
         });
+		
+
+		
         page.navigate(yaml.getPublisherUrl());
         Thread.sleep(15000);
 	
 		} catch (Exception e) {
-			log.info("Bidex not found");
+			e.printStackTrace();
+			log.info("Bidex not found at line 205");
 		}
 
 		JsonNode pageSlots = slotsDataFromPage(page);
@@ -198,12 +220,9 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 		 
 		if(bidexOrClientag.contains("bidexchange.js?"))
 		{
-			
-		
 
 		 String startTarget = "{\"AaxDpCeiling\"";
 		 
-		 //System.err.println(bidexResp);
 		 
 		if (bidexResp.contains(startTarget)) {
 			startIndex = bidexResp.indexOf(startTarget);

@@ -113,33 +113,40 @@ public class bidexController {
 		try {
 			
 			
-			ResponseMocking mocking=new ResponseMocking();
+//			ResponseMocking mocking=new ResponseMocking();
 			
-			for(ResponseMocking rm:listOfResponseMocking)
-			{
-				mocking.setFeature(rm.getFeature());
-				mocking.setResponse(rm.getResponse());
-				mocking.setUrl(rm.getUrl());
-			}
+//			if(listOfResponseMocking!=null)
+//			{
+//				for(ResponseMocking rm:listOfResponseMocking)
+//				{
+//					mocking.setFeature(rm.getFeature());
+//					mocking.setResponse(rm.getResponse());
+//					mocking.setUrl(rm.getUrl());
+//				}
+//				
+//			}
 			
-			System.err.println("feature : "+featureMocking);
+			
 						
 //			TestCriteriaBo yamlTc = bidexAndFeatureTests.meargeYaml(yaml);
 			
-			TestCriteriaBo yamlTc=bidexAndFeatureTests.simpleBuildYaml(yaml);
+//			TestCriteriaBo yamlTc=bidexAndFeatureTests.simpleBuildYaml(yaml);
 			
 			
-			BidexFeatureReport bidexFeatureReport=bidexAndFeatureTestsService.bidexTests(yaml,mocking);
+			
+			List<ResponseMocking> responseMockingList=new ArrayList<>(listOfResponseMocking);
+			
+			
+			BidexFeatureReport bidexFeatureReport=bidexAndFeatureTestsService.bidexTests(yaml,responseMockingList);
 			
 			 TestDataResult dataResult=TestDataResult.builder().businessFeaturesDetected(bidexFeatureReport.getBusinessFeaturesDetected()).bidex(bidexFeatureReport.getTestMetaDataBidex()).build();
 			 
 			modelAndView.addObject("rawData",dataResult);
-//			modelAndView.addObject("slotsData", bidexFeatureReport.getSlotsDetected());
 			modelAndView.addObject("allFeatureData", bidexFeatureReport.getAllFeatureData());
 			modelAndView.addObject("allCookiesData", bidexFeatureReport.getCookies());
 			modelAndView.addObject("basicReport", bidexFeatureReport.getUrlChecksReport());
-//			modelAndView.addObject("slotsReport",bidexFeatureReport.getSlotsReport());
 			modelAndView.addObject("featureReport", bidexFeatureReport.getFeatureReport());
+			
 		} catch (JsonProcessingException e) {
 			log.error("YAML Processing Error", e);
 			
@@ -148,12 +155,6 @@ public class bidexController {
 		return modelAndView;
 	}
 	
-	
-//	@GetMapping("response")
-//	public Set<ResponseMocking> getAllResponseMokcing()
-//	{
-//		return listOfResponseMocking;
-//	}
 	
 	@GetMapping("responseMock")
 	public ResponseMocking getMocking(@RequestParam String feature)
@@ -180,12 +181,7 @@ public class bidexController {
 	@PostMapping("responseMocking")
 	public String getDetailsOfModal(@RequestBody ResponseMocking responseMocking)
 	{
-		
-		System.err.println("get Value : "+responseMocking.getFeature());
-		
-		System.err.println("get Value : "+responseMocking.getUrl());
-
-		
+	
 		ResponseMocking mocking=new ResponseMocking();
 
 		for(ResponseMocking  rm:listOfResponseMocking)
@@ -203,8 +199,6 @@ public class bidexController {
 		mocking.setResponse(responseMocking.getResponse());
 		
 		listOfResponseMocking.add(responseMocking);
-	
-		System.out.println("List"+listOfResponseMocking);
 
 		
 		return responseMocking.getFeature();

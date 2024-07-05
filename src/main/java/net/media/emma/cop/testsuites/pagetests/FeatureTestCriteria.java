@@ -15,10 +15,13 @@ import org.springframework.stereotype.Component;
 import com.microsoft.playwright.Request;
 
 import lombok.extern.slf4j.Slf4j;
+
 import net.media.emma.cop.testsuites.pagetests.FeatureReport.FeatureChecks;
 import net.media.emma.cop.testsuites.pagetests.FeatureReport.TestStatus;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
+import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
+
 import net.media.emma.utils.URLDataProcessing;
 
 @Component
@@ -29,12 +32,35 @@ public class FeatureTestCriteria implements FeatureTestServiceIn{
 	private URLDataProcessing dataProcessing;
 
 	boolean test = true;
+	boolean negativeKey=false;
 
 	@Override
 	public FeatureReport featureTestCasePositvie(Map.Entry<String, String> urlData, List<Request> requests,
 			TestCriteriaBo criteriaBo, URLChecksReportModel reportModel, String feature) {
 
 		log.info("urlData : " + urlData);
+		
+		
+		
+		
+		Map<String, NegativeURLChecks> negativeCheck=reportModel.getNegativeUrlChecks();
+		
+		negativeCheck.entrySet().forEach(negativePoint->{
+			
+			
+			if(negativePoint.getValue().getCountOfMatchingUrls()>0)
+			{
+				
+				negativeKey=true;
+			}
+			
+		});
+		
+		
+		if( negativeKey==false)
+		{
+			
+		
 
 		Map<String, PositiveURLChecks> mapReport = reportModel.getPositiveUrlChecks();
 
@@ -295,6 +321,13 @@ public class FeatureTestCriteria implements FeatureTestServiceIn{
 		report.setFeatureChecks(repo);
 
 		return report;
+		
+		}
+		
+		negativeKey=false;
+		
+		
+		return null;
 
 	}
 
