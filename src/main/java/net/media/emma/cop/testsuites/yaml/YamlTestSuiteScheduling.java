@@ -374,13 +374,13 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			testdata.setPublisherUrl(reportModel.getTestMetaData().getPublisherUrl());
 			testdata.setMatchingUrls(reportModel.getBidExController().getMatchingUrls());
 			testdata.setBidexData(reportModel.getBidExController().getBidexData());
+			testdata.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
 			
-
 			
 			
 			testdataResult.add(testdata);
 
-			dto.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
+//			dto.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
 			
 		}
 
@@ -428,9 +428,9 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 	
 	
 	
-	public static Map<String, String> testResultSummery(URLChecksReportModel result)
+	public static Map<String, Map<String, String>> testResultSummery(URLChecksReportModel result)
 	{
-		Map<String, String> testResult=new HashMap<>();
+		Map<String, Map<String, String>> testResult=new HashMap<>();
 		
 		Map<String, PositiveURLChecks> positiveReport=result.getPositiveUrlChecks();
 		
@@ -441,7 +441,9 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			PositiveURLChecks value=entry.getValue();
 			
 			
-			testResult.put(key, value.getTestResult().toString());
+//			testResult.put(key, value.getTestResult().toString());
+			
+			testResult.computeIfAbsent("PositiveURLChecks", k->new HashMap<>()).put(key, value.getTestResult().toString());
 			
 			
 			
@@ -451,8 +453,18 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			String key=entry.getKey();
 			NegativeURLChecks value=entry.getValue();
 			
-	
-			testResult.put(key, value.getTestResult().toString());
+			if(value.getTestResult().toString().equals("PASS"))
+			{
+//				testResult.put(key, "NOT PASS");
+				
+				testResult.computeIfAbsent("NegativeURLChecks", k->new HashMap<>()).put(key, "NOT PASS");
+			}
+			else {
+				testResult.computeIfAbsent("NegativeURLChecks", k-> new HashMap<>()).put(key, "PASS");
+			}
+			
+			
+			
 			
 		});
 		

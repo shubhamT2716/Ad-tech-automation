@@ -1,5 +1,5 @@
 package net.media.emma.cop.testsuites.yaml;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -254,17 +254,11 @@ public class TestSuite implements GenericTestSuite {
 			log.info("location:  "+geolocation);
 			browserContext.setGeolocation(geolocation);
 //			browserContext.grantPermissions(new String[]{"geolocation"});
-			
-			
-			
+
 
 			
 			Page page = browserContext.newPage();
-			
-			
-			
-			
-			
+
 			if(url!=null&& response!=null)
 			{
 				
@@ -292,9 +286,7 @@ public class TestSuite implements GenericTestSuite {
 				
 				 pbjsEventsData = getPbjsEvents(page ,testData.getPbjsEvents());		
 			}
-			
-			
-			System.err.println("pbjsEventsData: "+pbjsEventsData);
+		
 //			 page.waitForLoadState(LoadState.NETWORKIDLE,new
 //			 Page.WaitForLoadStateOptions().setTimeout(5000));
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
@@ -403,7 +395,7 @@ try {
     
     public Map<String , String> addGamAssertion(List<Request > urls)
     {
-    	
+    	try {
     	Map<String, String> mapOfSlotsData = new HashMap<>();
     	
     	for(Request request: urls) 
@@ -452,8 +444,13 @@ try {
  
 
     	}
-
     	return mapOfSlotsData;
+    	}
+    	catch (Exception e) {
+    		return null;
+		}
+
+    	
     			
     }
 
@@ -585,13 +582,8 @@ try {
 
 	    	return listOfCookies;
 	    }
-	
-	
 
 		//get all pbjs features and events fired
-
-
-	
 
     private List<Request> getBidExRequestObjects(List<Request> listOfPwRequestObjects, String environmentHost) {
 
@@ -665,7 +657,9 @@ try {
 				bidexReport.setTotalResponseTime("Not Available");
 			}
 
-			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "b");
+//			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "b");
+			bidexReport.setTotalSizeDownloaded(getBidexSize(request));
+			size.setLength(0);
 			
 			bidexReport.setBidexData(getBidExData(request));
 			
@@ -683,6 +677,42 @@ try {
 
 		return bidexReport;
 
+	}
+	
+	StringBuilder size =new StringBuilder();
+	
+	public String getBidexSize(Request request)
+	{
+		List<String> bidex2=Arrays.asList("ss/nes/bidexl2.js?");
+		String regexForBidex2=".*/(" + String.join("|", bidExHosts) + ")/("
+                + String.join("|", bidex2) + ").*";
+		
+		List<String> bibex1=Arrays.asList("bidexchange.js");
+		String regexForBidex1=".*/(" + String.join("|", bidExHosts) + ")/("
+                + String.join("|", bibex1) + ").*";
+		
+		if(request.url().matches(regexForBidex1))
+		{
+//			size.c("bidexchange.js", request.sizes().responseBodySize + "b");
+			size.append("bidexchange.js : "+ request.sizes().responseBodySize + " b");
+		
+			
+		}
+		if(request.url().matches(regexForBidex2))
+		{
+			size.append("  "+"bidexl2.js : "+ request.sizes().responseBodySize + " b");
+		}
+		else {
+			
+			return request.sizes().responseBodySize + "b";
+			
+			
+		}
+		
+		
+		return size.toString();		
+		
+		
 	}
 	
 	
@@ -896,7 +926,7 @@ try {
 							if(matcher2.find())
 							{
 								
-								System.out.println("match found");
+								
 								
 								 svr = matcher2.group(1);
 								

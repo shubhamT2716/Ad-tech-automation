@@ -57,6 +57,9 @@ public class JsonPath {
 
     public Object readValueFromJson(String data, String jsonPath) throws PathNotFoundException {
     	
+//    	System.out.println("Data: "+data);
+//    	System.out.println("jsonPath: "+jsonPath);
+    	
         return com.jayway.jsonpath.JsonPath.read(data, jsonPath);
     }
 
@@ -75,10 +78,25 @@ public class JsonPath {
              
               String pathValue="Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue;
               
+              
+              System.err.println(pathValue);
+              
               ArrayList<String> al=new ArrayList<>();
               al.add(pathValue);
               
-              return Objects.equals(actualValue.toString(), expectedValue.toString());
+              
+              if(expectedValue.toString().equals(actualValue.toString()))
+              {
+//            	  System.out.println("expectedValue: "+expectedValue+" "+ " actualValue : "+actualValue+" "+" true");
+            	  return true;
+              }
+              else {
+            	  
+//            	  System.out.println("expectedValue: "+expectedValue+" "+ " actualValue : "+actualValue+" "+" false");
+            	  return false;
+              }
+              
+//              return Objects.equals(actualValue.toString(), expectedValue.toString());
 //            }else {
 //            	throw new PathNotFoundException();
 //            }

@@ -26,6 +26,8 @@ public class URLChecksReportModel {
     @Builder.Default
     Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
     @Builder.Default
+    Map<String, Map<String, Object>> bidderDataAssertionKeyVerification=new HashMap<>();
+    @Builder.Default
     Map<String, List<BidderDataAssertion>> bidderDataAssertions = new HashMap<>();
     @Builder.Default
     Map<String, List<HeadersAssertion>> headerAssertions = new HashMap<>();

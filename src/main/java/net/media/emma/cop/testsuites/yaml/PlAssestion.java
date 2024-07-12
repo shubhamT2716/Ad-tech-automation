@@ -1,6 +1,10 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import com.microsoft.playwright.Request;
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +27,10 @@ public class PlAssestion {
 
     @Autowired
     private JsonPath jsonPath;
+    
+    List<String> listOfpayload=Arrays.asList("site","ext","id","imp","ortb2","tmax");
+    
+   
 
     HashMap<String, Object> errorMap = new HashMap<>();
 
@@ -37,6 +46,8 @@ public class PlAssestion {
             List<Request> matchingRequests = filterMatchingRequests(requestList, bidderUrl);
             if (matchingRequests.isEmpty()) continue;
 
+            Map<String , Map<String, Object> > bidderDataKeyVerification=new HashMap<>();
+            
             // Collect all imp objects and their corresponding responses for matching requests
             List<Pair<Object, String>> allImpAndResponsePairs = new ArrayList<>();
             for (Request request : matchingRequests) {
@@ -51,12 +62,60 @@ public class PlAssestion {
                     List<Object> impObjects = readContext.read("$.imp");
                     
                     
-                    
-                    
+                  String jsonString=  readContext.jsonString();
+                  
+                  
+                  ObjectMapper mapper=new ObjectMapper();
+                  
+                  try {
+					JsonNode jsonData=mapper.readValue(jsonString,JsonNode.class);
+					
+					for (String payloadName : listOfpayload) {
+
+//						String data = jsonData.get(payloadName).toString();
+						
+//						Map<String, Object> mp=mapper.convertValue(jsonData.get(payloadName), new  TypeReference<Map<String, Object>>() {});
+						
+//						JsonNode node=mapper.readValue(data, JsonNode.class);
+						
+						if(payloadName=="site"||payloadName=="ext"||payloadName=="ortb2")
+						{
+							for(String name:getKeyFromPayload(payloadName))
+							{
+								JsonNode value=jsonData.get(payloadName).get(name);
+								if(value==null)
+								{
+									bidderDataKeyVerification.computeIfAbsent(payloadName, k->new HashMap<>()).put(name, false);
+								}else {
+									bidderDataKeyVerification.computeIfAbsent(payloadName, k-> new HashMap<>()).put(name, value);
+								}
+							}
+						}
+//						else if(payloadName=="id"||payloadName=="tmax"){
+//							
+//							JsonNode value=jsonData.get(payloadName);
+//							if(value!=null)
+//							{
+//								bidderDataKeyVerification.computeIfAbsent(payloadName, k-> new HashMap<>());
+//							}
+//							
+//							
+//						}
+					}
+					
+					
+				} catch (JsonMappingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JsonProcessingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                  
+                 
+   
                     for (Object imp : impObjects) {
-                    	
-                    	
-                    	
+           
                         allImpAndResponsePairs.add(new Pair<>(imp, responseData));
                     }
                 } catch (PathNotFoundException e) {
@@ -77,6 +136,8 @@ public class PlAssestion {
                     }
 
                     String correspondingResponseData = pair.getValue();
+                    
+//                    System.err.println("ImpData: "+impData);
 
                     if (isPathPresent(assertion, impData)) {
                         if (verifyDataAssertionsRequest(assertion.getRequestData(), impData) &&
@@ -87,19 +148,43 @@ public class PlAssestion {
                     }
                 }
                 if (passedForOneImpObject) {
-                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, "All assertions passed", URLChecksReportModel.TestResult.PASS);
+                	
+                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, "All assertions passed", URLChecksReportModel.TestResult.PASS,bidderDataKeyVerification);
                 } else {
                 
                 	String message="bidderAssertion fail:  "+"Expected Value : "+errorMap.get("expected")+ "  Actual Value : "+errorMap.get("actualValue")+"  JsonPath: "+errorMap.get("jsonPath");
+           
                 	
-                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, message , URLChecksReportModel.TestResult.FAIL);
+                    createReport(urlChecksReportModel, assertion,bidder, bidderUrl, message , URLChecksReportModel.TestResult.FAIL,bidderDataKeyVerification);
                 }
             }
         }
     }
-
     private List<Request> filterMatchingRequests(List<Request> requestList, String bidderUrl) {
         return requestList.stream().filter(request -> request.url().contains(bidderUrl)).collect(Collectors.toList());
+    }
+    
+    
+    private List<String> getKeyFromPayload(String payload)
+    {
+    	Map<String, List<String>> keyData=new HashMap<>();
+    	
+    	List<String> listOfSiteData=Arrays.asList("domain","page","ref","topMostLocation","isTop","canonical_url","og_url");
+    	
+    	List<String> listOfExtData=Arrays.asList("abte","customer_id","prebid_version","gdpr_applies","usp_applies","coppa_applies","screen");
+    	
+    	List<String> listOfOrtb2=Arrays.asList("regs");
+    	
+    	keyData.put("ext", listOfExtData);
+    	keyData.put("ortb2", listOfOrtb2);
+    	keyData.put("site", listOfSiteData);
+    	
+    	List<String> result=keyData.get(payload);
+    	
+    	
+    	
+    	return result;
+    	
     }
 
     private boolean isPathPresent(TestCriteriaBo.BidderDataAssertions assertion, String postData) {
@@ -113,6 +198,7 @@ public class PlAssestion {
             errorMap.put("jsonPath", path);
             errorMap.put("data", "Matching Json Path");
             errorMap.put("actualValue", jsonPath.readValueFromJson(postData,removeJsonPathIndexForImp(path)));
+//            errorMap.put("actualValue", path);
             errorMap.put("expected", expectedValue);
             return false;
         }
@@ -128,6 +214,7 @@ public class PlAssestion {
                 errorMap.put("jsonPath", path);
                 errorMap.put("data", "Request Data");
                 errorMap.put("actualValue", jsonPath.readValueFromJson(parsedData,removeJsonPathIndexForImp(path)));
+//                errorMap.put("actualValue", path);
                 errorMap.put("expected", expectedValue);
                 break;
             }
@@ -146,6 +233,7 @@ public class PlAssestion {
                 errorMap.put("data", "Response Data");
                 errorMap.put("expectedValue ", expectedValue);
                 errorMap.put("actualValue", jsonPath.readValueFromJson(parsedData,removeJsonPathIndexForImp(path)));
+                
                 break;
             }
         }
@@ -153,7 +241,7 @@ public class PlAssestion {
 
     }
 
-    private void createReport(URLChecksReportModel urlChecksReportModel, TestCriteriaBo.BidderDataAssertions bidderDataAssertions , String bidder, String url, String message, URLChecksReportModel.TestResult result) {
+    private void createReport(URLChecksReportModel urlChecksReportModel, TestCriteriaBo.BidderDataAssertions bidderDataAssertions , String bidder, String url, String message, URLChecksReportModel.TestResult result, Map<String, Map<String, Object>> bidderKeyVerification) {
 
         URLChecksReportModel.BidderDataAssertion assertionReport = URLChecksReportModel.BidderDataAssertion.builder()
                 .message(message)
@@ -162,12 +250,14 @@ public class PlAssestion {
                         .jsonPath(bidderDataAssertions.getMatchingJsonPath().getJsonPath())
                         .Value(bidderDataAssertions.getMatchingJsonPath().getExpectedValue())
                         .build()).build();
+        
 
         // Get the existing list or create a new one
         List<URLChecksReportModel.BidderDataAssertion> existingReports = urlChecksReportModel.getBidderDataAssertions().getOrDefault(bidder, new ArrayList<>());
         // Add the new report to the list
         existingReports.add(assertionReport);
         urlChecksReportModel.getBidderDataAssertions().put(bidder, existingReports);
+        urlChecksReportModel.getBidderDataAssertionKeyVerification().putAll(bidderKeyVerification);
     }
 
     public String removeJsonPathIndexForImp(String jsonPath) {

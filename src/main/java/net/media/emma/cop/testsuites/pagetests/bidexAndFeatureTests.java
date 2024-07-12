@@ -26,8 +26,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.Route;
 
@@ -139,9 +141,7 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
     	
     	TestCriteriaBo yaml=simpleBuildYaml(yamlTc);
     	
-    	System.err.println("Yaml Build: "+yaml);
     	
-    	System.out.println("urls: "+yaml.getPublisherUrl());
     	
     	
     	List<String> urlFromNetworkTab=new ArrayList<>();
@@ -153,6 +153,19 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
     	
 		
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
+    	
+//    	BrowserType.LaunchOptions launchOptions=new BrowserType.LaunchOptions().setHeadless(false).setChannel("chrome")
+//    			.setArgs(List.of("--proxy-server=http://104.248.63.17:31583"));
+//    	
+//    	Browser browser=Playwright.create().chromium().launch(launchOptions);
+//    	
+//    	Browser.NewContextOptions contextOptions=new Browser.NewContextOptions()
+//    			.setViewportSize(1280,720)
+//    			.setDeviceScaleFactor(1.0);
+//    			
+//    			
+//    		Page page=browser.newContext(contextOptions).newPage();
+    	
 		try {
 			
 			page=replaceBidExUrl(page, yaml);

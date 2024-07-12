@@ -24,7 +24,7 @@ public class SmokeTestSummeryDto {
 
 	private List<Testdata> testdatas;
 	
-	private Map<String, String> testResultSummery;
+	
 
 	@Setter
 	@Getter
@@ -52,6 +52,7 @@ public class SmokeTestSummeryDto {
 		
 		private BidexData bidexData;
 		
+		private Map<String, Map<String, String>> testResultSummery;
 		
 		
 	}

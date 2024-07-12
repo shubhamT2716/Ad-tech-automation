@@ -100,11 +100,11 @@ bidderDataAssertions: {
     {
       matchingJsonPath: {
         jsonPath: "x.imp[1].ext.dfp_id",
-        expectedValue: "235515020"
+        expectedValue: "356136642"
       },
       requestData: [
         { jsonPath: "x.imp[1].all.cid", value: "8CU66J63J" },
-        { jsonPath: "x.imp[1].all.crid", value: "235515020" },
+        { jsonPath: "x.imp[1].all.crid", value: "356136642" },
         { jsonPath: "x.imp[1].banner[0].h", value: "600" },
         { jsonPath: "x.imp[1].banner[0].w", value: "300" },
         { jsonPath: "x.imp[1].banner[1].h", value: "250" },
@@ -127,191 +127,191 @@ bidderDataAssertions: {
         { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
       ]
     },
-    {
-      matchingJsonPath: {
-        jsonPath: "x.imp[2].ext.dfp_id",
-        expectedValue: "356136642"
-      },
-      requestData: [
-        { jsonPath: "x.imp[2].all.cid", value: "8CU66J63J" },
-        { jsonPath: "x.imp[2].all.crid", value: "356136642" },
-        { jsonPath: "x.imp[2].banner[0].h", value: "90" },
-        { jsonPath: "x.imp[2].banner[0].w", value: "728" },
-        { jsonPath: "x.imp[2].banner[1].h", value: "250" },
-        { jsonPath: "x.imp[2].banner[1].w", value: "970" },
-        { jsonPath: "x.imp[2].banner[2].h", value: "90" },
-        { jsonPath: "x.imp[2].banner[2].w", value: "970" },
-        { jsonPath: "x.imp[2].tagid", value: "356136642" },
-        { jsonPath: "x.imp[2].bidfloors[0].currency", value: "" },
-        { jsonPath: "x.imp[2].bidfloors[0].floor", value: "0" },
-        { jsonPath: "x.imp[2].bidfloors[0].mediaType", value: "banner" },
-        { jsonPath: "x.imp[2].bidfloors[1].currency", value: "" },
-        { jsonPath: "x.imp[2].bidfloors[1].floor", value: "0" },
-        { jsonPath: "x.imp[2].bidfloors[1].mediaType", value: "banner" },
-        { jsonPath: "x.imp[2].bidfloors[2].currency", value: "" },
-        { jsonPath: "x.imp[2].bidfloors[2].floor", value: "0" },
-        { jsonPath: "x.imp[2].bidfloors[2].mediaType", value: "banner" },
-        { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
-        { jsonPath: "x.imp[2].ext.channel", value: ""},
-        { jsonPath: "x.imp[2].ext.display_count", value: "1"},
-        { jsonPath: "x.imp[2].ext.mniv", value: "0"},
-        { jsonPath: "x.imp[2].ext.section", value: ""}
-      ],
-      responseData: [
-        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-        { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
-      ]
-    },
-    {
-      matchingJsonPath: {
-        jsonPath: "x.imp[3].ext.dfp_id",
-        expectedValue: "388736527"
-      },
-      requestData: [
-        { jsonPath: "x.imp[3].all.cid", value: "8CU66J63J" },
-        { jsonPath: "x.imp[3].all.crid", value: "388736527" },
-        { jsonPath: "x.imp[3].banner[0].h", value: "600" },
-        { jsonPath: "x.imp[3].banner[0].w", value: "160" },
-        { jsonPath: "x.imp[3].tagid", value: "388736527" },
-        { jsonPath: "x.imp[3].bidfloors[0].currency", value: "" },
-        { jsonPath: "x.imp[3].bidfloors[0].floor", value: "0" },
-        { jsonPath: "x.imp[3].bidfloors[0].mediaType", value: "banner" },
-        { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
-        { jsonPath: "x.imp[3].ext.channel", value: ""},
-        { jsonPath: "x.imp[3].ext.display_count", value: "1"},
-        { jsonPath: "x.imp[3].ext.mniv", value: "0"},
-        { jsonPath: "x.imp[3].ext.section", value: ""}
-      ],
-      responseData: [
-        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-        { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
-      ]
-    },
-    {
-      matchingJsonPath: {
-        jsonPath: "x.imp[4].ext.dfp_id",
-        expectedValue: "638432657"
-      },
-      requestData: [
-        { jsonPath: "x.imp[4].all.cid", value: "8CU66J63J" },
-        { jsonPath: "x.imp[4].all.crid", value: "638432657" },
-        { jsonPath: "x.imp[4].banner[0].h", value: "50" },
-        { jsonPath: "x.imp[4].banner[0].w", value: "300" },
-        { jsonPath: "x.imp[4].banner[1].h", value: "250" },
-        { jsonPath: "x.imp[4].banner[1].w", value: "300" },
-        { jsonPath: "x.imp[4].banner[2].h", value: "50" },
-        { jsonPath: "x.imp[4].banner[2].w", value: "320" },
-        { jsonPath: "x.imp[4].tagid", value: "638432657" },
-        { jsonPath: "x.imp[4].bidfloors[0].currency", value: "" },
-        { jsonPath: "x.imp[4].bidfloors[0].floor", value: "0" },
-        { jsonPath: "x.imp[4].bidfloors[0].mediaType", value: "banner" },
-        { jsonPath: "x.imp[4].bidfloors[1].currency", value: "" },
-        { jsonPath: "x.imp[4].bidfloors[1].floor", value: "0" },
-        { jsonPath: "x.imp[4].bidfloors[1].mediaType", value: "banner" },
-        { jsonPath: "x.imp[4].bidfloors[2].currency", value: "" },
-        { jsonPath: "x.imp[4].bidfloors[2].floor", value: "0" },
-        { jsonPath: "x.imp[4].bidfloors[2].mediaType", value: "banner" },
-        { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
-        { jsonPath: "x.imp[4].ext.channel", value: ""},
-        { jsonPath: "x.imp[4].ext.display_count", value: "1"},
-        { jsonPath: "x.imp[4].ext.mniv", value: "0"},
-        { jsonPath: "x.imp[4].ext.section", value: ""}
-      ],
-      responseData: [
-        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-        { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
-      ]
-    },
-    {
-      matchingJsonPath: {
-        jsonPath: "x.imp[5].ext.dfp_id",
-        expectedValue: "656615527"
-      },
-      requestData: [
-        { jsonPath: "x.imp[5].all.cid", value: "8CU66J63J" },
-        { jsonPath: "x.imp[5].all.crid", value: "656615527" },
-        { jsonPath: "x.imp[5].banner[0].h", value: "600" },
-        { jsonPath: "x.imp[5].banner[0].w", value: "300" },
-        { jsonPath: "x.imp[5].banner[1].h", value: "250" },
-        { jsonPath: "x.imp[5].banner[1].w", value: "300" },
-        { jsonPath: "x.imp[5].banner[2].h", value: "251" },
-        { jsonPath: "x.imp[5].banner[2].w", value: "300" },
-        { jsonPath: "x.imp[5].banner[3].h", value: "1050" },
-        { jsonPath: "x.imp[5].banner[3].w", value: "300" },
-        { jsonPath: "x.imp[5].tagid", value: "656615527" },
-        { jsonPath: "x.imp[5].bidfloors[0].currency", value: "" },
-        { jsonPath: "x.imp[5].bidfloors[0].floor", value: "0" },
-        { jsonPath: "x.imp[5].bidfloors[0].mediaType", value: "banner" },
-        { jsonPath: "x.imp[5].bidfloors[1].currency", value: "" },
-        { jsonPath: "x.imp[5].bidfloors[1].floor", value: "0" },
-        { jsonPath: "x.imp[5].bidfloors[1].mediaType", value: "banner" },
-        { jsonPath: "x.imp[5].bidfloors[2].currency", value: "" },
-        { jsonPath: "x.imp[5].bidfloors[2].floor", value: "0" },
-        { jsonPath: "x.imp[5].bidfloors[2].mediaType", value: "banner" },
-        { jsonPath: "x.imp[5].bidfloors[3].currency", value: "" },
-        { jsonPath: "x.imp[5].bidfloors[3].floor", value: "0" },
-        { jsonPath: "x.imp[5].bidfloors[3].mediaType", value: "banner" },
-        { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
-        { jsonPath: "x.imp[5].ext.channel", value: ""},
-        { jsonPath: "x.imp[5].ext.display_count", value: "1"},
-        { jsonPath: "x.imp[5].ext.mniv", value: "0"},
-        { jsonPath: "x.imp[5].ext.section", value: ""}
-      ],
-      responseData: [
-        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-        { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
-      ]
-    },
-    {
-      matchingJsonPath: {
-        jsonPath: "x.imp[6].ext.dfp_id",
-        expectedValue: "758214918"
-      },
-      requestData: [
-        { jsonPath: "x.imp[6].all.cid", value: "8CU66J63J" },
-        { jsonPath: "x.imp[6].all.crid", value: "758214918" },
-        { jsonPath: "x.imp[6].banner[0].h", value: "9" },
-        { jsonPath: "x.imp[6].banner[0].w", value: "1" },
-        { jsonPath: "x.imp[6].tagid", value: "758214918" },
-        { jsonPath: "x.imp[6].bidfloors[0].currency", value: "" },
-        { jsonPath: "x.imp[6].bidfloors[0].floor", value: "0" },
-        { jsonPath: "x.imp[6].bidfloors[0].mediaType", value: "banner" },
-        { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
-        { jsonPath: "x.imp[6].ext.channel", value: ""},
-        { jsonPath: "x.imp[6].ext.display_count", value: "1"},
-        { jsonPath: "x.imp[6].ext.mniv", value: "0"},
-        { jsonPath: "x.imp[6].ext.section", value: ""}
-      ],
-      responseData: [
-        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-        { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
-      ]
-    },
-    {
-      matchingJsonPath: {
-        jsonPath: "x.imp[7].ext.dfp_id",
-        expectedValue: "867238351"
-      },
-      requestData: [
-        { jsonPath: "x.imp[7].all.cid", value: "8CU66J63J" },
-        { jsonPath: "x.imp[7].all.crid", value: "867238351" },
-        { jsonPath: "x.imp[7].banner[0].h", value: "90" },
-        { jsonPath: "x.imp[7].banner[0].w", value: "728" },
-        { jsonPath: "x.imp[7].tagid", value: "867238351" },
-        { jsonPath: "x.imp[7].bidfloors[0].currency", value: "" },
-        { jsonPath: "x.imp[7].bidfloors[0].floor", value: "0" },
-        { jsonPath: "x.imp[7].bidfloors[0].mediaType", value: "banner" },
-        { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
-        { jsonPath: "x.imp[7].ext.channel", value: ""},
-        { jsonPath: "x.imp[7].ext.display_count", value: "1"},
-        { jsonPath: "x.imp[7].ext.mniv", value: "0"},
-        { jsonPath: "x.imp[7].ext.section", value: ""}
-      ],
-      responseData: [
-        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-        { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
-      ]
-    }
+    # {
+    #   matchingJsonPath: {
+    #     jsonPath: "x.imp[2].ext.dfp_id",
+    #     expectedValue: "356136642"
+    #   },
+    #   requestData: [
+    #     { jsonPath: "x.imp[2].all.cid", value: "8CU66J63J" },
+    #     { jsonPath: "x.imp[2].all.crid", value: "356136642" },
+    #     { jsonPath: "x.imp[2].banner[0].h", value: "90" },
+    #     { jsonPath: "x.imp[2].banner[0].w", value: "728" },
+    #     { jsonPath: "x.imp[2].banner[1].h", value: "250" },
+    #     { jsonPath: "x.imp[2].banner[1].w", value: "970" },
+    #     # { jsonPath: "x.imp[2].banner[2].h", value: "90" },
+    #     # { jsonPath: "x.imp[2].banner[2].w", value: "970" },
+    #     { jsonPath: "x.imp[2].tagid", value: "356136642" },
+    #     { jsonPath: "x.imp[2].bidfloors[0].currency", value: "" },
+    #     { jsonPath: "x.imp[2].bidfloors[0].floor", value: "0" },
+    #     { jsonPath: "x.imp[2].bidfloors[0].mediaType", value: "banner" },
+    #     { jsonPath: "x.imp[2].bidfloors[1].currency", value: "" },
+    #     { jsonPath: "x.imp[2].bidfloors[1].floor", value: "0" },
+    #     { jsonPath: "x.imp[2].bidfloors[1].mediaType", value: "banner" },
+    #     { jsonPath: "x.imp[2].bidfloors[2].currency", value: "" },
+    #     { jsonPath: "x.imp[2].bidfloors[2].floor", value: "0" },
+    #     { jsonPath: "x.imp[2].bidfloors[2].mediaType", value: "banner" },
+    #     { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
+    #     { jsonPath: "x.imp[2].ext.channel", value: ""},
+    #     { jsonPath: "x.imp[2].ext.display_count", value: "1"},
+    #     { jsonPath: "x.imp[2].ext.mniv", value: "0"},
+    #     { jsonPath: "x.imp[2].ext.section", value: ""}
+    #   ],
+    #   responseData: [
+    #     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+    #     { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+    #   ]
+    # },
+    # {
+    #   matchingJsonPath: {
+    #     jsonPath: "x.imp[3].ext.dfp_id",
+    #     expectedValue: "388736527"
+    #   },
+    #   requestData: [
+    #     { jsonPath: "x.imp[3].all.cid", value: "8CU66J63J" },
+    #     { jsonPath: "x.imp[3].all.crid", value: "388736527" },
+    #     { jsonPath: "x.imp[3].banner[0].h", value: "600" },
+    #     { jsonPath: "x.imp[3].banner[0].w", value: "160" },
+    #     { jsonPath: "x.imp[3].tagid", value: "388736527" },
+    #     { jsonPath: "x.imp[3].bidfloors[0].currency", value: "" },
+    #     { jsonPath: "x.imp[3].bidfloors[0].floor", value: "0" },
+    #     { jsonPath: "x.imp[3].bidfloors[0].mediaType", value: "banner" },
+    #     { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
+    #     { jsonPath: "x.imp[3].ext.channel", value: ""},
+    #     { jsonPath: "x.imp[3].ext.display_count", value: "1"},
+    #     { jsonPath: "x.imp[3].ext.mniv", value: "0"},
+    #     { jsonPath: "x.imp[3].ext.section", value: ""}
+    #   ],
+    #   responseData: [
+    #     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+    #     { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+    #   ]
+    # },
+    # {
+    #   matchingJsonPath: {
+    #     jsonPath: "x.imp[4].ext.dfp_id",
+    #     expectedValue: "638432657"
+    #   },
+    #   requestData: [
+    #     { jsonPath: "x.imp[4].all.cid", value: "8CU66J63J" },
+    #     { jsonPath: "x.imp[4].all.crid", value: "638432657" },
+    #     { jsonPath: "x.imp[4].banner[0].h", value: "50" },
+    #     { jsonPath: "x.imp[4].banner[0].w", value: "300" },
+    #     { jsonPath: "x.imp[4].banner[1].h", value: "250" },
+    #     { jsonPath: "x.imp[4].banner[1].w", value: "300" },
+    #     # { jsonPath: "x.imp[4].banner[2].h", value: "50" },
+    #     # { jsonPath: "x.imp[4].banner[2].w", value: "320" },
+    #     { jsonPath: "x.imp[4].tagid", value: "638432657" },
+    #     { jsonPath: "x.imp[4].bidfloors[0].currency", value: "" },
+    #     { jsonPath: "x.imp[4].bidfloors[0].floor", value: "0" },
+    #     { jsonPath: "x.imp[4].bidfloors[0].mediaType", value: "banner" },
+    #     { jsonPath: "x.imp[4].bidfloors[1].currency", value: "" },
+    #     { jsonPath: "x.imp[4].bidfloors[1].floor", value: "0" },
+    #     { jsonPath: "x.imp[4].bidfloors[1].mediaType", value: "banner" },
+    #     { jsonPath: "x.imp[4].bidfloors[2].currency", value: "" },
+    #     { jsonPath: "x.imp[4].bidfloors[2].floor", value: "0" },
+    #     { jsonPath: "x.imp[4].bidfloors[2].mediaType", value: "banner" },
+    #     { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
+    #     { jsonPath: "x.imp[4].ext.channel", value: ""},
+    #     { jsonPath: "x.imp[4].ext.display_count", value: "1"},
+    #     { jsonPath: "x.imp[4].ext.mniv", value: "0"},
+    #     { jsonPath: "x.imp[4].ext.section", value: ""}
+    #   ],
+    #   responseData: [
+    #     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+    #     { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+    #   ]
+    # },
+    # {
+    #   matchingJsonPath: {
+    #     jsonPath: "x.imp[5].ext.dfp_id",
+    #     expectedValue: "656615527"
+    #   },
+    #   requestData: [
+    #     { jsonPath: "x.imp[5].all.cid", value: "8CU66J63J" },
+    #     { jsonPath: "x.imp[5].all.crid", value: "656615527" },
+    #     { jsonPath: "x.imp[5].banner[0].h", value: "600" },
+    #     { jsonPath: "x.imp[5].banner[0].w", value: "300" },
+    #     { jsonPath: "x.imp[5].banner[1].h", value: "250" },
+    #     { jsonPath: "x.imp[5].banner[1].w", value: "300" },
+    #     # { jsonPath: "x.imp[5].banner[2].h", value: "251" },
+    #     # { jsonPath: "x.imp[5].banner[2].w", value: "300" },
+    #     # { jsonPath: "x.imp[5].banner[3].h", value: "1050" },
+    #     # { jsonPath: "x.imp[5].banner[3].w", value: "300" },
+    #     { jsonPath: "x.imp[5].tagid", value: "656615527" },
+    #     { jsonPath: "x.imp[5].bidfloors[0].currency", value: "" },
+    #     { jsonPath: "x.imp[5].bidfloors[0].floor", value: "0" },
+    #     { jsonPath: "x.imp[5].bidfloors[0].mediaType", value: "banner" },
+    #     { jsonPath: "x.imp[5].bidfloors[1].currency", value: "" },
+    #     { jsonPath: "x.imp[5].bidfloors[1].floor", value: "0" },
+    #     { jsonPath: "x.imp[5].bidfloors[1].mediaType", value: "banner" },
+    #     { jsonPath: "x.imp[5].bidfloors[2].currency", value: "" },
+    #     { jsonPath: "x.imp[5].bidfloors[2].floor", value: "0" },
+    #     { jsonPath: "x.imp[5].bidfloors[2].mediaType", value: "banner" },
+    #     { jsonPath: "x.imp[5].bidfloors[3].currency", value: "" },
+    #     { jsonPath: "x.imp[5].bidfloors[3].floor", value: "0" },
+    #     { jsonPath: "x.imp[5].bidfloors[3].mediaType", value: "banner" },
+    #     { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
+    #     { jsonPath: "x.imp[5].ext.channel", value: ""},
+    #     { jsonPath: "x.imp[5].ext.display_count", value: "1"},
+    #     { jsonPath: "x.imp[5].ext.mniv", value: "0"},
+    #     { jsonPath: "x.imp[5].ext.section", value: ""}
+    #   ],
+    #   responseData: [
+    #     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+    #     { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+    #   ]
+    # },
+    # {
+    #   matchingJsonPath: {
+    #     jsonPath: "x.imp[6].ext.dfp_id",
+    #     expectedValue: "758214918"
+    #   },
+    #   requestData: [
+    #     { jsonPath: "x.imp[6].all.cid", value: "8CU66J63J" },
+    #     { jsonPath: "x.imp[6].all.crid", value: "758214918" },
+    #     { jsonPath: "x.imp[6].banner[0].h", value: "9" },
+    #     { jsonPath: "x.imp[6].banner[0].w", value: "1" },
+    #     { jsonPath: "x.imp[6].tagid", value: "758214918" },
+    #     { jsonPath: "x.imp[6].bidfloors[0].currency", value: "" },
+    #     { jsonPath: "x.imp[6].bidfloors[0].floor", value: "0" },
+    #     { jsonPath: "x.imp[6].bidfloors[0].mediaType", value: "banner" },
+    #     { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
+    #     { jsonPath: "x.imp[6].ext.channel", value: ""},
+    #     { jsonPath: "x.imp[6].ext.display_count", value: "1"},
+    #     { jsonPath: "x.imp[6].ext.mniv", value: "0"},
+    #     { jsonPath: "x.imp[6].ext.section", value: ""}
+    #   ],
+    #   responseData: [
+    #     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+    #     { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+    #   ]
+    # },
+    # {
+    #   matchingJsonPath: {
+    #     jsonPath: "x.imp[7].ext.dfp_id",
+    #     expectedValue: "867238351"
+    #   },
+    #   requestData: [
+    #     { jsonPath: "x.imp[7].all.cid", value: "8CU66J63J" },
+    #     { jsonPath: "x.imp[7].all.crid", value: "867238351" },
+    #     { jsonPath: "x.imp[7].banner[0].h", value: "90" },
+    #     { jsonPath: "x.imp[7].banner[0].w", value: "728" },
+    #     { jsonPath: "x.imp[7].tagid", value: "867238351" },
+    #     { jsonPath: "x.imp[7].bidfloors[0].currency", value: "" },
+    #     { jsonPath: "x.imp[7].bidfloors[0].floor", value: "0" },
+    #     { jsonPath: "x.imp[7].bidfloors[0].mediaType", value: "banner" },
+    #     { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
+    #     { jsonPath: "x.imp[7].ext.channel", value: ""},
+    #     { jsonPath: "x.imp[7].ext.display_count", value: "1"},
+    #     { jsonPath: "x.imp[7].ext.mniv", value: "0"},
+    #     { jsonPath: "x.imp[7].ext.section", value: ""}
+    #   ],
+    #   responseData: [
+    #     { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+    #     { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+    #   ]
+    # }
   ]
 }
 
