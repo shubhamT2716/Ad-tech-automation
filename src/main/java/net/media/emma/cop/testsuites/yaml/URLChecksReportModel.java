@@ -34,7 +34,7 @@ public class URLChecksReportModel {
 
 
     enum TestResult {
-        PASS, FAIL, NA
+        PASS, FAIL, NOTPASS, NA
     }
 
     @Getter
@@ -162,7 +162,7 @@ public class URLChecksReportModel {
             if (!negativeUrlChecks.containsKey(key)) {
 //                negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
                 
-                negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
+                negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).testResult(TestResult.NOTPASS).urlPattern(value).build());
                 
             
             } else {

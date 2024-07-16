@@ -7,9 +7,15 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.TimeoutError;
 import com.microsoft.playwright.options.Cookie;
-import com.microsoft.playwright.options.LoadState;
+
+
+
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
+import net.media.emma.cop.testsuites.compliance.ComplianceTestReport.BidExController;
+import net.media.emma.cop.testsuites.compliance.ComplianceTestReport.TestData;
+import net.media.emma.cop.testsuites.compliance.ComplianceURLChecksReportModel.NegativeURLChecks;
+
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
 import org.slf4j.Logger;
@@ -17,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -37,7 +44,11 @@ public class ComplianceTestSuite {
 
     @Value("${browserPath}")
     private String browserPath;
-
+   
+    
+    @Autowired
+    private BidexOrClientagData data;
+    
     private static String windscribeLogin = "xpath=//button[text()='Login']";
     private static String windscribeUsername = "xpath=//input[@name='username']";
     private static String windscribepassword = "xpath=//input[@name='password']";
@@ -48,7 +59,7 @@ public class ComplianceTestSuite {
     private static String windscribeLocations = "xpath=//button[@aria-label='Locations']";
     private static String windscribeSearchLocation = "xpath=//div//i";
     private static String windscribeSearchbox = "xpath=//input[contains(@class,'css-1c1txoj')]";
-    private static String windscribeParisLoc = "xpath=(//div[@aria-label='Paris'])[1]";
+    
 //    private static String acceptAllBtn = "xpath=//button[text()='I Accept']";
     
     private static String acceptAllBtn="xpath=//*[@id=\"onetrust-accept-btn-handler\"]";
@@ -59,7 +70,14 @@ public class ComplianceTestSuite {
     String url = "chrome-extension://hnmpcagpplmpfojmgmnngilcnanddlhb/popup.html";
     String windScribeExtensionPath = System.getProperty("user.dir") + "/extensions/hnmpcagpplmpfojmgmnngilcnanddlhb/3.4.6_0";
 
-    public String getTestResults(ComplianceTestCriteria testData) throws InterruptedException {
+    // List of strings "1", "2"
+    List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
+            "hbx-stage.media.net","hbx-stage-2.media.net","hbx-stage-3.media.net","hbx-stage-4.media.net","hbx-stage-1.media.net","ssp-stage-hb.media.net","ssp-stage-hb-1.media.net","ssp-stage-hb-2.media.net","ssp-stage-hb-3.media.net","ssp-stage-hb-4.media.net");
+    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js","ss/nes/bidexl2.js");// , "catchpoint_content.js",
+    // "topics.js");
+    
+    
+    public ComplianceTestReport getTestResults(ComplianceTestCriteria testData) throws InterruptedException {
 
         String harFileName = harFileBasePath + CommonBrowserUtil.getFileNameForHar();
         BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(), harFileName, browserPath);
@@ -79,7 +97,7 @@ public class ComplianceTestSuite {
         browserContext.setDefaultNavigationTimeout(90000);//90 s
 
         Page page = browserContext.newPage();
-        openWindscribe(page);
+        openWindscribe(page, testData.getLocation());
         page.close();
         page = browserContext.newPage();
         page.navigate(testData.getPublisherUrl());
@@ -115,8 +133,16 @@ public class ComplianceTestSuite {
 //        page.waitForLoadState(LoadState.NETWORKIDLE);
 
         updateTestCriteriaGdprString(testData,gdprString);
+        
+       Thread.sleep(30000);        
+        BidExController  bidExController=getBidData(requestList,testData);
 
-        String results = getNetworkCallAssertions3(allCookies,urlFromNetworkTab, requestList,testData);
+        ComplianceURLChecksReportModel urlCheck = getNetworkCallAssertions3(allCookies,urlFromNetworkTab, requestList,testData);
+        
+        ComplianceTestReport results=ComplianceTestReport.builder().testMetaData(TestData.builder()
+        		.environment(testData.getEnvironment()).publisherUrl(testData.getPublisherUrl()).testTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+        		.userAgent(testData.getUserAgent()).build()).bidExController(bidExController)
+        		.checksReportModel(urlCheck).build();
         
         return results;
         
@@ -125,7 +151,7 @@ public class ComplianceTestSuite {
         	
         	e.printStackTrace();
         	
-        	return e.getMessage();
+        	return null;
 			
 		}
         finally {
@@ -139,32 +165,150 @@ public class ComplianceTestSuite {
        
     }
 
-    public List<String> getExtensionList() {
+    private BidExController getBidData(List<Request> requestList, ComplianceTestCriteria testData) {
+		
+    	
+    	BidExController bidExController=BidExController.builder().build();
+    	List<Request> listOfUrls=getBidexUrls(requestList, testData.getEnvironment());
+    	
+    	for(Request request:listOfUrls)
+    	{
+    		
+    		bidExController.getMatchingUrls().add(request.url());
+    		
+    		if(request.failure()!=null)
+    		{
+    			bidExController.getConsoleMessages().add("bidex or clinetag request failed"+request.failure());
+    		}
+    		
+    		
+    		
+    		if(request.timing()!=null)
+    		{
+    			Date  date=new Date((long) (request.timing().responseEnd-request.timing().responseStart));
+    			bidExController.setTotalResponseTime(date.getTime()+" ms");
+    			
+    		}else {
+    			
+    			bidExController.setTotalResponseTime("not available");
+    		}
+    		
+    		
+    		String uSize=getBidexSize(request);
+    		
+    		System.err.println(uSize);
+    		
+    		bidExController.setTotalSizeDownloaded(uSize); 
+    		
+//    		bidExController.setTotalSizeDownloaded(getBidexSize(request));
+    		
+    		bidExController.setBidexData(this.data.getBidExData(request));
+    		
+    	}
+    	
+    	size.setLength(0);
+    	
+    	if(listOfUrls.size()==0)
+    	{
+    		bidExController.getConsoleMessages().add("bidex or clientag data not found");
+    	}
+    	
+    	
+    	return bidExController;
+    	
+    	
+	}
+    
+    
+    
+StringBuilder size =new StringBuilder();
+	
+	public String getBidexSize(Request request)
+	{
+		List<String> bidex2=Arrays.asList("ss/nes/bidexl2.js?");
+		String regexForBidex2=".*/(" + String.join("|", bidExHosts) + ")/("
+                + String.join("|", bidex2) + ").*";
+		
+		List<String> bibex1=Arrays.asList("bidexchange.js");
+		String regexForBidex1=".*/(" + String.join("|", bidExHosts) + ")/("
+                + String.join("|", bibex1) + ").*";
+		
+		if(request.url().matches(regexForBidex1))
+		{
+//			size.c("bidexchange.js", request.sizes().s + "b");
+			
+			System.err.println(" Size :  "+request.sizes().responseBodySize+" :  "+request.sizes().requestBodySize+" :   "+request.sizes());
+			size.append("bidexchange.js : "+ request.sizes().responseBodySize + " b");
+		
+			
+		}
+		if(request.url().matches(regexForBidex2))
+		{
+			System.err.println(" Size :  "+request.sizes().responseBodySize);
+			System.err.println(" Size :  "+request.sizes().responseBodySize+" :  "+request.sizes().requestBodySize+" :   "+request.sizes());
+
+			size.append("  "+"bidexl2.js : "+ request.sizes().responseBodySize + " b");
+		}
+		else {
+			
+			return request.sizes().responseBodySize + "b";
+			
+			
+		}
+		
+		
+		return size.toString();		
+		
+		
+	}
+	
+    
+    
+    private List<Request> getBidexUrls(List<Request> requestList, String env)
+    {
+    	
+    	 String regEx = ".*/(" + String.join("|", bidExHosts) + "|" + env + ")/("
+                 + String.join("|", bidExControlers) + ").*";
+    	
+    	 List<Request> listOfUrls=new ArrayList<>();
+    	 
+    	for(Request request:requestList)
+    	{
+    		if(request.url().matches(regEx))
+    		{
+    			listOfUrls.add(request);
+    		}
+    	}
+    	
+    	return listOfUrls;
+    }
+
+	public List<String> getExtensionList() {
         List<String> ext = new ArrayList<>();
         ext.add("--disable-extensions-except=" + windScribeExtensionPath);
         ext.add("--load-extension=" + windScribeExtensionPath);
         return ext;
     }
 
-    public void openWindscribe(Page page) throws InterruptedException
+    public void openWindscribe(Page page , String location) throws InterruptedException
     {
         page.navigate(url);
         page.waitForTimeout(2000);
-        if (page.isVisible(windscribeLogin))
-        {
-            try
-            {
-                loginToWindscribe(page);
-                setLocationInWindscribe(page);
-            } catch (TimeoutError e)
-            {
-                log.error("Element not found ", e);
-            }
-        }
-        else
-        {
-            setLocationInWindscribe(page);
-        }
+//        if (page.isVisible(windscribeLogin))
+//        {
+//            try
+//            {
+//                loginToWindscribe(page);
+//                setLocationInWindscribe(page , location);
+//            } catch (TimeoutError e)
+//            {
+//                log.error("Element not found ", e);
+//            }
+//        }
+//        else
+//        {
+            setLocationInWindscribe(page, location);
+//        }
     }
 
     private static void loginToWindscribe(Page page)
@@ -178,17 +322,20 @@ public class ComplianceTestSuite {
         //page.locator(windscribeSkip).click();
     }
 
-    private static void setLocationInWindscribe(Page page)
+    private static void setLocationInWindscribe(Page page , String location)
     {
+    	
+    	String windscribeParisLoc = "xpath=(//div[@aria-label='"+location+"'])[1]";
+    	
         page.locator(windscribeLocations).click();
         page.locator(windscribeSearchLocation).click();
         page.locator(windscribeSearchbox).click();
-        page.locator(windscribeSearchbox).fill("Paris");
+        page.locator(windscribeSearchbox).fill(location);
         page.locator(windscribeParisLoc).click();
         page.close();
     }
 
-    private String getNetworkCallAssertions3(List<Cookie> allCookies,List<String> requestList, List<Request> requests, ComplianceTestCriteria testData) {
+    private ComplianceURLChecksReportModel getNetworkCallAssertions3(List<Cookie> allCookies,List<String> requestList, List<Request> requests, ComplianceTestCriteria testData) {
 
         ComplianceURLChecksReportModel urlChecks = ComplianceURLChecksReportModel.builder().build();
 
@@ -220,19 +367,23 @@ public class ComplianceTestSuite {
                 continue;
             }
 
-           /* urlData = negativeURLPatternExists(requestUrl, testData);
+            urlData = negativeURLPatternExists(requestUrl, testData);
 
             if(urlData != null){
-                URLChecks.NegativeURLChecks nuc = urlChecks.getNegativeUrlChecks().get(urlData.getKey());
+                NegativeURLChecks nuc = urlChecks.getNegativeUrlChecks().get(urlData.getKey());
                 if(nuc == null){
-                    urlChecks.getNegativeUrlChecks().put(urlData.getKey(), URLChecks.NegativeURLChecks.builder().label(urlData.getKey())
-                            .urlPattern(urlData.getValue())
-                            .matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl))))
-                            .build());
+//                    urlChecks.getNegativeUrlChecks().put(urlData.getKey(), URLChecks.NegativeURLChecks.builder().label(urlData.getKey())
+//                            .urlPattern(urlData.getValue())
+//                            .matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl))))
+//                            .build());
+                	
+                	urlChecks.getNegativeUrlChecks().put(urlData.getKey(),
+							NegativeURLChecks.builder().label(urlData.getKey()).urlPattern(urlData.getValue())
+									.matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl)))).build());
                 }else{
                     nuc.getMatchingUrls().add(requestUrl);
                 }
-            }*/
+            }
         }
 
         urlChecks.updateMatchingUrlsCount();
@@ -240,13 +391,13 @@ public class ComplianceTestSuite {
         urlChecks.verifyPositiveKeyValChecks();
         urlChecks.verifyCookies(allCookies,testData.getCookiesToVerify());
 
-        try {
-            return jsonWriter.writeValueAsString(urlChecks);
-        } catch (JsonProcessingException e) {
-            log.error("json processing error", e);
-        }
+//        try {
+//            return jsonWriter.writeValueAsString(urlChecks);
+//        } catch (JsonProcessingException e) {
+//            log.error("json processing error", e);
+//        }
 
-        return "json error";
+        return urlChecks;
     }
 
     private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, ComplianceTestCriteria testData) {
@@ -262,7 +413,7 @@ public class ComplianceTestSuite {
         return null;
     }
 
- /*   private Map.Entry<String, String> negativeURLPatternExists(String currentUrl, ComplianceTestCriteria testData){
+    private Map.Entry<String, String> negativeURLPatternExists(String currentUrl, ComplianceTestCriteria testData){
 
         for(Map.Entry<String, String> urlData : testData.getNetworkCallsNegative().entrySet()){
 
@@ -274,7 +425,7 @@ public class ComplianceTestSuite {
 
 
         return null;
-    }*/
+    }
 
     private Object getTcfApiResponse(Page page) {
     	try {

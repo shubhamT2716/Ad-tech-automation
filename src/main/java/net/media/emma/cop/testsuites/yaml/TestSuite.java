@@ -350,7 +350,7 @@ try {
 			
 		try {
 			
-			String fileName=this.fileHandling.setReportToFile(testData, model);
+			String fileName=this.fileHandling.setReportToFile(testData, model,testReport);
 			
 			String downloadUrl = "/downloadFile?fileName=" + URLEncoder.encode(fileName, "UTF-8");
 			
@@ -659,13 +659,14 @@ try {
 
 //			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "b");
 			bidexReport.setTotalSizeDownloaded(getBidexSize(request));
-			size.setLength(0);
+			
 			
 			bidexReport.setBidexData(getBidExData(request));
 			
 			
 			
 		}
+		size.setLength(0);
 
 		if (bidExRequestObjects.size() == 0) {
 			bidexReport.getConsoleMessages().add("No bidex request found");
@@ -720,7 +721,7 @@ try {
 	
 	
 
-	private BidexData getBidExData(Request request) {
+	public BidexData getBidExData(Request request) {
 
 		BidexData bidexData = BidexData.builder().build();
 		

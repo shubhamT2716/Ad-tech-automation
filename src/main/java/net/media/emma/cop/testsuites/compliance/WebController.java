@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
@@ -33,6 +34,10 @@ public class WebController {
 
     @Autowired
     ComplianceTestSuite complianceTestSuite;
+    
+    @Autowired
+    ObjectMapper yamlMapper;
+    
     @Autowired
     FileOperations fileOperations;
     
@@ -59,7 +64,12 @@ public class WebController {
             ComplianceTestCriteria yamlTc = mapper.readValue(yaml, ComplianceTestCriteria.class);
             // mav.addObject("message", yamlTc.getEnvironment());
             //mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
-            mav.addObject("message", complianceTestSuite.getTestResults(yamlTc));
+            
+            ComplianceTestReport complianceTestReport=complianceTestSuite.getTestResults(yamlTc);
+            
+            JsonNode jsonNode=yamlMapper.convertValue(complianceTestReport, JsonNode.class);
+            
+            mav.addObject("message", jsonNode);
 
         } catch (JsonProcessingException | InterruptedException e) {
             log.error("YAML Processing Error", e);

@@ -2,10 +2,13 @@ package net.media.emma.cop.testsuites.compliance;
 
 import lombok.Builder;
 import lombok.Getter;
+
 import lombok.Setter;
 import lombok.ToString;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
 
-import java.util.Date;
+import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,25 +17,47 @@ public class ComplianceTestReport {
 
     TestData testMetaData;
     BidExController bidExController;
-    @Builder.Default
-    List<UrlChecks> urlChecks = new java.util.ArrayList<UrlChecks>();
-    NetworkAnalytics networkAnalytics;
+    ComplianceURLChecksReportModel checksReportModel;
+    
+//    @Builder.Default
+//    List<UrlChecks> urlChecks = new java.util.ArrayList<UrlChecks>();
+//    NetworkAnalytics networkAnalytics;
 
     @Getter @Setter @Builder @ToString
     public static class TestData{
         String publisherUrl;
         String environment;
         String userAgent;
-        Date testTime;
+        String testTime;
         TestStatus testStatus;
     }
 
     @Getter @Setter @Builder @ToString
     public static class BidExController{
-        TestStatus testStatus;
-        UrlData urlData;
-        String jsErrors;
+//        TestStatus testStatus;
+//        UrlData urlData;
+//        String jsErrors;
+    	@Builder.Default
+		List<String> matchingUrls = new ArrayList<>();
+		String totalSizeDownloaded;
+		String totalResponseTime;
+		@Builder.Default
+		List<String> consoleMessages = new ArrayList<>();
+		BidexData bidexData;
+    	
     }
+    
+    
+//    @Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
+//    public static class BidexData{
+//    	
+//    	String svr;
+//		String sugd;
+//		String cid;
+//		String itype;
+//		String ct;
+//    	
+//    }
 
     @Getter @Setter @Builder @ToString
     public static class UrlChecks{

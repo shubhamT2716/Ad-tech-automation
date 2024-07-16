@@ -453,7 +453,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			String key=entry.getKey();
 			NegativeURLChecks value=entry.getValue();
 			
-			if(value.getTestResult().toString().equals("PASS"))
+			if(value.getTestResult().toString().equals("NOTPASS"))
 			{
 //				testResult.put(key, "NOT PASS");
 				

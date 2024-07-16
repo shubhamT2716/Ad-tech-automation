@@ -17,6 +17,7 @@ public class ComplianceTestCriteria {
     List<Map<String, String>> cookies;
     List<Map<String, String>> cookiesToVerify;
     Map<String, String> networkCallsPositive;
+    Map<String, String> networkCallsNegative;
 
     Map<String, Map<String, Set<String>>> keysToVerifyPositive;
     Map<String, Map<String, Set<String>>> keysToVerifyNegative;

@@ -15,6 +15,12 @@ networkCallsPositive: {
   # GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 }
 
+networkCallsNegative: {
+  nerrPing: "https://hblg.media.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+}
+
+
 keysToVerifyPositive: {
   PRLog: {
     tcf_cmp: ["28"],
