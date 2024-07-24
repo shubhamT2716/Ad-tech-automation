@@ -171,12 +171,28 @@ public class URLChecksReportModel {
             }
         });
     }
+    
+    
+    
+//    public void verifyData(TestCriteriaBo testData, PositiveURLChecks positiveURLChecks)
+//    {
+//    	testData.getKeysToVerifyPositive().entrySet().forEach(entry->{
+//    		
+//    		String key=entry.getKey();
+//    		Map<String, Set<String>> value=entry.getValue();
+//    		
+//    		positiveURLChecks.getq
+//    		
+//    		
+//    	});
+//    }
+//    
 
     public void verifyPositiveKeyValChecks() {
 
         positiveUrlChecks.forEach((callLabel, callData) -> { // key, value --> lable, PositiveURLChecks obj
 
-            if (callData.getPositiveKeyValChecks() != null)
+            if (callData.getPositiveKeyValChecks() != null) {
 
                 callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
 
@@ -187,6 +203,9 @@ public class URLChecksReportModel {
                             actualValues.add(qsMapFromNetworkCall.get(qsParam));
                         }
                     });
+                    
+                  
+                    
 
                     if (!actualValues.equals(listOfValues)) {
                         callData.getTestMessages().add("Positive key value check failed for key: " + qsParam
@@ -195,8 +214,10 @@ public class URLChecksReportModel {
                     }
 
                 });
+                
+            }
 
-            if (callData.getNegativeKeyValChecks() != null)
+            if (callData.getNegativeKeyValChecks() != null) {
 
                 callData.getNegativeKeyValChecks().forEach((qsParam, listOfValues) -> {
 
@@ -224,7 +245,7 @@ public class URLChecksReportModel {
                     }
 
                 });
-
+            }
             if (callData.getAnyOneOfKeyValChecks() != null)
 
                 callData.getAnyOneOfKeyValChecks().forEach((qsParam, listOfValues) -> {

@@ -14,6 +14,8 @@ import java.util.Set;
 
 
 import com.microsoft.playwright.options.Cookie;
+import com.microsoft.playwright.options.LoadState;
+import com.microsoft.playwright.options.Proxy;
 import com.microsoft.playwright.options.Timing;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +76,7 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 
 	String finalConfig = "";
 	String bidexResp = "";
+	
 	ObjectMapper mapper = new ObjectMapper(); 
 	JsonNode replaced;
 
@@ -155,16 +158,21 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
     	
 //    	BrowserType.LaunchOptions launchOptions=new BrowserType.LaunchOptions().setHeadless(false).setChannel("chrome")
-//    			.setArgs(List.of("--proxy-server=http://104.248.63.17:31583"));
+//    			//.setProxy(new Proxy("http://209.190.13.254:8081"))   US
+////    			.setProxy(new Proxy("http://10.2.128.194:3128")) EU
+//    			;
+//    	
+////    			.setArgs(List.of("--proxy-server=http://209.190.13.254:8081"));
 //    	
 //    	Browser browser=Playwright.create().chromium().launch(launchOptions);
 //    	
-//    	Browser.NewContextOptions contextOptions=new Browser.NewContextOptions()
-//    			.setViewportSize(1280,720)
-//    			.setDeviceScaleFactor(1.0);
+//    	Browser.NewContextOptions contextOptions=new Browser.NewContextOptions();
+////    			.setViewportSize(1280,720)
+////    			.setDeviceScaleFactor(1.0);
 //    			
 //    			
 //    		Page page=browser.newContext(contextOptions).newPage();
+//    		page.waitForLoadState(LoadState.DOMCONTENTLOADED);
     	
 		try {
 			
@@ -220,7 +228,7 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 
 		
         page.navigate(yaml.getPublisherUrl());
-        Thread.sleep(15000);
+        Thread.sleep(25000);
 	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -244,12 +252,14 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 		}
 
 		//control in Bidexconfig.java
-		finalConfig = bidexResp.substring(startIndex-12);
-		 JsonNode bidexJson= mapper.readValue(finalConfig, JsonNode.class);
-
-		 
 		
-		page.waitForTimeout(7000);
+
+		finalConfig = bidexResp.substring(startIndex-12);
+		JsonNode  bidexJson= mapper.readValue(finalConfig, JsonNode.class);
+
+		
+		
+		page.waitForTimeout(20000);
 		
 		
 		Map<String, List<Cookie>> cookies = getCookies(page, yaml.getPublisherUrl());
