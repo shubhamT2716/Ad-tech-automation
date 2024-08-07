@@ -14,6 +14,7 @@ public class ComplianceTestCriteria {
     String publisherUrl;
     String environment;
     String userAgent;
+    List<Integer> consents;
     List<Map<String, String>> cookies;
     List<Map<String, String>> cookiesToVerify;
     Map<String, String> networkCallsPositive;

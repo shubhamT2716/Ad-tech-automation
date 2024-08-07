@@ -112,6 +112,8 @@ public class TestSuite implements GenericTestSuite {
 	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js",
 			"ss/nes/bidexl2.js");// , "catchpoint_content.js",
 	// "topics.js");
+	
+	List<String> urlController=Arrays.asList("checksync");
 
 	Object id;
 
@@ -166,7 +168,7 @@ public class TestSuite implements GenericTestSuite {
 
 		if (location != null) {
 			browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(),
-					getExtensionList(), harFileBasePath + harFilePath, browserPath);
+					getExtensionList(), harFileBasePath + harFilePath, browserPath,null);
 			browserContext.clearCookies();
 		} else {
 			browserContext = BrowserFactory.getBc(testData.getUserAgent(), testData.getCookies(),
@@ -249,8 +251,9 @@ public class TestSuite implements GenericTestSuite {
 				consoleMessage = getConsoleErrors(page);
 
 				page.navigate(testData.getPublisherUrl());
-//			page.evaluate(googleRefresh());
-
+		
+				page.evaluate(googleRefresh());
+				
 				pbjsConfigData = getPbjsData(page);
 
 				if (testData.getPbjsEvents() != null || !testData.getPbjsEvents().isEmpty()) {
@@ -266,10 +269,15 @@ public class TestSuite implements GenericTestSuite {
 //			page.wait(100000);
 
 				Thread.sleep(60000);
+				
+			page.close();
+				
 			} catch (Exception e) {
 				log.error("Error while navigating to publisher url: {}", e.getMessage());
 			}
 
+			
+			
 			BidExController bidExController = getBidExData(requestList, testData);
 
 			bidExController.setConsoleMessages(consoleMessage);
@@ -328,11 +336,15 @@ public class TestSuite implements GenericTestSuite {
 				}
 
 			} catch (Exception e) {
+				
+				e.printStackTrace();
 
 				testReport.setUrlChecks(null);
 
 //			testReport.getTestMetaData().setDownloadReport(null);
 			}
+			
+			
 
 			return testReport;
 
@@ -876,9 +888,7 @@ public class TestSuite implements GenericTestSuite {
 							
 							if (matcher.find()) {
 
-								System.out.println("Get data form regex"+matcher.group());
-
-								String extractedData = matcher.group();
+							String extractedData = matcher.group();
 
 							String svr = null;
 //							
@@ -1031,11 +1041,11 @@ public class TestSuite implements GenericTestSuite {
 		return bidexData;
 	}
 
-	private Map.Entry<String, String> positiveURLPatternExists(String currentUrl, TestCriteriaBo testData) {
+	private Map.Entry<String, String> positiveURLPatternExists(Request currentUrl, TestCriteriaBo testData) {
 
 		for (Map.Entry<String, String> urlData : testData.getNetworkCallsPositive().entrySet()) {
 
-			if (currentUrl.startsWith(urlData.getValue())) {
+			if (currentUrl.url().startsWith(urlData.getValue())) {
 
 				return urlData;
 			}
@@ -1068,7 +1078,7 @@ public class TestSuite implements GenericTestSuite {
 
 		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
 
-		for (String requestUrl : requestList) {
+		for (Request requestUrl : requests) {
 
 //			if(!URLDataProcessing.isValidUrl(requestUrl))
 //			{
@@ -1087,18 +1097,18 @@ public class TestSuite implements GenericTestSuite {
 
 					PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
 							.urlPattern(urlData.getValue())
-							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
-							.queryStringMap(new ArrayList<HashMap<String, String>>(
-									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests))))
+							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl.url())))
+							.queryStringMap(new ArrayList<Map<String, String>>(
+									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl.url(), requests))))
 							.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
 							.positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
 							.anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey())).build();
 
 					urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
 				} else {
-					labelExists.getMatchingUrls().add(requestUrl);
+					labelExists.getMatchingUrls().add(requestUrl.url());
 					labelExists.getQueryStringMap()
-							.add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests));
+							.add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl.url(), requests));
 				}
 
 				continue;
@@ -1106,23 +1116,25 @@ public class TestSuite implements GenericTestSuite {
 			
 			
 
-			urlData = negativeURLPatternExists(requestUrl, testData);
+			urlData = negativeURLPatternExists(requestUrl.url(), testData);
 
 			if (urlData != null) {
 				NegativeURLChecks nuc = urlChecks.getNegativeUrlChecks().get(urlData.getKey());
 				if (nuc == null) {
 					urlChecks.getNegativeUrlChecks().put(urlData.getKey(),
 							NegativeURLChecks.builder().label(urlData.getKey()).urlPattern(urlData.getValue())
-									.matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl)))).build());
+									.matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl.url())))).build());
 				} else {
-					nuc.getMatchingUrls().add(requestUrl);
+					nuc.getMatchingUrls().add(requestUrl.url());
 				}
 			}
 		}
-
+		
 		urlChecks.updateMatchingUrlsCount();
 		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
+		urlChecks.verifyData(testData);
+		
 		if (testData.getBidderDataAssertions() != null && testData.getBidderDataUrls() != null) {
 			try {
 				payloadAsserstions.verifyBidderDataAssertions(urlChecks, requests, testData);
@@ -1300,8 +1312,13 @@ public class TestSuite implements GenericTestSuite {
 
 	private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteriaBo testData) {
 
+		List<String> allUrls=new ArrayList<>();
+		allUrls.addAll(bidExControlers);
+		allUrls.addAll(urlController);
+		
+		
 		for (String currentHost : bidExHosts) {
-			for (String currentController : bidExControlers) {
+			for (String currentController : allUrls) {
 
 				browserContext.route("**/" + currentHost + "/" + currentController + "*", route -> {
 
@@ -1331,16 +1348,25 @@ public class TestSuite implements GenericTestSuite {
 					if (testData.getBidexAppendString() != null) {
 						replacedURL = replacedURL.concat(testData.getBidexAppendString());
 					}
+					
+					System.err.println(testData.getEnvironment().contains("hbistage.srv.media.net"));
 
-					if (testData.getEnvironment().matches(".*.hbistage.internal.ad.tech.*")) {
+					if (testData.getEnvironment().contains("hbistage.srv.media.net")) {
 
-						String splitUrl[] = testData.getEnvironment().split("\\.");
-						String username = splitUrl[0];
+					String splitUrl[] = testData.getEnvironment().split("\\.");
+					String username = splitUrl[0];
 						String addToUrl = "&ad_username=" + username;
-						replacedURL = replacedURL.concat(addToUrl);
+						
+						System.err.println(addToUrl);
+						
+//					String user=&ad_username=name
+						replacedURL = replacedURL+"&ad_username=" + username;
+						System.err.println(replacedURL);
+				
+						
 					}
 
-//					log.info("replace Url  =  " + replacedURL);
+					log.info("replace Url  =  " + replacedURL);
 					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
 				});
 			}

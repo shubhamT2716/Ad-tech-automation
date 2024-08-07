@@ -158,8 +158,8 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
     	
 //    	BrowserType.LaunchOptions launchOptions=new BrowserType.LaunchOptions().setHeadless(false).setChannel("chrome")
-//    			//.setProxy(new Proxy("http://209.190.13.254:8081"))   US
-////    			.setProxy(new Proxy("http://10.2.128.194:3128")) EU
+////    			.setProxy(new Proxy("http://209.190.13.254:8081"))  // US
+//    			.setProxy(new Proxy("http://10.2.128.194:3128")) //EU
 //    			;
 //    	
 ////    			.setArgs(List.of("--proxy-server=http://209.190.13.254:8081"));
@@ -175,6 +175,8 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 //    		page.waitForLoadState(LoadState.DOMCONTENTLOADED);
     	
 		try {
+			
+			
 			
 			page=replaceBidExUrl(page, yaml);
 			
@@ -198,17 +200,10 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 			}
 			
 			
-
-
-			
-			
 			page.onRequest(request ->{
 				urlFromNetworkTab.add(request.url());
 				listOfReqest.add(request);
 			});
-			
-			
-
 			
 			
 		page.onResponse(response -> {
@@ -225,10 +220,17 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 			}
         });
 		
-
+		
+		  String acceptAllBtn="xpath=//*[@id=\"onetrust-accept-btn-handler\"]";
 		
         page.navigate(yaml.getPublisherUrl());
-        Thread.sleep(25000);
+        
+        Thread.sleep(90000);
+		
+//        
+//        page.waitForTimeout(12400);
+        page.locator(acceptAllBtn).click();
+        
 	
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -482,7 +484,7 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 					PositiveURLChecks puc = PositiveURLChecks.builder()
 							.urlPattern(urlData.getValue())
 							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
-							.queryStringMap(new ArrayList<HashMap<String, String>>(
+							.queryStringMap(new ArrayList<Map<String, String>>(
 									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests))))
 							.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
 							.positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))

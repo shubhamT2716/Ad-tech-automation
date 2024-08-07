@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Color;
@@ -17,11 +18,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-
+import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 
 @Component
+@Slf4j
 public class FileHandling {
 	
 	@Value("${reportFileBasePath}")
@@ -163,6 +165,25 @@ public class FileHandling {
 		return fileName;
 
 	}
+	
+	public String addSmokeReportInFile(Map<String, TestReportModel> report, List<TestReportModel> testReportList)
+	{
+		
+		XSSFWorkbook workbook=new XSSFWorkbook();
+		XSSFSheet sheet=workbook.createSheet("data1");
+		
+		
+
+		for(TestReportModel reportModel:testReportList)
+		{
+			XSSFRow row=sheet.createRow(0);		
+			
+		}
+		
+		return null;
+	}
+	
+	
 	
 	public static String getFileNameForExcel() {
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(new Date());

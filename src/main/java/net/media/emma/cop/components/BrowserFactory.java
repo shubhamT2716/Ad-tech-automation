@@ -16,6 +16,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.Geolocation;
 import com.microsoft.playwright.options.HarMode;
+import com.microsoft.playwright.options.Proxy;
 
 public class BrowserFactory {
 
@@ -103,11 +104,21 @@ public class BrowserFactory {
 	}
 
 	private static BrowserType.LaunchPersistentContextOptions getSystemBrowserContextOptions(String userAgent,
-			Boolean isMobile, List<String> extension, String filename) {
+			Boolean isMobile, List<String> extension, String filename, String proxy) {
 
+		
 		BrowserType.LaunchPersistentContextOptions newContextOptions = new BrowserType.LaunchPersistentContextOptions()
 				.setUserAgent(userAgent).setRecordHarPath(Paths.get(filename)).setRecordHarMode(HarMode.FULL)
-				.setIgnoreHTTPSErrors(true).setHeadless(false).setArgs(extension);
+				.setIgnoreHTTPSErrors(true)
+				.setHeadless(false).setArgs(extension);
+		
+        if(proxy!=null)
+        {
+        	 newContextOptions = new BrowserType.LaunchPersistentContextOptions()
+    				.setUserAgent(userAgent).setRecordHarPath(Paths.get(filename)).setRecordHarMode(HarMode.FULL)
+    				.setIgnoreHTTPSErrors(true)
+    				.setProxy(new Proxy(proxy)).setHeadless(false).setArgs(extension);
+        }
 
 		if (isMobile) {
 			newContextOptions.setViewportSize(360, 640).setIsMobile(true).setHasTouch(true);
@@ -154,11 +165,11 @@ public class BrowserFactory {
 	}
 
 	private static BrowserContext getSystemBrowserByType(String browserType, List<Map<String, String>> cookies,
-			List<String> extension, String fileName, String browserPath) {
+			List<String> extension, String fileName, String browserPath , String proxy) {
 		if (browserType.contains("Chrome")) {
 			return getPlaywrightObj().chromium().launchPersistentContext(Paths.get(browserPath),
 					getSystemBrowserContextOptions(browserContexts.get(browserType), browserType.contains("Mobile"),
-							extension, fileName));
+							extension, fileName, proxy));
 		}
 		
 //		if(browserType.contains("Other"))
@@ -222,8 +233,8 @@ public class BrowserFactory {
 	}
 
 	public static BrowserContext getSystemBc(String browserType, List<Map<String, String>> cookies,
-			List<String> extension, String fileName, String browserPath) {
-		BrowserContext newBc = getSystemBrowserByType(browserType, cookies, extension, fileName, browserPath);
+			List<String> extension, String fileName, String browserPath, String proxy) {
+		BrowserContext newBc = getSystemBrowserByType(browserType, cookies, extension, fileName, browserPath, proxy);
 		return newBc;
 	}
 

@@ -16,8 +16,8 @@ public class ComplianceURLChecksReportModel {
 	Map<String, PositiveURLChecks> positiveUrlChecks = new HashMap<String, PositiveURLChecks>();
 	@Builder.Default
 	Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
-	@Builder.Default
-	List<HashMap<String, String>> cookiesCheck = new ArrayList<>();
+//	@Builder.Default
+//	List<HashMap<String, String>> cookiesCheck = new ArrayList<>();
 
 
 	enum TestResult {
@@ -201,6 +201,6 @@ public class ComplianceURLChecksReportModel {
 
 			cookiesCheckTotal.add(cookieCheckIndividual);
 		}
-		setCookiesCheck(cookiesCheckTotal);
+//		setCookiesCheck(cookiesCheckTotal);
 	}
 }

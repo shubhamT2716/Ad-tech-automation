@@ -6,9 +6,12 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.playwright.Request;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +62,7 @@ public class URLDataProcessing {
 			try {
 				URL url = new URL(urlPattern);
 
-				HashMap<String, String> queryStringMap = queryStringToMap(url.getQuery());
+				Map<String, String> queryStringMap = queryStringToMap(url.getQuery());
 
 				uniqueKeys.addAll(queryStringMap.keySet());
 
@@ -100,9 +103,9 @@ public class URLDataProcessing {
 	}
 	
 
-	public HashMap<String, String> queryStringToMap(String queryString) {
+	public Map<String, String> queryStringToMap(String queryString) {
 		
-		HashMap<String, String> queryStringMap = new HashMap<String, String>();
+		Map<String, String> queryStringMap = new LinkedHashMap<String, String>();
 
 		
 		if(queryString==null)
@@ -123,17 +126,6 @@ public class URLDataProcessing {
 				// queryStringMap.put(queryStringPartParts[0], ""); --rats
 				// queryStringMap.put(queryStringPartParts[0], null); --rats
 			}
-//			if (queryStringPartParts.length == 1) {
-//				queryStringMap.put(queryStringPartParts[0], "");
-//			}
-
-//			if (queryStringPartParts.length == 2 || queryStringPartParts.length == 1) {
-//
-//				if (queryStringPartParts.length == 2) {
-//					queryStringMap.put(queryStringPartParts[0], queryStringPartParts[1]);
-//				}
-//				queryStringMap.put(queryStringPartParts[0], "");
-//			}
 
 		}
 		
@@ -144,7 +136,7 @@ public class URLDataProcessing {
 		return queryStringMap;
 	}
 
-	public HashMap<String, String> getQueryStringMapFromUrl(String url, List<Request> requests) {
+	public Map<String, String> getQueryStringMapFromUrl(String url, List<Request> requests) {
 
 		try {
 			
@@ -156,7 +148,13 @@ public class URLDataProcessing {
 				{
 					if(req.url().startsWith(url))
 					{
-						return queryStringToMap(req.postData());
+							
+					log.info("url: "+url +"  PostData:  "+req.postData());
+						
+						Map<String, String> queryM=queryStringToMap(req.postData());
+
+						
+						return queryM;
 					}
 				}
 			}

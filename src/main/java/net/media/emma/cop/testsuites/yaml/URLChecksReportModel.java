@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+
 @Getter
 @Setter
 @Builder
@@ -58,7 +59,7 @@ public class URLChecksReportModel {
 
         @Builder.Default
         @JsonIgnore
-        List<HashMap<String, String>> queryStringMap = new ArrayList<>();
+        List<Map<String, String>> queryStringMap = new ArrayList<>();
 
         @Builder.Default
         Integer countOfMatchingUrls = 0;
@@ -174,40 +175,113 @@ public class URLChecksReportModel {
     
     
     
-//    public void verifyData(TestCriteriaBo testData, PositiveURLChecks positiveURLChecks)
-//    {
+    public void verifyData(TestCriteriaBo testData)
+    {
 //    	testData.getKeysToVerifyPositive().entrySet().forEach(entry->{
 //    		
 //    		String key=entry.getKey();
 //    		Map<String, Set<String>> value=entry.getValue();
 //    		
-//    		positiveURLChecks.getq
+//    		   		
+//    		PositiveURLChecks checks=positiveUrlChecks.get(key);
+//
+//    		
+//    		if(checks!=null)
+//    		{
+//    			
+//    			List<String> message=new ArrayList<>(checks.getTestMessages()); 
+//    			if(checks.getPositiveKeyValChecks().equals(value)) {
+//        			
+//        			System.err.println( "Match"+"  "+checks.getPositiveKeyValChecks()+" "+value+" "+checks.getCountOfMatchingUrls());
+//        			
+//        			message.add("Positive Value Pass: "+value);
+//        			
+////        			checks.getTestMessages().add("Positive Value Pass: "+value);
+//        			
+//        			
+//        		}
+//        		else {
+//        			
+//        			System.out.println(" postive "+checks.getPositiveKeyValChecks());
+//        			System.out.println("Value : "+value); 
+//        			
+//        			message.add("positive value not pass: "+value);
+////        			checks.getTestMessages().add("positive value not pass: "+value);
+//        		}
+//    			
+////    			checks.getTestMessages().addAll(message);
+//    			
+//    			
+//    		}
+//    		
 //    		
 //    		
 //    	});
-//    }
-//    
+    }
+    
 
     public void verifyPositiveKeyValChecks() {
 
         positiveUrlChecks.forEach((callLabel, callData) -> { // key, value --> lable, PositiveURLChecks obj
 
             if (callData.getPositiveKeyValChecks() != null) {
-
+            	
+         	
+//            	callData.getPositiveKeyValChecks().entrySet().forEach(positveValue->{
+//            		
+//            		String key=positveValue.getKey(); 
+//            		Set<String> value=positveValue.getValue();
+//            		
+//            			List<Map<String, String>> mp=callData.getQueryStringMap();
+//            			
+//            			for(Map<String , String>p: mp )
+//            			{
+//            					if(p.get(key) != null)
+//            					{
+//            						 System.out.println("P: "+p.get(key)+" key: "+key+" value : "+value);
+//            					}
+//            					else {
+//            						System.out.println("key "+key+"not found "+value);
+//            						
+//            					}
+//            					
+//            			}
+//            			
+//            		
+//            	});
+            	
                 callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
 
-                    Set<String> actualValues = new HashSet<>();
+                	Set<String> actualValues = new HashSet<>();
+                	
+                	// if(callData.getLabel().equals("APPR"))
+                	// {
+                	// 	System.err.println(callData.getQueryStringMap().get(0));
+                	// }
 
-                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                    callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
+                    	
+                    	
+                    	
                         if (qsMapFromNetworkCall.containsKey(qsParam)) {
+                        	
+//                        	System.err.println("Qury: "+qsMapFromNetworkCall+ " "+qsParam);
                             actualValues.add(qsMapFromNetworkCall.get(qsParam));
                         }
                     });
                     
-                  
+                  if(actualValues.equals(listOfValues))
+                  {
+//                	  System.out.println("  list of match: "+actualValues+" "+listOfValues);
+                	  
+                	  callData.getTestMessages().add("Positive key value check Pass for key: " + qsParam
+                              + ". Expected: " + listOfValues + " Actual: " + actualValues);
+                  }
                     
 
                     if (!actualValues.equals(listOfValues)) {
+                    	
+//                    	System.out.println("  list of not  match: "+actualValues+" "+listOfValues);
                         callData.getTestMessages().add("Positive key value check failed for key: " + qsParam
                                 + ". Expected: " + listOfValues + " Actual: " + actualValues);
                         callData.setTestResult(TestResult.FAIL);
@@ -238,7 +312,13 @@ public class URLChecksReportModel {
 //						callData.setTestResult(TestResult.FAIL);
 //					}
 
-                    if (!actualValues.retainAll(listOfValues)) {
+                    if (actualValues.equals(listOfValues)) {
+                        callData.getTestMessages().add("Negative key value check Pass for key: " + qsParam
+                                + ". Found negative matches: " + actualValues);
+                       
+                    }
+                    
+                    if (!actualValues.equals(listOfValues)) {
                         callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
                                 + ". Found negative matches: " + actualValues);
                         callData.setTestResult(TestResult.FAIL);

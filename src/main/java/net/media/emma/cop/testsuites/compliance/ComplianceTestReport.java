@@ -18,6 +18,7 @@ public class ComplianceTestReport {
     TestData testMetaData;
     BidExController bidExController;
     ComplianceURLChecksReportModel checksReportModel;
+    Map<String, Map<String, Map<String,String>>> cookie;
     
 //    @Builder.Default
 //    List<UrlChecks> urlChecks = new java.util.ArrayList<UrlChecks>();

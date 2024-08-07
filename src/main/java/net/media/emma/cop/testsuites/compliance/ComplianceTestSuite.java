@@ -7,8 +7,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Request;
 import com.microsoft.playwright.TimeoutError;
 import com.microsoft.playwright.options.Cookie;
-
-
+import com.microsoft.playwright.options.LoadState;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
@@ -53,8 +52,8 @@ public class ComplianceTestSuite {
     private static String windscribeUsername = "xpath=//input[@name='username']";
     private static String windscribepassword = "xpath=//input[@name='password']";
     private static String windscribeSkip = "xpath=//div[text()='Skip']";
-    private static String username = "mohib1233";
-    private static String password = "mohib123";
+    private static String username = "shubhamT27";
+    private static String password = "shubhamT2711$";
 //    private static String locationParis = "Paris";
     private static String windscribeLocations = "xpath=//button[@aria-label='Locations']";
     private static String windscribeSearchLocation = "xpath=//div//i";
@@ -62,9 +61,11 @@ public class ComplianceTestSuite {
     
 //    private static String acceptAllBtn = "xpath=//button[text()='I Accept']";
     
-    private static String acceptAllBtn="xpath=//*[@id=\"onetrust-accept-btn-handler\"]";
+   private static String acceptAllBtn="xpath=//*[@id=\"onetrust-accept-btn-handler\"]";
+
+//    private static String acceptAllBtn="xpath=/html/body/div[7]/div[2]/div[1]/div[2]/div[2]/button[1]/p";
     
-  //*[@id="onetrust-accept-btn-handler"]
+    
 
 
     String url = "chrome-extension://hnmpcagpplmpfojmgmnngilcnanddlhb/popup.html";
@@ -77,11 +78,44 @@ public class ComplianceTestSuite {
     // "topics.js");
     
     
+    public String getConsent(int number)
+    {
+    	
+    	
+    	
+    	Map<Integer, String> consent=new HashMap<>();
+    	consent.put(1, "xpath=//*[@id=\"ot-pc-content\"]/section/div[5]/div[1]/label/span[1]");
+    	consent.put(2, "xpath=//*[@id=\"ot-pc-content\"]/section/div[6]/div[2]/ul/li/div[1]/div/label/span[1]");
+    	consent.put(3, "xpath=//*[@id=\"ot-pc-content\"]/section/div[6]/div[3]/ul/li/div/div/label/span[1]");
+    	consent.put(4, "xpath=//*[@id=\"ot-pc-content\"]/section/div[6]/div[4]/ul/li/div/div/label/span[1]");
+//    	consent.put(5, "xpath=");
+//    	consent.put(6, "xpath=\");
+    	consent.put(7, "xpath=//*[@id=\"ot-pc-content\"]/section/div[6]/div[7]/ul/li/div[1]/div/label/span[1]");
+//    	consent.put(8, "xpath=");
+//    	consent.put(9, "xpath=");
+    	
+    	
+    	
+    	return consent.get(number);
+    	
+    }
+    
     public ComplianceTestReport getTestResults(ComplianceTestCriteria testData) throws InterruptedException {
 
         String harFileName = harFileBasePath + CommonBrowserUtil.getFileNameForHar();
-        BrowserContext browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(), harFileName, browserPath);
-        browserContext.clearCookies();
+        String proxy="http://10.2.128.194:3128";
+        BrowserContext browserContext=null;
+        if(testData.getLocation()==null)
+        {
+        	  browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(), harFileName, browserPath,proxy);
+
+        }
+        else {
+        	browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(), harFileName, browserPath,null);
+
+        }
+        
+               browserContext.clearCookies();
         
         //list of arrays initialization
         List<String> urlFromNetworkTab = new ArrayList<>();
@@ -97,17 +131,62 @@ public class ComplianceTestSuite {
         browserContext.setDefaultNavigationTimeout(90000);//90 s
 
         Page page = browserContext.newPage();
-        openWindscribe(page, testData.getLocation());
-        page.close();
-        page = browserContext.newPage();
+        
+        if(testData.getLocation()!=null)
+        {
+          openWindscribe(page, testData.getLocation());
+          page.close();
+          page = browserContext.newPage();
+        }
+
+        		
+
         page.navigate(testData.getPublisherUrl());
 
+        page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+        
 
         try {
         	
-        	
         	try {
-        		page.locator(acceptAllBtn).click();
+        		
+        		if(testData.getConsents()==null||testData.getConsents().isEmpty())
+        		{
+            		page.locator(acceptAllBtn).click();
+        		}
+        		else{
+        		
+        			String customizeChoice="xpath=//*[@id=\"onetrust-pc-btn-handler\"]";
+        			
+        			page.locator(customizeChoice).click();
+        			
+        			page.locator("xpath=//*[@id=\"ot-pc-content\"]/section/div[2]/div/label/span[1]").click();//targeting cookies
+        			page.locator("xpath=//*[@id=\"ot-pc-content\"]/section/div[3]/div/label/span[1]").click();//performance cookies
+        			page.locator("xpath=//*[@id=\"ot-pc-content\"]/section/div[4]/div/label/span[1]").click();//functional cookies        			
+        			for(int consent:testData.getConsents())
+        			{
+        				String consnt=getConsent(consent);     
+        				
+        				
+        				
+        				page.locator(consnt).click();
+        				if(consent==2)
+        				{
+        					page.locator("xpath=//*[@id=\"ot-pc-content\"]/section/div[6]/div[2]/ul/li/div[2]/button[1]").click();
+        				}
+        				if(consent==7)
+        				{
+        					page.locator("xpath=//*[@id=\"ot-pc-content\"]/section/div[6]/div[7]/ul/li/div[2]/button[1]").click();
+        				}
+        				
+        			}
+        			
+        			String confirmMyChoices="xpath=//*[@id=\"onetrust-pc-sdk\"]/div/div[3]/div[1]/button";
+        			
+        			page.locator(confirmMyChoices).click();
+        			
+        		}
+        		
         	}catch (Exception e) {
 				
         		System.out.println(e.getMessage());
@@ -139,10 +218,15 @@ public class ComplianceTestSuite {
 
         ComplianceURLChecksReportModel urlCheck = getNetworkCallAssertions3(allCookies,urlFromNetworkTab, requestList,testData);
         
+        Map<String, List<Cookie>> getCookies = getCookies(browserContext, testData.getPublisherUrl());
+        
+        Map<String, Map<String, Map<String, String>>> cookies = displayCookies(getCookies);
+        
+        
         ComplianceTestReport results=ComplianceTestReport.builder().testMetaData(TestData.builder()
         		.environment(testData.getEnvironment()).publisherUrl(testData.getPublisherUrl()).testTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
         		.userAgent(testData.getUserAgent()).build()).bidExController(bidExController)
-        		.checksReportModel(urlCheck).build();
+        		.checksReportModel(urlCheck).cookie(cookies).build();
         
         return results;
         
@@ -164,6 +248,54 @@ public class ComplianceTestSuite {
 
        
     }
+    
+    
+    public Map<String, List<Cookie>> getCookies(BrowserContext page, String publisher) {
+		List<String> url = new ArrayList<>();
+
+		url.add("https://hbx.media.net");
+//    	url.add("https://hb.yahoo.net");
+		url.add("https://contextual.media.net");
+		url.add(publisher);
+
+		Map<String, List<Cookie>> mapOfCookie = new HashMap<>();
+
+		for (String li : url) {
+			List<Cookie> cookie = page.cookies(li);
+			mapOfCookie.put(li, cookie);
+
+		}
+		return mapOfCookie;
+
+	}
+    
+    public Map<String, Map<String, Map<String, String>>> displayCookies(Map<String, List<Cookie>> cookies) {
+		Map<String, Map<String, Map<String, String>>> listOfCookies = new HashMap<>();
+
+		cookies.entrySet().forEach(entry -> {
+
+			Map<String, Map<String, String>> allcookiesData = new HashMap<>();
+
+			for (Cookie cookie : entry.getValue()) {
+
+				allcookiesData.put(cookie.name, new HashMap<>());
+				allcookiesData.get(cookie.name).put("value", cookie.value);
+				allcookiesData.get(cookie.name).put("domain", cookie.domain);
+				allcookiesData.get(cookie.name).put("path", cookie.path);
+				allcookiesData.get(cookie.name).put("expires", cookie.expires.toString());
+				allcookiesData.get(cookie.name).put("httpOnly", cookie.httpOnly.toString());
+				allcookiesData.get(cookie.name).put("secure", cookie.secure.toString());
+				allcookiesData.get(cookie.name).put("sameSite", cookie.sameSite.toString());
+				// log.info("Cookie Name : "+cookie.name+" Cookie Domain : "+cookie.domain);
+
+			}
+
+			listOfCookies.put(entry.getKey(), allcookiesData);
+
+		});
+
+		return listOfCookies;
+	}
 
     private BidExController getBidData(List<Request> requestList, ComplianceTestCriteria testData) {
 		
@@ -292,8 +424,8 @@ StringBuilder size =new StringBuilder();
 
     public void openWindscribe(Page page , String location) throws InterruptedException
     {
-        page.navigate(url);
-        page.waitForTimeout(2000);
+//        page.navigate(url);
+//        page.waitForTimeout(1000);
 //        if (page.isVisible(windscribeLogin))
 //        {
 //            try
@@ -308,7 +440,7 @@ StringBuilder size =new StringBuilder();
 //        else
 //        {
             setLocationInWindscribe(page, location);
-//        }
+//       }
     }
 
     private static void loginToWindscribe(Page page)
@@ -325,13 +457,19 @@ StringBuilder size =new StringBuilder();
     private static void setLocationInWindscribe(Page page , String location)
     {
     	
+    	System.out.println(location);
+    	
     	String windscribeParisLoc = "xpath=(//div[@aria-label='"+location+"'])[1]";
     	
         page.locator(windscribeLocations).click();
         page.locator(windscribeSearchLocation).click();
+        
         page.locator(windscribeSearchbox).click();
+        
         page.locator(windscribeSearchbox).fill(location);
+        page.waitForTimeout(2000);
         page.locator(windscribeParisLoc).click();
+        page.waitForTimeout(2000);
         page.close();
     }
 
@@ -348,11 +486,10 @@ StringBuilder size =new StringBuilder();
                 ComplianceURLChecksReportModel.PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
 
                 if (labelExists == null) {
-
                     ComplianceURLChecksReportModel.PositiveURLChecks puc = ComplianceURLChecksReportModel.PositiveURLChecks.builder().label(urlData.getKey())
                             .urlPattern(urlData.getValue())
                             .matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
-                            .queryStringMap(new ArrayList<HashMap<String, String>>(Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests))))
+                            .queryStringMap(new ArrayList<HashMap<String, String>>())
                             //  .negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
                             .positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
                             .anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey()))
@@ -361,7 +498,7 @@ StringBuilder size =new StringBuilder();
                     urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
                 } else {
                     labelExists.getMatchingUrls().add(requestUrl);
-                    labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests));
+                    labelExists.getQueryStringMap().add((HashMap<String, String>) urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests));
                 }
 
                 continue;

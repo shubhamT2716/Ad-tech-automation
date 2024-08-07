@@ -51,6 +51,9 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 
 	@Autowired
 	private YamlUtils yamlUtils;
+	
+	@Autowired
+	private FileHandling fileHandling;
 
 	@Autowired
 	private GenericTestSuite yamlTestSuite;
@@ -389,6 +392,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 		String testResult = getTestResult(error);
 		
 		
+		this.fileHandling.addSmokeReportInFile(finalResult, testReportModelList);
 
 		if (flagForMail == true && email!=null && !email.isBlank()&& !email.isEmpty()) {
 			this.mailServiceImpl.sendMail(email, email, testReportModelList,
