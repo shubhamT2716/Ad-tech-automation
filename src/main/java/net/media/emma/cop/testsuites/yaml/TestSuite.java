@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import com.microsoft.playwright.*;
 
+import org.apache.poi.wp.usermodel.Paragraph;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -322,7 +323,7 @@ public class TestSuite implements GenericTestSuite {
 				} catch (Exception e) {
 
 					log.info("ExcelReport Error: " + e.getMessage());
-					e.printStackTrace();
+					
 
 					testReport.getTestMetaData().setDownloadReport(null);
 				}
@@ -662,64 +663,66 @@ public class TestSuite implements GenericTestSuite {
 
 					boolean svrFind = false;
 
-					String t = "new o.a({";
-
-					if (responseMP.contains(t)) {
-						int index = responseMP.indexOf(t);
-
-						responseMP = responseMP.substring(index);
-
-						Pattern pattern = Pattern.compile("new\\s+o\\.a\\((.*?)\\)");
-
-						Matcher matcher = pattern.matcher(responseMP);
-
-						if (matcher.find()) {
-
-							String extractedData = matcher.group(1);
-
-							String svr = null;
-
-							if (responseMP.contains("var i")) {
-								int svrIndex = responseMP.indexOf("var i");
-
-								responseMP = responseMP.substring(svrIndex);
-
-								Pattern pattern2 = Pattern.compile("var i=\"([^\"]+)\"");
-
-								Matcher matcher2 = pattern2.matcher(responseMP);
-
-								if (matcher2.find()) {
-
-									System.out.println("match found");
-
-									svr = matcher2.group(1);
-
-								}
-
-							}
-
-							JsonNode bidData = mapper.readValue(extractedData, JsonNode.class);
-
-							bidexData.setCid(bidData.get("cid").asText());
-
-							if (svr == null) {
-
-								System.out.println(" data 1: " + bidData.get("sver").asText());
-								bidexData.setSvr(bidData.get("sver").asText());
-							} else {
-
-								System.out.println(" data 2: " + svr);
-
-								bidexData.setSvr(svr);
-							}
-
-							bidexData.setSugd(bidData.get("sugd").asText());
-							bidexData.setCt(bidData.get("ip2ct").asText());
-
-							return bidexData;
-						}
-
-					}
+//					String t = "new o.a({";
+//
+//					System.err.println(responseMP.contains(t));
+//					
+//					if (responseMP.contains(t)) {
+//						int index = responseMP.indexOf(t);
+//
+//						responseMP = responseMP.substring(index);
+//
+//						Pattern pattern = Pattern.compile("new\\s+o\\.a\\((.*?)\\)");
+//
+//						Matcher matcher = pattern.matcher(responseMP);
+//
+//						if (matcher.find()) {
+//
+//							String extractedData = matcher.group(1);
+//
+//							String svr = null;
+//
+//							if (responseMP.contains("var i")) {
+//								int svrIndex = responseMP.indexOf("var i");
+//
+//								responseMP = responseMP.substring(svrIndex);
+//
+//								Pattern pattern2 = Pattern.compile("var i=\"([^\"]+)\"");
+//
+//								Matcher matcher2 = pattern2.matcher(responseMP);
+//
+//								if (matcher2.find()) {
+//
+//									System.out.println("match found");
+//
+//									svr = matcher2.group(1);
+//
+//								}
+//
+//							}
+//
+//							JsonNode bidData = mapper.readValue(extractedData, JsonNode.class);
+//
+//							bidexData.setCid(bidData.get("cid").asText());
+//
+//							if (svr == null) {
+//
+//								System.out.println(" data 1: " + bidData.get("sver").asText());
+//								bidexData.setSvr(bidData.get("sver").asText());
+//							} else {
+//
+//								System.out.println(" data 2: " + svr);
+//
+//								bidexData.setSvr(svr);
+//							}
+//
+//							bidexData.setSugd(bidData.get("sugd").asText());
+//							bidexData.setCt(bidData.get("ip2ct").asText());
+//
+//							return bidexData;
+//						}
+//
+//					}
 
 					if (svrFind == false) {
 						
@@ -727,7 +730,10 @@ public class TestSuite implements GenericTestSuite {
 						String target = "\"Environment\":{";
 
 						
-						String regex = "\\{.*\\}\\,\"ExternalServiceAdapters\"";
+						String regex="\"Environment\":\\{([^}]*)\\}";
+				        
+						
+		
 
 						if (responseMP.contains(target)) {
 							
@@ -743,16 +749,25 @@ public class TestSuite implements GenericTestSuite {
 								Pattern pattern = Pattern.compile(regex);
 								
 								Matcher matcher = pattern.matcher(responseMP);
+														
+								if(matcher.find())
+								{
+									
+								String extractedData=matcher.group();
 								
+								String svr=null;
 								
-								
-								if (matcher.find()) {
-
-									System.out.println("Get data form regex"+matcher.group());
-
-									String extractedData = matcher.group();
-
-								String svr = null;
+//								if (matcher.find()) {
+//
+//									
+//
+//									String extractedData = matcher.group();
+//									
+//									System.out.println(extractedData);
+//									
+//									
+//
+//								String svr = null;
 //								
 //								if(responseMP.contains("const i"))
 //								{
@@ -775,9 +790,21 @@ public class TestSuite implements GenericTestSuite {
 //									
 //								}
 
-									JsonNode bidData = mapper.readValue(extractedData, JsonNode.class);
-
-									bidexData.setCid(bidData.get("cid").asText());
+								System.out.println("Data:   : "+extractedData);
+								
+								
+								JSONObject jsonObject=new JSONObject("{"+extractedData+"}");
+								
+								System.err.println(jsonObject);
+								
+								JSONObject  object= jsonObject.getJSONObject("Environment");
+								
+								System.out.println(object.get("cid").toString());
+								
+//									JsonNode bidData = mapper.readValue(object, JsonNode.class);
+									
+									
+									bidexData.setCid(object.get("cid").toString());
 
 								if(svr==null)
 								{
@@ -796,7 +823,7 @@ public class TestSuite implements GenericTestSuite {
 										
 										 svr = matcher1.group(1);
 
-										System.err.println(svr);
+										
 
 										bidexData.setSvr(svr);
 
@@ -805,8 +832,8 @@ public class TestSuite implements GenericTestSuite {
 								}
 
 //								bidexData.setSvr(bidData.get("sver").asText());
-									bidexData.setSugd(bidData.get("sugd").asText());
-									bidexData.setCt(bidData.get("ip2ct").asText());
+									bidexData.setSugd(object.get("sugd").toString());
+									bidexData.setCt(object.get("ip2ct").toString());
 
 //								bidexData.setItype(bidData.get("itype").asText());
 
@@ -855,8 +882,8 @@ public class TestSuite implements GenericTestSuite {
 					String target = "\"Environment\":{";
 
 					
-					String regex = "\\{.*\\}\\,\"ExternalServiceAdapters\"";
-
+					String regex="\"Environment\":\\{([^}]*)\\}";
+					
 					if (responseMP.contains(target)) {
 						
 						String res=responseMP;
@@ -902,10 +929,18 @@ public class TestSuite implements GenericTestSuite {
 //								}
 //								
 //							}
+							
 
-								JsonNode bidData = mapper.readValue(extractedData, JsonNode.class);
+							JSONObject jsonObject=new JSONObject("{"+extractedData+"}");
+							
+							System.err.println(jsonObject);
+							
+							JSONObject  object= jsonObject.getJSONObject("Environment");
+							
+							System.out.println(object.get("cid").toString());
 
-								bidexData.setCid(bidData.get("cid").asText());
+							
+								bidexData.setCid(object.get("cid").toString());
 
 							if(svr==null)
 							{
@@ -933,8 +968,8 @@ public class TestSuite implements GenericTestSuite {
 							}
 
 //							bidexData.setSvr(bidData.get("sver").asText());
-								bidexData.setSugd(bidData.get("sugd").asText());
-								bidexData.setCt(bidData.get("ip2ct").asText());
+								bidexData.setSugd(object.get("sugd").toString());
+								bidexData.setCt(object.get("ip2ct").toString());
 
 //							bidexData.setItype(bidData.get("itype").asText());
 
@@ -1128,7 +1163,7 @@ public class TestSuite implements GenericTestSuite {
 				payloadAsserstions.verifyBidderDataAssertions(urlChecks, requests, testData);
 			} catch (Exception e) {
 
-				e.printStackTrace();
+//				e.printStackTrace();
 //				payloadAsserstions.verifyBidderDataAssertions(urlChecks,requests,testData);
 			}
 
