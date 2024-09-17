@@ -40,21 +40,46 @@ public class PlAssestion {
 
         for (Map.Entry<String, List<TestCriteriaBo.BidderDataAssertions>> entry : bidderDataAssertions.entrySet()) {
             String bidder = entry.getKey();
+            
+//            System.err.println("bidder: "+bidder);
+            
             String bidderUrl = bidderDataUrls.get(bidder);
+            
+//            System.err.println("bidderUrl: "+bidderUrl);
+            
             if (bidderUrl == null) continue;
 
             List<Request> matchingRequests = filterMatchingRequests(requestList, bidderUrl);
+            System.err.println("Matching request: "+matchingRequests);
+            
             if (matchingRequests.isEmpty()) continue;
 
             Map<String , Map<String, Object> > bidderDataKeyVerification=new HashMap<>();
             
             // Collect all imp objects and their corresponding responses for matching requests
             List<Pair<Object, String>> allImpAndResponsePairs = new ArrayList<>();
+//            System.err.println("MatchingUrl: "+matchingRequests);
+            
             for (Request request : matchingRequests) {
                 String postData = getPostData(request);
                 
-                String responseData = getResponseData(request);
-               
+//                System.out.println("postdata: "+postData);
+                
+                
+                String responseData =null;
+                
+//                try {
+                
+                	responseData= getResponseData(request);
+                	
+//                	 System.err.println("ResponseData:  -> "+responseData);
+//                }
+//                catch (Exception e) {
+//					
+//                	continue;
+//                	
+//				}
+
                 
                 ReadContext readContext = com.jayway.jsonpath.JsonPath.parse(postData);
                
@@ -64,6 +89,7 @@ public class PlAssestion {
                     
                   String jsonString=  readContext.jsonString();
                   
+//                  System.out.println("JsonData: "+jsonString);
                   
                   ObjectMapper mapper=new ObjectMapper();
                   
@@ -71,38 +97,55 @@ public class PlAssestion {
 					JsonNode jsonData=mapper.readValue(jsonString,JsonNode.class);
 					
 					for (String payloadName : listOfpayload) {
-
-//						String data = jsonData.get(payloadName).toString();
 						
-//						Map<String, Object> mp=mapper.convertValue(jsonData.get(payloadName), new  TypeReference<Map<String, Object>>() {});
-						
-//						JsonNode node=mapper.readValue(data, JsonNode.class);
+//						System.err.println(payloadName=="site"||payloadName=="ext"||payloadName=="ortb2");
+//						
+//						System.out.println("data:"+getKeyFromPayload(payloadName) );
 						
 						if(payloadName=="site"||payloadName=="ext"||payloadName=="ortb2")
 						{
 							for(String name:getKeyFromPayload(payloadName))
 							{
-								JsonNode value=jsonData.get(payloadName).get(name);
-								if(value==null)
-								{
-									bidderDataKeyVerification.computeIfAbsent(payloadName, k->new HashMap<>()).put(name, false);
-								}else {
-									bidderDataKeyVerification.computeIfAbsent(payloadName, k-> new HashMap<>()).put(name, value);
+								
+							
+								try {
+									
+//									System.out.println("Payload Name:  "+payloadName+" "+ name);
+									JsonNode value=jsonData.get(payloadName).get(name);
+								
+									if(value==null)
+									{
+										
+//										System.out.println("In Value==null");
+										bidderDataKeyVerification.computeIfAbsent(payloadName, k->new HashMap<>()).put(name, false);
+									}else {
+//										System.out.println("In Value!=null");
+										bidderDataKeyVerification.computeIfAbsent(payloadName, k-> new HashMap<>()).put(name, value);
+									}
+									
+//									addDataToReport(urlChecksReportModel, bidderDataKeyVerification);
 								}
+								
+								
+								catch (Exception e) {
+									e.printStackTrace();
+									continue;
+									
+									}
+								
 							}
 						}
-//						else if(payloadName=="id"||payloadName=="tmax"){
-//							
-//							JsonNode value=jsonData.get(payloadName);
-//							if(value!=null)
-//							{
-//								bidderDataKeyVerification.computeIfAbsent(payloadName, k-> new HashMap<>());
-//							}
-//							
-//							
-//						}
+
 					}
 					
+					
+					
+					
+//					System.out.println("Porcess Completed");
+//					
+//					System.out.println("Process done: "+bidderDataKeyVerification);
+//					
+//					System.err.println("Map: "+bidderDataKeyVerification);
 					
 				} catch (JsonMappingException e) {
 					// TODO Auto-generated catch block
@@ -161,6 +204,7 @@ public class PlAssestion {
         }
     }
     private List<Request> filterMatchingRequests(List<Request> requestList, String bidderUrl) {
+    	
         return requestList.stream().filter(request -> request.url().contains(bidderUrl)).collect(Collectors.toList());
     }
     
@@ -240,9 +284,20 @@ public class PlAssestion {
         return passForAllResponse;
 
     }
+    
+//    private void addDataToReport(URLChecksReportModel urlChecksReportModel,Map<String, Map<String, Object>> bidderKeyVerification)
+//    {
+////    	System.out.println("Data Set to report");
+////    	
+////    	urlChecksReportModel.getBidderDataAssertionKeyVerification().putAll(bidderKeyVerification);	
+//    }
+    
+    
 
     private void createReport(URLChecksReportModel urlChecksReportModel, TestCriteriaBo.BidderDataAssertions bidderDataAssertions , String bidder, String url, String message, URLChecksReportModel.TestResult result, Map<String, Map<String, Object>> bidderKeyVerification) {
 
+    	
+    	
         URLChecksReportModel.BidderDataAssertion assertionReport = URLChecksReportModel.BidderDataAssertion.builder()
                 .message(message)
                 .testResult(result)
@@ -256,8 +311,14 @@ public class PlAssestion {
         List<URLChecksReportModel.BidderDataAssertion> existingReports = urlChecksReportModel.getBidderDataAssertions().getOrDefault(bidder, new ArrayList<>());
         // Add the new report to the list
         existingReports.add(assertionReport);
+        
+//     // Get the existing list or create a new one
+//        List<URLChecksReportModel.bid> existingReports = urlChecksReportModel.getBidderDataAssertions().getOrDefault(bidder, new ArrayList<>());
+//        // Add the new report to the list
+//        existingReports.add(assertionReport);
+        
         urlChecksReportModel.getBidderDataAssertions().put(bidder, existingReports);
-        urlChecksReportModel.getBidderDataAssertionKeyVerification().putAll(bidderKeyVerification);
+        urlChecksReportModel.getBidderDataAssertionKeyVerification().put(bidder,bidderKeyVerification);
     }
 
     public String removeJsonPathIndexForImp(String jsonPath) {
@@ -266,7 +327,14 @@ public class PlAssestion {
     }
 
     public String getResponseData(Request request) {
-        return new String(request.response().body(), StandardCharsets.UTF_8);
+    	
+//    	try {
+    		 return new String(request.response().body(), StandardCharsets.UTF_8);
+//    	}
+//    	catch (Exception e) {
+//			return  request.response().body().toString();
+//		}
+       
     }
 
     public String getPostData(Request request) {

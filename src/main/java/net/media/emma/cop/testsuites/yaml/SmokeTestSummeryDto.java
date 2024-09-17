@@ -39,6 +39,8 @@ public class SmokeTestSummeryDto {
 		private String publisherUrl;
 
 		private String harFileDownloadLink;
+		
+		private String downloadReport;
 
 		private String dateTime;
 

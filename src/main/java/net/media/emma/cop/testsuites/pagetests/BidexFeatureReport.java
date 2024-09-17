@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.microsoft.playwright.options.Cookie;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,7 @@ public class BidexFeatureReport {
 	Map<String, Boolean> businessFeaturesDetected;
 //	Map<String , Object> environmentDetails;
 //	Map<String, List<SlotsData>> slotsDetected;
+	JsonNode slotsData;
 	Map<String, Object> allFeatureData;
 	Map<String, Map<String, Map<String,String>>> cookies;
 	Map<String, URLChecksReportModel> urlChecksReport;

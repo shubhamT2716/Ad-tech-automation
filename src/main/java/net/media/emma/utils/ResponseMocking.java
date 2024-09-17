@@ -35,6 +35,7 @@ public class ResponseMocking {
 		
 		page.onRequest(request->{
 			
+			
 			if(request.url().equals(url))
 			{
 				String postData=request.postData();
@@ -54,8 +55,6 @@ public class ResponseMocking {
 			
 			APIResponse apiResponse=route.fetch();
 			
-		
-			
 			for(int i=0;i<jsonArray.length();i++)
 			{
 				JSONObject jsonObject=jsonArray.getJSONObject(i);
@@ -66,8 +65,6 @@ public class ResponseMocking {
 				
 			}
 			
-		
-			
 			try {
 				
 				JSONObject jo=new JSONObject(response);
@@ -77,6 +74,10 @@ public class ResponseMocking {
 //				Object ext=jo.get("ext");
 		
 				List<Object> li=new ArrayList<>();
+				
+				System.out.println("BidList: "+bidListArray.length());
+				
+				System.err.println("list Of Imp: "+listOfImp); 
 				
 				for(int i=0;i<bidListArray.length();i++)
 				{
@@ -97,15 +98,10 @@ public class ResponseMocking {
 
 
 				System.err.println(message);
-				
-				
-				
+							
 				
 //				Thread.sleep(10000);
-				
-				
-				
-			
+							
 //				route.fulfill(new Route.FulfillOptions().setResponse(apiResponse).setBody(message));
 				
 				route.fulfill(new Route.FulfillOptions().setBody(message));

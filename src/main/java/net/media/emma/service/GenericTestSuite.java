@@ -1,5 +1,6 @@
 package net.media.emma.service;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Service;
@@ -14,4 +15,7 @@ public interface GenericTestSuite {
 	public TestReportModel getTestResults(TestCriteriaBo testData, String url, String response);
 
 	public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData);
+	
+	public List<String> getReportFiles();
+	
 }

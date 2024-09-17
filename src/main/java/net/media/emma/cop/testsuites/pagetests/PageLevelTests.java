@@ -63,9 +63,11 @@ public class PageLevelTests {
 	// List of urls to scrape the data from, basically bidder calls
 	HashMap<String, String> knownBidderCallPatterns = new HashMap<>() {
 		{
-			put("YPBJS", "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
-			put("RTBSCall", "https://xch.media.net/AdExchange/rtbsspub?");
-			put("YHBcall", "https://m.hb.yahoo.net/rtb/yhb?cid");
+//			put("YPBJS", "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
+//			put("RTBSCall", "https://xch.media.net/AdExchange/rtbsspub?");
+			put("RTBSCall", "\n"
+					+ "https://xch.media.net/AdExchange/rtbsspub?" );
+//			put("YHBcall", "https://m.hb.yahoo.net/rtb/yhb?cid");
 		}
 	};
 
@@ -92,7 +94,17 @@ public class PageLevelTests {
 
 			urlsFromNetworkTab.add(request);
 		});
+		page.setDefaultNavigationTimeout(15000);
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		List<Slots> slotsData = extractSlotsDataFromPage2(page, yaml.getPublisherUrl());
+		System.err.println("slots:  "+slotsData);
+		
+		
 		page.close();
 		page.context().close();
 
@@ -398,14 +410,16 @@ private AbstractBidder getMatchingDataByAdUnitYHB(Slots slotData, List<? extends
 
 		try {
 
-			page.onConsoleMessage(consoleMessage -> {
-				jsExtraction.add("\n" + consoleMessage.text() + "\n");
-			});
+//			page.onConsoleMessage(consoleMessage -> {
+//				jsExtraction.add("\n" + consoleMessage.text() + "\n");
+//			});
 
 			page.navigate(url);
-			page.waitForTimeout(500);
+			page.waitForTimeout(12000);
 
 			Object adUnitDataEval = page.evaluate(adUnitDataCheckV2());
+			System.err.println("Slots: "+adUnitDataEval);
+			
 			log.info("Extracted json data from the page: " + adUnitDataEval.toString());
 //        SlotsDataUtil slotsDataUtil = jsonReader.readValue(adUnitDataEval.toString(), SlotsDataUtil.class);
 			List<Slots> slotsData = jsonReader.readValue(adUnitDataEval.toString(), new TypeReference<List<Slots>>() {
@@ -436,7 +450,8 @@ private AbstractBidder getMatchingDataByAdUnitYHB(Slots slotData, List<? extends
 			try {
 				JsonNode slotsData;
 				Object adUnitDataEval = page.evaluate(adUnitDataCheckV2());
-				// log.info("Extracted json data from the page: " + adUnitDataEval.toString());
+				
+				log.info("Extracted json data from the page: " + adUnitDataEval.toString());
 				slotsData = jsonReader.readTree(adUnitDataEval.toString());
 				// log.info("JSON Node as pretty print: " +
 				// jsonReader.writerWithDefaultPrettyPrinter().writeValueAsString(slotsData));

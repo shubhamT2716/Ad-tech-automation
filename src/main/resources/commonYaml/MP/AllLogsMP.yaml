@@ -7,8 +7,8 @@ networkCallsPositive: {
 
 networkCallsNegative: {
  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
- Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
- mnetcall: ".*media.net.*"
+ flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+ 
 }
 
 keysToVerifyPositive: {

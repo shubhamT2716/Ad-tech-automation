@@ -1,13 +1,17 @@
 package net.media.emma.utils;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,6 +20,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -86,6 +91,36 @@ public class FileOperations {
 		}
 
 		return yamlFiles;
+	}
+	
+	public List<String> listOfDownloadFiles(String dir)
+	{
+		List<String> listofReport=new ArrayList<>();
+		File file=new File(dir);
+		
+		File [] listofFiles=file.listFiles(new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				
+				return name.toLowerCase().endsWith(".xls");
+			}
+		});
+		
+		int n=0;
+		
+		for(File f: listofFiles)
+		{
+			if(n<15)
+			{
+			listofReport.add(f.getName());
+			}
+			n++;
+		}
+		
+
+		return listofReport;
+		
 	}
 	
 	public Set<String> listYamlFeatureFiles(String dir, String fileName)

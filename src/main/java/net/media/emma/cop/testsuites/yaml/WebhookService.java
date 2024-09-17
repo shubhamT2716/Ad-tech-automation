@@ -1,0 +1,669 @@
+package net.media.emma.cop.testsuites.yaml;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
+import net.media.emma.utils.FileOperations;
+
+@Slf4j
+@Service
+public class WebhookService implements WebhookServiceIn {
+
+	@Autowired
+	private FileOperations fileOperations;
+
+	@Value("${commonYamlFilePath}")
+	private String commonYamlFile;
+
+	@Value("${autoTestFilePath}")
+	private String autoTesterYamlFile;
+
+	@Autowired
+	private YamlTestSuiteScheduling yamlTestSuiteScheduling;
+
+	@Value("${yamlTestCriteriaFilesPath}")
+	private String yamlTestCriteriaFilesPath;
+
+	@Override
+	public void executeWebhook(String payload) {
+		try {
+
+//            payload="{\n"
+//            		+ "  \"object_kind\": \"note\",\n"
+//            		+ "  \"event_type\": \"note\",\n"
+//            		+ "  \"user\": {\n"
+//            		+ "    \"id\": 2245,\n"
+//            		+ "    \"name\": \"shubham.t\",\n"
+//            		+ "    \"username\": \"shubham.t\",\n"
+//            		+ "    \"avatar_url\": \"https://www.gravatar.com/avatar/1e18b01fe975317b2acb5a58bda17ff5?s=80&d=identicon\",\n"
+//            		+ "    \"email\": \"[REDACTED]\"\n"
+//            		+ "  },\n"
+//            		+ "  \"project_id\": 15491,\n"
+//            		+ "  \"project\": {\n"
+//            		+ "    \"id\": 15491,\n"
+//            		+ "    \"name\": \"emma\",\n"
+//            		+ "    \"description\": null,\n"
+//            		+ "    \"web_url\": \"http://tree.mn/mnet-ssp/emma\",\n"
+//            		+ "    \"avatar_url\": null,\n"
+//            		+ "    \"git_ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
+//            		+ "    \"git_http_url\": \"http://tree.mn/mnet-ssp/emma.git\",\n"
+//            		+ "    \"namespace\": \"mnet-ssp\",\n"
+//            		+ "    \"visibility_level\": 0,\n"
+//            		+ "    \"path_with_namespace\": \"mnet-ssp/emma\",\n"
+//            		+ "    \"default_branch\": \"master\",\n"
+//            		+ "    \"ci_config_path\": \"\",\n"
+//            		+ "    \"homepage\": \"http://tree.mn/mnet-ssp/emma\",\n"
+//            		+ "    \"url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
+//            		+ "    \"ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
+//            		+ "    \"http_url\": \"http://tree.mn/mnet-ssp/emma.git\"\n"
+//            		+ "  },\n"
+//            		+ "  \"object_attributes\": {\n"
+//            		+ "    \"attachment\": null,\n"
+//            		+ "    \"author_id\": 2245,\n"
+//            		+ "    \"change_position\": null,\n"
+//            		+ "    \"commit_id\": null,\n"
+//            		+ "    \"created_at\": \"2024-09-09 14:50:39 UTC\",\n"
+//            		+ "    \"discussion_id\": \"b524e0d922e12712802c225aaa87abe828f0c8e0\",\n"
+//            		+ "    \"id\": 1625514,\n"
+//            		+ "    \"line_code\": null,\n"
+//            		+ "    \"note\": \"@emma basic-sanity HB host: hbx.media.net\",\n"
+//            		+ "    \"noteable_id\": 279029,\n"
+//            		+ "    \"noteable_type\": \"MergeRequest\",\n"
+//            		+ "    \"original_position\": null,\n"
+//            		+ "    \"position\": null,\n"
+//            		+ "    \"project_id\": 15491,\n"
+//            		+ "    \"resolved_at\": null,\n"
+//            		+ "    \"resolved_by_id\": null,\n"
+//            		+ "    \"resolved_by_push\": null,\n"
+//            		+ "    \"st_diff\": null,\n"
+//            		+ "    \"system\": false,\n"
+//            		+ "    \"type\": null,\n"
+//            		+ "    \"updated_at\": \"2024-09-09 14:50:39 UTC\",\n"
+//            		+ "    \"updated_by_id\": null,\n"
+//            		+ "    \"description\": \"@emma userAgent: Chrome.Desktop.Mac , host: hbx.media.net  , publisher : https://www.webmd.com/?mnet_test=1\",\n"
+//            		+ "    \"url\": \"http://tree.mn/mnet-ssp/emma/-/merge_requests/74#note_1625514\"\n"
+//            		+ "  },\n"
+//            		+ "  \"repository\": {\n"
+//            		+ "    \"name\": \"emma\",\n"
+//            		+ "    \"url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
+//            		+ "    \"description\": null,\n"
+//            		+ "    \"homepage\": \"http://tree.mn/mnet-ssp/emma\"\n"
+//            		+ "  },\n"
+//            		+ "  \"merge_request\": {\n"
+//            		+ "    \"assignee_id\": 2137,\n"
+//            		+ "    \"author_id\": 2137,\n"
+//            		+ "    \"created_at\": \"2024-06-04 11:23:39 UTC\",\n"
+//            		+ "    \"description\": \"Create mr\\n\\nlearning to create MR\",\n"
+//            		+ "    \"draft\": false,\n"
+//            		+ "    \"head_pipeline_id\": 160809,\n"
+//            		+ "    \"id\": 279029,\n"
+//            		+ "    \"iid\": 74,\n"
+//            		+ "    \"last_edited_at\": null,\n"
+//            		+ "    \"last_edited_by_id\": null,\n"
+//            		+ "    \"merge_commit_sha\": null,\n"
+//            		+ "    \"merge_error\": null,\n"
+//            		+ "    \"merge_params\": {\n"
+//            		+ "      \"force_remove_source_branch\": \"1\"\n"
+//            		+ "    },\n"
+//            		+ "    \"merge_status\": \"can_be_merged\",\n"
+//            		+ "    \"merge_user_id\": null,\n"
+//            		+ "    \"merge_when_pipeline_succeeds\": false,\n"
+//            		+ "    \"milestone_id\": null,\n"
+//            		+ "    \"source_branch\": \"Create-MR\",\n"
+//            		+ "    \"source_project_id\": 15491,\n"
+//            		+ "    \"state_id\": 1,\n"
+//            		+ "    \"target_branch\": \"master\",\n"
+//            		+ "    \"target_project_id\": 15491,\n"
+//            		+ "    \"time_estimate\": 0,\n"
+//            		+ "    \"title\": \"Create mr\",\n"
+//            		+ "    \"updated_at\": \"2024-09-09 14:50:39 UTC\",\n"
+//            		+ "    \"updated_by_id\": 2245,\n"
+//            		+ "    \"url\": \"http://tree.mn/mnet-ssp/emma/-/merge_requests/74\",\n"
+//            		+ "    \"source\": {\n"
+//            		+ "      \"id\": 15491,\n"
+//            		+ "      \"name\": \"emma\",\n"
+//            		+ "      \"description\": null,\n"
+//            		+ "      \"web_url\": \"http://tree.mn/mnet-ssp/emma\",\n"
+//            		+ "      \"avatar_url\": null,\n"
+//            		+ "      \"git_ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
+//            		+ "      \"git_http_url\": \"http://tree.mn/mnet-ssp/emma.git\",\n"
+//            		+ "      \"namespace\": \"mnet-ssp\",\n"
+//            		+ "      \"visibility_level\": 0,\n"
+//            		+ "      \"path_with_namespace\": \"mnet-ssp/emma\",\n"
+//            		+ "      \"default_branch\": \"master\",\n"
+//            		+ "      \"ci_config_path\": \"\",\n"
+//            		+ "      \"homepage\": \"http://tree.mn/mnet-ssp/emma\",\n"
+//            		+ "      \"url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
+//            		+ "      \"ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
+//            		+ "      \"http_url\": \"http://tree.mn/mnet-ssp/emma.git\"\n"
+//            		+ "    },\n"
+//            		+ "    \"target\": {\n"
+//            		+ "      \"id\": 15491,\n"
+//            		+ "      \"name\": \"emma\",\n"
+//            		+ "      \"description\": null,\n"
+//            		+ "      \"web_url\": \"http://tree.mn/mnet-ssp/emma\",\n"
+//            		+ "      \"avatar_url\": null,\n"
+//            		+ "      \"git_ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
+//            		+ "      \"git_http_url\": \"http://tree.mn/mnet-ssp/emma.git\",\n"
+//            		+ "      \"namespace\": \"mnet-ssp\",\n"
+//            		+ "      \"visibility_level\": 0,\n"
+//            		+ "      \"path_with_namespace\": \"mnet-ssp/emma\",\n"
+//            		+ "      \"default_branch\": \"master\",\n"
+//            		+ "      \"ci_config_path\": \"\",\n"
+//            		+ "      \"homepage\": \"http://tree.mn/mnet-ssp/emma\",\n"
+//            		+ "      \"url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
+//            		+ "      \"ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
+//            		+ "      \"http_url\": \"http://tree.mn/mnet-ssp/emma.git\"\n"
+//            		+ "    },\n"
+//            		+ "    \"last_commit\": {\n"
+//            		+ "      \"id\": \"019d895f70c12d424eebbb90a9a2c4ca13c008d0\",\n"
+//            		+ "      \"message\": \"Merge branch 'master' of tree.mn:mnet-ssp/emma into akshda.k_branch\\n\",\n"
+//            		+ "      \"title\": \"Merge branch 'master' of tree.mn:mnet-ssp/emma into akshda.k_branch\",\n"
+//            		+ "      \"timestamp\": \"2024-06-03T19:38:41+05:30\",\n"
+//            		+ "      \"url\": \"http://tree.mn/mnet-ssp/emma/-/commit/019d895f70c12d424eebbb90a9a2c4ca13c008d0\",\n"
+//            		+ "      \"author\": {\n"
+//            		+ "        \"name\": \"akshda.k\",\n"
+//            		+ "        \"email\": \"[REDACTED]\"\n"
+//            		+ "      }\n"
+//            		+ "    },\n"
+//            		+ "    \"work_in_progress\": false,\n"
+//            		+ "    \"total_time_spent\": 0,\n"
+//            		+ "    \"time_change\": 0,\n"
+//            		+ "    \"human_total_time_spent\": null,\n"
+//            		+ "    \"human_time_change\": null,\n"
+//            		+ "    \"human_time_estimate\": null,\n"
+//            		+ "    \"assignee_ids\": [\n"
+//            		+ "      2137\n"
+//            		+ "    ],\n"
+//            		+ "    \"reviewer_ids\": [\n"
+//            		+ "\n"
+//            		+ "    ],\n"
+//            		+ "    \"labels\": [\n"
+//            		+ "\n"
+//            		+ "    ],\n"
+//            		+ "    \"state\": \"opened\",\n"
+//            		+ "    \"blocking_discussions_resolved\": true,\n"
+//            		+ "    \"first_contribution\": true,\n"
+//            		+ "    \"detailed_merge_status\": \"mergeable\"\n"
+//            		+ "  }\n"
+//            		+ "}";
+//			System.out.println("processing");
+			triggerEmma(payload);
+			Thread.sleep(5500);
+
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void triggerEmma(String payload) {
+		ObjectMapper mapper = new ObjectMapper();
+
+		Map<String, Object> map = new HashMap<>();
+
+		try {
+			JsonNode jsonNode = mapper.readValue(payload, JsonNode.class);
+
+			String projectId = jsonNode.get("project_id").toPrettyString();
+
+			map.put("projectId", projectId);
+
+			String brachName = jsonNode.get("merge_request").get("iid").toPrettyString();
+
+			map.put("mr", brachName);
+
+			String comment = jsonNode.get("object_attributes").get("description").toPrettyString();
+
+			if (comment.contains("@emma")) {
+
+				if (comment.contains("basic-sanity")|| comment.contains("basicSanity")||comment.contains("basicsanity")||comment.contains("BASICSANITY")||comment.contains("Basic-Sanity")) {
+
+					String url = null;
+
+//					String hostRegex = "(host|env|environment)\\s*:\\s*([\\S]+)\\s*";
+					
+					String hostRegex = "(host|env|environment)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
+
+					if (comment.contains("url")) {
+						String urlRegex = "(url|publisher|urls|pubs)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
+
+						url = extractValue(comment, urlRegex);
+
+						String domain = getHostFromUrl(url);
+
+						String itype = getItypeFromUrl(domain);
+
+						List<String> yamlFiles = getYamlFromUrl(domain);
+
+					}
+
+					if (comment.contains("hb") || comment.contains("HB") || comment.contains("Hb")) {
+						url = getUrlFromItype("hb");
+					}
+					if (comment.contains("MP") || comment.contains("Mp") || comment.contains("mp")) {
+						url = getUrlFromItype("mp");
+					}
+					if (comment.contains("hb2") || comment.contains("HB2") || comment.contains("Hb2")) {
+						url = getUrlFromItype("hb2");
+					}
+
+					String host = extractValue(comment, hostRegex);
+					
+					System.err.println("host: "+host);
+
+//					url="https://www.nutritionix.com/brands/restaurant?mnet_test=1";
+
+					String domain = getHostFromUrl(url);
+
+					String itype = getItypeFromUrl(domain);
+
+//						System.err.println("Domain: "+domain);
+//						
+//						System.err.println("itype: "+itype);
+
+					String ua = "Chrome.Desktop.Mac";
+
+					map.put("processStart", "Bot has started processing for " + url + "  with host: " + host
+							+ " please wait for some time");
+
+					addResponseToGit(map);
+
+					List<String> autoTester = new ArrayList<>(getAutoTesterFilesTest());
+
+					List<String> commonFile = new ArrayList<>(getCommonFilesForApi(itype));
+
+					SmokeTestRawDataDto dataDto = this.yamlTestSuiteScheduling.getAutoTest(host, ua, autoTester,
+							commonFile, url, itype, "", false);
+
+//						System.err.println("Report from :" +dataDto);
+//						
+//						System.err.println("REport from dataDto: "+dataDto.getSmokeReport().getTestdatas());
+
+					map.put("response", dataDto);
+
+				}
+
+				else {
+
+					String hostRegex = "(host|env|environment)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
+					String uaRegex = "(userAgent|ua)\\s*:\\s*([\\S]+)\\s*(?=[\\s,\"])";
+					String publisher = "(url|publisher|urls|pubs)\\s*:\\s*([\\S]+)\\s*(?=[\\s,\"])";
+					String itype = "itype\\s*:\\s*([\\S]+)\\s*(?=[\\s,\"])";
+
+					String pub = extractValue(comment, publisher);
+					String host = extractValue(comment, hostRegex);
+					String ua = extractValue(comment, uaRegex);
+					String it = extractValue(comment, itype);
+					
+					
+					if(it==null)
+					{
+						String domain = getHostFromUrl(pub);
+
+						 it = getItypeFromUrl(domain);
+					}
+					
+					
+					System.out.println(" pubs "+pub);
+					
+					System.out.println("host: "+host+" :ua:  "+ua+" : "+it+" : "+pub); 
+
+					map.put("processStart",
+							"Bot has started processing with host:" + host + " please wait for some time");
+
+					addResponseToGit(map);
+
+					List<String> commonFile = new ArrayList<>(getCommonFilesForApi(it));
+					
+					System.out.println(commonFile+" : ");
+
+					List<String> autoTest = new ArrayList<>(getAutoTesterFilesTest());
+
+					SmokeTestRawDataDto dataDto = this.yamlTestSuiteScheduling.getAutoTest(host, ua, autoTest,
+							commonFile, pub, it, "", false);
+
+//					System.err.println("REport from dataDto: "+dataDto.getSmokeReport().getTestdatas());
+
+					map.put("response", dataDto);
+				}
+
+//				System.err.println("MapGEt: "+map );
+
+				addResponseToGit(map);
+
+			}
+
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private String getUrlFromItype(String itype) {
+//		List<String> listOfUrlForHb=Arrays.asList("https://www.nutritionix.com/brands/restaurant?mnet_test=1","https://www.webmd.com/?mnet_test=1");
+//		
+//		List<String> listOfUrlForMp=Arrays.asList("https://www.forbes.com/?medianet_test=1","https://www.fox13now.com/?medianet_test=1");
+//
+//		List<String> listOfUrlForHb2=Arrays.asList("https://time.com/?mnet_test=1");
+
+		Map<String, String> list = new HashMap<>();
+
+		list.put("hb2", "https://time.com/?mnet_test=1");
+
+		list.put("mp", "https://www.forbes.com/?medianet_test=1,https://www.fox13now.com/?medianet_test=1");
+
+		list.put("hb", "https://www.nutritionix.com/brands/restaurant?mnet_test=1,https://www.webmd.com/?mnet_test=1");
+
+		return list.get(itype);
+	}
+
+	private String getItypeFromUrl(String url) {
+
+		String pub[] = url.split(",");
+
+		Map<String, String> listOfurls = new HashMap<>();
+
+		listOfurls.put("daily.co.jp", "MP");
+		listOfurls.put("fox13now.com", "MP");
+		listOfurls.put("forbes.com", "MP");
+		listOfurls.put("time.com", "HB2");
+		listOfurls.put("webmd.com", "HB");
+		listOfurls.put("nutritionix.com", "HB");
+
+		String itype = null;
+
+		for (String a : pub) {
+			itype = listOfurls.get(a);
+		}
+
+		return itype;
+
+	}
+
+	private String getFileNameFromUrl(String url) {
+		Map<String, String> listOfurls = new HashMap<>();
+
+		List<String> list = new ArrayList<>();
+
+		listOfurls.put("daily.co.jp", "DailyCoMP.yaml");
+		listOfurls.put("fox13now.com", "fox13now.yaml");
+		listOfurls.put("forbes.com", "forbesMp.yaml");
+		listOfurls.put("time.com", "timeHome.yaml");
+		listOfurls.put("webmd.com", "webmd.yaml");
+		listOfurls.put("nutritionix.com", "nutritionix.yaml");
+
+		String a[] = url.split(",");
+
+		for (String pub : a) {
+			String yaml = listOfurls.get(pub);
+
+			list.add(yaml);
+		}
+
+		String yml = String.join(",", list);
+
+		return yml;
+
+	}
+
+	private String getHostFromUrl(String url) {
+
+		String a[] = url.split(",");
+
+		List<String> li = new ArrayList<>();
+
+		try {
+
+			for (String pub : a) {
+				URL ur = new URL(pub);
+
+				String host = ur.getHost();
+
+				if (host.contains("www.")) {
+					host = host.substring(4);
+
+				}
+
+				li.add(host);
+
+			}
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String updateUrl = String.join(",", li);
+
+		return updateUrl;
+
+	}
+
+	private List<String> getYamlFromUrl(String url) {
+		List<String> listOfFiles = new ArrayList<>();
+
+		String publishers[] = url.split(",");
+
+		try {
+
+			for (String yaml : getYamlFiles()) {
+
+				for (String pub : publishers) {
+					if (yaml.contains(getFileNameFromUrl(pub))) {
+						listOfFiles.add(yaml);
+					}
+				}
+
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return listOfFiles;
+
+	}
+
+	public static String generateMarkdownReport(SmokeTestRawDataDto data) {
+		StringBuilder markdownBuilder = new StringBuilder();
+		data.getRawData().entrySet().forEach(entry -> {
+
+			System.err.println("Key: " + entry.getKey());
+
+			markdownBuilder.append("# Test Summary\n");
+			markdownBuilder.append("**Test URL:** ").append(entry.getValue().getTestMetaData().getPublisherUrl())
+					.append("\n\n");
+			markdownBuilder.append("**Scripts Used:**\n");
+
+			markdownBuilder.append("-").append(entry.getValue().getBidExController().getMatchingUrls());
+
+			// Test Details
+			markdownBuilder.append("\n### Test Details\n");
+			markdownBuilder.append("- **Size:** ")
+					.append(entry.getValue().getBidExController().getTotalSizeDownloaded()).append("\n");
+			markdownBuilder.append("- **Svr:** ").append(entry.getValue().getBidExController().getBidexData().getSvr())
+					.append("\n");
+			markdownBuilder.append("- **Ugd:** ").append(entry.getValue().getBidExController().getBidexData().getSugd())
+					.append("\n");
+			markdownBuilder.append("- **Cid:** ").append(entry.getValue().getBidExController().getBidexData().getCid())
+					.append("\n");
+			markdownBuilder.append("- **Itype:** ")
+					.append(entry.getValue().getBidExController().getBidexData().getItype()).append("\n");
+			markdownBuilder.append("- **Location:** ")
+					.append(entry.getValue().getBidExController().getBidexData().getCt()).append("\n");
+			markdownBuilder.append("- **Console Message:** ")
+					.append(entry.getValue().getBidExController().getConsoleMessages()).append("\n");
+
+			// network calls negative
+			markdownBuilder.append("\n### Negative URL Checks\n");
+
+			entry.getValue().getTestSummery().get("NegativeURLChecks").entrySet().forEach(nagativeCalls -> {
+
+//				markdownBuilder.append("- **" + nagativeCalls.getKey() + ":** ").append(nagativeCalls.getValue())
+//						.append("\n");
+				if (nagativeCalls.getValue().equalsIgnoreCase("NOT PRESENT")) {
+					markdownBuilder.append("- NO " + nagativeCalls.getKey()).append("\n\n");
+				} else {
+					markdownBuilder.append("- **" + nagativeCalls.getKey() + ":** ").append(nagativeCalls.getValue())
+							.append("\n");
+				}
+
+			});
+
+			// network calls Positive
+			markdownBuilder.append("\n### Positive URL Checks\n");
+
+			entry.getValue().getTestSummery().get("PositiveURLChecks").entrySet().forEach(positiveCalls -> {
+
+				markdownBuilder.append("- " + positiveCalls.getKey()).append("\n").append("\n");
+
+			});
+
+			markdownBuilder.append("\n### Cookie \n");
+			
+			System.err.println("Cookies: "+entry.getValue().getCookie());
+
+			entry.getValue().getCookie().entrySet().forEach(cookieDomain -> {
+
+				if (cookieDomain.getKey().equals("https://contextual.media.net")
+						|| cookieDomain.getKey().equals("https://hbx.media.net")) {
+
+					markdownBuilder.append("- **" + "Domain" + ":** ").append(cookieDomain.getKey()).append("\n");
+					cookieDomain.getValue().entrySet().forEach(cookie -> {
+
+						markdownBuilder.append("- **" + "cookie" + ":** ").append(cookie.getKey()).append("\n");
+
+					});
+
+				}
+
+			});
+
+			// Test Result
+			markdownBuilder.append("\n## Test Result\n");
+			markdownBuilder.append("- **Overall Result:** ").append(data.getTestResult().get("testResult")).append("\n")
+					.append("\n");
+
+			markdownBuilder.append("- **Reason:** ").append("\n");
+
+			data.getErrorMessage().get(entry.getKey()).entrySet().forEach(errorMessage -> {
+				markdownBuilder.append("- " + errorMessage.getKey()).append(" : ").append(errorMessage.getValue())
+						.append("\n");
+
+			});
+
+			markdownBuilder.append("\n");
+
+			markdownBuilder.append("**Full Report:** [View Full Report](" + data.getFullReport() + ")\n");
+
+		});
+
+		return markdownBuilder.toString();
+	}
+
+	private String extractValue(String comment, String pattern) {
+		Pattern pattern2 = Pattern.compile(pattern);
+
+		Matcher matcher = pattern2.matcher(comment);
+
+		if (matcher.find()) {
+			
+			try {
+				return matcher.group(2).trim();
+			}
+			catch (Exception e) {
+				return matcher.group(1).trim();
+			}
+
+			
+		}
+
+		return null;
+	}
+
+	private void addResponseToGit(Map<String, Object> response) {
+
+		String girUrl = "http://tree.mn/api/v4/projects/" + response.get("projectId") + "/merge_requests/"
+				+ response.get("mr") + "/notes";
+
+		log.info("git process start");
+		RestTemplate restTemplate = new RestTemplate();
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("PRIVATE-TOKEN", "glpat-iv_1fYCKGHmWW623pEqm");
+
+		Map<String, String> map = new HashMap<>();
+
+		System.err.println("REsponse: " + response);
+
+		if (response.get("response") == null) {
+			map.put("body", response.get("processStart").toString());
+		} else {
+			SmokeTestRawDataDto rawReport = (SmokeTestRawDataDto) response.get("response");
+			String html = null;
+
+			try {
+
+				log.info(rawReport.getBidExReport().toString());
+				html = generateMarkdownReport(rawReport);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			map.put("body", html);
+		}
+
+		HttpEntity<Map<String, String>> entity = new HttpEntity<Map<String, String>>(map, headers);
+
+		ResponseEntity<String> data = restTemplate.postForEntity(girUrl, entity, String.class);
+
+		log.info("process completed: " + data.getBody() + " : " + data.getStatusCode());
+	}
+
+	private Set<String> getCommonFilesForApi(String itype) {
+		Set<String> fileName = fileOperations.listYamlFiles(commonYamlFile + "/" + itype);
+
+		return fileName;
+	}
+
+	private Set<String> getAutoTesterFilesTest() {
+		Set<String> fileName = fileOperations.listYamlFiles(autoTesterYamlFile);
+
+		return fileName;
+	}
+
+	private Set<String> getYamlFiles() {
+		Set<String> filename = fileOperations.listYamlFiles(yamlTestCriteriaFilesPath);
+
+		return filename;
+	}
+
+}

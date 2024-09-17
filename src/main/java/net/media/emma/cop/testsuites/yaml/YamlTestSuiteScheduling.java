@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +23,12 @@ import org.springframework.util.StreamUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -167,6 +169,9 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 				
 				ClassPathResource classPathResource = new ClassPathResource(autoTesterYamlFile + "/" + yaml);
 				
+//				ClassPathResource classPathResource = new ClassPathResource(yamlTestCriteriaFilesPath + "/" + yaml);
+						
+				
 				String content = null;
 
 				try {
@@ -199,8 +204,8 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 							testCriteriaBo.setEnvironment(env);
 							testCriteriaBo.setPublisherUrl(pub);							
 							
-							map.put(yaml+"_"+env+"_"+agent , yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-							listOfYamlEnv.add(yaml+"_"+env +"_"+agent);
+							map.put(pub+"_"+env+"_"+agent , yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+							listOfYamlEnv.add(pub+"_"+env +"_"+agent);
 					}
 
 					}
@@ -337,7 +342,9 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 
 		Map<String, Map<String, List<String>>> error = new HashMap<>();
 
-		
+		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
+
+		String testResult = getTestResult(error);
 		
 		for (String yaml : listOfYamlEnv) {
 			
@@ -368,6 +375,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 
 			error.put(yaml, errorMessage);
 
+			
 			testdata.setEnvironment(reportModel.getTestMetaData().getEnvironment());
 			testdata.setUserAgent(reportModel.getTestMetaData().getUserAgent());
 			testdata.setBidExFileSize(reportModel.getBidExController().getTotalSizeDownloaded());
@@ -387,12 +395,15 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			
 		}
 
-		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
-
-		String testResult = getTestResult(error);
 		
 		
-		this.fileHandling.addSmokeReportInFile(finalResult, testReportModelList);
+		
+		try {
+			this.fileHandling.addSmokeReportInFile(finalResult, testReportModelList);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		if (flagForMail == true && email!=null && !email.isBlank()&& !email.isEmpty()) {
 			this.mailServiceImpl.sendMail(email, email, testReportModelList,
@@ -403,24 +414,20 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 		
 		Map<String, String> testReport=new HashMap<>();
 		
-
-//		sdto.setRawDataLink("zipDownload/" + zipFile);
 		dto.setTestdatas(testdataResult);
-		
-		// dto.setTestResultSummery(testResultSummery(reportModel));
 		
 		testReport.put("testResult", testResult);
 		String reportLink="http://10.2.64.124:8080/yamlTestSuite/smokeTestSuite/"+ zipFile;
+		testReport.put("fullReport:", reportLink);
 		
-//		String link="<a href=\"" + reportLink + "\">Show Report</a>";
 		
-		testReport.put("fullReport", reportLink);
 
 		rawDataDto.setTestResult(testReport);
 		rawDataDto.setRawData(finalResult);
 		rawDataDto.setSmokeReport(dto);
 		rawDataDto.setBidExReport(bidExReport);
-		rawDataDto.setErrorMessage(error);
+		rawDataDto.setErrorMessage(getErrorMessage(error));
+		rawDataDto.setFullReport(reportLink);
 		
 		
 		
@@ -428,6 +435,43 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 
 		return rawDataDto;
 
+	}
+	
+	
+	public Map<String, Map<String, List<String>>> getErrorMessage(Map<String, Map<String, List<String>>> errorMessage)
+	{
+		Map<String , Map<String, List<String>>> getErrorMessage=new HashMap<>();
+		
+		
+		
+		errorMessage.entrySet().forEach(entry->{
+			
+			
+			
+			Map<String, List<String>> getMessage=new HashMap<>();
+			
+			entry.getValue().entrySet().forEach(networkCall->{
+				
+				List<String> error=new ArrayList<>();
+				for(String message: networkCall.getValue())
+				{
+					if(message.startsWith("Positive key value check failed for key")||message.startsWith("Negative key value check failed for key")||
+							message.startsWith("Call not fired"))
+					{
+						error.add(message);
+					}
+				}
+				
+				getMessage.put(networkCall.getKey(), error);
+				
+			});
+			
+			getErrorMessage.put(entry.getKey(), getMessage);
+			
+			
+		});
+		
+		return getErrorMessage;
 	}
 	
 	
@@ -461,7 +505,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			{
 //				testResult.put(key, "NOT PASS");
 				
-				testResult.computeIfAbsent("NegativeURLChecks", k->new HashMap<>()).put(key, "NOT PASS");
+				testResult.computeIfAbsent("NegativeURLChecks", k->new HashMap<>()).put(key, "NOT PRESENT");
 			}
 			else {
 				testResult.computeIfAbsent("NegativeURLChecks", k-> new HashMap<>()).put(key, "PASS");
@@ -480,21 +524,21 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 	
 	
 
-	private TestCriteriaBo getYamlObject(String fileName) {
-
-		try {
-
-			ObjectMapper yamlMapper = new YAMLMapper();
-
-			return yamlMapper.readValue(fileOperations.readFileAsInputStream(fileName), TestCriteriaBo.class);
-
-		} catch (StreamReadException | DatabindException e) {
-			log.error("Error while reading yaml file: " + fileName, e);
-		} catch (IOException e) {
-			log.error("Error while reading yaml file", e);
-		}
-		return null;
-	}
+//	private TestCriteriaBo getYamlObject(String fileName) {
+//
+//		try {
+//
+//			ObjectMapper yamlMapper = new YAMLMapper();
+//
+//			return yamlMapper.readValue(fileOperations.readFileAsInputStream(fileName), TestCriteriaBo.class);
+//
+//		} catch (StreamReadException | DatabindException e) {
+//			log.error("Error while reading yaml file: " + fileName, e);
+//		} catch (IOException e) {
+//			log.error("Error while reading yaml file", e);
+//		}
+//		return null;
+//	}
 
 	public String templateLoder(String user, Map<String, JsonNode> result) {
 		Context context = new Context();
@@ -503,20 +547,57 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 		return this.engine.process("SchedulerReport", context);
 	}
 
-	public JsonNode readDataFromZip(String fileName) {
-		
-		System.err.println(fileName);
+	public Map<String, Map<String, Object>> readDataFromZip(String fileName) {
 
-		String filePath = zipFilePath + fileName;
+		ObjectMapper mapper=new ObjectMapper();
 		
-		System.err.println(filePath);
+		String filePath = zipFilePath + fileName;
 
 		JsonNode resultData = CommonBrowserUtil.readDataFromZip(filePath);
+		
+		Map<String,Object> result=mapper.convertValue(resultData, new TypeReference<Map<String, Object>>() {});
 
 		log.info("Result Data " + resultData);
+		
+		
+		Map<String, Map<String, Object>> report=new HashMap<>();
+		
+		
+		result.entrySet().forEach(entry->{
+			
+			Map<String, Object> data=new HashMap<>(); 
+			
+			Map<String, Object>map=mapper.convertValue(entry.getValue(),new TypeReference<Map<String, Object>>(){});
+			
+			Object testData=map.get("testMetaData");
+			Object bidexData=map.get("bidExController");	
+			Object summery=map.get("testSummery");	
+			
+//			Map<String, Object> urlReport=mapper.convertValue(map.get("urlChecks"), new TypeReference<Map<String, Object>>() {});
+			
+			Map<String, Object> metaData=mapper.convertValue(testData,new TypeReference<Map<String, Object>>(){});
+			
+			data.computeIfAbsent(metaData.get("publisherUrl")+":"+metaData.get("environment"), k -> {
+				List<Object> list=new ArrayList<>();
+				
+				list.addAll(Arrays.asList(testData,bidexData,summery));
+				return list;
+			});
 
-		return resultData;
+			
+			 report.computeIfAbsent("basicReport", k -> new HashMap<String, Object>())
+	          .putAll(data);
+			 
+			 report.computeIfAbsent("fullReport", k -> new HashMap<String, Object>())
+	          .putAll(map);
+			
+		});
+		
+		return report;
 
 	}
+	
+	
+	
 
 }

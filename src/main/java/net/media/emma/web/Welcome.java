@@ -25,6 +25,7 @@ public class Welcome {
             put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
             put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "/privacyComplianceTestSuite/");
             put("Auto Tester", "/autoTester/");
+            put("Show Report", "/yamlTestSuite/show-report");
         }};
 
     @GetMapping("/welcome")

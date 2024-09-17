@@ -155,24 +155,24 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
     	String harFile=browserUtil.getFileNameForHar();
     	
 		
-		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
+//		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), null, harFileBasePath+harFile);
     	
-//    	BrowserType.LaunchOptions launchOptions=new BrowserType.LaunchOptions().setHeadless(false).setChannel("chrome")
-////    			.setProxy(new Proxy("http://209.190.13.254:8081"))  // US
-//    			.setProxy(new Proxy("http://10.2.128.194:3128")) //EU
-//    			;
-//    	
-////    			.setArgs(List.of("--proxy-server=http://209.190.13.254:8081"));
-//    	
-//    	Browser browser=Playwright.create().chromium().launch(launchOptions);
-//    	
-//    	Browser.NewContextOptions contextOptions=new Browser.NewContextOptions();
-////    			.setViewportSize(1280,720)
-////    			.setDeviceScaleFactor(1.0);
-//    			
-//    			
-//    		Page page=browser.newContext(contextOptions).newPage();
-//    		page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+    	BrowserType.LaunchOptions launchOptions=new BrowserType.LaunchOptions().setHeadless(false).setChannel("chrome")
+    			.setProxy(new Proxy("http://209.190.13.254:8081"))  // US
+ //   			.setProxy(new Proxy("http://10.2.128.194:3128")) //EU
+    			;
+    	
+//    			.setArgs(List.of("--proxy-server=http://209.190.13.254:8081"));
+    	
+    	Browser browser=Playwright.create().chromium().launch(launchOptions);
+    	
+    	Browser.NewContextOptions contextOptions=new Browser.NewContextOptions();
+//    			.setViewportSize(1280,720)
+//    			.setDeviceScaleFactor(1.0);
+    			
+    			
+    		Page page=browser.newContext(contextOptions).newPage();
+    		page.waitForLoadState(LoadState.DOMCONTENTLOADED);
     	
 		try {
 			
@@ -290,7 +290,7 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 		page.close();
 
 
-		return autoTesterSrevice.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile, cookies,yamlTc, urlFromNetworkTab, listOfReqest, getConsoleErrors(page));
+		return autoTesterSrevice.loadBidExConfig(bidexJson,listOfFeatures,yaml, harFile, cookies,yamlTc, urlFromNetworkTab, listOfReqest, getConsoleErrors(page),pageSlots);
 
 		
 		
@@ -302,7 +302,7 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 			
 			page.close();
 			
-			return autoTesterSrevice.loadBidExConfig(null, urlFromNetworkTab, yaml, harFile, getCookies(page, yaml.getPublisherUrl()),  yamlTc, urlFromNetworkTab, listOfReqest, getConsoleErrors(page));		
+			return autoTesterSrevice.loadBidExConfig(null, urlFromNetworkTab, yaml, harFile, getCookies(page, yaml.getPublisherUrl()),  yamlTc, urlFromNetworkTab, listOfReqest, getConsoleErrors(page),pageSlots);		
 			
 		}
 		

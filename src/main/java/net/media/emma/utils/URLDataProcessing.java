@@ -149,7 +149,7 @@ public class URLDataProcessing {
 					if(req.url().startsWith(url))
 					{
 							
-					log.info("url: "+url +"  PostData:  "+req.postData());
+//					log.info("url: "+url +"  PostData:  "+req.postData());
 						
 						Map<String, String> queryM=queryStringToMap(req.postData());
 

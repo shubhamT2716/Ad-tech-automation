@@ -18,6 +18,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import org.springframework.http.HttpHeaders;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,9 +31,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
@@ -42,6 +45,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
+
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.FileOperations;
 
@@ -84,6 +88,9 @@ public class WebController {
 
 	@Autowired
 	YamlTestSuiteScheduling yamlTestSuiteScheduling;
+	
+	@Autowired
+	private WebhookServiceIn webhookService;
 
 	@GetMapping("/smokeTestSuite")
 	public ModelAndView threadPoolTestForm() {
@@ -98,24 +105,16 @@ public class WebController {
 	@GetMapping("smokeTestSuiteItype")
 	public Map<String, Set<String>> getFilesOnItypeForForm(@RequestParam(name = "itype",required = false)String itype) {
 
-//		ModelAndView mav = new ModelAndView("smokeTestSuite");
-		
 		Map<String, Set<String>> mav=new HashMap<>();
-//		
+		
 		if(!itype.equalsIgnoreCase("all"))
 		{
-////			mav.addObject("fileNames", new ArrayList<>(getFileNamesForSmokeTest()));
-////			mav.addObject("commonFile", new ArrayList<>(getCommonFilesForSmokeTest()));
-		
+			
 		mav.put("fileNames", getFileNamesForSmokeTestItype(itype));
 		mav.put("commonFile", getCommonFilesForApi(itype));
 			
 		}
 		else {
-//			mav.addObject("fileNames", new ArrayList<>(getFileNamesForSmokeTestItype(itype)));
-//			mav.addObject("commonFile", new ArrayList<>(getCommonFilesForApi(itype)));
-			
-			
 			mav.put("fileNames", getFileNamesForSmokeTest());
 			mav.put("commonFile", getCommonFilesForSmokeTest());
 		}
@@ -137,9 +136,6 @@ public class WebController {
 
 		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 		
-		System.err.println("Env: "+environment);
-		
-		System.err.println("Ua = "+userAgent);
 		
 		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null, itype,email,true);
 		// SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null,email, true);
@@ -180,10 +176,7 @@ public class WebController {
 		SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest,commonFile,pubs,itype, email,true);
 
 		try {
-//			mav.addObject("message2", result.getSmokeReport());
-//			mav.addObject("message1", result.getRawData());
-//			mav.addObject("message3", result.getBidExReport());
-//			mav.addObject("message4", result.getErrorMessage());
+
 			
 			return ResponseEntity.ok(result);
 
@@ -198,27 +191,18 @@ public class WebController {
 
 	}
 	
-	
-	
-	public ModelAndView featureController()
-	{
-		return null;
-	}
-	
-	
-	 
-	
-	
 
 	@GetMapping("/smokeTestSuite/{fileName}")
 	public ModelAndView runReortForEmail(@PathVariable("fileName") String fileName) {
 
-		ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
+		ModelAndView mav = new ModelAndView("zipFileSmokeReport");
 
-		JsonNode resultData = yamlTestSuiteScheduling.readDataFromZip(fileName);
-
+		Map<String, Map<String, Object>> resultData = yamlTestSuiteScheduling.readDataFromZip(fileName);
+	
 		try {
-			mav.addObject("message2", resultData);
+			mav.addObject("message2", resultData.get("basicReport"));
+			mav.addObject("message1", resultData.get("fullReport"));
+
 		} catch (Exception e) {
 			log.info("Error in reading zip = " + e);
 			mav.addObject("message", e.getMessage());
@@ -275,48 +259,18 @@ public class WebController {
 	@GetMapping("/userAgent")
 	public Map<String, String> getUserAgent()
 	{
-		
-//		ModelAndView mav=new ModelAndView("UserAgent");
-//		try {
-//			
-//			Map<String, String> map=BrowserFactory.browserContexts; 
-//			
-//			
-//			
-//			JsonNode jsonNode=yamlMapper.convertValue(map, JsonNode.class);
-//			
-//			
-//			
-//			mav.addObject("userAgent", jsonNode);
-//				
-//		}
-//		catch (Exception e) {
-//			
-//			mav.addObject("message1", e.getMessage());
-//		}
-		
-		
+	
 		Map<String, String> map=BrowserFactory.browserContexts;
 		
 		return map;
 	}
 
-	
-//	@Autowired
-//	private YamlTestSuiteScheduling scheduling;
-//
-//	@GetMapping("/schedulerReport")
-//	public ModelAndView generatedReportFromScheduling() {
-//		return this.scheduling.getAutoTest();
-//	}
 
 	@GetMapping
 	public ModelAndView yamlTestSuite() {
 
 		ModelAndView mav = new ModelAndView("yamlTestSuite");
 		mav.addObject("files", fileOperations.listYamlFiles(yamlTestCriteriaFilesPath));// Arrays.asList(null,
-		// "testCriteria.yaml",
-		// "testCriteria2.yaml"));
 
 		return mav;
 	}
@@ -331,13 +285,12 @@ public class WebController {
 		try {
 
 			
+			
 			ObjectMapper mapper = new YAMLMapper();
 			
 			TestCriteriaBo yamlTc = mapper.readValue(yaml, TestCriteriaBo.class);
 
 			TestReportModel message = yamlTestSuite.getTestResults(yamlTc,url,response);
-
-			// mav. addObject("message2", message);
 
 			JsonNode jsonNode = yamlMapper.convertValue(message, JsonNode.class);
 
@@ -350,27 +303,25 @@ public class WebController {
 
 		return mav;
 	}
-
 	
+	
+	@PostMapping("/data")
+	public String/*ModelAndView*/ demoWebhooks(@RequestBody(required = false)String payload)
+	{
+		log.info("Webhooks called ");
+		log.info(payload);
+
+		new Thread(()-> this.webhookService.executeWebhook(payload)).start();
+
+		return "complete";
+		
+		
+	}
+
 
 	@PostMapping("fileContent")
 	@ResponseBody
 	public String getFileContent(@RequestBody String fileName) {
-	
-//		String filePath =  yamlTestCriteriaFilesPath + "/" + fileName;
-//
-//		
-////		 String file = Paths.get(filePath).toString();
-//
-//		    try {
-//		        // Read the file content using java.nio.file.Files
-//		        byte[] bytes = Files.readAllBytes(Paths.get(filePath));
-//		        String content = new String(bytes, StandardCharsets.UTF_8);
-//		        return content;
-//		    } catch (IOException e) {
-//		        e.printStackTrace();
-//		        return "Error while reading file: " + e.getMessage();
-//		    }
 		
 		ClassPathResource classPathResource = new ClassPathResource(yamlTestCriteriaFilesPath+"/" + fileName);
 
@@ -386,7 +337,6 @@ public class WebController {
 			e.printStackTrace();
 			return "Error while reading Yaml" + e.getMessage();
 		}
-
 
 	}
 
@@ -424,6 +374,28 @@ public class WebController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
 
+	}
+	
+	
+	@GetMapping("show-report")
+	public ModelAndView getDownloadReport()
+	{
+		ModelAndView model=new ModelAndView("yamlReport");
+		
+		try {
+			
+			List<String> listOfFiles=this.yamlTestSuite.getReportFiles();
+			
+			model.addObject("listOfFileNames", listOfFiles);
+			
+		}catch (Exception e) {
+			
+			model.addObject("listOfFileNames", e.getMessage());
+		}
+		
+		
+		return model;
+		
 	}
 	
 	@GetMapping("/downloadFile")

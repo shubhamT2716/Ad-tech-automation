@@ -15,7 +15,7 @@ import net.media.emma.cop.testsuites.pagetests.TestCriteriaBo;
 @Service
 public interface AutoTesterSreviceIn {
 
-	public BidexFeatureReport loadBidExConfig(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, Map<String, List<Cookie>> cookies, String yamlTc, List<String> urls,  List<Request> requests, List<String> consoleError) ;
+	public BidexFeatureReport loadBidExConfig(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, Map<String, List<Cookie>> cookies, String yamlTc, List<String> urls,  List<Request> requests, List<String> consoleError, JsonNode slots) ;
 
 	
 }

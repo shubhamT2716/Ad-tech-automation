@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Files</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .file-list li {
+            margin: 10px 0;
+        }
+
+        .file-list a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .file-list a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Available Files</h1>
+        <ul class="file-list">
+            <!-- Thymeleaf loop to display list of files -->
+            <!-- <li th:each="file : ${listOfFileNames}">
+                <a href="#" th:text="${file}" th:data-filename="${file}" class="file-link"></a>
+            </li> -->
+            <li th:each="file : ${listOfFileNames}">
+                <a th:href="'/yamlTestSuite/downloadFile?fileName=' + ${file}" th:text="${file}"></a>
+            </li>
+            
+        </ul>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Attach click event to file links
+            $('.file-list').on('click', '.file-link', function(event) {
+                event.preventDefault(); // Prevent default link behavior
+                
+                var fileName = $(this).data('filename'); // Get the file name from data attribute
+                
+                // AJAX call to send the file name to the server
+                $.ajax({
+                    url: '/yamlTestSuite/downloadFile', // Your controller endpoint
+                    type: 'GET',
+                    data: { fileName: fileName },
+                    // success: function(response) {
+                    //     alert('File ' + fileName + ' has been processed.');
+                    //     // Optionally, you can handle the response here
+                    // },
+                    // error: function(xhr, status, error) {
+                    //     console.error('Error processing the file:', error);
+                    // }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

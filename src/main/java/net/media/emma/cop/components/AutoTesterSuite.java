@@ -93,7 +93,7 @@ public class AutoTesterSuite implements AutoTesterSreviceIn {
     
 
     @Override
-	public BidexFeatureReport loadBidExConfig(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, Map<String, List<Cookie>> cookies, String yamlTc, List<String> urls,  List<Request> requests, List<String> consoleError) 
+	public BidexFeatureReport loadBidExConfig(JsonNode bidexContent,List<String> listOfFeatures ,TestCriteriaBo yaml, String harFile, Map<String, List<Cookie>> cookies, String yamlTc, List<String> urls,  List<Request> requests, List<String> consoleError,JsonNode slots) 
 	{
 		
 		
@@ -219,7 +219,7 @@ public class AutoTesterSuite implements AutoTesterSreviceIn {
 	        
 	        bidexFeatureReport.setBusinessFeaturesDetected(featureTestResult);
 //	        bidexFeatureReport.setEnvironmentDetails(getEnvironment(bidexContent));
-//	        bidexFeatureReport.setSlotsDetected(solts);
+	        bidexFeatureReport.setSlotsData(slots);
 	        bidexFeatureReport.setCookies(displayCookies(cookies));
 	        bidexFeatureReport.setUrlChecksReport(urlChecks);
 //	        bidexFeatureReport.setSlotsReport(getSlotsReport(reportModel, bidexContent));    

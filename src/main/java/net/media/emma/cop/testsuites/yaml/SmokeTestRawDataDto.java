@@ -25,6 +25,8 @@ public class SmokeTestRawDataDto {
 	
 	private Map<String, String> testResult;
 	
+	private String fullReport;
+	
 	
  
 }

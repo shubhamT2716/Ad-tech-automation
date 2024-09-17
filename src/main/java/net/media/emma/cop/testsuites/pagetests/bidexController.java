@@ -145,6 +145,7 @@ public class bidexController {
 			modelAndView.addObject("allFeatureData", bidexFeatureReport.getAllFeatureData());
 			modelAndView.addObject("allCookiesData", bidexFeatureReport.getCookies());
 			modelAndView.addObject("basicReport", bidexFeatureReport.getUrlChecksReport());
+			modelAndView.addObject("slotsData", bidexFeatureReport.getSlotsData());
 			modelAndView.addObject("featureReport", bidexFeatureReport.getFeatureReport());
 			
 		} catch (JsonProcessingException e) {
