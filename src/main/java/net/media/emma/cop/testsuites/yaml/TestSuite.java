@@ -311,7 +311,7 @@ public class TestSuite implements GenericTestSuite {
 							.environment(testData.getEnvironment())
 //				.userAgent(
 //						testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
-							.harFileDownloadLink("harDownload/" + harFilePath).build())
+							.harFileDownloadLink("/yamlTestSuite/harDownload/" + harFilePath).build())
 					.build();
 
 			if (userAgent != null) {
@@ -698,7 +698,7 @@ public class TestSuite implements GenericTestSuite {
 			
 			
 			
-			size.append("bidexchange.js : " + responseSize/1000 + " Kb");
+			size.append("bidexchange.js : " + responseSize/1000 + " kb");
 
 		}
 		if (request.url().matches(regexForBidex2)) {
@@ -708,7 +708,9 @@ public class TestSuite implements GenericTestSuite {
 			size.append("  " + "bidexl2.js : " + responseSize/1000 + " kb");
 		} else {
 
-			return request.sizes().responseBodySize + "b";
+			int responseSize=request.sizes().responseBodySize;
+			
+			return responseSize/1000 + "kb";
 
 		}
 

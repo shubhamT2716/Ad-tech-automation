@@ -317,6 +317,19 @@ public class WebController {
 		
 		
 	}
+	
+	@PostMapping("/emma")
+	public String/*ModelAndView*/ triggerWebhooks(@RequestBody(required = false)String payload)
+	{
+		log.info("Webhooks called ");
+		log.info(payload);
+
+		new Thread(()-> this.webhookService.executeWebhook(payload)).start();
+
+		return "complete";
+		
+		
+	}
 
 
 	@PostMapping("fileContent")

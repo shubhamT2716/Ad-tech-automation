@@ -264,10 +264,10 @@ public class WebhookService implements WebhookServiceIn {
 						url = getUrlFromItype("hb");
 					}
 					if (comment.contains("MP") || comment.contains("Mp") || comment.contains("mp")) {
-						url = getUrlFromItype("mp");
+						url = url+ getUrlFromItype("mp");
 					}
 					if (comment.contains("hb2") || comment.contains("HB2") || comment.contains("Hb2")) {
-						url = getUrlFromItype("hb2");
+						url = url+ getUrlFromItype("hb2");
 					}
 
 					String host = extractValue(comment, hostRegex);
@@ -649,6 +649,17 @@ public class WebhookService implements WebhookServiceIn {
 	}
 
 	private Set<String> getCommonFilesForApi(String itype) {
+		Set<String> fileName = fileOperations.listYamlFiles(commonYamlFile + "/" + itype);
+
+		return fileName;
+	}
+	
+	private Set<String> getCommonYamlFilesForApi(String itype) {
+		
+		String itpe[]=itype.split(",");
+		
+		
+		
 		Set<String> fileName = fileOperations.listYamlFiles(commonYamlFile + "/" + itype);
 
 		return fileName;

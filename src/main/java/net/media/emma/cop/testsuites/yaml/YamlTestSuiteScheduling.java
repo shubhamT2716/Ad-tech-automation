@@ -426,7 +426,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 		rawDataDto.setRawData(finalResult);
 		rawDataDto.setSmokeReport(dto);
 		rawDataDto.setBidExReport(bidExReport);
-		rawDataDto.setErrorMessage(getErrorMessage(error));
+		rawDataDto.setErrorMessage(getErrorMessage(error, reportModel));
 		rawDataDto.setFullReport(reportLink);
 		
 		
@@ -438,7 +438,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 	}
 	
 	
-	public Map<String, Map<String, List<String>>> getErrorMessage(Map<String, Map<String, List<String>>> errorMessage)
+	public Map<String, Map<String, List<String>>> getErrorMessage(Map<String, Map<String, List<String>>> errorMessage, TestReportModel report)
 	{
 		Map<String , Map<String, List<String>>> getErrorMessage=new HashMap<>();
 		
@@ -453,6 +453,21 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			entry.getValue().entrySet().forEach(networkCall->{
 				
 				List<String> error=new ArrayList<>();
+				
+				report.getUrlChecks().getNegativeUrlChecks().entrySet().forEach(negativecall->{
+					
+//					Map<String, List<String>> getMessage=new HashMap<>();
+					
+					if(negativecall.getValue().getCountOfMatchingUrls()!=0)
+					{
+						
+						getMessage.put(negativecall.getValue().getLabel(),negativecall.getValue().getMatchingUrls());
+//						getErrorMessage.put(negativecall.getKey() ,k->new HashMap<>()).put(negativecall.getValue().getLabel(), negativecall.getValue().getCountOfMatchingUrls());
+					}
+					
+					
+				});
+				
 				for(String message: networkCall.getValue())
 				{
 					if(message.startsWith("Positive key value check failed for key")||message.startsWith("Negative key value check failed for key")||
@@ -460,6 +475,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 					{
 						error.add(message);
 					}
+					
 				}
 				
 				getMessage.put(networkCall.getKey(), error);
@@ -470,6 +486,11 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			
 			
 		});
+		
+		
+		
+		
+		
 		
 		return getErrorMessage;
 	}
