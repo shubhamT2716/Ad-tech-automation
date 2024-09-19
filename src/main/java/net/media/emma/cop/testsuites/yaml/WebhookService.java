@@ -440,8 +440,10 @@ public class WebhookService implements WebhookServiceIn {
 
 		HttpHeaders headers = new HttpHeaders();
 
+		//glpat-zzNwY6CKgyLaBYg_7PuL
+		//glpat-spsyh2z6QMEQs5sQnKD7
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("PRIVATE-TOKEN", "glpat-iv_1fYCKGHmWW623pEqm");
+		headers.set("PRIVATE-TOKEN", "glpat-spsyh2z6QMEQs5sQnKD7");
 
 		Map<String, String> map = new HashMap<>();
 
