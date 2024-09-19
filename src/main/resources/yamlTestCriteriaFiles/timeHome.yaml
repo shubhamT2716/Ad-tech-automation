@@ -30,8 +30,7 @@ networkCallsPositive:
 networkCallsNegative:
   {
     nerrPing: "https://hblg.media.net/nerrping.php",
-    fLog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
-    elLog: "https://hblg.media.net/log?logid=kfk&evtid=ellog"
+    flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
   }
 
 keysToVerifyPositive:

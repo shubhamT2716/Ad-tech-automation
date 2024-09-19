@@ -10,7 +10,7 @@ networkCallsPositive: {
   prlog: "https://hblg.media.net/log?logid=prlog",
   aplog: "https://hblg.media.net/log?logid=aplog",
   awlog: "https://hblg.media.net/log?logid=awlog",
-  RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  rtbscall: "https://xch.media.net/AdExchange/rtbsspub?",
   checksync: "https://hbx.media.net/checksync.php?",
   hb: "https://hb-pb.media.net/rtb/hb?",
   ucreative: "https://hbx.media.net/__media__/js/ucreative.js?cv=1",

@@ -21,6 +21,8 @@ public class ResponseMocking {
 	private Object id;
 
 	private JSONArray jsonArray;
+	
+	boolean temp=false;
 
 	public Page responseMocking(Page page, String url, String response) {
 
@@ -35,10 +37,12 @@ public class ResponseMocking {
 
 				JSONObject jsonObject = new JSONObject(postData);
 
-				id = jsonObject.get("id");
+				if(temp==false)
+				{
+					id = jsonObject.get("id");
 
-				jsonArray = jsonObject.getJSONArray("imp");
-
+					jsonArray = jsonObject.getJSONArray("imp");
+				}
 			}
 
 		});
@@ -61,8 +65,6 @@ public class ResponseMocking {
 				JSONObject jObject = new JSONObject(response);
 
 				JSONArray bidListArray = jObject.getJSONArray("bidList");
-
-//				Object ext=jo.get("ext");
 
 				List<Object> li = new ArrayList<>();
 

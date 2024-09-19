@@ -49,167 +49,6 @@ public class WebhookService implements WebhookServiceIn {
 	@Override
 	public void executeWebhook(String payload) {
 		try {
-
-//            payload="{\n"
-//            		+ "  \"object_kind\": \"note\",\n"
-//            		+ "  \"event_type\": \"note\",\n"
-//            		+ "  \"user\": {\n"
-//            		+ "    \"id\": 2245,\n"
-//            		+ "    \"name\": \"shubham.t\",\n"
-//            		+ "    \"username\": \"shubham.t\",\n"
-//            		+ "    \"avatar_url\": \"https://www.gravatar.com/avatar/1e18b01fe975317b2acb5a58bda17ff5?s=80&d=identicon\",\n"
-//            		+ "    \"email\": \"[REDACTED]\"\n"
-//            		+ "  },\n"
-//            		+ "  \"project_id\": 15491,\n"
-//            		+ "  \"project\": {\n"
-//            		+ "    \"id\": 15491,\n"
-//            		+ "    \"name\": \"emma\",\n"
-//            		+ "    \"description\": null,\n"
-//            		+ "    \"web_url\": \"http://tree.mn/mnet-ssp/emma\",\n"
-//            		+ "    \"avatar_url\": null,\n"
-//            		+ "    \"git_ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
-//            		+ "    \"git_http_url\": \"http://tree.mn/mnet-ssp/emma.git\",\n"
-//            		+ "    \"namespace\": \"mnet-ssp\",\n"
-//            		+ "    \"visibility_level\": 0,\n"
-//            		+ "    \"path_with_namespace\": \"mnet-ssp/emma\",\n"
-//            		+ "    \"default_branch\": \"master\",\n"
-//            		+ "    \"ci_config_path\": \"\",\n"
-//            		+ "    \"homepage\": \"http://tree.mn/mnet-ssp/emma\",\n"
-//            		+ "    \"url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
-//            		+ "    \"ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
-//            		+ "    \"http_url\": \"http://tree.mn/mnet-ssp/emma.git\"\n"
-//            		+ "  },\n"
-//            		+ "  \"object_attributes\": {\n"
-//            		+ "    \"attachment\": null,\n"
-//            		+ "    \"author_id\": 2245,\n"
-//            		+ "    \"change_position\": null,\n"
-//            		+ "    \"commit_id\": null,\n"
-//            		+ "    \"created_at\": \"2024-09-09 14:50:39 UTC\",\n"
-//            		+ "    \"discussion_id\": \"b524e0d922e12712802c225aaa87abe828f0c8e0\",\n"
-//            		+ "    \"id\": 1625514,\n"
-//            		+ "    \"line_code\": null,\n"
-//            		+ "    \"note\": \"@emma basic-sanity HB host: hbx.media.net\",\n"
-//            		+ "    \"noteable_id\": 279029,\n"
-//            		+ "    \"noteable_type\": \"MergeRequest\",\n"
-//            		+ "    \"original_position\": null,\n"
-//            		+ "    \"position\": null,\n"
-//            		+ "    \"project_id\": 15491,\n"
-//            		+ "    \"resolved_at\": null,\n"
-//            		+ "    \"resolved_by_id\": null,\n"
-//            		+ "    \"resolved_by_push\": null,\n"
-//            		+ "    \"st_diff\": null,\n"
-//            		+ "    \"system\": false,\n"
-//            		+ "    \"type\": null,\n"
-//            		+ "    \"updated_at\": \"2024-09-09 14:50:39 UTC\",\n"
-//            		+ "    \"updated_by_id\": null,\n"
-//            		+ "    \"description\": \"@emma userAgent: Chrome.Desktop.Mac , host: hbx.media.net  , publisher : https://www.webmd.com/?mnet_test=1\",\n"
-//            		+ "    \"url\": \"http://tree.mn/mnet-ssp/emma/-/merge_requests/74#note_1625514\"\n"
-//            		+ "  },\n"
-//            		+ "  \"repository\": {\n"
-//            		+ "    \"name\": \"emma\",\n"
-//            		+ "    \"url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
-//            		+ "    \"description\": null,\n"
-//            		+ "    \"homepage\": \"http://tree.mn/mnet-ssp/emma\"\n"
-//            		+ "  },\n"
-//            		+ "  \"merge_request\": {\n"
-//            		+ "    \"assignee_id\": 2137,\n"
-//            		+ "    \"author_id\": 2137,\n"
-//            		+ "    \"created_at\": \"2024-06-04 11:23:39 UTC\",\n"
-//            		+ "    \"description\": \"Create mr\\n\\nlearning to create MR\",\n"
-//            		+ "    \"draft\": false,\n"
-//            		+ "    \"head_pipeline_id\": 160809,\n"
-//            		+ "    \"id\": 279029,\n"
-//            		+ "    \"iid\": 74,\n"
-//            		+ "    \"last_edited_at\": null,\n"
-//            		+ "    \"last_edited_by_id\": null,\n"
-//            		+ "    \"merge_commit_sha\": null,\n"
-//            		+ "    \"merge_error\": null,\n"
-//            		+ "    \"merge_params\": {\n"
-//            		+ "      \"force_remove_source_branch\": \"1\"\n"
-//            		+ "    },\n"
-//            		+ "    \"merge_status\": \"can_be_merged\",\n"
-//            		+ "    \"merge_user_id\": null,\n"
-//            		+ "    \"merge_when_pipeline_succeeds\": false,\n"
-//            		+ "    \"milestone_id\": null,\n"
-//            		+ "    \"source_branch\": \"Create-MR\",\n"
-//            		+ "    \"source_project_id\": 15491,\n"
-//            		+ "    \"state_id\": 1,\n"
-//            		+ "    \"target_branch\": \"master\",\n"
-//            		+ "    \"target_project_id\": 15491,\n"
-//            		+ "    \"time_estimate\": 0,\n"
-//            		+ "    \"title\": \"Create mr\",\n"
-//            		+ "    \"updated_at\": \"2024-09-09 14:50:39 UTC\",\n"
-//            		+ "    \"updated_by_id\": 2245,\n"
-//            		+ "    \"url\": \"http://tree.mn/mnet-ssp/emma/-/merge_requests/74\",\n"
-//            		+ "    \"source\": {\n"
-//            		+ "      \"id\": 15491,\n"
-//            		+ "      \"name\": \"emma\",\n"
-//            		+ "      \"description\": null,\n"
-//            		+ "      \"web_url\": \"http://tree.mn/mnet-ssp/emma\",\n"
-//            		+ "      \"avatar_url\": null,\n"
-//            		+ "      \"git_ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
-//            		+ "      \"git_http_url\": \"http://tree.mn/mnet-ssp/emma.git\",\n"
-//            		+ "      \"namespace\": \"mnet-ssp\",\n"
-//            		+ "      \"visibility_level\": 0,\n"
-//            		+ "      \"path_with_namespace\": \"mnet-ssp/emma\",\n"
-//            		+ "      \"default_branch\": \"master\",\n"
-//            		+ "      \"ci_config_path\": \"\",\n"
-//            		+ "      \"homepage\": \"http://tree.mn/mnet-ssp/emma\",\n"
-//            		+ "      \"url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
-//            		+ "      \"ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
-//            		+ "      \"http_url\": \"http://tree.mn/mnet-ssp/emma.git\"\n"
-//            		+ "    },\n"
-//            		+ "    \"target\": {\n"
-//            		+ "      \"id\": 15491,\n"
-//            		+ "      \"name\": \"emma\",\n"
-//            		+ "      \"description\": null,\n"
-//            		+ "      \"web_url\": \"http://tree.mn/mnet-ssp/emma\",\n"
-//            		+ "      \"avatar_url\": null,\n"
-//            		+ "      \"git_ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
-//            		+ "      \"git_http_url\": \"http://tree.mn/mnet-ssp/emma.git\",\n"
-//            		+ "      \"namespace\": \"mnet-ssp\",\n"
-//            		+ "      \"visibility_level\": 0,\n"
-//            		+ "      \"path_with_namespace\": \"mnet-ssp/emma\",\n"
-//            		+ "      \"default_branch\": \"master\",\n"
-//            		+ "      \"ci_config_path\": \"\",\n"
-//            		+ "      \"homepage\": \"http://tree.mn/mnet-ssp/emma\",\n"
-//            		+ "      \"url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
-//            		+ "      \"ssh_url\": \"git@tree.mn:mnet-ssp/emma.git\",\n"
-//            		+ "      \"http_url\": \"http://tree.mn/mnet-ssp/emma.git\"\n"
-//            		+ "    },\n"
-//            		+ "    \"last_commit\": {\n"
-//            		+ "      \"id\": \"019d895f70c12d424eebbb90a9a2c4ca13c008d0\",\n"
-//            		+ "      \"message\": \"Merge branch 'master' of tree.mn:mnet-ssp/emma into akshda.k_branch\\n\",\n"
-//            		+ "      \"title\": \"Merge branch 'master' of tree.mn:mnet-ssp/emma into akshda.k_branch\",\n"
-//            		+ "      \"timestamp\": \"2024-06-03T19:38:41+05:30\",\n"
-//            		+ "      \"url\": \"http://tree.mn/mnet-ssp/emma/-/commit/019d895f70c12d424eebbb90a9a2c4ca13c008d0\",\n"
-//            		+ "      \"author\": {\n"
-//            		+ "        \"name\": \"akshda.k\",\n"
-//            		+ "        \"email\": \"[REDACTED]\"\n"
-//            		+ "      }\n"
-//            		+ "    },\n"
-//            		+ "    \"work_in_progress\": false,\n"
-//            		+ "    \"total_time_spent\": 0,\n"
-//            		+ "    \"time_change\": 0,\n"
-//            		+ "    \"human_total_time_spent\": null,\n"
-//            		+ "    \"human_time_change\": null,\n"
-//            		+ "    \"human_time_estimate\": null,\n"
-//            		+ "    \"assignee_ids\": [\n"
-//            		+ "      2137\n"
-//            		+ "    ],\n"
-//            		+ "    \"reviewer_ids\": [\n"
-//            		+ "\n"
-//            		+ "    ],\n"
-//            		+ "    \"labels\": [\n"
-//            		+ "\n"
-//            		+ "    ],\n"
-//            		+ "    \"state\": \"opened\",\n"
-//            		+ "    \"blocking_discussions_resolved\": true,\n"
-//            		+ "    \"first_contribution\": true,\n"
-//            		+ "    \"detailed_merge_status\": \"mergeable\"\n"
-//            		+ "  }\n"
-//            		+ "}";
-//			System.out.println("processing");
 			triggerEmma(payload);
 			Thread.sleep(5500);
 
@@ -260,29 +99,23 @@ public class WebhookService implements WebhookServiceIn {
 
 					}
 
-					if (comment.contains("hb") || comment.contains("HB") || comment.contains("Hb")) {
+					if (comment.contains("hb") || comment.contains("HB") || comment.contains("Hb")|| comment.contains("hB")) {
 						url = getUrlFromItype("hb");
 					}
-					if (comment.contains("MP") || comment.contains("Mp") || comment.contains("mp")) {
-						url = url+ getUrlFromItype("mp");
+					if (comment.contains("MP") || comment.contains("Mp") || comment.contains("mp")|| comment.contains("mP")) {
+						url = getUrlFromItype("mp");
 					}
 					if (comment.contains("hb2") || comment.contains("HB2") || comment.contains("Hb2")) {
-						url = url+ getUrlFromItype("hb2");
+						url = getUrlFromItype("hb2");
 					}
 
 					String host = extractValue(comment, hostRegex);
 					
-					System.err.println("host: "+host);
-
-//					url="https://www.nutritionix.com/brands/restaurant?mnet_test=1";
 
 					String domain = getHostFromUrl(url);
 
 					String itype = getItypeFromUrl(domain);
 
-//						System.err.println("Domain: "+domain);
-//						
-//						System.err.println("itype: "+itype);
 
 					String ua = "Chrome.Desktop.Mac";
 
@@ -297,10 +130,6 @@ public class WebhookService implements WebhookServiceIn {
 
 					SmokeTestRawDataDto dataDto = this.yamlTestSuiteScheduling.getAutoTest(host, ua, autoTester,
 							commonFile, url, itype, "", false);
-
-//						System.err.println("Report from :" +dataDto);
-//						
-//						System.err.println("REport from dataDto: "+dataDto.getSmokeReport().getTestdatas());
 
 					map.put("response", dataDto);
 
@@ -325,11 +154,6 @@ public class WebhookService implements WebhookServiceIn {
 
 						 it = getItypeFromUrl(domain);
 					}
-					
-					
-					System.out.println(" pubs "+pub);
-					
-					System.out.println("host: "+host+" :ua:  "+ua+" : "+it+" : "+pub); 
 
 					map.put("processStart",
 							"Bot has started processing with host:" + host + " please wait for some time");
@@ -430,15 +254,15 @@ public class WebhookService implements WebhookServiceIn {
 
 	}
 
-	private String getHostFromUrl(String url) {
+	private String getHostFromUrl(String urls) {
 
-		String a[] = url.split(",");
+		String url[] = urls.split(",");
 
 		List<String> li = new ArrayList<>();
 
 		try {
 
-			for (String pub : a) {
+			for (String pub : url) {
 				URL ur = new URL(pub);
 
 				String host = ur.getHost();

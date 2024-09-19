@@ -6,13 +6,14 @@ bidexAppendString: ""
 bidexReplaceString: { "": "" }
 
 networkCallsPositive: {
-  belog: "https://lg1.hb.yahoo.net/log?logid=belog",
+  auction: "https://prebid-s2s.media.net/openrtb2/auction",
+  sync: "https://prebid-s2s.media.net/cookie_sync",
       
 }
 
 networkCallsNegative: {
-   nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
-   Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  nerrPing: "https://hblg.media.net/nerrping.(php|js)?", #pattern: .*nerrping.(php|js).*
+  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog"
   
 }
 

@@ -4,32 +4,35 @@ userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.fox13now.com/?medianet_test=1"
 
 networkCallsPositive: {
-  Clientag: "https://warp.media.net/js/tags/clientag.js?",
-  APPRlog: "https://navvy.media.net/log",
-  AWlog: "https://navvy.media.net/log",
-  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
-  prtllog: "https://hbxlp.media.net/log"
+  appr: "https://navvy.media.net/log",
+  awlog: "https://navvy.media.net/log",
+  gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  prtllog: "https://hbxlp.media.net/log",
+  belog: "https://hbxlp.media.net/log",
+  cxtlog: "https://hblg.media.net/log?logid=kfk&evtid=cxtlog",
+  auction: "https://prebid-s2s.media.net/openrtb2/auction",
+  sync: "https://prebid-s2s.media.net/cookie_sync",
  }
 
 networkCallsNegative: {
   nerrPing: "https://hblg.media.net/nerrping.(php|js)?", #pattern: .*nerrping.(php|js).*
-  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog"
+  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog"
  }
 
 keysToVerifyPositive: {
-  BELog: {
+  belog: {
     evtid: ["belog"],
     svr: ["284_21_0111_358_mp"],
     dn: ["fox13now.com"],
     cid: ["8CU2N1270"],
     itype: ["MANAGED_PREBID"]},
 
-  APPRLog: {
+  appr: {
     lgtp: ["APPR"],
     evtid: ["prebid_analytics_events_client"]
   },
 
-  AWLog: {
+  awlog: {
     lgtp: ["RA"],
     dn: ["www.fox13now.com"],
     gdpr: ["0"],
@@ -37,18 +40,18 @@ keysToVerifyPositive: {
     iwb: ["1"]
   },
 
- PRTLLog: {
+ prtllog: {
     itype: ["MANAGED_PREBID"]
   }}
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-    BELog: { name: ["GPT_Fetching_Warning"]}}
+    belog: { name: ["GPT_Fetching_Warning"]}}
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  BELog: { name: ["DFS_PERF","auctionEnd_1000","timeout_openx","timeout_sharethrough","timeout_appnexus","timeout_medianet", "timeout_pubmatic","timeout_rubicon","timeout_triplelift","timeout_ix" ]},
-  APPRLog: { iwb: ["0","1"],status: ["0","1","2"], aucstatus: ["completed"],req_mtype: ["banner", "video"], src: ["client","s2s"], pvnm: ["medianet", "sharethrough", "pubmatic", "ix", "openx", "sovrn", "yeildmo", "trustx", "appnexus", "kargo", "triplelift", "undertone", "rubicon", "yahooAds", "gumgum"] }}
+  brlog: { name: ["DFS_PERF","auctionEnd_1000","timeout_openx","timeout_sharethrough","timeout_appnexus","timeout_medianet", "timeout_pubmatic","timeout_rubicon","timeout_triplelift","timeout_ix" ]},
+  appr: { iwb: ["0","1"],status: ["0","1","2"], aucstatus: ["completed"],req_mtype: ["banner", "video"], src: ["client","s2s"], pvnm: ["medianet", "sharethrough", "pubmatic", "ix", "openx", "sovrn", "yeildmo", "trustx", "appnexus", "kargo", "triplelift", "undertone", "rubicon", "yahooAds", "gumgum"] }}
 
 
 bidderDataUrls: {

@@ -462,18 +462,13 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 
 		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
 
-		for (String requestUrl : requestList) {
+		for (Request requestUrl : requests) {
 			
-//			if(!URLDataProcessing.isValidUrl(requestUrl))
-//			{
-//				System.err.println();
-//				
-//				continue;
-//			}
+
 			
 			testData=updateTestCriteria(testData);
 			
-			Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
+			Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl.url(), testData);
 
 			if (urlData != null) {
 
@@ -483,7 +478,7 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 
 					PositiveURLChecks puc = PositiveURLChecks.builder()
 							.urlPattern(urlData.getValue())
-							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl)))
+							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl.url())))
 							.queryStringMap(new ArrayList<Map<String, String>>(
 									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests))))
 							.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
@@ -492,23 +487,23 @@ public class bidexAndFeatureTests implements BidexAndFeatureTestsService{
 
 					urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
 				} else {
-					labelExists.getMatchingUrls().add(requestUrl);
+					labelExists.getMatchingUrls().add(requestUrl.url());
 					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl,requests));
 				}
 
 				continue;
 			}
 
-			urlData = negativeURLPatternExists(requestUrl, testData);
+			urlData = negativeURLPatternExists(requestUrl.url(), testData);
 
 			if (urlData != null) {
 				NegativeURLChecks nuc = urlChecks.getNegativeUrlChecks().get(urlData.getKey());
 				if (nuc == null) {
 					urlChecks.getNegativeUrlChecks().put(urlData.getKey(),
 							NegativeURLChecks.builder().label(urlData.getKey()).urlPattern(urlData.getValue())
-									.matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl)))).build());
+									.matchingUrls(new ArrayList<String>((Arrays.asList(requestUrl.url())))).build());
 				} else {
-					nuc.getMatchingUrls().add(requestUrl);
+					nuc.getMatchingUrls().add(requestUrl.url());
 				}
 			}
 		}

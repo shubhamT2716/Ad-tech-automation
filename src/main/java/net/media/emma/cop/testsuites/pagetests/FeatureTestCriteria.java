@@ -86,7 +86,7 @@ public class FeatureTestCriteria implements FeatureTestServiceIn{
 			List<String> matchingUrls = mapReport.get(key).getMatchingUrls();
 
 			for (String urls : matchingUrls) {
-				Map<String, String> urlQuesryStringMap = dataProcessing.getQueryStringMapFromUrl(urls, requests);
+				Map<String, String> urlQuesryStringMap = dataProcessing.getQueryStringMap(urls, requests);
 
 				Map<String, Set<String>> value = entry.getValue();
 
@@ -213,7 +213,7 @@ public class FeatureTestCriteria implements FeatureTestServiceIn{
 					List<String> matchingUrls = mapReport.get(key).getMatchingUrls();
 
 					for (String urls : matchingUrls) {
-						Map<String, String> urlQuesryStringMap = dataProcessing.getQueryStringMapFromUrl(urls,
+						Map<String, String> urlQuesryStringMap = dataProcessing.getQueryStringMap(urls,
 								requests);
 
 						Map<String, Set<String>> value = entry.getValue();

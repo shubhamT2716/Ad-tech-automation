@@ -9,7 +9,7 @@ networkCallsPositive: {
  checksync: "https://hbx.media.net/checksync.php?",
  APPR: "https://navvy.media.net/log",
  RA: "https://navvy.media.net/log",
- BElog: "https://hbxlp.media.net/log",
+ belog: "https://hbxlp.media.net/log",
  cxtlog: "https://hblg.media.net/log?logid=kfk&evtid=cxtlog",
  cslog: "https://c21lg-d.media.net/log",
  auction: "https://prebid-s2s.media.net/openrtb2/auction",

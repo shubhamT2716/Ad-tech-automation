@@ -7,13 +7,13 @@ publisherUrl: "https://time.com/?mnet_test=1"
 networkCallsPositive: {
  prlog: "https://hbxlp.media.net/log",
  aplog: "https://hbxlp.media.net/log",
- AWLog: "https://hblg.media.net/log?logid=awlog",
+ awlog: "https://hblg.media.net/log?logid=awlog",
  checksync: "https://hbx.media.net/checksync.php?cid=8CUDF88I8",
  hb: "https://hb2.media.net/rtb/hb2?cid=8CUDF88I8",
  ucreative: "https://hbx.media.net/ucreative.php?cv=1",
  tcb: "https://contextual.media.net/tcb.js?",
  belog: "https://hblg.media.net/log?logid=kfk&evtid=belog",
- GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+ gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
  Pubmatic: "https://hbopenbid.pubmatic.com/translator?source=prebid-client",
  triplelift: "https://tlx.3lift.com/header/auction?lib=prebid&v=8.26.0&referrer=https%3A%2F%2Ftime.com%2F6960789%2Fcovid-19-cautious-americans%2F&tmax=2000&gdpr=false",
 
@@ -21,7 +21,7 @@ networkCallsPositive: {
 
 networkCallsNegative: {
   nerrPing: "https://hblg.media.net/nerrping.php?",
-  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
 }
 
 keysToVerifyPositive: {

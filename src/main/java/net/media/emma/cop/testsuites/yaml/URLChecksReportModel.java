@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Getter
@@ -20,6 +21,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class URLChecksReportModel {
 
     @Builder.Default
@@ -32,6 +34,8 @@ public class URLChecksReportModel {
     Map<String, List<BidderDataAssertion>> bidderDataAssertions = new HashMap<>();
     @Builder.Default
     Map<String, List<HeadersAssertion>> headerAssertions = new HashMap<>();
+//    @Builder.Default
+//    List<Map<String, String>> getpayloadDetails=new ArrayList();
 
 
     enum TestResult {
@@ -175,304 +179,388 @@ public class URLChecksReportModel {
     
     
     
-    public void verifyData(TestCriteriaBo testData)
-    {
-//    	testData.getKeysToVerifyPositive().entrySet().forEach(entry->{
-//    		
-//    		String key=entry.getKey();
-//    		Map<String, Set<String>> value=entry.getValue();
-//    		
-//    		   		
-//    		PositiveURLChecks checks=positiveUrlChecks.get(key);
-//
-//    		
-//    		if(checks!=null)
-//    		{
-//    			
-//    			List<String> message=new ArrayList<>(checks.getTestMessages()); 
-//    			if(checks.getPositiveKeyValChecks().equals(value)) {
-//        			
-//        			System.err.println( "Match"+"  "+checks.getPositiveKeyValChecks()+" "+value+" "+checks.getCountOfMatchingUrls());
-//        			
-//        			message.add("Positive Value Pass: "+value);
-//        			
-////        			checks.getTestMessages().add("Positive Value Pass: "+value);
-//        			
-//        			
-//        		}
-//        		else {
-//        			
-//        			System.out.println(" postive "+checks.getPositiveKeyValChecks());
-//        			System.out.println("Value : "+value); 
-//        			
-//        			message.add("positive value not pass: "+value);
-////        			checks.getTestMessages().add("positive value not pass: "+value);
-//        		}
-//    			
-////    			checks.getTestMessages().addAll(message);
-//    			
-//    			
-//    		}
-//    		
-//    		
-//    		
-//    	});
-    }
-    
-
     public void verifyPositiveKeyValChecks() {
-
-        positiveUrlChecks.forEach((callLabel, callData) -> { // key, value --> lable, PositiveURLChecks obj
+    	
+    	try {
+    	
+    		 positiveUrlChecks.forEach((callLabel, callData) -> {  // key, value --> label, PositiveURLChecks obj
 
             if (callData.getPositiveKeyValChecks() != null) {
-            	
-         	
-//            	callData.getPositiveKeyValChecks().entrySet().forEach(positveValue->{
-//            		
-//            		String key=positveValue.getKey(); 
-//            		Set<String> value=positveValue.getValue();
-//            		
-//            			List<Map<String, String>> mp=callData.getQueryStringMap();
-//            			
-//            			for(Map<String , String>p: mp )
-//            			{
-//            					if(p.get(key) != null)
-//            					{
-//            						 System.out.println("P: "+p.get(key)+" key: "+key+" value : "+value);
-//            					}
-//            					else {
-//            						System.out.println("key "+key+"not found "+value);
-//            						
-//            					}
-//            					
-//            			}
-//            			
-//            		
-//            	});
-            	
                 callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
-
-                	Set<String> actualValues = new HashSet<>();
-                	
-                	// if(callData.getLabel().equals("APPR"))
-                	// {
-                	// 	System.err.println(callData.getQueryStringMap().get(0));
-                	// }
-
+                    Set<String> actualValues = new HashSet<>();
+                    
                     callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
-                    	
-                    	
-                    	
                         if (qsMapFromNetworkCall.containsKey(qsParam)) {
-                        	
-//                        	System.err.println("Qury: "+qsMapFromNetworkCall+ " "+qsParam);
                             actualValues.add(qsMapFromNetworkCall.get(qsParam));
                         }
                     });
                     
-                  if(actualValues.equals(listOfValues))
-                  {
-//                	  System.out.println("  list of match: "+actualValues+" "+listOfValues);
-                	  
-                	  callData.getTestMessages().add("Positive key value check Pass for key: " + qsParam
-                              + ". Expected: " + listOfValues + " Actual: " + actualValues);
-                  }
+                    log.info(" Expected: " + listOfValues + " Actual: " + actualValues);
                     
-
                     if (!actualValues.equals(listOfValues)) {
-                    	
-//                    	System.out.println("  list of not  match: "+actualValues+" "+listOfValues);
+//                        callData.getTestMessages().add("Positive key value check Pass for key: " + qsParam
+//                                + ". Expected: " + listOfValues + " Actual: " + actualValues);
+//                    } else {
                         callData.getTestMessages().add("Positive key value check failed for key: " + qsParam
                                 + ". Expected: " + listOfValues + " Actual: " + actualValues);
                         callData.setTestResult(TestResult.FAIL);
                     }
-
                 });
-                
             }
 
+            // Negative Key Value Checks
             if (callData.getNegativeKeyValChecks() != null) {
-
                 callData.getNegativeKeyValChecks().forEach((qsParam, listOfValues) -> {
-
                     Set<String> actualValues = new HashSet<>();
 
-                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                    callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
                         if (qsMapFromNetworkCall.containsKey(qsParam)) {
-
                             actualValues.add(qsMapFromNetworkCall.get(qsParam));
-
                         }
-
                     });
-
-//					if (actualValues.retainAll(listOfValues) == false && actualValues.isEmpty()) {
-//						callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
-//								+ ". Found negative matches: " + actualValues);
-//						callData.setTestResult(TestResult.FAIL);
-//					}
 
                     if (actualValues.equals(listOfValues)) {
                         callData.getTestMessages().add("Negative key value check Pass for key: " + qsParam
                                 + ". Found negative matches: " + actualValues);
-                       
-                    }
-                    
-                    if (!actualValues.equals(listOfValues)) {
+                    } else {
                         callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
                                 + ". Found negative matches: " + actualValues);
                         callData.setTestResult(TestResult.FAIL);
                     }
-
                 });
             }
-            if (callData.getAnyOneOfKeyValChecks() != null)
 
+            // Any One Of Key Value Checks
+            if (callData.getAnyOneOfKeyValChecks() != null) {
                 callData.getAnyOneOfKeyValChecks().forEach((qsParam, listOfValues) -> {
-
                     Set<String> actualValues = new HashSet<>();
 
-                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+                    callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
                         if (qsMapFromNetworkCall.containsKey(qsParam)) {
                             actualValues.add(qsMapFromNetworkCall.get(qsParam));
                         }
                     });
 
-                    if (actualValues.retainAll(listOfValues) && actualValues.isEmpty()) {
+                    if (!Collections.disjoint(actualValues, listOfValues)) {
+                        callData.getTestMessages().add("Any one of key value check Pass for key: " + qsParam
+                                + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
+                    } else {
                         callData.getTestMessages().add("Any one of key value check failed for key: " + qsParam
                                 + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
                         callData.setTestResult(TestResult.FAIL);
                     }
-
                 });
+            }
 
+            // Request Headers Checks
             if (callData.getRequestHeadersChecks() != null && !callData.getRequestHeadersChecks().isEmpty()) {
                 boolean allMatched = false;
 
-                // For each map in queryStringMapRequestHeader
                 for (Map<String, Object> headerMap : callData.getQueryStringMapRequestHeader()) {
-                    allMatched = true; // Assume all key-value pairs are matched initially
-
-                    // For each key-value pair in requestHeadersChecks
-                    for (Map.Entry<String, Object> entry : callData.getRequestHeadersChecks().entrySet()) {
-                        String key = entry.getKey().toLowerCase();
-                        Object expectedValue = entry.getValue();
-                        Object actualValue = headerMap.get(key);
-
-                        // If the expected value is an ArrayList and the actual value is a String
-                        if (expectedValue instanceof ArrayList && actualValue instanceof String) {
-
-                            // Convert the actual value string into a Map
-                            Map<String, String> actualMap = Arrays.stream(((String) actualValue).split(";"))
-                                    .map(String::trim)
-                                    .map(str -> str.split("=", 2))
-                                    .collect(Collectors.toMap(arr -> arr[0], arr -> arr.length > 1 ? arr[1] : ""));
-
-                            // Iterate over the expected value list and compare with the actual map
-                            ArrayList<Map<String, String>> expectedList = (ArrayList<Map<String, String>>) expectedValue;
-                            for (Map<String, String> expectedMap : expectedList) {
-                                for (Map.Entry<String, String> expectedEntry : expectedMap.entrySet()) {
-                                    String expectedKey = expectedEntry.getKey().trim();
-                                    String expectedVal = expectedEntry.getValue().trim();
-                                    if (!actualMap.containsKey(expectedKey) || !actualMap.get(expectedKey).equals(expectedVal)) {
-                                        allMatched = false;
-                                        break;
-                                    }
-                                }
-                                if (!allMatched) {
-                                    break;
-                                }
-                            }
-                        } else if (expectedValue instanceof String && actualValue != null) {
-                            // Continue with the existing string comparison logic
-                            if (!actualValue.toString().equals(expectedValue)) {
-                                allMatched = false;
-                                break;
-                            }
-                        } else if(actualValue == null) {
-                            allMatched = false;
-                            break;
-                        }
-                    }
-
-                    if (allMatched) {
-                        // If all key-value pairs are matched for the current headerMap, break the outer loop
-                        break;
-                    }
+                    allMatched = compareHeaders(callData.getRequestHeadersChecks(), headerMap);
+                    if (allMatched) break; // Only break when all headers match
                 }
 
-                // If after iterating over all headerMap in queryStringMapRequestHeader, no match is found, add the failure message
                 if (!allMatched) {
                     callData.getTestMessages().add("Failed request headers verification");
                     callData.setTestResult(TestResult.FAIL);
                 }
             }
 
+            // Response Headers Checks
             if (callData.getResponseHeadersChecks() != null && !callData.getResponseHeadersChecks().isEmpty()) {
                 boolean allMatched = false;
 
-                // For each map in queryStringMapRequestHeader
                 for (Map<String, Object> headerMap : callData.getQueryStringMapResponseHeader()) {
-                    allMatched = true; // Assume all key-value pairs are matched initially
-
-                    // For each key-value pair in requestHeadersChecks
-                    for (Map.Entry<String, Object> entry : callData.getResponseHeadersChecks().entrySet()) {
-                        String key = entry.getKey().toLowerCase();
-                        Object expectedValue = entry.getValue();
-                        Object actualValue = headerMap.get(key);
-
-                        // If the expected value is an ArrayList and the actual value is a String
-                        if (expectedValue instanceof ArrayList && actualValue instanceof String) {
-
-                            // Convert the actual value string into a Map
-                            Map<String, String> actualMap = Arrays.stream(((String) actualValue).split(";"))
-                                    .map(String::trim)
-                                    .map(str -> str.split("=", 2))
-                                    .collect(Collectors.toMap(arr -> arr[0], arr -> arr.length > 1 ? arr[1] : ""));
-
-                            // Iterate over the expected value list and compare with the actual map
-                            ArrayList<Map<String, String>> expectedList = (ArrayList<Map<String, String>>) expectedValue;
-                            for (Map<String, String> expectedMap : expectedList) {
-                                for (Map.Entry<String, String> expectedEntry : expectedMap.entrySet()) {
-                                    String expectedKey = expectedEntry.getKey().trim();
-                                    String expectedVal = expectedEntry.getValue().trim();
-                                    if (!actualMap.containsKey(expectedKey) || !actualMap.get(expectedKey).equals(expectedVal)) {
-                                        allMatched = false;
-                                        break;
-                                    }
-                                }
-                                if (!allMatched) {
-                                    break;
-                                }
-                            }
-                        } else if (expectedValue instanceof String && actualValue != null) {
-                            // Continue with the existing string comparison logic
-                            if (!actualValue.toString().equals(expectedValue)) {
-                                allMatched = false;
-                                break;
-                            }
-                        } else if(actualValue == null) {
-                            allMatched = false;
-                            break;
-                        }
-                    }
-
-                    if (allMatched) {
-                        // If all key-value pairs are matched for the current headerMap, break the outer loop
-                        break;
-                    }
+                    allMatched = compareHeaders(callData.getResponseHeadersChecks(), headerMap);
+                    if (allMatched) break; // Only break when all headers match
                 }
 
-                // If after iterating over all headerMap in queryStringMapRequestHeader, no match is found, add the failure message
                 if (!allMatched) {
-                    callData.getTestMessages().add("Failed Response Headers verification");
+                    callData.getTestMessages().add("Failed response headers verification");
                     callData.setTestResult(TestResult.FAIL);
                 }
             }
 
         });
-
+        
+    	}
+    	catch (Exception e) {
+			
+    		e.printStackTrace();
+		}
     }
+
+    private boolean compareHeaders(Map<String, Object> expectedHeaders, Map<String, Object> actualHeaders) {
+        for (Map.Entry<String, Object> entry : expectedHeaders.entrySet()) {
+            String key = entry.getKey().toLowerCase();
+            Object expectedValue = entry.getValue();
+            Object actualValue = actualHeaders.get(key);
+
+            if (expectedValue instanceof ArrayList && actualValue instanceof String) {
+                Map<String, String> actualMap = Arrays.stream(((String) actualValue).split(";"))
+                        .map(String::trim)
+                        .map(str -> str.split("=", 2))
+                        .collect(Collectors.toMap(arr -> arr[0], arr -> arr.length > 1 ? arr[1] : ""));
+
+                for (Map<String, String> expectedMap : (ArrayList<Map<String, String>>) expectedValue) {
+                    for (Map.Entry<String, String> expectedEntry : expectedMap.entrySet()) {
+                        String expectedKey = expectedEntry.getKey().trim();
+                        String expectedVal = expectedEntry.getValue().trim();
+                        if (!actualMap.containsKey(expectedKey) || !actualMap.get(expectedKey).equals(expectedVal)) {
+                            return false;
+                        }
+                    }
+                }
+            } else if (expectedValue instanceof String && actualValue != null) {
+                if (!actualValue.toString().equals(expectedValue)) {
+                    return false;
+                }
+            } else if (actualValue == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    
+
+    
+    
+    
+//    public void verifyPositiveKeyValChecks() {
+//
+//        positiveUrlChecks.forEach((callLabel, callData) -> { // key, value --> lable, PositiveURLChecks obj
+//
+//            if (callData.getPositiveKeyValChecks() != null) {
+//            	
+//         	
+//
+//            	
+//                callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
+//
+//                	Set<String> actualValues = new HashSet<>();
+//                	
+//                	
+//
+//                    callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
+//                    	
+//                    	
+//                    	
+//                        if (qsMapFromNetworkCall.containsKey(qsParam)) {
+//                        	
+//
+//                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
+//                        }
+//                    });
+//                    
+//                  if(actualValues.equals(listOfValues))
+//                  {
+//          	  
+//                	  callData.getTestMessages().add("Positive key value check Pass for key: " + qsParam
+//                              + ". Expected: " + listOfValues + " Actual: " + actualValues);
+//                  }
+//                    
+//
+//                    if (!actualValues.equals(listOfValues)) {
+//                    	
+//
+//                        callData.getTestMessages().add("Positive key value check failed for key: " + qsParam
+//                                + ". Expected: " + listOfValues + " Actual: " + actualValues);
+//                        callData.setTestResult(TestResult.FAIL);
+//                    }
+//
+//                });
+//                
+//            }
+//
+//            if (callData.getNegativeKeyValChecks() != null) {
+//
+//                callData.getNegativeKeyValChecks().forEach((qsParam, listOfValues) -> {
+//
+//                    Set<String> actualValues = new HashSet<>();
+//
+//                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+//                        if (qsMapFromNetworkCall.containsKey(qsParam)) {
+//
+//                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
+//
+//                        }
+//
+//                    });
+//
+////					if (actualValues.retainAll(listOfValues) == false && actualValues.isEmpty()) {
+////						callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
+////								+ ". Found negative matches: " + actualValues);
+////						callData.setTestResult(TestResult.FAIL);
+////					}
+//
+//                    if (actualValues.equals(listOfValues)) {
+//                        callData.getTestMessages().add("Negative key value check Pass for key: " + qsParam
+//                                + ". Found negative matches: " + actualValues);
+//                       
+//                    }
+//                    
+//                    else  {
+//                        callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
+//                                + ". Found negative matches: " + actualValues);
+//                        callData.setTestResult(TestResult.FAIL);
+//                    }
+//
+//                });
+//            }
+//            if (callData.getAnyOneOfKeyValChecks() != null)
+//
+//                callData.getAnyOneOfKeyValChecks().forEach((qsParam, listOfValues) -> {
+//
+//                    Set<String> actualValues = new HashSet<>();
+//
+//                    callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
+//                        if (qsMapFromNetworkCall.containsKey(qsParam)) {
+//                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
+//                        }
+//                    });
+//
+//                    if (!Collections.disjoint(actualValues, listOfValues)) {
+//                        callData.getTestMessages().add("Any one of key value check Pass for key: " + qsParam
+//                                + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
+//                        callData.setTestResult(TestResult.FAIL);
+//                    }
+//                    else {
+//                    	 callData.getTestMessages().add("Any one of key value check failed for key: " + qsParam
+//                                 + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
+//                         
+//                    }
+//
+//                });
+//
+//            if (callData.getRequestHeadersChecks() != null && !callData.getRequestHeadersChecks().isEmpty()) {
+//                boolean allMatched = false;
+//
+//                // For each map in queryStringMapRequestHeader
+//                for (Map<String, Object> headerMap : callData.getQueryStringMapRequestHeader()) {
+//                    allMatched = true; // Assume all key-value pairs are matched initially
+//
+//                    // For each key-value pair in requestHeadersChecks
+//                    for (Map.Entry<String, Object> entry : callData.getRequestHeadersChecks().entrySet()) {
+//                        String key = entry.getKey().toLowerCase();
+//                        Object expectedValue = entry.getValue();
+//                        Object actualValue = headerMap.get(key);
+//
+//                        // If the expected value is an ArrayList and the actual value is a String
+//                        if (expectedValue instanceof ArrayList && actualValue instanceof String) {
+//
+//                            // Convert the actual value string into a Map
+//                            Map<String, String> actualMap = Arrays.stream(((String) actualValue).split(";"))
+//                                    .map(String::trim)
+//                                    .map(str -> str.split("=", 2))
+//                                    .collect(Collectors.toMap(arr -> arr[0], arr -> arr.length > 1 ? arr[1] : ""));
+//
+//                            // Iterate over the expected value list and compare with the actual map
+//                            ArrayList<Map<String, String>> expectedList = (ArrayList<Map<String, String>>) expectedValue;
+//                            for (Map<String, String> expectedMap : expectedList) {
+//                                for (Map.Entry<String, String> expectedEntry : expectedMap.entrySet()) {
+//                                    String expectedKey = expectedEntry.getKey().trim();
+//                                    String expectedVal = expectedEntry.getValue().trim();
+//                                    if (!actualMap.containsKey(expectedKey) || !actualMap.get(expectedKey).equals(expectedVal)) {
+//                                        allMatched = false;
+//                                        break;
+//                                    }
+//                                }
+//                                if (!allMatched) {
+//                                    break;
+//                                }
+//                            }
+//                        } else if (expectedValue instanceof String && actualValue != null) {
+//                            // Continue with the existing string comparison logic
+//                            if (!actualValue.toString().equals(expectedValue)) {
+//                                allMatched = false;
+//                                break;
+//                            }
+//                        } else if(actualValue == null) {
+//                            allMatched = false;
+//                            break;
+//                        }
+//                    }
+//
+//                    if (allMatched) {
+//                        // If all key-value pairs are matched for the current headerMap, break the outer loop
+//                        break;
+//                    }
+//                }
+//
+//                // If after iterating over all headerMap in queryStringMapRequestHeader, no match is found, add the failure message
+//                if (!allMatched) {
+//                    callData.getTestMessages().add("Failed request headers verification");
+//                    callData.setTestResult(TestResult.FAIL);
+//                }
+//            }
+//
+//            if (callData.getResponseHeadersChecks() != null && !callData.getResponseHeadersChecks().isEmpty()) {
+//                boolean allMatched = false;
+//
+//                // For each map in queryStringMapRequestHeader
+//                for (Map<String, Object> headerMap : callData.getQueryStringMapResponseHeader()) {
+//                    allMatched = true; // Assume all key-value pairs are matched initially
+//
+//                    // For each key-value pair in requestHeadersChecks
+//                    for (Map.Entry<String, Object> entry : callData.getResponseHeadersChecks().entrySet()) {
+//                        String key = entry.getKey().toLowerCase();
+//                        Object expectedValue = entry.getValue();
+//                        Object actualValue = headerMap.get(key);
+//
+//                        // If the expected value is an ArrayList and the actual value is a String
+//                        if (expectedValue instanceof ArrayList && actualValue instanceof String) {
+//
+//                            // Convert the actual value string into a Map
+//                            Map<String, String> actualMap = Arrays.stream(((String) actualValue).split(";"))
+//                                    .map(String::trim)
+//                                    .map(str -> str.split("=", 2))
+//                                    .collect(Collectors.toMap(arr -> arr[0], arr -> arr.length > 1 ? arr[1] : ""));
+//
+//                            // Iterate over the expected value list and compare with the actual map
+//                            ArrayList<Map<String, String>> expectedList = (ArrayList<Map<String, String>>) expectedValue;
+//                            for (Map<String, String> expectedMap : expectedList) {
+//                                for (Map.Entry<String, String> expectedEntry : expectedMap.entrySet()) {
+//                                    String expectedKey = expectedEntry.getKey().trim();
+//                                    String expectedVal = expectedEntry.getValue().trim();
+//                                    if (!actualMap.containsKey(expectedKey) || !actualMap.get(expectedKey).equals(expectedVal)) {
+//                                        allMatched = false;
+//                                        break;
+//                                    }
+//                                }
+//                                if (!allMatched) {
+//                                    break;
+//                                }
+//                            }
+//                        } else if (expectedValue instanceof String && actualValue != null) {
+//                            // Continue with the existing string comparison logic
+//                            if (!actualValue.toString().equals(expectedValue)) {
+//                                allMatched = false;
+//                                break;
+//                            }
+//                        } else if(actualValue == null) {
+//                            allMatched = false;
+//                            break;
+//                        }
+//                    }
+//
+//                    if (allMatched) {
+//                        // If all key-value pairs are matched for the current headerMap, break the outer loop
+//                        break;
+//                    }
+//                }
+//
+//                // If after iterating over all headerMap in queryStringMapRequestHeader, no match is found, add the failure message
+//                if (!allMatched) {
+//                    callData.getTestMessages().add("Failed Response Headers verification");
+//                    callData.setTestResult(TestResult.FAIL);
+//                }
+//            }
+//
+//        });
+//
+//    }
 
 	public void updateNetworkCallErrors(net.media.emma.cop.testsuites.pagetests.TestCriteriaBo testData) {
 //		testData.getNetworkCallsPositive().forEach((key, value) -> {

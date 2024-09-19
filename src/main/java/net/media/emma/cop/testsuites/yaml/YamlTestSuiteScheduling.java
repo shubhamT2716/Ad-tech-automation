@@ -512,7 +512,15 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			
 //			testResult.put(key, value.getTestResult().toString());
 			
-			testResult.computeIfAbsent("PositiveURLChecks", k->new HashMap<>()).put(key, value.getTestResult().toString());
+			if(value.getTestResult().toString().equalsIgnoreCase("FAIL"))
+			{
+				testResult.computeIfAbsent("PositiveURLChecks", k->new HashMap<>()).put(key, value.getTestResult().toString()+" : "+ value.getTestMessages());
+			}
+			else {
+				testResult.computeIfAbsent("PositiveURLChecks", k->new HashMap<>()).put(key, value.getTestResult().toString());
+				
+			}
+			
 			
 			
 			

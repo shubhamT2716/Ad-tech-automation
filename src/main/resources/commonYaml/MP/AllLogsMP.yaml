@@ -1,7 +1,7 @@
 networkCallsPositive: {
  checksync: "https://hbx.media.net/checksync.php?",
- APPR: "https://navvy.media.net/log",
- RA: "https://navvy.media.net/log",
+ appr: "https://navvy.media.net/log",
+ ra: "https://navvy.media.net/log",
   
 }
 
@@ -23,12 +23,12 @@ keysToVerifyPositive: {
    axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
  },
 
- APPR: {
+ appr: {
    lgtp: ["APPR"],
    gdpr: ["0"],
    
  },
- RA: {
+ ra: {
    lgtp: ["RA"],
  },
 
@@ -42,7 +42,7 @@ keysToVerifyNegative: {
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
-  APPR: {
+  appr: {
     pvnm: ["trustx","ix","rubicon","appnexus","adagio"],
     size: ["300x250","728x90"],
     lgtp: ["APPR","RA"]
@@ -50,9 +50,4 @@ keysToVerifyAnyOneOf: {
   
 }
 
-
-bidderDataUrls: {
-  YHB: "https://m.hb.yahoo.net/rtb/yhb?cid=8YHBL12EX",
-  YPBJS: "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS",
-}
 

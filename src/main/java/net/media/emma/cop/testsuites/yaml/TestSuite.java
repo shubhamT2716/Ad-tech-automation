@@ -240,7 +240,7 @@ public class TestSuite implements GenericTestSuite {
 
 			try {
 
-				browserContext.setDefaultTimeout(95000); // 70 seconds
+				browserContext.setDefaultTimeout(3000); // 30 seconds
 				Geolocation geolocation = new Geolocation(48.8575, 2.3514);// latitude and logitude
 				log.info("location:  " + geolocation);
 				browserContext.setGeolocation(geolocation);
@@ -280,11 +280,11 @@ public class TestSuite implements GenericTestSuite {
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
 //			 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
 
-				Thread.sleep(60000);
+				Thread.sleep(2000);
 				
 			
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 				log.error("Error while navigating to publisher url: {}", e.getMessage());
 			}
 			finally {		
@@ -1179,6 +1179,8 @@ public class TestSuite implements GenericTestSuite {
 		URLChecksReportModel urlChecks = URLChecksReportModel.builder().build();
 
 		for (Request requestUrl : requests) {
+			
+			
 
 			Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
 
@@ -1192,7 +1194,8 @@ public class TestSuite implements GenericTestSuite {
 							.urlPattern(urlData.getValue())
 							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl.url())))
 							.queryStringMap(new ArrayList<Map<String, String>>(
-									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl.url(), requests))))
+									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests))))
+//							.queryStringMap(urlDataProcessing.getQueryStringMapFromUrl(url, requests))
 							.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
 							.positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
 							.anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey())).build();
@@ -1200,8 +1203,7 @@ public class TestSuite implements GenericTestSuite {
 					urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
 				} else {
 					labelExists.getMatchingUrls().add(requestUrl.url());
-					labelExists.getQueryStringMap()
-							.add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl.url(), requests));
+					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests));
 				}
 
 				continue;
@@ -1223,10 +1225,10 @@ public class TestSuite implements GenericTestSuite {
 			}
 		}
 		
+//		urlChecks.setGetpayloadDetails(getPayload(testData, requests));
 		urlChecks.updateMatchingUrlsCount();
 		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
-		urlChecks.verifyData(testData);
 		
 		if (testData.getBidderDataAssertions() != null && testData.getBidderDataUrls() != null) {
 			try {
@@ -1238,9 +1240,56 @@ public class TestSuite implements GenericTestSuite {
 			}
 
 		}
+		
+		
 
 		return urlChecks;
 	}
+	
+	
+	public List<Map<String, String>> getPayload(TestCriteriaBo testData, List<Request> requestlist)
+	{
+		List<Map<String, String>> queryParam=new ArrayList<>();
+		
+		try {
+		
+			testData.getNetworkCallsPositive().entrySet().forEach(entry->{
+				
+				
+				if(entry.getKey().equals("apprlog"))
+				{
+					System.out.println("in process start");
+
+					boolean temp=false;
+					for(Request  req: requestlist)
+					{
+						if(req.url().equalsIgnoreCase(entry.getValue()))
+						{
+							
+//							if(temp==false)
+//							{
+								queryParam.add(urlDataProcessing.queryStringToMap(req.postData()));
+								temp=true;
+//							}
+							
+						}
+					}
+				}
+				
+			});		
+			
+		}
+		catch (Exception e) {
+			
+			System.err.println(e.getMessage());
+			
+		}
+		
+		
+		
+		return queryParam;
+	}
+	
 
 	/*
 	 * private void verifyBidderDataValuesComparisons(URLChecksReportModel

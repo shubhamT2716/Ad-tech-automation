@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -136,17 +137,86 @@ public class URLDataProcessing {
 		return queryStringMap;
 	}
 
-	public Map<String, String> getQueryStringMapFromUrl(String url, List<Request> requests) {
+	public Map<String, String> getQueryStringMapFromUrl(Request urlRequest, List<Request> requests) {
 
+//		List<Map<String, String>> listOfParam=new ArrayList<>();
+//		
+//		int listOfQuantOfUrl=3;
+//		
+//		try
+//		{
+//			URL urlObj = new URL(url);
+//			
+//			if(urlObj.getQuery()==null)
+//			{
+//				for(Request request: requests)
+//				{
+//					if(request.url().equalsIgnoreCase(url))
+//					{
+//						if(listOfQuantOfUrl<0)
+//						{
+//							listOfParam.add(queryStringToMap(request.postData()));
+//							listOfQuantOfUrl--;	
+//						}
+//					}
+//				}
+//			}
+//			
+//			if(listOfQuantOfUrl<0)
+//			{
+//				listOfParam.add(queryStringToMap(urlObj.getQuery()));
+//			}
+//			
+//			
+//		}
+//		catch (Exception e) {
+//			log.info("Error while getting requrest payload "+e.getMessage());
+//		}
+//		
+//		return listOfParam;
+		
+		
 		try {
 			
-			URL urlObj = new URL(url);
+			URL urlObj = new URL(urlRequest.url());
+			
+			
+			
+			if(urlObj.getQuery()==null)
+			{	
+						Map<String, String> queryM=queryStringToMap(urlRequest.postData());
+
+						return queryM;
+				
+			}
+			
+			return queryStringToMap(urlObj.getQuery());
+
+		} catch (MalformedURLException e) {
+			log.error("URL malformed exception");
+		}
+
+		return new HashMap<>();
+		
+		
+		
+			
+	}
+	
+	public Map<String, String> getQueryStringMap(String urlRequest, List<Request> requests) {
+
+
+		
+		
+		try {
+			
+			URL urlObj = new URL(urlRequest);
 			
 			if(urlObj.getQuery()==null)
 			{
 				for(Request req:requests)
 				{
-					if(req.url().startsWith(url))
+					if(req.url().startsWith(urlRequest))
 					{
 							
 //					log.info("url: "+url +"  PostData:  "+req.postData());
@@ -169,5 +239,10 @@ public class URLDataProcessing {
 		}
 
 		return new HashMap<>();
+		
+		
+		
+			
 	}
+	
 }

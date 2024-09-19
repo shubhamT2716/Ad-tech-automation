@@ -8,14 +8,19 @@ pbjsEvents: "bidResponse"
 
 networkCallsPositive: {
  checksync: "https://hbx.media.net/checksync.php?",
- APPR: "https://navvy.media.net/log",
+ appr: "https://navvy.media.net/log",
  RA: "https://navvy.media.net/log",
+ belog: "https://hbxlp.media.net/log",
+ cxtlog: "https://hblg.media.net/log?logid=kfk&evtid=cxtlog",
+ auction: "https://prebid-s2s.media.net/openrtb2/auction",
+ sync: "https://prebid-s2s.media.net/cookie_sync",
+ litype: "https://contextual.media.net/litype.php",
   
 }
 
 networkCallsNegative: {
  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
- Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+ flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
 }
 
 keysToVerifyPositive: {
@@ -30,7 +35,7 @@ keysToVerifyPositive: {
    axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
  },
 
- APPR: {
+ appr: {
    lgtp: ["APPR"],
    gdpr: ["0"],
    dn: ["www.fox13now.com"]
@@ -49,7 +54,7 @@ keysToVerifyNegative: {
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
-  APPR: {
+  appr: {
     pvnm: ["trustx","ix","rubicon","appnexus","adagio"],
     size: ["300x250","728x90"],
     lgtp: ["APPR","RA"]

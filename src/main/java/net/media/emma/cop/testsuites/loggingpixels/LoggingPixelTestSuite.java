@@ -50,7 +50,7 @@ public class LoggingPixelTestSuite
 
         // log.info("all Url Data: " + allUrl.toString());
 
-        List<String> matchingUrls = getMatchingNetworkCalls(allUrl);
+        List<Request> matchingUrls = getMatchingNetworkCalls(requests);
 
         // log.info("matching Url Data: " + matchingUrls.toString());
 
@@ -67,14 +67,14 @@ public class LoggingPixelTestSuite
                                                 .build();
 
         //Loop through matching network calls
-        for (String url : matchingUrls)
+        for (Request url : matchingUrls)
         {
             Map<String, String> urlParams;
             // get key-val map "urlUtil.getQueryMap(currentUrl.toString());"
             urlParams = urlUtil.getQueryStringMapFromUrl(url,requests);;//  UrlQueryBuild.getQueryMap(url.toString());
             //verify key related data present in yaml against data present in url key query
 
-            testReportV2.getNetworkCalls().put(url, verifyKeyDetails(urlParams, testData));
+            testReportV2.getNetworkCalls().put(url.url(), verifyKeyDetails(urlParams, testData));
         }
 
         return genericObjectMapper.valueToTree(testReportV2);
@@ -172,15 +172,15 @@ public class LoggingPixelTestSuite
             return keyDataList;
         }
 
-        private List<String> getMatchingNetworkCalls(List < String > allUrl)
+        private List<Request> getMatchingNetworkCalls(List < Request > allUrl)
         {
-            List<String> matchingUrls = new ArrayList<>();
+            List<Request> matchingUrls = new ArrayList<>();
 
             for (String loggingPixelFormat : loggingPixelUrlPatterns)
             {
-                for (String currentUrl : allUrl)
+                for (Request currentUrl : allUrl)
                 {
-                    if (currentUrl.startsWith(loggingPixelFormat))
+                    if (currentUrl.url().startsWith(loggingPixelFormat))
                     {
                         matchingUrls.add(currentUrl);
                     }
