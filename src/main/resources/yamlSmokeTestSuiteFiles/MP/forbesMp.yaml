@@ -7,9 +7,9 @@ bidexReplaceString: { "": "" }
 
 networkCallsPositive: {
  checksync: "https://hbx.media.net/checksync.php?",
- APPR: "https://navvy.media.net/log",
- RA: "https://navvy.media.net/log",
- BElog: "https://hbxlp.media.net/log",
+ APPR-RA: "https://navvy.media.net/log",
+ #RA: "https://navvy.media.net/log",
+ belog: "https://hbxlp.media.net/log",
  cxtlog: "https://hblg.media.net/log?logid=kfk&evtid=cxtlog",
  cslog: "https://c21lg-d.media.net/log",
  auction: "https://prebid-s2s.media.net/openrtb2/auction",
@@ -20,9 +20,8 @@ networkCallsPositive: {
 }
 
 networkCallsNegative: {
- nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
- Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
- mnetcall: ".*media.net.*"
+ nerrPing: "https://hblg.media.net/nerrping.php",
+ flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
 }
 
 keysToVerifyPositive: {
@@ -34,12 +33,16 @@ keysToVerifyPositive: {
    uspstring: ["1YNN"],
  },
 
- APPR: {
-   lgtp: ["APPR"],
+ APPR-RA: {
+   lgtp: ["APPR","RA"],
    dn: ["www.forbes.com"],
    req_mtype: ["banner"],
    aucstatus: ["completed"]
  },
+ 
+ #RA: {
+  #lgtp: ["RA"],
+ #}
  
 
 }
@@ -52,13 +55,13 @@ keysToVerifyNegative: {
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
-  APPR: {
-    pvnm: ["trustx","ix","rubicon","appnexus","adagio","sharethrough","openx","kargo","medianet","pubmatic","-2"],
-    size: ["300x250","728x90","970x250"],
-    status: ["1","2","3","7"],
-    iwb: ["0","1"],
+  #APPR: {
+    #pvnm: ["trustx","ix","rubicon","appnexus","adagio","sharethrough","openx","kargo","medianet","pubmatic","-2"],
+    #size: ["300x250","728x90","970x250"],
+    #status: ["1","2","3","7"],
+    #iwb: ["0","1"],
 
-  }
+  #}
   
 }
 

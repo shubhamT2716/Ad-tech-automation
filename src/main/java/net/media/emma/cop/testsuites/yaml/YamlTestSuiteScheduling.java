@@ -338,7 +338,9 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 
 		Map<String, BidExController> bidExReport = new HashMap<>();
 
-		Map<String, List<String>> errorMessage = new HashMap<>();
+		Map<String, List<String>> errorMessagePositive = new HashMap<>();
+		
+		Map<String, List<String>> errorMessageNegative = new HashMap<>();
 
 		Map<String, Map<String, List<String>>> error = new HashMap<>();
 
@@ -360,8 +362,10 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			bidExReport.put(yaml, reportModel.getBidExController());
 
 			Map<String, PositiveURLChecks> model = reportModel.getUrlChecks().getPositiveUrlChecks();
+			
+			Map<String, NegativeURLChecks> nagativeModel=reportModel.getUrlChecks().getNegativeUrlChecks();
 
-			errorMessage = model.entrySet().stream()
+			errorMessagePositive = model.entrySet().stream()
 					.filter(n -> n.getValue().getTestMessages() != null && !n.getValue().getTestMessages().isEmpty())
 					.collect(Collectors.toMap(Map.Entry::getKey, e -> {
 						try {
@@ -372,8 +376,18 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 						return null;
 
 					}));
+			
+			nagativeModel.entrySet().forEach(entry->{
+				
+				if(entry.getValue().getCountOfMatchingUrls()!=0)
+				{
+					errorMessageNegative.put(entry.getKey(), entry.getValue().getMatchingUrls());
+				}
+			});
 
-			error.put(yaml, errorMessage);
+//			error.put(yaml, errorMessagePositive);
+			
+			error.computeIfAbsent(yaml, k->new HashMap<>(errorMessageNegative)).putAll(errorMessagePositive);
 
 			
 			testdata.setEnvironment(reportModel.getTestMetaData().getEnvironment());
@@ -454,24 +468,24 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 				
 				List<String> error=new ArrayList<>();
 				
-				report.getUrlChecks().getNegativeUrlChecks().entrySet().forEach(negativecall->{
-					
-//					Map<String, List<String>> getMessage=new HashMap<>();
-					
-					if(negativecall.getValue().getCountOfMatchingUrls()!=0)
-					{
-						
-						getMessage.put(negativecall.getValue().getLabel(),negativecall.getValue().getMatchingUrls());
-//						getErrorMessage.put(negativecall.getKey() ,k->new HashMap<>()).put(negativecall.getValue().getLabel(), negativecall.getValue().getCountOfMatchingUrls());
-					}
-					
-					
-				});
+//				report.getUrlChecks().getNegativeUrlChecks().entrySet().forEach(negativecall->{
+//					
+////					Map<String, List<String>> getMessage=new HashMap<>();
+//					
+//					if(negativecall.getValue().getCountOfMatchingUrls()!=0)
+//					{
+//						
+//						getMessage.put(negativecall.getValue().getLabel(),negativecall.getValue().getMatchingUrls());
+////						getErrorMessage.put(negativecall.getKey() ,k->new HashMap<>()).put(negativecall.getValue().getLabel(), negativecall.getValue().getCountOfMatchingUrls());
+//					}
+//					
+//					
+//				});
 				
 				for(String message: networkCall.getValue())
 				{
 					if(message.startsWith("Positive key value check failed for key")||message.startsWith("Negative key value check failed for key")||
-							message.startsWith("Call not fired"))
+							message.startsWith("Call not fired")|| message.startsWith("Any one of key value check failed for key")||message.startsWith("https://hblg.media.net/nerrping.php")||message.startsWith("https://hblg.media.net/log?logid=kfk&evtid=flog"))
 					{
 						error.add(message);
 					}

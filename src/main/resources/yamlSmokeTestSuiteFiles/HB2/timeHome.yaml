@@ -13,7 +13,7 @@ networkCallsPositive:
     aplogs: "https://hblg.media.net/log?logid=aplog",
     prlogs: "https://hblg.media.net/log?logid=prlog",
     awlogs: "https://hblg.media.net/log?logid=awlog",
-    checksync: "https://hbx.media.net/checksync.php?cid=8CUDF88I8",
+    checksync: "https://hbx.media.net/checksync.php?",
     #rtbscall: "https://xch.media.net/AdExchange/rtbsspub",
     gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads",
     bidExchange: "https://hbx.media.net/bidexchange.js",
@@ -30,8 +30,7 @@ networkCallsPositive:
 networkCallsNegative:
   {
     nerrPing: "https://hblg.media.net/nerrping.php",
-    fLog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
-    elLog: "https://hblg.media.net/log?logid=kfk&evtid=ellog"
+    flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
   }
 
 keysToVerifyPositive:

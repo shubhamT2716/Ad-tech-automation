@@ -79,8 +79,11 @@ public class TestReportModel {
 		String svr;
 		String sugd;
 		String cid;
-		String itype;
+//		String itype;
 		String ct;
+		String servname;
+		String browser;
+		String lw;
 		
 	}
 

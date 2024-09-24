@@ -1,5 +1,7 @@
 package net.media.emma.cop.testsuites.yaml;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -161,6 +163,7 @@ public class URLChecksReportModel {
                 positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).urlPattern(value).testResult(TestResult.FAIL)
                         .testMessages(Arrays.asList("Call not fired")).build());
             }
+            
         });
 
         testData.getNetworkCallsNegative().forEach((key, value) -> {
@@ -181,6 +184,10 @@ public class URLChecksReportModel {
     
     public void verifyPositiveKeyValChecks() {
     	
+    	Set<String> ralog=new HashSet<>();
+    	
+    	ralog.add("RA");
+    	
     	try {
     	
     		 positiveUrlChecks.forEach((callLabel, callData) -> {  // key, value --> label, PositiveURLChecks obj
@@ -197,7 +204,13 @@ public class URLChecksReportModel {
                     
                     log.info(" Expected: " + listOfValues + " Actual: " + actualValues);
                     
-                    if (!actualValues.equals(listOfValues)) {
+                    
+                    if(listOfValues.equals(ralog)&& !actualValues.equals(ralog)&& callData.getLabel().equals("awlog"))
+                    {
+                    	callData.getTestMessages().add("Call not fired");
+                    	
+                    }
+                    else  if (!actualValues.equals(listOfValues)) {
 //                        callData.getTestMessages().add("Positive key value check Pass for key: " + qsParam
 //                                + ". Expected: " + listOfValues + " Actual: " + actualValues);
 //                    } else {

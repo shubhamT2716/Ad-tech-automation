@@ -465,14 +465,20 @@ private Map.Entry<String, String> positiveURLPatternExistsForFeature(String curr
 			bidexData.setCid(envData.get("cid").asText());
 			bidexData.setSvr(envData.get("sver").asText());
 			bidexData.setSugd(envData.get("sugd").asText());
-			bidexData.setItype(envData.get("itype").asText());
-			bidexData.setCt(envData.get("ip2ct").asText())	;	
+//			bidexData.setItype(envData.get("itype").asText());
+			bidexData.setCt(envData.get("ip2ct").asText());
+			bidexData.setServname(envData.get("servname").toString());
+			bidexData.setBrowser(envData.get("browser").toString());
+			bidexData.setLw(envData.get("lw").toString());
 			
 			bd.setCid(envData.get("cid").asText());
 			bd.setCt(envData.get("ip2ct").asText());
 			bd.setSvr(envData.get("sver").asText());	
 			bd.setSugd(envData.get("sugd").asText());
-			bd.setItype(envData.get("itype").asText());
+			bd.setServname(envData.get("servname").toString());
+			bd.setBrowser(envData.get("browser").toString());
+			bd.setLw(envData.get("lw").toString());
+//			bd.setItype(envData.get("itype").asText());
 		}
 			
 //			if(request.url().startsWith("https://hbx-stage-1.media.net/ss/nes/bidexl2.js?")|| request.url().startsWith("https://hbx-stage-2.media.net/ss/nes/bidexl2.js?"))
@@ -485,8 +491,11 @@ private Map.Entry<String, String> positiveURLPatternExistsForFeature(String curr
 				bidexData.setCid(bd.getCid());
 				bidexData.setSvr(bd.getSvr());
 				bidexData.setCt(bd.getCt());
-				bidexData.setItype(bd.getItype());
-				bidexData.setSugd(bd.getSugd());	
+//				bidexData.setItype(bd.getItype());
+				bidexData.setSugd(bd.getSugd());
+				bidexData.setServname(bd.getServname());
+				bidexData.setBrowser(bd.getBrowser());
+				bidexData.setLw(bd.getLw());
 				
 //				bd.setCid();
 //				bd.setCt(envData.get("ip2ct").asText());

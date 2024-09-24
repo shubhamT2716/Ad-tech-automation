@@ -141,6 +141,9 @@ public class BidexOrClientagData {
 //							bidexData.setSvr(bidData.get("sver").asText());
 							bidexData.setSugd(bidData.get("sugd").asText());
 							bidexData.setCt(bidData.get("ip2ct").asText());
+							bidexData.setServname(bidData.get("servname").toString());
+							bidexData.setBrowser(bidData.get("browser").toString());
+							bidexData.setLw(bidData.get("lw").toString());
 							
 //							bidexData.setItype(bidData.get("itype").asText());
 							
@@ -235,12 +238,8 @@ public class BidexOrClientagData {
 							
 							if(matcher2.find())
 							{
-								
-								
-								
-								 svr = matcher2.group(1);
-								
-								
+																
+								 svr = matcher2.group(1);		
 								
 							}
 							
@@ -260,6 +259,9 @@ public class BidexOrClientagData {
 //						bidexData.setSvr(bidData.get("sver").asText());
 						bidexData.setSugd(bidData.get("sugd").asText());
 						bidexData.setCt(bidData.get("ip2ct").asText());
+						bidexData.setServname(bidData.get("servname").toString());
+						bidexData.setBrowser(bidData.get("browser").toString());
+						bidexData.setLw(bidData.get("lw").toString());
 						
 //						bidexData.setItype(bidData.get("itype").asText());
 						
@@ -295,14 +297,20 @@ public class BidexOrClientagData {
 			bidexData.setCid(envData.get("cid").asText());
 			bidexData.setSvr(envData.get("sver").asText());
 			bidexData.setSugd(envData.get("sugd").asText());
-			bidexData.setItype(envData.get("itype").asText());
-			bidexData.setCt(envData.get("ip2ct").asText())	;	
+//			bidexData.setItype(envData.get("itype").asText());
+			bidexData.setCt(envData.get("ip2ct").asText());
+			bidexData.setServname(envData.get("servname").toString());
+			bidexData.setBrowser(envData.get("browser").toString());
+			bidexData.setLw(envData.get("lw").toString());
 			
 			bd.setCid(envData.get("cid").asText());
 			bd.setCt(envData.get("ip2ct").asText());
 			bd.setSvr(envData.get("sver").asText());	
 			bd.setSugd(envData.get("sugd").asText());
-			bd.setItype(envData.get("itype").asText());
+			bd.setServname(envData.get("servname").toString());
+			bd.setBrowser(envData.get("browser").toString());
+			bd.setLw(envData.get("lw").toString());
+//			bd.setItype(envData.get("itype").asText());
 		}
 			
 //			if(request.url().startsWith("https://hbx-stage-1.media.net/ss/nes/bidexl2.js?")|| request.url().startsWith("https://hbx-stage-2.media.net/ss/nes/bidexl2.js?"))
@@ -315,8 +323,11 @@ public class BidexOrClientagData {
 				bidexData.setCid(bd.getCid());
 				bidexData.setSvr(bd.getSvr());
 				bidexData.setCt(bd.getCt());
-				bidexData.setItype(bd.getItype());
-				bidexData.setSugd(bd.getSugd());	
+//				bidexData.setItype(bd.getItype());
+				bidexData.setSugd(bd.getSugd());
+				bidexData.setServname(bd.getServname());
+				bidexData.setBrowser(bd.getBrowser());
+				bidexData.setLw(bd.getLw());
 				
 //				bd.setCid();
 //				bd.setCt(envData.get("ip2ct").asText());

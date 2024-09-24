@@ -336,8 +336,8 @@ public class WebhookService implements WebhookServiceIn {
 					.append("\n");
 			markdownBuilder.append("- **Cid:** ").append(entry.getValue().getBidExController().getBidexData().getCid())
 					.append("\n");
-			markdownBuilder.append("- **Itype:** ")
-					.append(entry.getValue().getBidExController().getBidexData().getItype()).append("\n");
+			markdownBuilder.append("- **servname:** ")
+					.append(entry.getValue().getBidExController().getBidexData().getServname()).append("\n");
 			markdownBuilder.append("- **Location:** ")
 					.append(entry.getValue().getBidExController().getBidexData().getCt()).append("\n");
 			markdownBuilder.append("- **Console Message:** ")
@@ -443,11 +443,11 @@ public class WebhookService implements WebhookServiceIn {
 		//glpat-zzNwY6CKgyLaBYg_7PuL
 		//glpat-spsyh2z6QMEQs5sQnKD7
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("PRIVATE-TOKEN", "glpat-spsyh2z6QMEQs5sQnKD7");
+		headers.set("PRIVATE-TOKEN", "glpat-eiZcFRxrY4n_vwhzqpfF");
 
 		Map<String, String> map = new HashMap<>();
 
-		System.err.println("REsponse: " + response);
+//		System.err.println("REsponse: " + response);
 
 		if (response.get("response") == null) {
 			map.put("body", response.get("processStart").toString());

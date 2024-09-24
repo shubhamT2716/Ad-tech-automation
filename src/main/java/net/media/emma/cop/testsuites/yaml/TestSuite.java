@@ -251,7 +251,7 @@ public class TestSuite implements GenericTestSuite {
 
 				if (url != null && response != null) {
 
-					page = mocking.responseMocking(page, url, response);
+					page = mocking.addResponseMocking(page, url, response);
 
 				}
 
@@ -922,7 +922,11 @@ public class TestSuite implements GenericTestSuite {
 //								bidexData.setSvr(bidData.get("sver").asText());
 									bidexData.setSugd(object.get("sugd").toString());
 									bidexData.setCt(object.get("ip2ct").toString());
-
+									bidexData.setServname(object.get("servname").toString());
+									bidexData.setBrowser(object.get("browser").toString());
+									bidexData.setLw(object.get("lw").toString());
+									
+									
 									return bidexData;
 								}
 							} catch (Exception e) {
@@ -1048,6 +1052,9 @@ public class TestSuite implements GenericTestSuite {
 
 								bidexData.setSugd(object.get("sugd").toString());
 								bidexData.setCt(object.get("ip2ct").toString());
+								bidexData.setServname(object.get("servname").toString());
+								bidexData.setBrowser(object.get("browser").toString());
+								bidexData.setLw(object.get("lw").toString());
 
 								return bidexData;
 							}
@@ -1111,14 +1118,21 @@ public class TestSuite implements GenericTestSuite {
 				bidexData.setCid(envData.get("cid").asText());
 				bidexData.setSvr(envData.get("sver").asText());
 				bidexData.setSugd(envData.get("sugd").asText());
-				bidexData.setItype(envData.get("itype").asText());
+//				bidexData.setItype(envData.get("itype").asText());
 				bidexData.setCt(envData.get("ip2ct").asText());
+				bidexData.setServname(envData.get("servname").toString());
+				bidexData.setBrowser(envData.get("browser").toString());
+				bidexData.setLw(envData.get("lw").toString());
 
 				bd.setCid(envData.get("cid").asText());
 				bd.setCt(envData.get("ip2ct").asText());
 				bd.setSvr(envData.get("sver").asText());
 				bd.setSugd(envData.get("sugd").asText());
-				bd.setItype(envData.get("itype").asText());
+				bd.setServname(envData.get("servname").toString());
+				bd.setBrowser(envData.get("browser").toString());
+				bd.setLw(envData.get("lw").toString());
+				
+//				bd.setItype(envData.get("itype").asText());
 			}
 
 			if (request.url().matches(regexForBidex2)) {
@@ -1126,8 +1140,12 @@ public class TestSuite implements GenericTestSuite {
 				bidexData.setCid(bd.getCid());
 				bidexData.setSvr(bd.getSvr());
 				bidexData.setCt(bd.getCt());
-				bidexData.setItype(bd.getItype());
+//				bidexData.setItype(bd.getItype());
 				bidexData.setSugd(bd.getSugd());
+				bidexData.setServname(bd.getServname());
+				bidexData.setBrowser(bd.getBrowser());
+				bidexData.setLw(bd.getLw());
+				
 
 			}
 
@@ -1142,17 +1160,31 @@ public class TestSuite implements GenericTestSuite {
 		return bidexData;
 	}
 
-	private Map.Entry<String, String> positiveURLPatternExists(Request currentUrl, TestCriteriaBo testData) {
+	private List<Map.Entry<String, String>> positiveURLPatternExists(Request currentUrl, TestCriteriaBo testData) {
+		
+		
+		 List<Map.Entry<String, String>> matchingEntries = new ArrayList<>();
 
-		for (Map.Entry<String, String> urlData : testData.getNetworkCallsPositive().entrySet()) {
+		    // Collect all matching entries
+		    for (Map.Entry<String, String> entry : testData.getNetworkCallsPositive().entrySet()) {
+		        if (currentUrl.url().startsWith(entry.getValue())) {
+		            matchingEntries.add(entry);  // Store all matches
+		        }
+		    }
 
-			if (currentUrl.url().startsWith(urlData.getValue())) {
-
-				return urlData;
-			}
-		}
-
-		return null;
+		    return matchingEntries; // Return the list of matching entries
+		
+		
+		
+//		for (Map.Entry<String, String> urlData : testData.getNetworkCallsPositive().entrySet()) {
+//
+//			if (currentUrl.url().startsWith(urlData.getValue())) {
+//
+//				return urlData;
+//			}
+//		}
+//
+//		return null;
 	}
 
 	private Map.Entry<String, String> negativeURLPatternExists(String currentUrl, TestCriteriaBo testData) {
@@ -1182,36 +1214,38 @@ public class TestSuite implements GenericTestSuite {
 			
 			
 
-			Map.Entry<String, String> urlData = positiveURLPatternExists(requestUrl, testData);
+			List<Map.Entry<String, String>> urls = positiveURLPatternExists(requestUrl, testData);
 
-			if (urlData != null) {
+			for(Map.Entry<String, String> urlData: urls)
+			{
+				if (urlData != null) {
 
-				PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
+					PositiveURLChecks labelExists = urlChecks.getPositiveUrlChecks().get(urlData.getKey());
 
-				if (labelExists == null) {
+					if (labelExists == null) {
 
-					PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
-							.urlPattern(urlData.getValue())
-							.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl.url())))
-							.queryStringMap(new ArrayList<Map<String, String>>(
-									Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests))))
-//							.queryStringMap(urlDataProcessing.getQueryStringMapFromUrl(url, requests))
-							.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
-							.positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
-							.anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey())).build();
+						PositiveURLChecks puc = PositiveURLChecks.builder().label(urlData.getKey())
+								.urlPattern(urlData.getValue())
+								.matchingUrls(new ArrayList<String>(Arrays.asList(requestUrl.url())))
+								.queryStringMap(new ArrayList<Map<String, String>>(
+										Arrays.asList(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests))))
+//								.queryStringMap(urlDataProcessing.getQueryStringMapFromUrl(url, requests))
+								.negativeKeyValChecks(testData.getKeysToVerifyNegative().get(urlData.getKey()))
+								.positiveKeyValChecks(testData.getKeysToVerifyPositive().get(urlData.getKey()))
+								.anyOneOfKeyValChecks(testData.getKeysToVerifyAnyOneOf().get(urlData.getKey())).build();
 
-					urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
-				} else {
-					labelExists.getMatchingUrls().add(requestUrl.url());
-					labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests));
+						urlChecks.getPositiveUrlChecks().put(urlData.getKey(), puc);
+					} else {
+						labelExists.getMatchingUrls().add(requestUrl.url());
+						labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests));
+					}
+
+//					continue;
 				}
-
-				continue;
 			}
-			
-			
 
-			urlData = negativeURLPatternExists(requestUrl.url(), testData);
+
+			Map.Entry<String, String>	urlData = negativeURLPatternExists(requestUrl.url(), testData);
 
 			if (urlData != null) {
 				NegativeURLChecks nuc = urlChecks.getNegativeUrlChecks().get(urlData.getKey());

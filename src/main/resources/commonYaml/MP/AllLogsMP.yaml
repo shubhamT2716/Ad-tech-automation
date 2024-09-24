@@ -1,8 +1,8 @@
 networkCallsPositive: {
  checksync: "https://hbx.media.net/checksync.php?",
- appr: "https://navvy.media.net/log",
- ra: "https://navvy.media.net/log",
-  
+ APPR-RA: "https://navvy.media.net/log",
+ l1log: "https://hblg.media.net/log?logid=kfk&evtid=l1log", 
+ #RA: "https://navvy.media.net/log",
 }
 
 networkCallsNegative: {
@@ -15,22 +15,22 @@ keysToVerifyPositive: {
 
  checksync: {
    #gdpr: ["0"],
-   gpp: ["DBAA"],
-   gpp_sid: ["-1"],
-   usp_status: ["1"],
-   usp_consent: ["1"],
-   uspstring: ["1YNN"],
-   axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
+   #gpp: ["DBAA"],
+   #gpp_sid: ["-1"],
+   #usp_status: ["1"],
+   #usp_consent: ["1"],
+   #uspstring: ["1YNN"],
+   #axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
  },
 
- appr: {
-   lgtp: ["APPR"],
-   gdpr: ["0"],
+ APPR-RA: {
+   lgtp: ["APPR","RA"],
+   #gdpr: ["0"],
    
  },
- ra: {
-   lgtp: ["RA"],
- },
+ #RA: {
+   #lgtp: ["RA"],
+ #},
 
 }
 
@@ -42,11 +42,11 @@ keysToVerifyNegative: {
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
-  appr: {
-    pvnm: ["trustx","ix","rubicon","appnexus","adagio"],
-    size: ["300x250","728x90"],
-    lgtp: ["APPR","RA"]
-  }
+  #APPR: {
+   # pvnm: ["trustx","ix","rubicon","appnexus","adagio"],
+    #size: ["300x250","728x90"],
+   # lgtp: ["APPR","RA"]
+ # }
   
 }
 

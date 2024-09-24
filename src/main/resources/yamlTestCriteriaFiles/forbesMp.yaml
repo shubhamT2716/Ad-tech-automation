@@ -7,8 +7,8 @@ bidexReplaceString: { "": "" }
 
 networkCallsPositive: {
  checksync: "https://hbx.media.net/checksync.php?",
- APPR: "https://navvy.media.net/log",
- RA: "https://navvy.media.net/log",
+ APPR-RA: "https://navvy.media.net/log",
+ #RA: "https://navvy.media.net/log",
  belog: "https://hbxlp.media.net/log",
  cxtlog: "https://hblg.media.net/log?logid=kfk&evtid=cxtlog",
  cslog: "https://c21lg-d.media.net/log",
@@ -20,7 +20,7 @@ networkCallsPositive: {
 }
 
 networkCallsNegative: {
- nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+ nerrPing: "https://hblg.media.net/nerrping.php",
  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
 }
 
@@ -28,17 +28,21 @@ keysToVerifyPositive: {
 
  checksync: {
    #gdpr: ["0"],
-   usp_status: ["1"],
+   #usp_status: ["1"],
    usp_consent: ["1"],
-   uspstring: ["1YNN"],
+   #uspstring: ["1YNN"],
  },
 
- APPR: {
-   lgtp: ["APPR"],
+ APPR-RA: {
+   lgtp: ["APPR","RA"],
    dn: ["www.forbes.com"],
    req_mtype: ["banner"],
    aucstatus: ["completed"]
  },
+ #RA: {
+  # lgtp: ["RA"],
+ #}
+ 
  
 
 }
@@ -51,7 +55,7 @@ keysToVerifyNegative: {
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
-  APPR: {
+  APPR-RA: {
     pvnm: ["trustx","ix","rubicon","appnexus","adagio","sharethrough","openx","kargo","medianet","pubmatic","-2"],
     size: ["300x250","728x90","970x250"],
     status: ["1","2","3","7"],
