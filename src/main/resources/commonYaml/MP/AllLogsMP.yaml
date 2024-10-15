@@ -6,7 +6,7 @@ networkCallsPositive: {
 }
 
 networkCallsNegative: {
- nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+ nerrPing: "https://hblg.media.net/nerrping.php",
  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
  
 }

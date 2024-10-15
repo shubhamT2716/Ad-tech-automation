@@ -49,10 +49,11 @@ public class WebhookService implements WebhookServiceIn {
 	@Override
 	public void executeWebhook(String payload) {
 		try {
+			
 			triggerEmma(payload);
-			Thread.sleep(5500);
+//			Thread.sleep(5500);
 
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -317,9 +318,28 @@ public class WebhookService implements WebhookServiceIn {
 		StringBuilder markdownBuilder = new StringBuilder();
 		data.getRawData().entrySet().forEach(entry -> {
 
-			System.err.println("Key: " + entry.getKey());
+			markdownBuilder.append("**Test URL:** ").append(entry.getValue().getTestMetaData().getPublisherUrl())
+			.append("\n\n");
+			
+			markdownBuilder.append("\n## Test Result\n");
+			markdownBuilder.append("- **Overall Result:** ").append(data.getTestResult().get("testResult")).append("\n")
+					.append("\n");
+
+			markdownBuilder.append("- **Reason:** ").append("\n");
+
+			data.getErrorMessage().get(entry.getKey()).entrySet().forEach(errorMessage -> {
+				markdownBuilder.append("- " + errorMessage.getKey()).append(" : ").append(errorMessage.getValue())
+						.append("\n");
+
+			});
+			
+			markdownBuilder.append("<details><summary>Click to expand</summary>");
+			markdownBuilder.append("\n\n");
+			markdownBuilder.append("\n");
 
 			markdownBuilder.append("# Test Summary\n");
+			markdownBuilder.append("\n");
+			markdownBuilder.append("\n");
 			markdownBuilder.append("**Test URL:** ").append(entry.getValue().getTestMetaData().getPublisherUrl())
 					.append("\n\n");
 			markdownBuilder.append("**Scripts Used:**\n");
@@ -374,13 +394,12 @@ public class WebhookService implements WebhookServiceIn {
 
 			entry.getValue().getCookie().entrySet().forEach(cookieDomain -> {
 
-				if (cookieDomain.getKey().equals("https://contextual.media.net")
-						|| cookieDomain.getKey().equals("https://hbx.media.net")) {
+				if (cookieDomain.getKey().equals("https://hbx.media.net")) {
 
 					markdownBuilder.append("- **" + "Domain" + ":** ").append(cookieDomain.getKey()).append("\n");
 					cookieDomain.getValue().entrySet().forEach(cookie -> {
 
-						markdownBuilder.append("- **" + "cookie" + ":** ").append(cookie.getKey()).append("\n");
+						markdownBuilder.append(cookie.getKey()).append(",");
 
 					});
 
@@ -405,6 +424,10 @@ public class WebhookService implements WebhookServiceIn {
 
 			markdownBuilder.append("**Full Report:** [View Full Report](" + data.getFullReport() + ")\n");
 
+			markdownBuilder.append("</details>");
+			markdownBuilder.append("\n");
+			markdownBuilder.append("\n");
+			
 		});
 
 		return markdownBuilder.toString();
@@ -429,6 +452,20 @@ public class WebhookService implements WebhookServiceIn {
 
 		return null;
 	}
+	
+	private String getAccessToken(Object projectId)
+	{
+		Map<String, String> mapOfProjectIdKy=new HashMap<>();
+		
+		mapOfProjectIdKy.put("15491", "glpat-fyX_Nidzz5EE6Vazr-Go");
+		mapOfProjectIdKy.put("8300", "glpat-eiZcFRxrY4n_vwhzqpfF");
+		mapOfProjectIdKy.put("6340", "glpat-WgH94v_gXuiDxAMtnpC2");
+		
+		String key=mapOfProjectIdKy.get(projectId);
+		
+		return key;
+		
+	}
 
 	private void addResponseToGit(Map<String, Object> response) {
 
@@ -442,8 +479,13 @@ public class WebhookService implements WebhookServiceIn {
 
 		//glpat-zzNwY6CKgyLaBYg_7PuL
 		//glpat-spsyh2z6QMEQs5sQnKD7
+		
+		// emma key : glpat-fyX_Nidzz5EE6Vazr-Go
+		// prebidKey: glpat-eiZcFRxrY4n_vwhzqpfF
+		
+		
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("PRIVATE-TOKEN", "glpat-eiZcFRxrY4n_vwhzqpfF");
+		headers.set("PRIVATE-TOKEN", getAccessToken(response.get("projectId")));
 
 		Map<String, String> map = new HashMap<>();
 

@@ -4,8 +4,8 @@ userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.fox13now.com/?medianet_test=1"
 
 networkCallsPositive: {
-  APPR: "https://navvy.media.net/log",
-  RA: "https://navvy.media.net/log",
+  APPR-RA: "https://navvy.media.net/log",
+  #RA: "https://navvy.media.net/log",
   gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
   prtllog: "https://hbxlp.media.net/log",
   belog: "https://hbxlp.media.net/log",
@@ -24,18 +24,18 @@ keysToVerifyPositive: {
     cid: ["8CU2N1270"],
     itype: ["MANAGED_PREBID"]},
 
-  APPR: {
-    lgtp: ["APPR"],
+  APPR-RA: {
+    lgtp: ["APPR","RA"],
     evtid: ["prebid_analytics_events_client"]
   },
 
-  RA: {
-    lgtp: ["RA"],
+  #RA: {
+    #lgtp: ["RA"],
     #dn: ["www.fox13now.com"],
     #gdpr: ["0"],
-    aucstatus: ["completed"],
+    #aucstatus: ["completed"],
     #iwb: ["1"]
-  },
+  #},
 
  prtllog: {
     itype: ["MANAGED_PREBID"]

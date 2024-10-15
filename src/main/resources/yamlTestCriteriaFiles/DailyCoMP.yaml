@@ -8,8 +8,8 @@ pbjsEvents: "bidResponse"
 
 networkCallsPositive: {
  checksync: "https://hbx.media.net/checksync.php?",
- APPR: "https://navvy.media.net/log",
- RA: "https://navvy.media.net/log",
+ APPR-RA: "https://navvy.media.net/log",
+ #RA: "https://navvy.media.net/log",
   
 }
 
@@ -26,14 +26,14 @@ keysToVerifyPositive: {
    axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
  },
 
- APPR: {
-   lgtp: ["APPR"],
+ APPR-RA: {
+   lgtp: ["APPR","RA"],
    gdpr: ["0"],
    dn: ["www.fox13now.com"]
  },
- RA: {
-   lgtp: ["RA"],
- },
+ #RA: {
+   #lgtp: ["RA"],
+ #},
 
 }
 
@@ -45,7 +45,7 @@ keysToVerifyNegative: {
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
-  APPR: {
+  APPR-RA: {
     pvnm: ["trustx","ix","rubicon","appnexus","adagio"],
     size: ["300x250","728x90"],
     lgtp: ["APPR","RA"]

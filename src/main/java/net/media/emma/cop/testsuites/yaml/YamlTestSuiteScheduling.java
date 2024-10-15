@@ -107,13 +107,83 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 	public String getTestResult(Map<String, Map<String, List<String>>> error) {
 		// here we have to add some condition based requirement to handle result
 		
-		if(error==null)
+		boolean temp=false;
+		
+		for(Map.Entry<String, Map<String, List<String>>> entry: error.entrySet() )
 		{
+			for(Map.Entry<String, List<String>> e1:entry.getValue().entrySet())
+			{
+				if(e1.getKey().equalsIgnoreCase("awlog")|| e1.getKey().equalsIgnoreCase("l1log"))
+				{
+					continue;
+				}
+				else if (e1.getKey().equalsIgnoreCase("flog") || e1.getKey().equalsIgnoreCase("nerrPing")) {
+					
+					return "fail";
+				}
+				else {
+					
+					for(String message: e1.getValue())
+					{
+						if(message.startsWith("Negative key value check failed for key"))
+						{
+							temp=true;
+//							break;
+							return "fail";
+						}
+					}
+				}
+			}
+		}
+		
+		if(temp==true)
+		{
+			return "fail";
+		}else {
 			return "pass";
 		}
-		else {
-			return "fail";
-		}
+			
+//		error.entrySet().forEach(entry->{
+//			
+//			log.error("eroor:"+error);
+//			
+//			System.err.println("error:"+error);
+//		
+//			entry.getValue().entrySet().forEach(er->{
+//				
+//				boolean f=true;
+//				
+//				if(!er.getKey().equalsIgnoreCase("awlog")|| !er.getKey().equalsIgnoreCase("l1log"))
+//				{
+//					for(String message:er.getValue())
+//					{
+//						if(message.startsWith("Negative key value check failed for key"))
+//						{
+//							f=false;
+//							break;
+//						}
+//								
+//					}
+//					
+//					
+//					
+//				}
+//				
+//			});
+//			
+//		});
+
+//		if(error==null)
+//		{
+//			return "pass";
+//		}
+//		else {
+//			return "fail";
+//		}
+		
+		
+		
+		
 		
 	}
 
@@ -121,13 +191,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
 			List<String> commonFiles, String pubs, String itype,String email,boolean flagForMail) {
 
-		// if (selectedFiles == null || selectedFiles.isEmpty()) {
-		// return new HashMap<>();
-		// }
 
-		
-		
-		
 		SmokeTestRawDataDto rawDataDto = new SmokeTestRawDataDto();
 
 		Map<String, CompletableFuture<TestReportModel>> map = new HashMap<>();
@@ -346,7 +410,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 
 		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
 
-		String testResult = getTestResult(error);
+		
 		
 		for (String yaml : listOfYamlEnv) {
 			
@@ -366,7 +430,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			Map<String, NegativeURLChecks> nagativeModel=reportModel.getUrlChecks().getNegativeUrlChecks();
 
 			errorMessagePositive = model.entrySet().stream()
-					.filter(n -> n.getValue().getTestMessages() != null && !n.getValue().getTestMessages().isEmpty())
+					.filter(n -> n.getValue().getTestMessages() != null && !n.getValue().getTestMessages().isEmpty() && (!n.getKey().equalsIgnoreCase("awlog") ||!n.getKey().equalsIgnoreCase("l1log")|| !n.getKey().equalsIgnoreCase("RA")))
 					.collect(Collectors.toMap(Map.Entry::getKey, e -> {
 						try {
 							return e.getValue().getTestMessages();
@@ -418,6 +482,9 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+		String testResult = getTestResult(error);
 
 		if (flagForMail == true && email!=null && !email.isBlank()&& !email.isEmpty()) {
 			this.mailServiceImpl.sendMail(email, email, testReportModelList,
@@ -430,11 +497,11 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 		
 		dto.setTestdatas(testdataResult);
 		
+	
+		
 		testReport.put("testResult", testResult);
 		String reportLink="http://10.2.64.124:8080/yamlTestSuite/smokeTestSuite/"+ zipFile;
 		testReport.put("fullReport:", reportLink);
-		
-		
 
 		rawDataDto.setTestResult(testReport);
 		rawDataDto.setRawData(finalResult);
@@ -631,10 +698,13 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			 report.computeIfAbsent("basicReport", k -> new HashMap<String, Object>())
 	          .putAll(data);
 			 
-			 report.computeIfAbsent("fullReport", k -> new HashMap<String, Object>())
-	          .putAll(map);
+//			 report.computeIfAbsent("fullReport", k -> new HashMap<String, Object>())
+//	          .putAll(map);
+			 
 			
 		});
+		
+		report.put("fullReport", result);
 		
 		return report;
 

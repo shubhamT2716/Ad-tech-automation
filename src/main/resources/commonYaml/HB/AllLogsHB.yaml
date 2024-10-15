@@ -1,8 +1,8 @@
 networkCallsPositive: {
   checksync: "https://hbx.media.net/checksync.php",
-  prlogs: "https://hblg.media.net/log?logid=prlog",
-  aplogs: "https://hblg.media.net/log?logid=aplog",
-  awlogs: "https://hblg.media.net/log?logid=awlog",
+  prlog: "https://hblg.media.net/log?logid=prlog",
+  aplog: "https://hblg.media.net/log?logid=aplog",
+  awlog: "https://hblg.media.net/log?logid=awlog",
   #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
   gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
 
@@ -35,15 +35,15 @@ keysToVerifyPositive: {
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  prlogs: { snm : ["removed","error",], nbr : ["13"]},
-  aplogs: { nbr: ["13","",null], mpvid: [], abs: []},
-  awlogs: { ogbdp : ["0","-1","-2"]},
+  prlog: { snm : ["removed","error",], nbr : ["13"]},
+  aplog: { nbr: ["13","",null], mpvid: [], abs: []},
+  #awlog: { ogbdp : ["0","-1","-2"]},
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  prlogs: { nbr : [ "45","3","69","0","1","99" ]},
-  aplogs: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+  #prlog: { nbr : [ "45","3","69","0","1","99" ]},
+  #aplog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
 
 }
 

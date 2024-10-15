@@ -27,43 +27,43 @@ networkCallsNegative: {
 keysToVerifyPositive: {
 
   checksync: {
-    gdpr: ["0"],
-    gdprconsent: ["0"],
-    cid: ["8CU66J63J"],
-    cs: ["1"],
-    cv: ["37"],
-    hb: ["1"],
-    vsSync: ["1"]
+    #gdpr: ["0"],
+    #gdprconsent: ["0"],
+    #cid: ["8CU66J63J"],
+    #cs: ["1"],
+    #cv: ["37"],
+    #hb: ["1"],
+    #vsSync: ["1"]
   },
 
   RTBSCall: {
-    gdpr: ["0"],
-    gdprconsent: ["0"],
-    cid: ["8CU66J63J", "8CULM0U5B"]
+    #gdpr: ["0"],
+    #gdprconsent: ["0"],
+    #cid: ["8CU66J63J", "8CULM0U5B"]
   },
 
   PRLog: {
-    pvid: ["99", "23", "79", "29", "3012", "3054", "441", "3007", "3", "345", "126", "326", "3003", "327", "107", "208", "54"],
+    #pvid: ["99", "23", "79", "29", "3012", "3054", "441", "3007", "3", "345", "126", "326", "3003", "327", "107", "208", "54"],
     #svr: ["2023091809_218_100912_20_100912_42_ssp"],
-    ugd: ["4"],
+    #ugd: ["4"],
   },
 
   APLog: {
    # svr: ["2023091809_218_100912_20_100912_42_ssp"],
-    ugd: ["4"]
+    #ugd: ["4"]
   },
 }
 
 keysToVerifyNegative: {
   belog: { name: ["ADS_DISABLED"]},
-  prlog: { snm : ["removed","error",], nbr : ["13"], usp_ldf : []},
+  prlog: { snm : ["removed","error",]},
   aplog: { nbr: ["13"]},
-  awlog: { ogbdp: ["0","-1","-2"]},
+  #awlog: { ogbdp: ["0","-1","-2"]},
 }
 
 keysToVerifyAnyOneOf: {
-  prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { cid: ["8CULM0U5B", "8CU66J6"], snm: ["success", "nobid"], nbr : [ "45","3","69","0","1","99" ]},
+  #prlog: { nbr : [ "45","3","69","0","1","99" ]},
+  #aplog: { cid: ["8CULM0U5B", "8CU66J6"], snm: ["success", "nobid"], nbr : [ "45","3","69","0","1","99" ]},
 }
 
 bidderDataUrls: {

@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
-
+import ch.qos.logback.core.model.Model;
 import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +67,9 @@ public class WebController {
 
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
+	
+	@Value("${testPageFilePath}")
+	private String testPageFilePath;
 
 	@Value("${yamlSmokeTestSuiteFilesPath}")
 	private String yamlSmokeTestSuiteFilesPath;
@@ -83,6 +86,9 @@ public class WebController {
 	
 	@Value("${reportFileBasePath}")
 	private String reportFilePath;
+	
+	@Autowired
+	private TestPageResponseMapping  mapping;
 	
 	
 
@@ -304,6 +310,42 @@ public class WebController {
 		return mav;
 	}
 	
+	@GetMapping("/testpage")
+	public ModelAndView getTestPage()
+	{
+		ModelAndView mav = new ModelAndView("testPage");
+		mav.addObject("files", fileOperations.listOfTestPage(testPageFilePath));
+
+		return mav;
+	}
+	
+	@PostMapping("/testpage")
+	public ModelAndView testPageSuite(@RequestParam String yaml,
+			@RequestParam(name = "url", required = false)String url,
+			@RequestParam(name = "response", required =  false)String response) {
+
+		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
+
+		try {
+			
+			ObjectMapper mapper = new YAMLMapper();
+			
+			TestCriteriaBo yamlTc = mapper.readValue(yaml, TestCriteriaBo.class);
+
+			TestReportModel message = yamlTestSuite.getTestResults(yamlTc,url,response);
+
+			JsonNode jsonNode = yamlMapper.convertValue(message, JsonNode.class);
+
+			mav.addObject("message1", jsonNode);
+
+		} catch (JsonProcessingException e) {
+			log.error("YAML Processing Error", e);
+			mav.addObject("message", e.getMessage());
+		}
+
+		return mav;
+	}
+	
 	
 	@PostMapping("/data")
 	public String/*ModelAndView*/ demoWebhooks(@RequestBody(required = false)String payload)
@@ -351,6 +393,41 @@ public class WebController {
 			return "Error while reading Yaml" + e.getMessage();
 		}
 
+	}
+	
+//	@PostMapping("testPageFileContent")
+//	@ResponseBody
+	public String getTestPageFileContent( String fileName) {
+		
+		ClassPathResource classPathResource = new ClassPathResource(testPageFilePath+"/" + fileName);
+
+		try {
+			InputStream inputStream = classPathResource.getInputStream();
+
+			String content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+
+			inputStream.close();
+
+			return content;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Error while reading Yaml" + e.getMessage();
+		}
+
+	}
+	
+	@PostMapping("testPageFileContent")
+	@ResponseBody
+	public Map<String, String> getTestPageContent(@RequestBody String filename)
+	{
+		Map<String, String> content=new HashMap<>();
+		
+		content.put("yaml", getTestPageFileContent(filename));
+		content.put("url", this.mapping.getTestPageUrl(filename));
+		content.put("response", this.mapping.gettestPageResponse(filename));
+		
+		return content;		
+		
 	}
 
 	@GetMapping("reportTest")

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8503QN0BSG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'G-8503QN0BSG', {
+      page_title: 'Deploy Testpage',
+    });
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #333;
+    }
+
+    #page-structure {
+      position: fixed;
+      right: 10px;
+      top: 10px;
+      padding: 5px;
+      width: 200px;
+      background-color: white;
+      box-shadow: 5px 5px 20px gray;
+    }
+
+    .title {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .node {
+      font-size: 90%;
+      padding: 5px;
+      background: whitesmoke;
+      border: 1px solid silver;
+      margin-bottom: 7px;
+      margin-top: 7px;
+    }
+
+    code {
+      font-size: 0.875rem;
+      font-weight: bold;
+    }
+
+    #note {
+      width: 300px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      background-color: #cfe2ff;
+      border: 1px solid #9ec5fe;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      right: 0;
+    }
+  </style>
+  <title>emmaTestPage</title>
+  
+<script src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+
+<script>
+  function loadScript(tagSrc) {
+    var scriptTag = document.createElement("script"),
+      placeTag = document.getElementsByTagName("script")[0];
+    scriptTag.type = "text/javascript";
+    scriptTag.async = true;
+    scriptTag.src = tagSrc;
+    placeTag.parentNode.insertBefore(scriptTag, placeTag);
+  }
+
+  window.mnjs = window.mnjs || {
+    customerId: "8CU56755C",
+    domain: "www.forbes.com",
+    failSafeTimeout: 3e3,
+    version: 1.0,
+    isAdServerLoaded: false,
+  };
+
+  var mnjsEndpoint = `https://warp.media.net/js/tags/clientag.js?cid=${window.mnjs.customerId}&dn=${window.mnjs.domain}&version=${window.mnjs.version}`;
+  loadScript(mnjsEndpoint);
+
+  window.mnjs.loadAdServer = setTimeout(function () {
+    if (!window.mnjs.isAdServerLoaded) {
+      loadScript("https://securepubads.g.doubleclick.net/tag/js/gpt.js");
+      window.mnjs.isAdServerLoaded = true;
+    }
+  }, window.mnjs.failSafeTimeout);
+
+  var pbjs = pbjs || {};
+  pbjs.que = pbjs.que || [];
+
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+</script>
+
+
+</head>
+
+<body>
+  <h1>emmaTestPage</h1>
+  
+<div id="deiv"></div>
+
+<script>
+window.googletag = window.googletag || {
+  cmd: [],
+};
+googletag.cmd.push(function () {
+  let slotkvs = "".split(/[,\s]+/).map((e) => e.split(/=/));
+  let sizes = "300x250, 300x600".split(/[,\s]+/).map((e) => {
+    let els = e.split(/x/);
+    return [parseInt(els[0]), parseInt(els[1])];
+  });
+
+  let slot = googletag
+    .defineSlot("/45361917/SportsNaut_display", sizes, "deiv")
+    .addService(googletag.pubads());
+  googletag.pubads().enableSingleRequest();
+  googletag.enableServices();
+
+  slotkvs.forEach((e) => {
+    // console.log(e);
+    if (e.length == 2) slot.setTargeting(e[0].trim(), e[1].trim());
+  });
+});
+</script>
+
+
+<script>
+googletag.cmd.push(function() {
+  googletag.display("deiv");
+});
+</script>
+<div id='page-structure'><div class="structure"><div class="title">HEAD</div><div><div class='node'>gpt.js</div><div class='node'>MP Tag</div></div></div><div class="structure"><div class="title">BODY</div><div><div class='node'>GPT Banner slot</div><div class='node'>GPT display()</div></div></div><a href="/pagemitra/testpages/modify/25">Modify Page</a></div>
+</body>
+
+</html>

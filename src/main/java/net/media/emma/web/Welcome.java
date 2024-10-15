@@ -12,34 +12,20 @@ import org.springframework.web.servlet.ModelAndView;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Controller @Slf4j
+@Controller 
 public class Welcome {
-
-    @Autowired private net.media.emma.service.BrowserRemote browserRemote;
 
     private static final Map<String,String> listOfTestSuites = new LinkedHashMap<>() {
         {
-            put("YAML Rules Test Suite", "/yamlTestSuite/");
+            put("Yaml Rules for Publisher ", "/yamlTestSuite/");
             put("Smoke Test Suite", "/yamlTestSuite/smokeTestSuite");
-            put("Page Level Checks - Test Suite", "/pageLevelTests/");
-            put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
+            //put("Page Level Checks - Test Suite", "/pageLevelTests/");
+            //put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
             put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "/privacyComplianceTestSuite/");
             put("Auto Tester", "/autoTester/");
-            put("Show Report", "/yamlTestSuite/show-report");
+            //put("Show Report", "/yamlTestSuite/show-report");
+            put("Yaml Rules for TestPage","/yamlTestSuite/testpage");
         }};
-
-    @GetMapping("/welcome")
-    public String openUrl() {
-
-        return "welcome";
-    }
-
-    @PostMapping("/welcome")
-    public void openUrlPost(@RequestParam String url) {
-
-        // browserRemote.injectDom(url, url, null);
-        browserRemote.openUrl(url);
-    }
 
     @GetMapping("/")
     public ModelAndView openIndex() {

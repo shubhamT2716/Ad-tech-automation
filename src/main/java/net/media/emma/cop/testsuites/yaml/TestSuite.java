@@ -122,7 +122,7 @@ public class TestSuite implements GenericTestSuite {
 			"ss/nes/bidexl2.js");
 	
 	List<String> getConsoleMessageOfUrl=Arrays.asList("checksync.php?","bidexchange.js", "clientag.js", "js/tags/clientag.js",
-			"ss/nes/bidexl2.js","cksync?");
+			"ss/nes/bidexl2.js","cksync?", "clientag.js?cid");
 	
 	
 	List<String> urlController=Arrays.asList("checksync");
@@ -212,8 +212,20 @@ public class TestSuite implements GenericTestSuite {
 			List<Request> requestList = new ArrayList<>();
 
 			if (location == null) {
+				
+//				browserContext.route("**/*", route->{
+//					if(route.request().url().contains("bidexchange.js?cid=8CULM0U5B"))
+//					{
+//						route.abort();
+//					}
+////					((Object) route).continue_();
+//					else {
+//						route.resume();
+//					}
+//				});
+				
 				browserContext.onRequest(request -> {
-
+					
 					urlFromNetworkTab.add(request.url());
 					requestList.add(request);
 
@@ -240,14 +252,17 @@ public class TestSuite implements GenericTestSuite {
 
 			try {
 
-				browserContext.setDefaultTimeout(3000); // 30 seconds
+				browserContext.setDefaultTimeout(35000); // 30 seconds
 				Geolocation geolocation = new Geolocation(48.8575, 2.3514);// latitude and logitude
 				log.info("location:  " + geolocation);
 				browserContext.setGeolocation(geolocation);
 //			browserContext.grantPermissions(new String[]{"geolocation"});
 
 				 page = browserContext.newPage();
-
+				 
+				 
+				 
+				 
 
 				if (url != null && response != null) {
 
@@ -264,10 +279,13 @@ public class TestSuite implements GenericTestSuite {
 
 				consoleMessage = getConsoleErrors(page);
 
-				page.navigate(testData.getPublisherUrl());
-		
-//				page.evaluate(googleRefresh());
+//				page.setDefaultTimeout(4500);
 				
+				page.navigate(testData.getPublisherUrl());
+				
+				Thread.sleep(1000);
+		
+//				page.evaluate(googleRefresh());			
 				pbjsConfigData = getPbjsData(page);
 
 				if (testData.getPbjsEvents() != null || !testData.getPbjsEvents().isEmpty()) {
@@ -281,7 +299,6 @@ public class TestSuite implements GenericTestSuite {
 //			 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
 
 				Thread.sleep(2000);
-				
 			
 			} catch (Exception e) {
 //				e.printStackTrace();
@@ -613,13 +630,8 @@ public class TestSuite implements GenericTestSuite {
 		// String controllerRegex = "**/" + bidExControlers + "/**";
 		String controllerRegex = ".*/(" + String.join("|", getConsoleMessageOfUrl) + ").*";
 		
-		Pattern pattern=Pattern.compile(controllerRegex);
-		
-		
 
 		page.onConsoleMessage(consoleMessage -> {
-			
-			Matcher matcher=pattern.matcher(consoleMessage.location());
 			
 			if ((consoleMessage.type().equals("error") || consoleMessage.type().equals("warning")|| consoleMessage.type().equals("debug")|| consoleMessage.type().equals("startGroupCollapsed")
 					|| consoleMessage.type().equals("clear")|| consoleMessage.type().equals("assert")|| consoleMessage.type().equals("log")) && consoleMessage.location().matches(controllerRegex)) {
@@ -951,13 +963,7 @@ public class TestSuite implements GenericTestSuite {
 
 							String svr = matcher1.group();
 
-							System.out.println(svr);
-
 							String svr1 = matcher1.group(1);
-
-//							System.out.println(svr);
-
-							
 
 							bidexData.setSvr(svr1);
 
@@ -1100,39 +1106,155 @@ public class TestSuite implements GenericTestSuite {
 //			else if(request.url().contains("**/bidexchange.js?")|| request.url().startsWith("https://hbx-stage-2.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-3.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-4.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage.media.net//bidexchange.js")|| request.url().startsWith("https://hbx.media.net//bidexchange.js?")|| request.url().startsWith("https://hbx.media.net/bidexchange.js?")|| request.url().startsWith("https://ssp-stage-hb.media.net/bidexchange.js?")|| request.url().startsWith("https://ssp-stage-hb-1.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-2.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-3.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-4.media.net//bidexchange.js")){
 			else if (request.url().matches(regexForBidex1)) {
 
-				int startIndex = 0;
+//				int startIndex = 0;
+//
+//				String startTarget = "{\"AaxDpCeiling\"";
+//				if (response.contains(startTarget)) {
+//					startIndex = response.indexOf(startTarget);
+//					startIndex += 12;
+//
+//				}
+//
+//				// control in Bidexconfig.java
+//				String finalString = response.substring(startIndex - 12);
+//				JsonNode bidexJson = mapper.readValue(finalString, JsonNode.class);
+				
+				
+				
+				
+				String target = "\"Environment\":{";
+				
+				String regex="\"Environment\":\\{([^}]*)\\}";
+				
+				
+				if (response.contains(target)) {
+					
+					String res=response;
 
-				String startTarget = "{\"AaxDpCeiling\"";
-				if (response.contains(startTarget)) {
-					startIndex = response.indexOf(startTarget);
-					startIndex += 12;
+					int in = response.indexOf(target);
+
+					response = response.substring(in);
+
+					
+
+					try {
+						Pattern pattern = Pattern.compile(regex);
+						
+						Matcher matcher = pattern.matcher(response);
+			
+						
+						if (matcher.find()) {
+
+						String extractedData = matcher.group();
+
+						String svr = null;
+						
+
+						JSONObject jsonObject=new JSONObject("{"+extractedData+"}");
+						
+						JSONObject  object= jsonObject.getJSONObject("Environment");
+						
+													
+							bidexData.setCid(object.get("cid").toString());
+
+						if(svr==null)
+						{
+							String targetSvr = "function createErrorObject(error) {";
+
+							int i = res.indexOf(targetSvr);
+
+							res = res.substring(i);
+
+							Pattern pattern1 = Pattern.compile("svr\\s*:\\s*\"([^\"]*)\"");
+
+							Matcher matcher1 = pattern1.matcher(res);
+							
+							if (matcher1.find()) {
+
+								
+								 svr = matcher1.group(1);
+
+								System.err.println(svr);
+
+								bidexData.setSvr(svr);
+								
+								bd.setSvr(svr);
+								
+
+							}
+							
+						}
+
+//							bidexData.setSugd(object.get("sugd").toString());
+//							bidexData.setCt(object.get("ip2ct").toString());
+//							bidexData.setServname(object.get("servname").toString());
+//							bidexData.setBrowser(object.get("browser").toString());
+//							bidexData.setLw(object.get("lw").toString());
+						
+						bidexData.setCid(object.get("cid").toString());
+//						bidexData.setSvr(envData.get("sver").asText());
+						bidexData.setSugd(object.get("sugd").toString());
+						bidexData.setCt(object.get("ip2ct").toString());
+						bidexData.setServname(object.get("servname").toString());
+//						bidexData.setBrowser(object.get("browser").toString());
+//						bidexData.setLw(object.get("lw").toString());
+						
+						
+						bd.setCid(object.get("cid").toString());
+						bd.setCt(object.get("ip2ct").toString());
+//						bd.setSvr(envData.get("sver").asText());
+						bd.setSugd(object.get("sugd").toString());
+						bd.setServname(object.get("servname").toString());
+//						bd.setBrowser(object.get("browser").toString());
+//						bd.setLw(object.get("lw").toString());
+
+							return bidexData;
+						}
+					} catch (Exception e) {
+						log.info("getting error at " + e.getMessage());
+
+					}
+
+					String targetSvr = "function createErrorObject(error) {";
+
+					int i = response.indexOf(targetSvr);
+
+					response = response.substring(i);
+
+					Pattern pattern1 = Pattern.compile("svr\\s*:\\s*\"([^\"]*)\"");
+
+					Matcher matcher1 = pattern1.matcher(response);
+
+					if (matcher1.find()) {
+
+						String svr1 = matcher1.group(1);
+
+						bidexData.setSvr(svr1);
+
+						bd.setSvr(svr1);
+						
+
+					}
 
 				}
-
-				// control in Bidexconfig.java
-				String finalString = response.substring(startIndex - 12);
-				JsonNode bidexJson = mapper.readValue(finalString, JsonNode.class);
-
-				JsonNode envData = bidexJson.get("Environment");
-
-				bidexData.setCid(envData.get("cid").asText());
-				bidexData.setSvr(envData.get("sver").asText());
-				bidexData.setSugd(envData.get("sugd").asText());
-//				bidexData.setItype(envData.get("itype").asText());
-				bidexData.setCt(envData.get("ip2ct").asText());
-				bidexData.setServname(envData.get("servname").toString());
-				bidexData.setBrowser(envData.get("browser").toString());
-				bidexData.setLw(envData.get("lw").toString());
-
-				bd.setCid(envData.get("cid").asText());
-				bd.setCt(envData.get("ip2ct").asText());
-				bd.setSvr(envData.get("sver").asText());
-				bd.setSugd(envData.get("sugd").asText());
-				bd.setServname(envData.get("servname").toString());
-				bd.setBrowser(envData.get("browser").toString());
-				bd.setLw(envData.get("lw").toString());
 				
-//				bd.setItype(envData.get("itype").asText());
+				
+
+//				JsonNode envData = bidexJson.get("Environment");
+//
+//				bidexData.setCid(envData.get("cid").asText());
+////				bidexData.setSvr(envData.get("sver").asText());
+//				bidexData.setSugd(envData.get("sugd").asText());
+//				bidexData.setCt(envData.get("ip2ct").asText());
+//				bidexData.setServname(envData.get("servname").toString());
+//				bidexData.setBrowser(envData.get("browser").toString());
+//				bidexData.setLw(envData.get("lw").toString());
+
+				
+				
+				
+				
+
 			}
 
 			if (request.url().matches(regexForBidex2)) {
@@ -1140,11 +1262,11 @@ public class TestSuite implements GenericTestSuite {
 				bidexData.setCid(bd.getCid());
 				bidexData.setSvr(bd.getSvr());
 				bidexData.setCt(bd.getCt());
-//				bidexData.setItype(bd.getItype());
+
 				bidexData.setSugd(bd.getSugd());
 				bidexData.setServname(bd.getServname());
-				bidexData.setBrowser(bd.getBrowser());
-				bidexData.setLw(bd.getLw());
+//				bidexData.setBrowser(bd.getBrowser());
+//				bidexData.setLw(bd.getLw());
 				
 
 			}

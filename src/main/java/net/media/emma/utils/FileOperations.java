@@ -93,6 +93,24 @@ public class FileOperations {
 		return yamlFiles;
 	}
 	
+	
+	public Set<String> listOfTestPage(String dir)
+	{
+		Set<String> yamlFiles = new HashSet<String>();
+		try {
+			ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+			Resource[] resources = resolver.getResources(dir + "/*.yaml");
+			for (Resource resource : resources) {
+				yamlFiles.add(resource.getFilename());
+			}
+		} catch (IOException e) {
+			loggers.standardLogger().error("YAML List Failed", e);
+		}
+
+		return yamlFiles;
+	}
+	
+	
 	public List<String> listOfDownloadFiles(String dir)
 	{
 		List<String> listofReport=new ArrayList<>();

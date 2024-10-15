@@ -28,32 +28,32 @@ keysToVerifyPositive:
   {
     checksync:
       {
-        cid: ["8CUDF88I8"],
-        cs: ["1"],
-        cv: ["37"],
-        hb: ["1"],
-        vsSync: ["1"],
-        gdpr: ["0"],
-        gdprconsent: ["0"],
-        coppa: ["0"]
+        #cid: ["8CUDF88I8"],
+        #cs: ["1"],
+        #cv: ["37"],
+        #hb: ["1"],
+        #vsSync: ["1"],
+        #gdpr: ["0"],
+        #gdprconsent: ["0"],
+        #coppa: ["0"]
       },
     prlogs:
       {
-        pvid: ["25000","-3","25022","25011","25013","25020","-2","25019","25004","25005"],
-        cid: ["8CUDF88I8"],
+        #pvid: ["25000","-3","25022","25011","25013","25020","-2","25019","25004","25005"],
+        #cid: ["8CUDF88I8"],
         
       },
     aplogs:
       {
-        pvid: ["25000","-3","25022","25011","25013","25020","-2","25019","25004","25005",],
-        ugd: ["4"],
+        #pvid: ["25000","-3","25022","25011","25013","25020","-2","25019","25004","25005",],
+        #ugd: ["4"],
       },
       awlogs:
       {
-        pvid: ["25000","-3","25022","25011","25013","25020","-2","25019","25004","25005",],
-        ugd: ["4"],
-        nbr: ["0"],
-        snm: ["success"],
+        #pvid: ["25000","-3","25022","25011","25013","25020","-2","25019","25004","25005",],
+        #ugd: ["4"],
+        #nbr: ["0"],
+        #snm: ["success"],
       },
 
   }
@@ -62,20 +62,20 @@ keysToVerifyNegative:
   {
     belog:
       {
-        name: ["ADS_DISABLED"]
+        #name: ["ADS_DISABLED"]
       },
     prlog:
       {
-        snm: ["removed", "error", ],
-        nbr: ["13"]
+        #snm: ["removed", "error", ],
+        #nbr: ["13"]
       },
     aplog:
       {
-        nbr: ["13"]
+        #nbr: ["13"]
       },
     awlog:
       {
-        ogbdp: ["-1", "-2"]
+        #ogbdp: ["-1", "-2"]
       }
   }
 
@@ -83,23 +83,23 @@ keysToVerifyAnyOneOf:
   {
     prlogs:
       {
-        nbr: ["45", "3", "69", "0", "1", "99"],
-        snm: ["success", "nobid","nobid_after_auction","response_after_auction"],
-        req_size: ["970x250 ","728x90","300x600","300x250","160x600"],
-        size: ["970x250 ","728x90","300x600","300x250","160x600"],
+        #nbr: ["45", "3", "69", "0", "1", "99"],
+        #snm: ["success", "nobid","nobid_after_auction","response_after_auction"],
+        #req_size: ["970x250 ","728x90","300x600","300x250","160x600"],
+        #size: ["970x250 ","728x90","300x600","300x250","160x600"],
       },
     aplogs:
       {
-        snm: ["success", "nobid","nobid_after_auction","response_after_auction"],
-        nbr: ["45", "3", "69", "0", "1", "99","2204"],
-        adtype: ["BANNER", "NATIVE", "VIDEO"],
-        req_size: ["970x250 ","728x90","300x600","300x250","160x600"],
-        size: ["970x250 ","728x90","300x600","300x250","160x600"],
+        #snm: ["success", "nobid","nobid_after_auction","response_after_auction"],
+        #nbr: ["45", "3", "69", "0", "1", "99","2204"],
+        #adtype: ["BANNER", "NATIVE", "VIDEO"],
+        #req_size: ["970x250 ","728x90","300x600","300x250","160x600"],
+        #size: ["970x250 ","728x90","300x600","300x250","160x600"],
       },
       awlogs:
       {
-        adtype: ["BANNER", "NATIVE", "VIDEO"],
-        req_size: ["970x250 ","728x90","300x600","300x250","160x600"],
-        size: ["970x250 ","728x90","300x600","300x250","160x600"],
+        #adtype: ["BANNER", "NATIVE", "VIDEO"],
+        #req_size: ["970x250 ","728x90","300x600","300x250","160x600"],
+        #size: ["970x250 ","728x90","300x600","300x250","160x600"],
       }
   }

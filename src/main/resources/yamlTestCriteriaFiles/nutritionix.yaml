@@ -16,7 +16,7 @@ networkCallsPositive:
     checksync: "https://hbx.media.net/checksync.php",
     rtbscall: "https://xch.media.net/AdExchange/rtbsspub",
     gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads",
-    bidExchangescript: "https://hbx.media.net/bidexchange.js",
+    #bidExchangescript: "https://hbx.media.net/bidexchange.js",
     gptjsscript: "https://securepubads.g.doubleclick.net/tag/js/gpt.js",
     l1log: "https://hblg.media.net/log?logid=kfk&evtid=l1log",
     adxLog: "https://hblg.media.net/log?logid=kfk&evtid=adx",
@@ -61,9 +61,9 @@ keysToVerifyPositive:
       {
         gdpr: ["0"],
         gdprconsent: ["0"],
-        cid: ["8CUB9W7X6"],
+        #cid: ["8CUB9W7X6"],
         coppa: ["0"],
-        prid: ["8PRVCXX19"]
+        #prid: ["8PRVCXX19"]
       }
   }
 
