@@ -143,47 +143,6 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			return "pass";
 		}
 			
-//		error.entrySet().forEach(entry->{
-//			
-//			log.error("eroor:"+error);
-//			
-//			System.err.println("error:"+error);
-//		
-//			entry.getValue().entrySet().forEach(er->{
-//				
-//				boolean f=true;
-//				
-//				if(!er.getKey().equalsIgnoreCase("awlog")|| !er.getKey().equalsIgnoreCase("l1log"))
-//				{
-//					for(String message:er.getValue())
-//					{
-//						if(message.startsWith("Negative key value check failed for key"))
-//						{
-//							f=false;
-//							break;
-//						}
-//								
-//					}
-//					
-//					
-//					
-//				}
-//				
-//			});
-//			
-//		});
-
-//		if(error==null)
-//		{
-//			return "pass";
-//		}
-//		else {
-//			return "fail";
-//		}
-		
-		
-		
-		
 		
 	}
 
@@ -218,8 +177,6 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 			String commonContent = this.fileOperations.getCommonFile(itype+"/"+commonYamls);
 				
 				yamlBuilder.append(commonContent).append("\n");
-//			 combinedCommonContent += commonContent;
-				
 				
 			}
 
@@ -260,10 +217,7 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 					
 					testCriteriaBo = yamlUtils.buildYaml(a);
 					
-					
-					
-			
-					
+				
 							testCriteriaBo.setUserAgent(agent);
 							testCriteriaBo.setEnvironment(env);
 							testCriteriaBo.setPublisherUrl(pub);							
@@ -292,8 +246,6 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 					String commonContent = this.fileOperations.getCommonFile(commonYamls);
 						
 						yamlBuilder.append(commonContent).append("\n");
-//					 combinedCommonContent += commonContent;
-						
 						
 					}
 			}
@@ -302,12 +254,9 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 					String commonContent = this.fileOperations.getCommonFile(itype + "/" + commonYamls);
 
 					yamlBuilder.append(commonContent).append("\n");
-//					 combinedCommonContent += commonContent;
 
 				}
 			}
-
-//			String combinedCommonContent = "";
 
 			for (String yaml : listOfYaml) {
 				for (String env : environments) {
@@ -335,26 +284,13 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 							log.error("Error while reading YAML file", e);
 							continue; // Continue to the next iteration
 						}
-
-//						ObjectMapper yamlMapper = new YAMLMapper();
-
-//						List<String> list = new ArrayList<>();
-//						list.add(content);
-
-//						System.out.println(content);
 						
 						String a[] = { content, yamlBuilder.toString() };
 
 						testCriteriaBo = yamlUtils.buildYaml(a);
-
-						System.err.println("Agnet: "+agent);
 						
 						testCriteriaBo.setUserAgent(agent);
 						testCriteriaBo.setEnvironment(env);
-	
-						System.err.println(testCriteriaBo.getPublisherUrl()+" :  "+testCriteriaBo.getKeysToVerifyPositive());
-						System.out.println();
-						System.out.println(testCriteriaBo.getUserAgent());
 
 						map.put(yaml + "_" + env+"_"+agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
 						listOfYamlEnv.add(yaml + "_" + env+"_"+agent);
@@ -376,13 +312,9 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 		
 		Map<String, TestReportModel> finalResult = new HashMap<>();
 		if (allFutures.isDone()) {
-			
-//			System.err.println(" MAP : "+map);
 
 			finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
 				try {
-					
-//					System.err.println(" Result Value : "+e.getKey()+"  : "+ e.getValue().get());
 					return e.getValue().get();
 				} catch (InterruptedException | ExecutionException e1) {
 					log.error("Error while getting result from CompletableFuture", e1);
@@ -523,8 +455,6 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 	{
 		Map<String , Map<String, List<String>>> getErrorMessage=new HashMap<>();
 		
-		
-		
 		errorMessage.entrySet().forEach(entry->{
 			
 			
@@ -631,24 +561,6 @@ public class YamlTestSuiteScheduling  implements YamlSuiteSmokeTestsService{
 		
 	}
 	
-	
-	
-
-//	private TestCriteriaBo getYamlObject(String fileName) {
-//
-//		try {
-//
-//			ObjectMapper yamlMapper = new YAMLMapper();
-//
-//			return yamlMapper.readValue(fileOperations.readFileAsInputStream(fileName), TestCriteriaBo.class);
-//
-//		} catch (StreamReadException | DatabindException e) {
-//			log.error("Error while reading yaml file: " + fileName, e);
-//		} catch (IOException e) {
-//			log.error("Error while reading yaml file", e);
-//		}
-//		return null;
-//	}
 
 	public String templateLoder(String user, Map<String, JsonNode> result) {
 		Context context = new Context();

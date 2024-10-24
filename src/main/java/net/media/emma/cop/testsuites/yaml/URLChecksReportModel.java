@@ -89,6 +89,7 @@ public class URLChecksReportModel {
         List<HashMap<String, Object>> queryStringMapRequestHeader = new ArrayList<>();
 
         @JsonIgnore
+        @Builder.Default
         List<HashMap<String, Object>> queryStringMapResponseHeader = new ArrayList<>();
 
     }

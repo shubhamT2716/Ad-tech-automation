@@ -241,7 +241,7 @@ public class TestSuite implements GenericTestSuite {
 				 page = browserContext.newPage();
 				 
 				
-				if(testData.getPublisherUrl().equalsIgnoreCase("https://shubhammedia.github.io/EmmaTestPage/page.html"))
+				if(testData.getPublisherUrl().equalsIgnoreCase("https://shubhammedia.github.io/EmmaTestPage/page.html?medianet_test=1"))
 				{
 					String mockUrl="https://prebid.media.net/rtb/prebid?cid=8CU56755C";
 					
