@@ -73,6 +73,10 @@ public class TestSuite implements GenericTestSuite {
 	PlAssestion payloadAsserstions;
 	@Autowired
 	HeadersAssertion headersAssertion;
+	
+	@Autowired
+	private TestPageResponseMapping pageResponseMapping;
+	
 
 	@Value("${harFileBasePath}")
 	private String harFileBasePath;
@@ -252,7 +256,7 @@ public class TestSuite implements GenericTestSuite {
 
 			try {
 
-				browserContext.setDefaultTimeout(35000); // 30 seconds
+				browserContext.setDefaultTimeout(35000); // 35 seconds
 				Geolocation geolocation = new Geolocation(48.8575, 2.3514);// latitude and logitude
 				log.info("location:  " + geolocation);
 				browserContext.setGeolocation(geolocation);
@@ -264,11 +268,24 @@ public class TestSuite implements GenericTestSuite {
 				 
 				 
 
-				if (url != null && response != null) {
-
-					page = mocking.addResponseMocking(page, url, response);
-
+//				if (url != null && response != null) {
+//
+//					page = mocking.addResponseMocking(page, url, response);
+//
+//				}
+				
+				if(testData.getPublisherUrl().equalsIgnoreCase("https://shubhammedia.github.io/EmmaTestPage/page.html"))
+				{
+					String mockUrl="https://prebid.media.net/rtb/prebid?cid=8CU56755C";
+					
+					String banner="MpBanner.json";
+		
+					String res=this.pageResponseMapping.gettestPageResponse(banner);
+					
+					page =mocking.addResponseMocking(page, mockUrl, res);
+					
 				}
+				
 
 				try {
 
@@ -283,7 +300,7 @@ public class TestSuite implements GenericTestSuite {
 				
 				page.navigate(testData.getPublisherUrl());
 				
-				Thread.sleep(1000);
+				Thread.sleep(2000);
 		
 //				page.evaluate(googleRefresh());			
 				pbjsConfigData = getPbjsData(page);
@@ -298,7 +315,7 @@ public class TestSuite implements GenericTestSuite {
 //			 page.waitForFunction("() => performance.getEntriesByType('resource').length >
 //			 0", null,new Page.WaitForFunctionOptions().setTimeout(5));
 
-				Thread.sleep(2000);
+//				Thread.sleep(2000);
 			
 			} catch (Exception e) {
 //				e.printStackTrace();

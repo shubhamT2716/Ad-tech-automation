@@ -79,7 +79,12 @@ public class WebhookService implements WebhookServiceIn {
 
 			if (comment.contains("@emma")) {
 
-				if (comment.contains("basic-sanity")|| comment.contains("basicSanity")||comment.contains("basicsanity")||comment.contains("BASICSANITY")||comment.contains("Basic-Sanity")) {
+				String sanity="(basic-sanity|basicSanity|basicsanity|BASICSANITY|)";
+				
+				if(comment.matches(sanity))
+				{
+					
+//				if (comment.contains("basic-sanity")|| comment.contains("basicSanity")||comment.contains("basicsanity")||comment.contains("BASICSANITY")||comment.contains("Basic-Sanity")) {
 
 					String url = null;
 
@@ -100,13 +105,22 @@ public class WebhookService implements WebhookServiceIn {
 
 					}
 
-					if (comment.contains("hb") || comment.contains("HB") || comment.contains("Hb")|| comment.contains("hB")) {
+					String hb="(HB|hb|Hb|hB)";
+					
+					if(comment.matches(hb))
+					{
 						url = getUrlFromItype("hb");
 					}
-					if (comment.contains("MP") || comment.contains("Mp") || comment.contains("mp")|| comment.contains("mP")) {
+					String mp="(mp|MP|Mp)";
+					
+					if(comment.matches(mp)) {
+//					if (comment.contains("MP") || comment.contains("Mp") || comment.contains("mp")|| comment.contains("mP")) {
 						url = getUrlFromItype("mp");
 					}
-					if (comment.contains("hb2") || comment.contains("HB2") || comment.contains("Hb2")) {
+					String hb2="(HB2|hb2|Hb2|hB2)";
+					
+					if(comment.matches(hb2)) {
+//					if (comment.contains("hb2") || comment.contains("HB2") || comment.contains("Hb2")) {
 						url = getUrlFromItype("hb2");
 					}
 
@@ -199,7 +213,7 @@ public class WebhookService implements WebhookServiceIn {
 
 		list.put("hb2", "https://time.com/?mnet_test=1");
 
-		list.put("mp", "https://www.forbes.com/?medianet_test=1,https://www.fox13now.com/?medianet_test=1");
+		list.put("mp", "https://www.forbes.com/?medianet_test=1,https://www.fox13now.com/?medianet_test=1,https://www.daily.co.jp/?medianet_test=1");
 
 		list.put("hb", "https://www.nutritionix.com/brands/restaurant?mnet_test=1,https://www.webmd.com/?mnet_test=1");
 
@@ -218,6 +232,7 @@ public class WebhookService implements WebhookServiceIn {
 		listOfurls.put("time.com", "HB2");
 		listOfurls.put("webmd.com", "HB");
 		listOfurls.put("nutritionix.com", "HB");
+		listOfurls.put("shubhammedia.github.io", "MP");
 
 		String itype = null;
 

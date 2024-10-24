@@ -31,9 +31,7 @@ public class TestPageResponseMapping {
 	
 	public String gettestPageResponse(String filename)
 	{
-		
-		
-		
+
 		Map<String, String> mapOfResponse=new HashMap<>();
 		
 		mapOfResponse.put("emmaTestPage1.yaml", "MpBanner.json");
@@ -45,8 +43,11 @@ public class TestPageResponseMapping {
 	}
 	
 	
-	private String getResponseContent(String filename)
+	public String getResponseContent(String filename)
 	{
+		System.out.println(filename);
+		
+		filename="MpBanner.json";
 	
 		ClassPathResource classPathResource = new ClassPathResource(responseFilePath+"/" + filename);
 
