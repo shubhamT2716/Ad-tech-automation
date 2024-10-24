@@ -1,4 +1,4 @@
-package net.media.emma.web;
+package net.media.emma.Controller;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller 
-public class Welcome {
+public class WelcomeController {
 
     private static final Map<String,String> listOfTestSuites = new LinkedHashMap<>() {
         {

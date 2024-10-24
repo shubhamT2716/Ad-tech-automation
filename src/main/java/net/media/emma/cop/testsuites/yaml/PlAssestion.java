@@ -34,6 +34,8 @@ public class PlAssestion {
 
     HashMap<String, Object> errorMap = new HashMap<>();
 
+    
+    
     public void verifyBidderDataAssertions(URLChecksReportModel urlChecksReportModel, List<Request> requestList, TestCriteriaBo testData) {
         Map<String, List<TestCriteriaBo.BidderDataAssertions>> bidderDataAssertions = testData.getBidderDataAssertions();
         Map<String, String> bidderDataUrls = testData.getBidderDataUrls();
@@ -41,11 +43,10 @@ public class PlAssestion {
         for (Map.Entry<String, List<TestCriteriaBo.BidderDataAssertions>> entry : bidderDataAssertions.entrySet()) {
             String bidder = entry.getKey();
             
-//            System.err.println("bidder: "+bidder);
+
             
             String bidderUrl = bidderDataUrls.get(bidder);
-            
-//            System.err.println("bidderUrl: "+bidderUrl);
+
             
             if (bidderUrl == null) continue;
 
@@ -58,27 +59,14 @@ public class PlAssestion {
             
             // Collect all imp objects and their corresponding responses for matching requests
             List<Pair<Object, String>> allImpAndResponsePairs = new ArrayList<>();
-//            System.err.println("MatchingUrl: "+matchingRequests);
+
             
             for (Request request : matchingRequests) {
                 String postData = getPostData(request);
                 
-//                System.out.println("postdata: "+postData);
-                
-                
                 String responseData =null;
-                
-//                try {
-                
                 	responseData= getResponseData(request);
                 	
-//                	 System.err.println("ResponseData:  -> "+responseData);
-//                }
-//                catch (Exception e) {
-//					
-//                	continue;
-//                	
-//				}
 
                 
                 ReadContext readContext = com.jayway.jsonpath.JsonPath.parse(postData);
@@ -89,7 +77,6 @@ public class PlAssestion {
                     
                   String jsonString=  readContext.jsonString();
                   
-//                  System.out.println("JsonData: "+jsonString);
                   
                   ObjectMapper mapper=new ObjectMapper();
                   
@@ -109,17 +96,15 @@ public class PlAssestion {
 								
 							
 								try {
-									
-//									System.out.println("Payload Name:  "+payloadName+" "+ name);
 									JsonNode value=jsonData.get(payloadName).get(name);
 								
 									if(value==null)
 									{
 										
-//										System.out.println("In Value==null");
+
 										bidderDataKeyVerification.computeIfAbsent(payloadName, k->new HashMap<>()).put(name, false);
 									}else {
-//										System.out.println("In Value!=null");
+
 										bidderDataKeyVerification.computeIfAbsent(payloadName, k-> new HashMap<>()).put(name, value);
 									}
 									
@@ -141,11 +126,7 @@ public class PlAssestion {
 					
 					
 					
-//					System.out.println("Porcess Completed");
-//					
-//					System.out.println("Process done: "+bidderDataKeyVerification);
-//					
-//					System.err.println("Map: "+bidderDataKeyVerification);
+
 					
 				} catch (JsonMappingException e) {
 					// TODO Auto-generated catch block
@@ -179,8 +160,6 @@ public class PlAssestion {
                     }
 
                     String correspondingResponseData = pair.getValue();
-                    
-//                    System.err.println("ImpData: "+impData);
 
                     if (isPathPresent(assertion, impData)) {
                         if (verifyDataAssertionsRequest(assertion.getRequestData(), impData) &&

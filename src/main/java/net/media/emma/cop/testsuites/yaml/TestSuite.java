@@ -25,7 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.NonNull;
+
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +51,6 @@ import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks
 import net.media.emma.service.GenericTestSuite;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.DomJsonUtils;
-import net.media.emma.utils.FileOperations;
 import net.media.emma.utils.ResponseMocking;
 import net.media.emma.utils.URLDataProcessing;
 
@@ -86,8 +85,6 @@ public class TestSuite implements GenericTestSuite {
 	@Value("${reportFileBasePath}")
 	private String reportFilePath;
 	
-	@Autowired
-	private FileOperations fileOperations;
 
 	@Autowired
 	private FileHandling fileHandling;
@@ -100,24 +97,18 @@ public class TestSuite implements GenericTestSuite {
 	private static String windscribeLogin = "xpath=//button[text()='Login']";
 	private static String windscribeUsername = "xpath=//input[@name='username']";
 	private static String windscribepassword = "xpath=//input[@name='password']";
-//    private static String windscribeSkip = "xpath=//div[text()='Skip']";
 	private static String username = "mohib1233";
 	private static String password = "mohib123";
-//    private static String locationParis = "Paris";
-//    private static String location = "Paris";
 	private static String windscribeLocations = "xpath=//button[@aria-label='Locations']";
 	private static String windscribeSearchLocation = "xpath=//div//i";
 	private static String windscribeSearchbox = "xpath=//input[contains(@class,'css-1c1txoj')]";
 	private static String windscribeLoc = "xpath=(//div[@aria-label='Loc'])[1]";
-//    private static String acceptAllBtn = "xpath=//span[text()='Accept all']";
-
-//    private static BrowserContext browserContext;
 
 	String url = "chrome-extension://hnmpcagpplmpfojmgmnngilcnanddlhb/popup.html";
 	String windScribeExtensionPath = System.getProperty("user.dir")
 			+ "/extensions/hnmpcagpplmpfojmgmnngilcnanddlhb/3.4.6_0";
 
-	// List of strings "1", "2"
+	
 	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
 			"hbx-stage.media.net", "hbx-stage-2.media.net", "hbx-stage-3.media.net", "hbx-stage-4.media.net",
 			"hbx-stage-1.media.net", "ssp-stage-hb.media.net", "ssp-stage-hb-1.media.net", "ssp-stage-hb-2.media.net",
@@ -155,7 +146,7 @@ public class TestSuite implements GenericTestSuite {
 		return bc;
 	}
 
-	// async with future string
+	
 	@Async("yamlTestSuitePool")
 	public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData) {
 
@@ -210,23 +201,10 @@ public class TestSuite implements GenericTestSuite {
 				browserContext = attachResponseMocking(browserContext, testData);
 			}
 
-			// browserContext = injectDOM(browserContext, testData);
-
 			List<String> urlFromNetworkTab = new ArrayList<>();
 			List<Request> requestList = new ArrayList<>();
 
 			if (location == null) {
-				
-//				browserContext.route("**/*", route->{
-//					if(route.request().url().contains("bidexchange.js?cid=8CULM0U5B"))
-//					{
-//						route.abort();
-//					}
-////					((Object) route).continue_();
-//					else {
-//						route.resume();
-//					}
-//				});
 				
 				browserContext.onRequest(request -> {
 					
@@ -249,30 +227,19 @@ public class TestSuite implements GenericTestSuite {
 
 			List<String> consoleMessage = new ArrayList<>();
 
+			JsonNode pbjsEventsData=null;
+			
 			JsonNode pbjsData = null;
-			JsonNode pbjsEventsData = null;
-
-			JsonNode pbjsConfigData = null;
 
 			try {
 
 				browserContext.setDefaultTimeout(35000); // 35 seconds
-				Geolocation geolocation = new Geolocation(48.8575, 2.3514);// latitude and logitude
+				Geolocation geolocation = new Geolocation(48.8575, 2.3514);
 				log.info("location:  " + geolocation);
 				browserContext.setGeolocation(geolocation);
-//			browserContext.grantPermissions(new String[]{"geolocation"});
 
 				 page = browserContext.newPage();
 				 
-				 
-				 
-				 
-
-//				if (url != null && response != null) {
-//
-//					page = mocking.addResponseMocking(page, url, response);
-//
-//				}
 				
 				if(testData.getPublisherUrl().equalsIgnoreCase("https://shubhammedia.github.io/EmmaTestPage/page.html"))
 				{
@@ -284,9 +251,15 @@ public class TestSuite implements GenericTestSuite {
 					
 					page =mocking.addResponseMocking(page, mockUrl, res);
 					
+				}else {
+					
+					if(url!=null&& response!=null)
+					{
+						page=mocking.addResponseMocking(page, url, response);
+					}
+			
 				}
 				
-
 				try {
 
 					pbjsData = getPbjsData(page);
@@ -303,8 +276,8 @@ public class TestSuite implements GenericTestSuite {
 				Thread.sleep(2000);
 		
 //				page.evaluate(googleRefresh());			
-				pbjsConfigData = getPbjsData(page);
-
+//				pbjsConfigData = getPbjsData(page);
+//
 				if (testData.getPbjsEvents() != null || !testData.getPbjsEvents().isEmpty()) {
 
 					pbjsEventsData = getPbjsEvents(page, testData.getPbjsEvents());
@@ -318,7 +291,7 @@ public class TestSuite implements GenericTestSuite {
 //				Thread.sleep(2000);
 			
 			} catch (Exception e) {
-//				e.printStackTrace();
+
 				log.error("Error while navigating to publisher url: {}", e.getMessage());
 			}
 			finally {		
@@ -343,8 +316,6 @@ public class TestSuite implements GenericTestSuite {
 							.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
 							.testName("YAML Test Suite").publisherUrl(testData.getPublisherUrl())
 							.environment(testData.getEnvironment())
-//				.userAgent(
-//						testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()))
 							.harFileDownloadLink("/yamlTestSuite/harDownload/" + harFilePath).build())
 					.build();
 
@@ -358,7 +329,6 @@ public class TestSuite implements GenericTestSuite {
 			testReport.setGamSlots(addGamAssertion(requestList));
 			testReport.setCookie(cookies);
 			testReport.setBidExController(bidExController);
-			testReport.setPbjs(pbjsConfigData);
 			testReport.setPbjsEvents(pbjsEventsData);
 			try {
 
@@ -449,58 +419,6 @@ public class TestSuite implements GenericTestSuite {
 		}
 
 	}
-	
-//	public Page getAwlog(String urls, Page page, String pub)
-//	{
-//		
-//	
-//		System.err.println("Function called...");
-//		
-//		 Page.NavigateOptions navigateOptions = new Page.NavigateOptions()
-//		            .setTimeout(240000); // 240 seconds (4 minutes)
-//
-//		 page.waitForLoadState(LoadState.DOMCONTENTLOADED);
-//		 
-//		    // Ensure the page navigation completes before proceeding
-//		    page.navigate(pub, navigateOptions);
-//		
-////		page.navigate(pub);
-//		
-//	    boolean isUrlFired = false;
-//	    int maxTries = 5;
-//	    int retries = 0;
-//
-//	    while (!isUrlFired && retries < maxTries) {
-//	    	
-//	    	System.err.println("lopp started proecessing...");
-//	        CompletableFuture<Boolean> urlFiredFuture = new CompletableFuture<>();
-//
-//	        // Set up the request listener for each attempt
-//	        page.onRequest(request -> {
-//	            if (request.url().equalsIgnoreCase(urls)) {
-//	                System.err.println("URL Fired: " + urls);
-//	                urlFiredFuture.complete(true); // Mark the future as completed
-//	            }
-//	        });
-//
-//	        try {
-//	            // Wait for the URL to be fired or timeout after 10 seconds
-//	            urlFiredFuture.get(10, TimeUnit.SECONDS);
-//	            isUrlFired = true;  // URL fired successfully, exit the loop
-//	        } catch (Exception e) {
-//	            // If the URL was not fired within 10 seconds, reload the page and retry
-//	            System.err.println("URL not fired, reloading the page... Retry #" + (retries + 1));
-//	            page.reload();
-//	            retries++;
-//	        }
-//
-//	        // Remove the request listener after each reload to avoid duplicate listeners
-//	        page.offRequest(null);
-//	    }
-//	
-//	 return page;
-//		
-//	}
 
 	public String googleRefresh() {
 		return "googletag.pubads().refresh();";
@@ -570,7 +488,6 @@ public class TestSuite implements GenericTestSuite {
 		List<String> url = new ArrayList<>();
 
 		url.add("https://hbx.media.net");
-//    	url.add("https://hb.yahoo.net");
 		url.add("https://contextual.media.net");
 		url.add(publisher);
 
@@ -613,15 +530,8 @@ public class TestSuite implements GenericTestSuite {
 		return listOfCookies;
 	}
 
-	// get all pbjs features and events fired
+		private List<Request> getBidExRequestObjects(List<Request> listOfPwRequestObjects, String environmentHost) {
 
-	private List<Request> getBidExRequestObjects(List<Request> listOfPwRequestObjects, String environmentHost) {
-
-		// get bidex url's Request object from listOfPwRequestObjects
-		// assumer the pattern like this
-		// /**hbx.media.net|warp.media.net|hb.yahoo.net|contextual.media.net**bidexchange.js|clienttag.js**
-		// from pw req object will have actual url filed, size, time taken to load
-		// js errors arising from this controller
 
 		String regEx = ".*/(" + String.join("|", bidExHosts) + "|" + environmentHost + ")/("
 				+ String.join("|", bidExControlers) + ").*";
@@ -751,8 +661,6 @@ public class TestSuite implements GenericTestSuite {
 
 		BidexData bidexData = BidexData.builder().build();
 
-		ObjectMapper mapper = new ObjectMapper();
-
 		// get data from request
 		// convert into request into json
 		String response = request.response().text();
@@ -783,66 +691,7 @@ public class TestSuite implements GenericTestSuite {
 
 					boolean svrFind = false;
 
-//					String t = "new o.a({";
-//
-//					System.err.println(responseMP.contains(t));
-//					
-//					if (responseMP.contains(t)) {
-//						int index = responseMP.indexOf(t);
-//
-//						responseMP = responseMP.substring(index);
-//
-//						Pattern pattern = Pattern.compile("new\\s+o\\.a\\((.*?)\\)");
-//
-//						Matcher matcher = pattern.matcher(responseMP);
-//
-//						if (matcher.find()) {
-//
-//							String extractedData = matcher.group(1);
-//
-//							String svr = null;
-//
-//							if (responseMP.contains("var i")) {
-//								int svrIndex = responseMP.indexOf("var i");
-//
-//								responseMP = responseMP.substring(svrIndex);
-//
-//								Pattern pattern2 = Pattern.compile("var i=\"([^\"]+)\"");
-//
-//								Matcher matcher2 = pattern2.matcher(responseMP);
-//
-//								if (matcher2.find()) {
-//
-//									System.out.println("match found");
-//
-//									svr = matcher2.group(1);
-//
-//								}
-//
-//							}
-//
-//							JsonNode bidData = mapper.readValue(extractedData, JsonNode.class);
-//
-//							bidexData.setCid(bidData.get("cid").asText());
-//
-//							if (svr == null) {
-//
-//								System.out.println(" data 1: " + bidData.get("sver").asText());
-//								bidexData.setSvr(bidData.get("sver").asText());
-//							} else {
-//
-//								System.out.println(" data 2: " + svr);
-//
-//								bidexData.setSvr(svr);
-//							}
-//
-//							bidexData.setSugd(bidData.get("sugd").asText());
-//							bidexData.setCt(bidData.get("ip2ct").asText());
-//
-//							return bidexData;
-//						}
-//
-//					}
+
 
 					if (svrFind == false) {
 						
@@ -877,52 +726,10 @@ public class TestSuite implements GenericTestSuite {
 								
 								String svr=null;
 								
-//								if (matcher.find()) {
-//
-//									
-//
-//									String extractedData = matcher.group();
-//									
-//									System.out.println(extractedData);
-//									
-//									
-//
-//								String svr = null;
-//								
-//								if(responseMP.contains("const i"))
-//								{
-//									int svrIndex=responseMP.indexOf("const i");
-//									
-//									responseMP=responseMP.substring(svrIndex);
-//									
-////									System.out.println(responseMP);
-//									
-//									Pattern pattern2=Pattern.compile("const i=\"([^\"]+)\"");
-//									
-//									Matcher matcher2=pattern2.matcher(responseMP);
-//									
-//									if(matcher2.find())
-//									{
-//									
-//										 svr = matcher2.group(1);
-//				
-//									}
-//									
-//								}
-
-								System.out.println("Data:   : "+extractedData);
-								
-								
 								JSONObject jsonObject=new JSONObject("{"+extractedData+"}");
-								
-								System.err.println(jsonObject);
-								
+														
 								JSONObject  object= jsonObject.getJSONObject("Environment");
 								
-								System.out.println(object.get("cid").toString());
-								
-//									JsonNode bidData = mapper.readValue(object, JsonNode.class);
-									
 									
 									bidexData.setCid(object.get("cid").toString());
 
@@ -977,9 +784,6 @@ public class TestSuite implements GenericTestSuite {
 						Matcher matcher1 = pattern1.matcher(responseMP);
 
 						if (matcher1.find()) {
-
-							String svr = matcher1.group();
-
 							String svr1 = matcher1.group(1);
 
 							bidexData.setSvr(svr1);
@@ -1018,28 +822,6 @@ public class TestSuite implements GenericTestSuite {
 							String extractedData = matcher.group();
 
 							String svr = null;
-//							
-//							if(responseMP.contains("const i"))
-//							{
-//								int svrIndex=responseMP.indexOf("const i");
-//								
-//								responseMP=responseMP.substring(svrIndex);
-//								
-////								System.out.println(responseMP);
-//								
-//								Pattern pattern2=Pattern.compile("const i=\"([^\"]+)\"");
-//								
-//								Matcher matcher2=pattern2.matcher(responseMP);
-//								
-//								if(matcher2.find())
-//								{
-//								
-//									 svr = matcher2.group(1);
-//			
-//								}
-//								
-//							}
-							
 
 							JSONObject jsonObject=new JSONObject("{"+extractedData+"}");
 							
@@ -1064,8 +846,6 @@ public class TestSuite implements GenericTestSuite {
 
 									
 									 svr = matcher1.group(1);
-
-									System.err.println(svr);
 
 									bidexData.setSvr(svr);
 
@@ -1120,24 +900,9 @@ public class TestSuite implements GenericTestSuite {
 				}
 
 			}
-//			else if(request.url().contains("**/bidexchange.js?")|| request.url().startsWith("https://hbx-stage-2.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-3.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage-4.media.net//bidexchange.js")|| request.url().startsWith("https://hbx-stage.media.net//bidexchange.js")|| request.url().startsWith("https://hbx.media.net//bidexchange.js?")|| request.url().startsWith("https://hbx.media.net/bidexchange.js?")|| request.url().startsWith("https://ssp-stage-hb.media.net/bidexchange.js?")|| request.url().startsWith("https://ssp-stage-hb-1.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-2.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-3.media.net//bidexchange.js")|| request.url().startsWith("https://ssp-stage-hb-4.media.net//bidexchange.js")){
 			else if (request.url().matches(regexForBidex1)) {
 
-//				int startIndex = 0;
-//
-//				String startTarget = "{\"AaxDpCeiling\"";
-//				if (response.contains(startTarget)) {
-//					startIndex = response.indexOf(startTarget);
-//					startIndex += 12;
-//
-//				}
-//
-//				// control in Bidexconfig.java
-//				String finalString = response.substring(startIndex - 12);
-//				JsonNode bidexJson = mapper.readValue(finalString, JsonNode.class);
-				
-				
-				
+
 				
 				String target = "\"Environment\":{";
 				
@@ -1201,29 +966,19 @@ public class TestSuite implements GenericTestSuite {
 							}
 							
 						}
-
-//							bidexData.setSugd(object.get("sugd").toString());
-//							bidexData.setCt(object.get("ip2ct").toString());
-//							bidexData.setServname(object.get("servname").toString());
-//							bidexData.setBrowser(object.get("browser").toString());
-//							bidexData.setLw(object.get("lw").toString());
 						
 						bidexData.setCid(object.get("cid").toString());
-//						bidexData.setSvr(envData.get("sver").asText());
 						bidexData.setSugd(object.get("sugd").toString());
 						bidexData.setCt(object.get("ip2ct").toString());
 						bidexData.setServname(object.get("servname").toString());
-//						bidexData.setBrowser(object.get("browser").toString());
-//						bidexData.setLw(object.get("lw").toString());
-						
+
 						
 						bd.setCid(object.get("cid").toString());
 						bd.setCt(object.get("ip2ct").toString());
-//						bd.setSvr(envData.get("sver").asText());
+
 						bd.setSugd(object.get("sugd").toString());
 						bd.setServname(object.get("servname").toString());
-//						bd.setBrowser(object.get("browser").toString());
-//						bd.setLw(object.get("lw").toString());
+
 
 							return bidexData;
 						}
@@ -1255,17 +1010,6 @@ public class TestSuite implements GenericTestSuite {
 
 				}
 				
-				
-
-//				JsonNode envData = bidexJson.get("Environment");
-//
-//				bidexData.setCid(envData.get("cid").asText());
-////				bidexData.setSvr(envData.get("sver").asText());
-//				bidexData.setSugd(envData.get("sugd").asText());
-//				bidexData.setCt(envData.get("ip2ct").asText());
-//				bidexData.setServname(envData.get("servname").toString());
-//				bidexData.setBrowser(envData.get("browser").toString());
-//				bidexData.setLw(envData.get("lw").toString());
 
 				
 				
@@ -1282,8 +1026,7 @@ public class TestSuite implements GenericTestSuite {
 
 				bidexData.setSugd(bd.getSugd());
 				bidexData.setServname(bd.getServname());
-//				bidexData.setBrowser(bd.getBrowser());
-//				bidexData.setLw(bd.getLw());
+
 				
 
 			}
@@ -1313,17 +1056,7 @@ public class TestSuite implements GenericTestSuite {
 
 		    return matchingEntries; // Return the list of matching entries
 		
-		
-		
-//		for (Map.Entry<String, String> urlData : testData.getNetworkCallsPositive().entrySet()) {
-//
-//			if (currentUrl.url().startsWith(urlData.getValue())) {
-//
-//				return urlData;
-//			}
-//		}
-//
-//		return null;
+
 	}
 
 	private Map.Entry<String, String> negativeURLPatternExists(String currentUrl, TestCriteriaBo testData) {
@@ -1379,7 +1112,6 @@ public class TestSuite implements GenericTestSuite {
 						labelExists.getQueryStringMap().add(urlDataProcessing.getQueryStringMapFromUrl(requestUrl, requests));
 					}
 
-//					continue;
 				}
 			}
 
@@ -1398,7 +1130,7 @@ public class TestSuite implements GenericTestSuite {
 			}
 		}
 		
-//		urlChecks.setGetpayloadDetails(getPayload(testData, requests));
+
 		urlChecks.updateMatchingUrlsCount();
 		urlChecks.updateNetworkCallErrors(testData);
 		urlChecks.verifyPositiveKeyValChecks();
@@ -1419,49 +1151,6 @@ public class TestSuite implements GenericTestSuite {
 		return urlChecks;
 	}
 	
-	
-	public List<Map<String, String>> getPayload(TestCriteriaBo testData, List<Request> requestlist)
-	{
-		List<Map<String, String>> queryParam=new ArrayList<>();
-		
-		try {
-		
-			testData.getNetworkCallsPositive().entrySet().forEach(entry->{
-				
-				
-				if(entry.getKey().equals("apprlog"))
-				{
-					System.out.println("in process start");
-
-					boolean temp=false;
-					for(Request  req: requestlist)
-					{
-						if(req.url().equalsIgnoreCase(entry.getValue()))
-						{
-							
-//							if(temp==false)
-//							{
-								queryParam.add(urlDataProcessing.queryStringToMap(req.postData()));
-								temp=true;
-//							}
-							
-						}
-					}
-				}
-				
-			});		
-			
-		}
-		catch (Exception e) {
-			
-			System.err.println(e.getMessage());
-			
-		}
-		
-		
-		
-		return queryParam;
-	}
 	
 
 	/*
@@ -1524,94 +1213,7 @@ public class TestSuite implements GenericTestSuite {
 	 * bidderDataAssertionsCheck); } } }
 	 */
 
-	// private String getNetworkCallAssertions2(List<String> requestList,
-	// TestCriteriaBo testData){
-
-	// TestReportBo trb = ReportBuilder.getNewReport(testData);
-
-	// for(Map<String, String> networkCalls: testData.getNetworkCallsPositive()){
-
-	// networkCalls.entrySet().forEach(entry -> {
-
-	// String matchedUrl = urlDataProcessing.getRequestFor2(entry.getValue(),
-	// requestList);
-
-	// if(matchedUrl == null){
-
-	// trb.getUrlChecks().add(ReportBuilder.logError(entry.getKey(),
-	// CheckType.POSSITIVE, entry.getValue()));
-
-	// }else{
-
-	// UrlChecks uc = ReportBuilder.urlCheckExists(entry.getKey(), trb);
-
-	// if(uc != null){
-	// uc.getUrlData().getMatchingUrls().add(matchedUrl);
-	// }else{
-	// trb.getUrlChecks().add(ReportBuilder.logSuccess(entry.getKey(),
-	// CheckType.POSSITIVE, entry.getValue(), matchedUrl));
-	// }
-	// }
-	// });
-	// }
-
-	// try {
-	// return jsonWriter.writeValueAsString(trb);
-	// } catch (JsonProcessingException e) {
-	// log.error("json processing error", e);
-	// }
-
-	// return "json error";
-	// }
-
-	// private String getNetworkCallAssertions(List<Request> requestList,
-	// TestCriteriaBo testData){
-
-	// TestReportBo trb = TestReportBo.builder().build();
-
-	// for(Map<String, String> networkCalls: testData.getNetworkCallsPositive()){
-
-	// networkCalls.entrySet().forEach(entry -> {
-
-	// Request request = urlDataProcessing.getRequestFor(entry.getValue(),
-	// requestList);
-
-	// if(request == null || request.failure() == null){
-
-	// logError(trb, entry.getKey(), CheckType.POSSITIVE, request);
-	// }else{
-	// logLogSuccess(trb, entry.getKey(), CheckType.POSSITIVE, request);
-	// }
-
-	// });
-	// }
-
-	// for(Map<String, String> networkCalls: testData.getNetworkCallsNegative()){
-
-	// networkCalls.entrySet().forEach(entry -> {
-
-	// Request request = urlDataProcessing.getRequestFor(entry.getValue(),
-	// requestList);
-
-	// if(request == null || request.failure() == null){
-
-	// logLogSuccess(trb, entry.getKey(), CheckType.NEGERIVE, request);
-
-	// }else{
-
-	// logError(trb, entry.getKey(), CheckType.NEGERIVE, request);
-	// }
-	// });
-	// }
-
-	// try {
-	// return jsonWriter.writeValueAsString(trb);
-	// } catch (JsonProcessingException e) {
-	// log.error("json processing error", e);
-	// }
-
-	// return "json error";
-	// }
+	
 
 	private BrowserContext replaceBidExUrl(BrowserContext browserContext, TestCriteriaBo testData) {
 
@@ -1658,7 +1260,6 @@ public class TestSuite implements GenericTestSuite {
 
 					String splitUrl[] = testData.getEnvironment().split("\\.");
 					String username = splitUrl[0];
-//						String addToUrl = "&ad_username=" + username;
 						
 						replacedURL = replacedURL+"&ad_username=" + username;
 					
@@ -1769,13 +1370,13 @@ public class TestSuite implements GenericTestSuite {
 		return new HashMap<String, Object>(request.response().allHeaders());
 	}
 
-	@Override
-	public List<String> getReportFiles() {
-
-		List<String> listOfFiles=this.fileOperations.listOfDownloadFiles(reportFilePath);		
-		
-		return listOfFiles;
-		
-	}
+//	@Override
+//	public List<String> getReportFiles() {
+//
+//		List<String> listOfFiles=this.fileOperations.listOfDownloadFiles(reportFilePath);		
+//		
+//		return listOfFiles;
+//		
+//	}
 
 }

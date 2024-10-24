@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
+
 
 @Service
 @Slf4j
@@ -57,9 +57,6 @@ public class JsonPath {
 
     public Object readValueFromJson(String data, String jsonPath) throws PathNotFoundException {
     	
-//    	System.out.println("Data: "+data);
-//    	System.out.println("jsonPath: "+jsonPath);
-    	
         return com.jayway.jsonpath.JsonPath.read(data, jsonPath);
     }
 
@@ -70,16 +67,14 @@ public class JsonPath {
     public boolean compareValueInJson(String json, String jsonPath, Object expectedValue) {
         try {
         	
-//            if (json!=null)
-//            {
+
             	Object actualValue = readValueFromJson(json, jsonPath);
                 
 //              log.info("Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue);
              
               String pathValue="Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue;
               
-              
-              System.err.println(pathValue);
+              log.info(pathValue);
               
               ArrayList<String> al=new ArrayList<>();
               al.add(pathValue);
@@ -87,12 +82,10 @@ public class JsonPath {
               
               if(expectedValue.toString().equals(actualValue.toString()))
               {
-//            	  System.out.println("expectedValue: "+expectedValue+" "+ " actualValue : "+actualValue+" "+" true");
             	  return true;
               }
               else {
             	  
-//            	  System.out.println("expectedValue: "+expectedValue+" "+ " actualValue : "+actualValue+" "+" false");
             	  return false;
               }
               

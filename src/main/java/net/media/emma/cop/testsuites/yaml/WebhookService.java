@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -45,6 +46,15 @@ public class WebhookService implements WebhookServiceIn {
 
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
+	
+	@Value("${emmaV}")
+	private String emmaToken;
+	
+	@Value("${sspV}")
+	private String sspToken;
+	
+	@Value("${prebidV}")
+	private String prebidToken;
 
 	@Override
 	public void executeWebhook(String payload) {
@@ -54,7 +64,7 @@ public class WebhookService implements WebhookServiceIn {
 //			Thread.sleep(5500);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}
@@ -79,48 +89,62 @@ public class WebhookService implements WebhookServiceIn {
 
 			if (comment.contains("@emma")) {
 
-				String sanity="(basic-sanity|basicSanity|basicsanity|BASICSANITY|)";
+				String sanity="(?i)basic-sanity";
 				
-				if(comment.matches(sanity))
-				{
-					
-//				if (comment.contains("basic-sanity")|| comment.contains("basicSanity")||comment.contains("basicsanity")||comment.contains("BASICSANITY")||comment.contains("Basic-Sanity")) {
+				Pattern patternSanity=Pattern.compile(sanity);
+				
+				Matcher matcherSanity=patternSanity.matcher(comment);
+				
+				if(matcherSanity.find())
+				{					
 
 					String url = null;
-
-//					String hostRegex = "(host|env|environment)\\s*:\\s*([\\S]+)\\s*";
 					
 					String hostRegex = "(host|env|environment)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
 
-					if (comment.contains("url")) {
-						String urlRegex = "(url|publisher|urls|pubs)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
+//					if (comment.contains("url")) {
+//						String urlRegex = "(url|publisher|urls|pubs)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
+//
+//						url = extractValue(comment, urlRegex);
+//
+//						String domain = getHostFromUrl(url);
+//
+//						String itype = getItypeFromUrl(domain);
+//
+//						List<String> yamlFiles = getYamlFromUrl(domain);
+//
+//					}
 
-						url = extractValue(comment, urlRegex);
-
-						String domain = getHostFromUrl(url);
-
-						String itype = getItypeFromUrl(domain);
-
-						List<String> yamlFiles = getYamlFromUrl(domain);
-
-					}
-
-					String hb="(HB|hb|Hb|hB)";
+					String hb="(?i)HB";
 					
-					if(comment.matches(hb))
+					Pattern patternHb=Pattern.compile(hb);
+					
+					Matcher matcherHb=patternHb.matcher(comment);
+					
+					if(matcherHb.find())
 					{
 						url = getUrlFromItype("hb");
 					}
-					String mp="(mp|MP|Mp)";
+					String mp="(?i)MP";
 					
-					if(comment.matches(mp)) {
-//					if (comment.contains("MP") || comment.contains("Mp") || comment.contains("mp")|| comment.contains("mP")) {
+					Pattern patternMp=Pattern.compile(mp);
+					
+					Matcher matcherMp=patternMp.matcher(comment);
+					
+					if(matcherMp.find()) {
+
 						url = getUrlFromItype("mp");
 					}
-					String hb2="(HB2|hb2|Hb2|hB2)";
 					
-					if(comment.matches(hb2)) {
-//					if (comment.contains("hb2") || comment.contains("HB2") || comment.contains("Hb2")) {
+					String hb2="(?i)HB2";
+					
+					Pattern patternhb2=Pattern.compile(hb2);
+					
+					Matcher matcherHb2 =patternhb2.matcher(comment);
+					
+//					if(comment.matches(hb2)) {
+
+					if(matcherHb2.find()) {
 						url = getUrlFromItype("hb2");
 					}
 
@@ -176,20 +200,15 @@ public class WebhookService implements WebhookServiceIn {
 					addResponseToGit(map);
 
 					List<String> commonFile = new ArrayList<>(getCommonFilesForApi(it));
-					
-					System.out.println(commonFile+" : ");
 
 					List<String> autoTest = new ArrayList<>(getAutoTesterFilesTest());
 
 					SmokeTestRawDataDto dataDto = this.yamlTestSuiteScheduling.getAutoTest(host, ua, autoTest,
 							commonFile, pub, it, "", false);
 
-//					System.err.println("REport from dataDto: "+dataDto.getSmokeReport().getTestdatas());
 
 					map.put("response", dataDto);
 				}
-
-//				System.err.println("MapGEt: "+map );
 
 				addResponseToGit(map);
 
@@ -203,11 +222,6 @@ public class WebhookService implements WebhookServiceIn {
 	}
 
 	private String getUrlFromItype(String itype) {
-//		List<String> listOfUrlForHb=Arrays.asList("https://www.nutritionix.com/brands/restaurant?mnet_test=1","https://www.webmd.com/?mnet_test=1");
-//		
-//		List<String> listOfUrlForMp=Arrays.asList("https://www.forbes.com/?medianet_test=1","https://www.fox13now.com/?medianet_test=1");
-//
-//		List<String> listOfUrlForHb2=Arrays.asList("https://time.com/?mnet_test=1");
 
 		Map<String, String> list = new HashMap<>();
 
@@ -244,31 +258,31 @@ public class WebhookService implements WebhookServiceIn {
 
 	}
 
-	private String getFileNameFromUrl(String url) {
-		Map<String, String> listOfurls = new HashMap<>();
-
-		List<String> list = new ArrayList<>();
-
-		listOfurls.put("daily.co.jp", "DailyCoMP.yaml");
-		listOfurls.put("fox13now.com", "fox13now.yaml");
-		listOfurls.put("forbes.com", "forbesMp.yaml");
-		listOfurls.put("time.com", "timeHome.yaml");
-		listOfurls.put("webmd.com", "webmd.yaml");
-		listOfurls.put("nutritionix.com", "nutritionix.yaml");
-
-		String a[] = url.split(",");
-
-		for (String pub : a) {
-			String yaml = listOfurls.get(pub);
-
-			list.add(yaml);
-		}
-
-		String yml = String.join(",", list);
-
-		return yml;
-
-	}
+//	private String getFileNameFromUrl(String url) {
+//		Map<String, String> listOfurls = new HashMap<>();
+//
+//		List<String> list = new ArrayList<>();
+//
+//		listOfurls.put("daily.co.jp", "DailyCoMP.yaml");
+//		listOfurls.put("fox13now.com", "fox13now.yaml");
+//		listOfurls.put("forbes.com", "forbesMp.yaml");
+//		listOfurls.put("time.com", "timeHome.yaml");
+//		listOfurls.put("webmd.com", "webmd.yaml");
+//		listOfurls.put("nutritionix.com", "nutritionix.yaml");
+//
+//		String a[] = url.split(",");
+//
+//		for (String pub : a) {
+//			String yaml = listOfurls.get(pub);
+//
+//			list.add(yaml);
+//		}
+//
+//		String yml = String.join(",", list);
+//
+//		return yml;
+//
+//	}
 
 	private String getHostFromUrl(String urls) {
 
@@ -303,31 +317,31 @@ public class WebhookService implements WebhookServiceIn {
 
 	}
 
-	private List<String> getYamlFromUrl(String url) {
-		List<String> listOfFiles = new ArrayList<>();
-
-		String publishers[] = url.split(",");
-
-		try {
-
-			for (String yaml : getYamlFiles()) {
-
-				for (String pub : publishers) {
-					if (yaml.contains(getFileNameFromUrl(pub))) {
-						listOfFiles.add(yaml);
-					}
-				}
-
-			}
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return listOfFiles;
-
-	}
+//	private List<String> getYamlFromUrl(String url) {
+//		List<String> listOfFiles = new ArrayList<>();
+//
+//		String publishers[] = url.split(",");
+//
+//		try {
+//
+//			for (String yaml : getYamlFiles()) {
+//
+//				for (String pub : publishers) {
+//					if (yaml.contains(getFileNameFromUrl(pub))) {
+//						listOfFiles.add(yaml);
+//					}
+//				}
+//
+//			}
+//
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		return listOfFiles;
+//
+//	}
 
 	public static String generateMarkdownReport(SmokeTestRawDataDto data) {
 		StringBuilder markdownBuilder = new StringBuilder();
@@ -472,9 +486,9 @@ public class WebhookService implements WebhookServiceIn {
 	{
 		Map<String, String> mapOfProjectIdKy=new HashMap<>();
 		
-		mapOfProjectIdKy.put("15491", "glpat-fyX_Nidzz5EE6Vazr-Go");
-		mapOfProjectIdKy.put("8300", "glpat-eiZcFRxrY4n_vwhzqpfF");
-		mapOfProjectIdKy.put("6340", "glpat-WgH94v_gXuiDxAMtnpC2");
+		mapOfProjectIdKy.put("15491", emmaToken);
+		mapOfProjectIdKy.put("8300", prebidToken);
+		mapOfProjectIdKy.put("6340", sspToken);
 		
 		String key=mapOfProjectIdKy.get(projectId);
 		
@@ -504,7 +518,7 @@ public class WebhookService implements WebhookServiceIn {
 
 		Map<String, String> map = new HashMap<>();
 
-//		System.err.println("REsponse: " + response);
+
 
 		if (response.get("response") == null) {
 			map.put("body", response.get("processStart").toString());
@@ -537,16 +551,6 @@ public class WebhookService implements WebhookServiceIn {
 		return fileName;
 	}
 	
-	private Set<String> getCommonYamlFilesForApi(String itype) {
-		
-		String itpe[]=itype.split(",");
-		
-		
-		
-		Set<String> fileName = fileOperations.listYamlFiles(commonYamlFile + "/" + itype);
-
-		return fileName;
-	}
 
 	private Set<String> getAutoTesterFilesTest() {
 		Set<String> fileName = fileOperations.listYamlFiles(autoTesterYamlFile);
@@ -554,10 +558,10 @@ public class WebhookService implements WebhookServiceIn {
 		return fileName;
 	}
 
-	private Set<String> getYamlFiles() {
-		Set<String> filename = fileOperations.listYamlFiles(yamlTestCriteriaFilesPath);
-
-		return filename;
-	}
+//	private Set<String> getYamlFiles() {
+//		Set<String> filename = fileOperations.listYamlFiles(yamlTestCriteriaFilesPath);
+//
+//		return filename;
+//	}
 
 }

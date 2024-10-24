@@ -40,8 +40,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
-import ch.qos.logback.core.model.Model;
-import jakarta.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
@@ -218,48 +216,6 @@ public class WebController {
 
 	}
 	
-
-	@GetMapping("/autoTest")
-	public ModelAndView getAutoTest(HttpServletResponse response) {
-
-		Set<String> listOfYaml = fileOperations.listFilesUsingFilesList(yamlTestCriteriaFilesPath);
-
-		Map<String, JsonNode> result = new HashMap<>();
-
-		ModelAndView mav = new ModelAndView("yamlTestSuiteReport");
-
-		int i = 0;
-		try {
-			for (String yaml : listOfYaml) {
-
-				if (i < 2) {
-					String yamlContent = fileOperations.readFileAsString(yamlTestCriteriaFilesPath + yaml);
-
-					Thread thread = new Thread(yamlContent);
-					thread.start();
-					// thread.join();
-
-					ObjectMapper objectMapper = new YAMLMapper();
-					TestCriteriaBo testCriteria = objectMapper.readValue(yamlContent, TestCriteriaBo.class);
-
-					TestReportModel message = yamlTestSuite.getTestResults(testCriteria,null, null);
-
-					JsonNode jsonNode = yamlMapper.convertValue(message, JsonNode.class);
-
-					result.put(yaml, jsonNode);
-				}
-				i++;
-			}
-			mav.addObject("message1", result);
-		} catch (Exception e) {
-			log.error("Error reading file.", e);
-			mav.addObject("message", e.getMessage());
-		}
-
-		log.info("Result = " + result);
-
-		return mav;
-	}
 	
 	
 	@GetMapping("/userAgent")
@@ -360,18 +316,6 @@ public class WebController {
 		
 	}
 	
-	@PostMapping("/emma")
-	public String/*ModelAndView*/ triggerWebhooks(@RequestBody(required = false)String payload)
-	{
-		log.info("Webhooks called ");
-		log.info(payload);
-
-		new Thread(()-> this.webhookService.executeWebhook(payload)).start();
-
-		return "complete";
-		
-		
-	}
 
 
 	@PostMapping("fileContent")
@@ -466,27 +410,6 @@ public class WebController {
 
 	}
 	
-	
-	@GetMapping("show-report")
-	public ModelAndView getDownloadReport()
-	{
-		ModelAndView model=new ModelAndView("yamlReport");
-		
-		try {
-			
-			List<String> listOfFiles=this.yamlTestSuite.getReportFiles();
-			
-			model.addObject("listOfFileNames", listOfFiles);
-			
-		}catch (Exception e) {
-			
-			model.addObject("listOfFileNames", e.getMessage());
-		}
-		
-		
-		return model;
-		
-	}
 	
 	@GetMapping("/downloadFile")
 	public  ResponseEntity<?> getExelFiles(@RequestParam String fileName)

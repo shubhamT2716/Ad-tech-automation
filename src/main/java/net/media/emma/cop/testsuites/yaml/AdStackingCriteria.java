@@ -20,12 +20,7 @@ public class AdStackingCriteria {
 	private Map<String, Map<String, Map<String , String >>> negativeCheck; 
 	
 	
-//	public class PositiveCheck{
-//		
-//		private 
-//		
-//	}
-//	
+
 	
 	
 }

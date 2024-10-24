@@ -1,6 +1,5 @@
 package net.media.emma.cop.testsuites.yaml;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -86,6 +85,7 @@ public class URLChecksReportModel {
         Map<String, Object> responseHeadersChecks = new HashMap<>(); //field for response headers checks
 
         @JsonIgnore
+        @Builder.Default
         List<HashMap<String, Object>> queryStringMapRequestHeader = new ArrayList<>();
 
         @JsonIgnore
