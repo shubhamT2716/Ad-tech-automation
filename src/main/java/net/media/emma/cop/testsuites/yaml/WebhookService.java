@@ -222,19 +222,6 @@ public class WebhookService implements WebhookServiceIn {
 
                     String hostRegex = "(host|env|environment)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
 
-//					if (comment.contains("url")) {
-//						String urlRegex = "(url|publisher|urls|pubs)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
-//
-//						url = extractValue(comment, urlRegex);
-//
-//						String domain = getHostFromUrl(url);
-//
-//						String itype = getItypeFromUrl(domain);
-//
-//						List<String> yamlFiles = getYamlFromUrl(domain);
-//
-//					}
-
                     String hb = "(?i)HB";
 
                     Pattern patternHb = Pattern.compile(hb);
@@ -551,11 +538,5 @@ public class WebhookService implements WebhookServiceIn {
 
         return fileName;
     }
-
-//	private Set<String> getYamlFiles() {
-//		Set<String> filename = fileOperations.listYamlFiles(yamlTestCriteriaFilesPath);
-//
-//		return filename;
-//	}
 
 }
