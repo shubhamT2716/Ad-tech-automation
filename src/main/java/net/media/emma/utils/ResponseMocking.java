@@ -1,187 +1,177 @@
 package net.media.emma.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import org.springframework.stereotype.Component;
-
-import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Route;
-
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Slf4j
 public class ResponseMocking {
 
-	private Object id;
+    boolean temp = false;
+    private Object id;
+    private JSONArray jsonArray;
 
-	private JSONArray jsonArray;
-	
-	boolean temp=false;
+    public Page responseMocking(Page page, String url, String response) {
 
-	public Page responseMocking(Page page, String url, String response) {
+        log.info("added Requestly");
 
-		log.info("added Requestly");
+        List<Object> listOfImp = new ArrayList<>();
 
-		List<Object> listOfImp = new ArrayList<>();
+        page.onRequest(request -> {
 
-		page.onRequest(request -> {
+            if (request.url().equals(url)) {
+                String postData = request.postData();
 
-			if (request.url().equals(url)) {
-				String postData = request.postData();
+                JSONObject jsonObject = new JSONObject(postData);
 
-				JSONObject jsonObject = new JSONObject(postData);
+                if (!temp) {
+                    id = jsonObject.get("id");
 
-				if(temp==false)
-				{
-					id = jsonObject.get("id");
+                    jsonArray = jsonObject.getJSONArray("imp");
+                }
+            }
 
-					jsonArray = jsonObject.getJSONArray("imp");
-				}
-			}
+        });
 
-		});
-
-		page.route(url, route -> {
+        page.route(url, route -> {
 
 //			APIResponse apiResponse = route.fetch();
 
-			for (int i = 0; i < jsonArray.length(); i++) {
-				JSONObject jsonObject = jsonArray.getJSONObject(i);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-				Object id = jsonObject.get("id");
+                Object id = jsonObject.get("id");
 
-				listOfImp.add(id);
+                listOfImp.add(id);
 
-			}
+            }
 
-			try {
+            try {
 
-				JSONObject jObject = new JSONObject(response);
+                JSONObject jObject = new JSONObject(response);
 
-				JSONArray bidListArray = jObject.getJSONArray("bidList");
+                JSONArray bidListArray = jObject.getJSONArray("bidList");
 
-				List<Object> li = new ArrayList<>();
+                List<Object> li = new ArrayList<>();
 
-				for (int i = 0; i < bidListArray.length(); i++) {
-					JSONObject bidObject = bidListArray.getJSONObject(i);
+                for (int i = 0; i < bidListArray.length(); i++) {
+                    JSONObject bidObject = bidListArray.getJSONObject(i);
 
-					bidObject.put("requestId", listOfImp.get(i));
+                    bidObject.put("requestId", listOfImp.get(i));
 
-					li.add(bidObject);
+                    li.add(bidObject);
 
-				}
-				jObject.put("id", id);
-				jObject.put("bidList", li);
+                }
+                jObject.put("id", id);
+                jObject.put("bidList", li);
 
-				String message = jObject.toString();
+                String message = jObject.toString();
 
 //				route.fulfill(new Route.FulfillOptions().setResponse(apiResponse).setBody(message));
 
-				route.fulfill(new Route.FulfillOptions().setBody(message));
+                route.fulfill(new Route.FulfillOptions().setBody(message));
 
-				listOfImp.clear();
+                listOfImp.clear();
 
-				log.info("response mocking done by emma");
+                log.info("response mocking done by emma");
 
-			} catch (Exception e) {
-				e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
 
-				log.info("error while response mocking " + e.getMessage());
-			}
+                log.info("error while response mocking " + e.getMessage());
+            }
 
-		});
+        });
 
-		log.info("completed response mocking");
+        log.info("completed response mocking");
 
-		return page;
-	}
-	
-	
-	public Page addResponseMocking(Page page, String url, String response) {
-		
-		System.err.println("Mocking Start.........");
-		
-		page.route(url, route->{
-			
-			List<Object> listOfImp = new ArrayList<>();
-			
-			System.out.println("Process start.......");
-			
-			if(route.request().url().equalsIgnoreCase(url))
-			{
-				
-				
-				String postData = route.request().postData();
+        return page;
+    }
 
-				JSONObject jsonObject = new JSONObject(postData);
 
-				Object id = jsonObject.get("id");
+    public Page addResponseMocking(Page page, String url, String response) {
 
-				JSONArray jsonArray = jsonObject.getJSONArray("imp");
+        System.err.println("Mocking Start.........");
 
-				
-				
-				for (int i = 0; i < jsonArray.length(); i++) {
-					JSONObject json = jsonArray.getJSONObject(i);
+        page.route(url, route -> {
 
-					Object ids = json.get("id");
+            List<Object> listOfImp = new ArrayList<>();
 
-					listOfImp.add(ids);
+            System.out.println("Process start.......");
 
-				}
+            if (route.request().url().equalsIgnoreCase(url)) {
 
-				try {
 
-					JSONObject jObject = new JSONObject(response);
+                String postData = route.request().postData();
 
-					JSONArray bidListArray = jObject.getJSONArray("bidList");
+                JSONObject jsonObject = new JSONObject(postData);
 
-					List<Object> li = new ArrayList<>();
+                Object id = jsonObject.get("id");
 
-					for (int i = 0; i < bidListArray.length(); i++) {
-						JSONObject bidObject = bidListArray.getJSONObject(i);
+                JSONArray jsonArray = jsonObject.getJSONArray("imp");
 
-						bidObject.put("requestId", listOfImp.get(i));
 
-						li.add(bidObject);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject json = jsonArray.getJSONObject(i);
 
-					}
-					jObject.put("id", id);
-					jObject.put("bidList", li);
+                    Object ids = json.get("id");
 
-					String message = jObject.toString();
-					
+                    listOfImp.add(ids);
+
+                }
+
+                try {
+
+                    JSONObject jObject = new JSONObject(response);
+
+                    JSONArray bidListArray = jObject.getJSONArray("bidList");
+
+                    List<Object> li = new ArrayList<>();
+
+                    for (int i = 0; i < bidListArray.length(); i++) {
+                        JSONObject bidObject = bidListArray.getJSONObject(i);
+
+                        bidObject.put("requestId", listOfImp.get(i));
+
+                        li.add(bidObject);
+
+                    }
+                    jObject.put("id", id);
+                    jObject.put("bidList", li);
+
+                    String message = jObject.toString();
+
 
 //					route.fulfill(new Route.FulfillOptions().setResponse(apiResponse).setBody(message));
 
-					route.fulfill(new Route.FulfillOptions().setBody(message));
+                    route.fulfill(new Route.FulfillOptions().setBody(message));
 
-					listOfImp.clear();
+                    listOfImp.clear();
 
-					log.info("response mocking done by emma");
+                    log.info("response mocking done by emma");
 
-				} catch (Exception e) {
-					e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
 
-					log.info("error while response mocking " + e.getMessage());
-				}
-				
-				
-				
-			}
-		
-			
-		});
-		
-		return page;
-		
-	}
-	
+                    log.info("error while response mocking " + e.getMessage());
+                }
+
+
+            }
+
+
+        });
+
+        return page;
+
+    }
+
 
 }

@@ -17,13 +17,14 @@ import java.util.Set;
 @ContextConfiguration(classes = Loggers.class)
 public class MockRequest extends AbstractTestNGSpringContextTests {
 
-    @Autowired private net.media.emma.service.BrowserRemote browserRemote;
-    @Autowired private net.media.emma.config.Loggers loggers;
-    @Autowired private net.media.emma.coptests.SoftAssertion softAssertion;
-
-    static Set<String> bidExHosts = new HashSet<>(Arrays.asList(new String[]{"hbx.media.net", "contextual.media.net", "warp.media.net"}));
-    static Set<String> bidExControllers = new HashSet<>(Arrays.asList(new String[]{"bidexchange.js", "clienttag.js"}));
-
+    static Set<String> bidExHosts = new HashSet<>(Arrays.asList("hbx.media.net", "contextual.media.net", "warp.media.net"));
+    static Set<String> bidExControllers = new HashSet<>(Arrays.asList("bidexchange.js", "clienttag.js"));
+    @Autowired
+    private net.media.emma.service.BrowserRemote browserRemote;
+    @Autowired
+    private net.media.emma.config.Loggers loggers;
+    @Autowired
+    private net.media.emma.coptests.SoftAssertion softAssertion;
 
     @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml.class)
     public void mockRequestt(Object object) {
@@ -36,10 +37,10 @@ public class MockRequest extends AbstractTestNGSpringContextTests {
                         break;
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             softAssertion.getSoftAssert().fail("Unable to Mock Request");
             loggers.standardLogger().error("Unable to Mock Request", e);
-        }finally {
+        } finally {
             softAssertion.getSoftAssert().assertAll();
         }
     }

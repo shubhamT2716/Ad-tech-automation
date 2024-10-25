@@ -1,15 +1,5 @@
 package net.media.emma.cop.testsuites.pagetests;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,14 +8,19 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.Request;
-
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.pagetests.bidders.AbstractBidder;
-import net.media.emma.cop.testsuites.pagetests.bidders.YHBUtil;
-import net.media.emma.cop.testsuites.pagetests.bidders.YPBJSUtil;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*  ***************************************************************************************************
     // Open the URL using Playwright Page - Done
@@ -45,77 +40,75 @@ import net.media.emma.utils.URLDataProcessing;
 @Slf4j
 public class PageLevelTests {
 
-	@Autowired
-	BrowserFactory browserFactory;
-	@Autowired
-	URLDataProcessing urlDataProcessing;
+    @Autowired
+    BrowserFactory browserFactory;
+    @Autowired
+    URLDataProcessing urlDataProcessing;
 
-	@Autowired
-	ObjectWriter jsonWriter;
+    @Autowired
+    ObjectWriter jsonWriter;
 
-	@Autowired
-	ObjectMapper jsonReader;
-
-	@Value("${harFileBasePath}")
-	private String harFileBasePath;
-
-	List<String> jsExtraction = new ArrayList<>();
-	// List of urls to scrape the data from, basically bidder calls
-	HashMap<String, String> knownBidderCallPatterns = new HashMap<>() {
-		{
+    @Autowired
+    ObjectMapper jsonReader;
+    List<String> jsExtraction = new ArrayList<>();
+    // List of urls to scrape the data from, basically bidder calls
+    HashMap<String, String> knownBidderCallPatterns = new HashMap<>() {
+        {
 //			put("YPBJS", "https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS");
 //			put("RTBSCall", "https://xch.media.net/AdExchange/rtbsspub?");
-			put("RTBSCall", "\n"
-					+ "https://xch.media.net/AdExchange/rtbsspub?" );
+            put("RTBSCall", "\n"
+                    + "https://xch.media.net/AdExchange/rtbsspub?");
 //			put("YHBcall", "https://m.hb.yahoo.net/rtb/yhb?cid");
-		}
-	};
+        }
+    };
+    @Value("${harFileBasePath}")
+    private String harFileBasePath;
 
-	// Map<String, AbstractBidder> bidderDataUtils = new HashMap<>(){
-	// {
-	// put("YPBJS",
-	// YPBJSUtil.builder().bidderCallFormat("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS")
-	// .build());
-	// put("YHBcall", YHBUtil.builder().build());
-	// }
-	// };
+    // Map<String, AbstractBidder> bidderDataUtils = new HashMap<>(){
+    // {
+    // put("YPBJS",
+    // YPBJSUtil.builder().bidderCallFormat("https://c2shb-oao.ssp.yahoo.com/admax/bid/partners/YPBJS")
+    // .build());
+    // put("YHBcall", YHBUtil.builder().build());
+    // }
+    // };
 
-	public JsonNode getPageLevelTestsData(TestCriteria yaml) {
+    public JsonNode getPageLevelTestsData(TestCriteria yaml) {
 
-		String harFilePath = CommonBrowserUtil.getFileNameForHar();
+        String harFilePath = CommonBrowserUtil.getFileNameForHar();
 
-		Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), yaml.getCoockies(),
-				harFileBasePath + harFilePath);
+        Page page = BrowserFactory.getPageWithNewContext(yaml.getUserAgent(), yaml.getCoockies(),
+                harFileBasePath + harFilePath);
 
-		// list of arrays initialization
-		List<Request> urlsFromNetworkTab = new ArrayList<>();
+        // list of arrays initialization
+        List<Request> urlsFromNetworkTab = new ArrayList<>();
 
-		page.onRequest(request -> {
+        page.onRequest(request -> {
 
-			urlsFromNetworkTab.add(request);
-		});
-		page.setDefaultNavigationTimeout(15000);
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		List<Slots> slotsData = extractSlotsDataFromPage2(page, yaml.getPublisherUrl());
-		System.err.println("slots:  "+slotsData);
-		
-		
-		page.close();
-		page.context().close();
+            urlsFromNetworkTab.add(request);
+        });
+        page.setDefaultNavigationTimeout(15000);
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        List<Slots> slotsData = extractSlotsDataFromPage2(page, yaml.getPublisherUrl());
+        System.err.println("slots:  " + slotsData);
 
-		Map<String, List<? extends AbstractBidder>> bidderData = new HashMap<>();
 
-		// knownBidderCallPatterns.forEach((bidderName, urlPattern) -> {
-		// bidderData.putAll(getBidderUtils(urlsFromNetworkTab, bidderName));
-		// });
+        page.close();
+        page.context().close();
 
-		// iterate through all the known bidder call patterns and get the data
-		for (Map.Entry<String, String> bidderCallPattern : knownBidderCallPatterns.entrySet()) {
+        Map<String, List<? extends AbstractBidder>> bidderData = new HashMap<>();
+
+        // knownBidderCallPatterns.forEach((bidderName, urlPattern) -> {
+        // bidderData.putAll(getBidderUtils(urlsFromNetworkTab, bidderName));
+        // });
+
+        // iterate through all the known bidder call patterns and get the data
+        for (Map.Entry<String, String> bidderCallPattern : knownBidderCallPatterns.entrySet()) {
 
 //			List<? extends AbstractBidder> bidderDataasdfs = getBidderUtils(urlsFromNetworkTab,
 //					bidderCallPattern.getKey());
@@ -125,156 +118,154 @@ public class PageLevelTests {
 //			if (bidderDataasdfs.size() > 0) {
 //				bidderData.put(bidderCallPattern.getKey(), bidderDataasdfs);
 //			}
-		}
+        }
 
-		log.info("All known bidders size:" + bidderData.size(), bidderData);
+        log.info("All known bidders size:" + bidderData.size(), bidderData);
 
-		TestReportV2 testReport = TestReportV2.builder()
-				.testMetaData(TestReportV2.TestMetaData.builder().testName("Pagelevel Test Suite")
-						.environment(yaml.getEnvironment()).publisherUrl(yaml.getPublisherUrl())
-						.userAgent(yaml.getUserAgent()).harFileDownloadLink("harDownload/" + harFilePath).build())
-				.build();
+        TestReportV2 testReport = TestReportV2.builder()
+                .testMetaData(TestReportV2.TestMetaData.builder().testName("Pagelevel Test Suite")
+                        .environment(yaml.getEnvironment()).publisherUrl(yaml.getPublisherUrl())
+                        .userAgent(yaml.getUserAgent()).harFileDownloadLink("harDownload/" + harFilePath).build())
+                .build();
 
-		
-		if(slotsData!=null)
-		{
-			
-			for (Slots slotData : slotsData) {
 
-				TestReportV2.Slot slotReport = TestReportV2.Slot.builder().slotName(slotData.getPath()).build();
+        if (slotsData != null) {
 
-				for (Map.Entry<String, List<? extends AbstractBidder>> bidderList : bidderData.entrySet()) {
+            for (Slots slotData : slotsData) {
 
-					log.info("Bidder Name: " + bidderList.getKey() + " Bidder Data: " + bidderList.getValue());
+                TestReportV2.Slot slotReport = TestReportV2.Slot.builder().slotName(slotData.getPath()).build();
 
-					TestReportV2.Bidder bidderReport = TestReportV2.Bidder.builder().bidderName(bidderList.getKey())
-							.build();
+                for (Map.Entry<String, List<? extends AbstractBidder>> bidderList : bidderData.entrySet()) {
 
-					AbstractBidder bidder = getMatchingDataByAdUnit(slotData, bidderList.getValue());
+                    log.info("Bidder Name: " + bidderList.getKey() + " Bidder Data: " + bidderList.getValue());
 
-					if (null == bidder) {
-						bidderReport.getTestMessages().add("Bidder Call not found");
-						slotReport.getBidders().add(bidderReport);
-						continue;
-					}
+                    TestReportV2.Bidder bidderReport = TestReportV2.Bidder.builder().bidderName(bidderList.getKey())
+                            .build();
 
-	                
-					AbstractBidder bidderSizes = getMatchingDataByAdUnitYHB(slotData, bidderList.getValue());
+                    AbstractBidder bidder = getMatchingDataByAdUnit(slotData, bidderList.getValue());
 
-					if(bidderSizes == null){
-	                    log.info("Bidder size = " + bidder.getSizes());
-						bidderReport.getTestMessages().add("Slot Sizes " + slotData.getSizes()
-								+ " mismatched with bidder sizes " + bidder.getSizes() + "");
-	                } else {
-						bidderReport.getTestMessages().add("Sizes matched " + slotData.getSizes() + "");
-					}
-
-					slotReport.getBidders().add(bidderReport);
-				}
-
-				testReport.getSlots().add(slotReport);
-			}
-		}
-		
-		
-
-		testReport.getTestRawData().put("Slots Raw Data", jsonReader.valueToTree(slotsData));
-		testReport.getTestRawData().put("Bidder Calls Raw Data", jsonReader.valueToTree(bidderData));
-
-		try {
-			return jsonReader.readTree(jsonWriter.writeValueAsString(testReport));
-		} catch (JsonProcessingException e) {
-			log.error("Test Report Object marshalling failed", e);
-			// Return JsonNode with error message
-			return jsonReader.createObjectNode().put("error", "Test Report Object marshalling failed");
-		}
-	}
-
-	private List<String> filterRequestsByTypeAndReturnPostData(String urlPattern, List<Request> urlsFromNetworkTab) {
-
-		List<String> postData = new ArrayList<>();
-
-		for (Request request : urlsFromNetworkTab) {
-
-			if (request.url().startsWith(urlPattern)) {
-
-				// post data of all ypbjs calls stored
-				try {
-					postData.add(request.postData());
-				} catch (PlaywrightException e) {
-					log.error("Error while getting post data from request: " + request.url());
-				}
-			}
-		}
-
-		return postData;
-	}
-
-	// private List<String> returnYhbPostData(String urlPattern, List<Request>
-	// urlsFromNetworkTab) {
-	// List<String> yhbPostData = new ArrayList<>();
-	// for (Request request : urlsFromNetworkTab) {
-	// if (request.url().startsWith(urlPattern)) {
-	// try {
-	// yhbPostData.add(request.postData());
-	// log.info("YHB post Data :" + yhbPostData);
-	// } catch (PlaywrightException e) {
-	// log.error("couldnt get YHB post Data " + request.url());
-	// }
-	// }
-	// }
-	// return yhbPostData;
-	// }
-
-	private AbstractBidder getMatchingDataByAdUnit(Slots slotData, List<? extends AbstractBidder> bidderCallData) {
-        
-
-		for (AbstractBidder bidderUtil : bidderCallData) {
-
-			log.info(
-					"Slot Ad Unit Path: " + slotData.getPath() + " Bidder Ad Unit Path: " + bidderUtil.getAdUnitPath());
-                    if(bidderUtil.getAdUnitPath() == null) {
-                        return bidderUtil;
+                    if (null == bidder) {
+                        bidderReport.getTestMessages().add("Bidder Call not found");
+                        slotReport.getBidders().add(bidderReport);
+                        continue;
                     }
 
-			if (slotData.getAdUnitPath().contains(bidderUtil.getAdUnitPath())) {
 
-				return bidderUtil;
-			}
-		}
+                    AbstractBidder bidderSizes = getMatchingDataByAdUnitYHB(slotData, bidderList.getValue());
 
-		return null;
-	}
-private AbstractBidder getMatchingDataByAdUnitYHB(Slots slotData, List<? extends AbstractBidder> bidderCallData) {
-    
+                    if (bidderSizes == null) {
+                        log.info("Bidder size = " + bidder.getSizes());
+                        bidderReport.getTestMessages().add("Slot Sizes " + slotData.getSizes()
+                                + " mismatched with bidder sizes " + bidder.getSizes());
+                    } else {
+                        bidderReport.getTestMessages().add("Sizes matched " + slotData.getSizes());
+                    }
+
+                    slotReport.getBidders().add(bidderReport);
+                }
+
+                testReport.getSlots().add(slotReport);
+            }
+        }
 
 
-		for (AbstractBidder bidderUtil : bidderCallData) {
+        testReport.getTestRawData().put("Slots Raw Data", jsonReader.valueToTree(slotsData));
+        testReport.getTestRawData().put("Bidder Calls Raw Data", jsonReader.valueToTree(bidderData));
 
-            if(slotData.getAdUnitPath().contains(bidderUtil.getAdUnitPath())) {
-			log.info(
-					"Slot Sizes: " + slotData.getSizes() + " Bidder Sizes: " + bidderUtil.getSizes());
-
-			if (slotData.getSizes().equals(bidderUtil.getSizes())) {
-
-				return bidderUtil;
-			}
-		}
+        try {
+            return jsonReader.readTree(jsonWriter.writeValueAsString(testReport));
+        } catch (JsonProcessingException e) {
+            log.error("Test Report Object marshalling failed", e);
+            // Return JsonNode with error message
+            return jsonReader.createObjectNode().put("error", "Test Report Object marshalling failed");
+        }
     }
 
-		return null;
-	}
-	// private YHBUtil getSizesYHB(Slots slotData, List<YHBUtil> yhbCalls) {
-	// for (YHBUtil yhbData : yhbCalls) {
-	// if (slotData.getSizes().equals(yhbData.getSizes())) {
-	// log.info("Inside IF, sizes matched " + slotData.getSizes().toString() + " and
-	// "
-	// + yhbData.getSizes().toStxring());
-	// return yhbData;
-	// }
-	// }
-	// return null;
-	// }
+    private List<String> filterRequestsByTypeAndReturnPostData(String urlPattern, List<Request> urlsFromNetworkTab) {
+
+        List<String> postData = new ArrayList<>();
+
+        for (Request request : urlsFromNetworkTab) {
+
+            if (request.url().startsWith(urlPattern)) {
+
+                // post data of all ypbjs calls stored
+                try {
+                    postData.add(request.postData());
+                } catch (PlaywrightException e) {
+                    log.error("Error while getting post data from request: " + request.url());
+                }
+            }
+        }
+
+        return postData;
+    }
+
+    // private List<String> returnYhbPostData(String urlPattern, List<Request>
+    // urlsFromNetworkTab) {
+    // List<String> yhbPostData = new ArrayList<>();
+    // for (Request request : urlsFromNetworkTab) {
+    // if (request.url().startsWith(urlPattern)) {
+    // try {
+    // yhbPostData.add(request.postData());
+    // log.info("YHB post Data :" + yhbPostData);
+    // } catch (PlaywrightException e) {
+    // log.error("couldnt get YHB post Data " + request.url());
+    // }
+    // }
+    // }
+    // return yhbPostData;
+    // }
+
+    private AbstractBidder getMatchingDataByAdUnit(Slots slotData, List<? extends AbstractBidder> bidderCallData) {
+
+
+        for (AbstractBidder bidderUtil : bidderCallData) {
+
+            log.info(
+                    "Slot Ad Unit Path: " + slotData.getPath() + " Bidder Ad Unit Path: " + bidderUtil.getAdUnitPath());
+            if (bidderUtil.getAdUnitPath() == null) {
+                return bidderUtil;
+            }
+
+            if (slotData.getAdUnitPath().contains(bidderUtil.getAdUnitPath())) {
+
+                return bidderUtil;
+            }
+        }
+
+        return null;
+    }
+
+    private AbstractBidder getMatchingDataByAdUnitYHB(Slots slotData, List<? extends AbstractBidder> bidderCallData) {
+
+
+        for (AbstractBidder bidderUtil : bidderCallData) {
+
+            if (slotData.getAdUnitPath().contains(bidderUtil.getAdUnitPath())) {
+                log.info(
+                        "Slot Sizes: " + slotData.getSizes() + " Bidder Sizes: " + bidderUtil.getSizes());
+
+                if (slotData.getSizes().equals(bidderUtil.getSizes())) {
+
+                    return bidderUtil;
+                }
+            }
+        }
+
+        return null;
+    }
+    // private YHBUtil getSizesYHB(Slots slotData, List<YHBUtil> yhbCalls) {
+    // for (YHBUtil yhbData : yhbCalls) {
+    // if (slotData.getSizes().equals(yhbData.getSizes())) {
+    // log.info("Inside IF, sizes matched " + slotData.getSizes().toString() + " and
+    // "
+    // + yhbData.getSizes().toStxring());
+    // return yhbData;
+    // }
+    // }
+    // return null;
+    // }
 
 //	private List<? extends AbstractBidder> getBidderUtils(List<Request> urlsFromNetworkTab, String bidderName) {
 //
@@ -372,174 +363,174 @@ private AbstractBidder getMatchingDataByAdUnitYHB(Slots slotData, List<? extends
 //		return result;
 //	}
 
-	// private String getYHBCallData(List<Slots> slotsData, List<Request>
-	// urlsFromNetworkTab) {
+    // private String getYHBCallData(List<Slots> slotsData, List<Request>
+    // urlsFromNetworkTab) {
 
-	// List<YHBUtil> yhbCallData =
-	// returnYhbPostData(knownBidderCallPatterns.get("YHBcall"), urlsFromNetworkTab)
-	// .stream().map(data -> {
-	// try {
-	// return YHBUtil.builder().yhbPostData(jsonReader.readValue(data,
-	// JsonNode.class)).build();
-	// } catch (JsonProcessingException e) {
-	// log.error("Error while converting YHB call data to JsonNode: " + data);
-	// return null;
-	// }
-	// }).filter(data -> data != null).collect(Collectors.toList());
+    // List<YHBUtil> yhbCallData =
+    // returnYhbPostData(knownBidderCallPatterns.get("YHBcall"), urlsFromNetworkTab)
+    // .stream().map(data -> {
+    // try {
+    // return YHBUtil.builder().yhbPostData(jsonReader.readValue(data,
+    // JsonNode.class)).build();
+    // } catch (JsonProcessingException e) {
+    // log.error("Error while converting YHB call data to JsonNode: " + data);
+    // return null;
+    // }
+    // }).filter(data -> data != null).collect(Collectors.toList());
 
-	// log.info("count of YHB calls: " + yhbCallData.size());
+    // log.info("count of YHB calls: " + yhbCallData.size());
 
-	// System.err.println("Yhb Data: " + yhbCallData.get(0).getSizes());
+    // System.err.println("Yhb Data: " + yhbCallData.get(0).getSizes());
 
-	// for (Slots slot : slotsData) {
+    // for (Slots slot : slotsData) {
 
-	// YHBUtil yhbDataMatchResult = getSizesYHB(slot, yhbCallData);
-	// if (yhbDataMatchResult != null) {
-	// log.info("Reached Here");
-	// } else {
-	// log.info("Slots Data with ad unit path: " + slot.getSlothPath() + " not found
-	// in YHB call data");
-	// }
+    // YHBUtil yhbDataMatchResult = getSizesYHB(slot, yhbCallData);
+    // if (yhbDataMatchResult != null) {
+    // log.info("Reached Here");
+    // } else {
+    // log.info("Slots Data with ad unit path: " + slot.getSlothPath() + " not found
+    // in YHB call data");
+    // }
 
-	// }
+    // }
 
-	// return "YHB Utils Data";
-	// }
+    // return "YHB Utils Data";
+    // }
 
-	private List<Slots> extractSlotsDataFromPage2(Page page, String url) {
+    private List<Slots> extractSlotsDataFromPage2(Page page, String url) {
 
-		try {
+        try {
 
 //			page.onConsoleMessage(consoleMessage -> {
 //				jsExtraction.add("\n" + consoleMessage.text() + "\n");
 //			});
 
-			page.navigate(url);
-			page.waitForTimeout(12000);
+            page.navigate(url);
+            page.waitForTimeout(12000);
 
-			Object adUnitDataEval = page.evaluate(adUnitDataCheckV2());
-			System.err.println("Slots: "+adUnitDataEval);
-			
-			log.info("Extracted json data from the page: " + adUnitDataEval.toString());
+            Object adUnitDataEval = page.evaluate(adUnitDataCheckV2());
+            System.err.println("Slots: " + adUnitDataEval);
+
+            log.info("Extracted json data from the page: " + adUnitDataEval.toString());
 //        SlotsDataUtil slotsDataUtil = jsonReader.readValue(adUnitDataEval.toString(), SlotsDataUtil.class);
-			List<Slots> slotsData = jsonReader.readValue(adUnitDataEval.toString(), new TypeReference<List<Slots>>() {
-			});
-			// log.info("JSON Node as pretty print: " +
-			// jsonReader.writerWithDefaultPrettyPrinter().writeValueAsString(slotsData));
+            List<Slots> slotsData = jsonReader.readValue(adUnitDataEval.toString(), new TypeReference<List<Slots>>() {
+            });
+            // log.info("JSON Node as pretty print: " +
+            // jsonReader.writerWithDefaultPrettyPrinter().writeValueAsString(slotsData));
 //        return SlotsDataUtil.builder().slots(slotsData).build();
-			return slotsData;
+            return slotsData;
 
-		} catch (Exception e) {
-			log.error("Error in scraping content", e);
-		}
+        } catch (Exception e) {
+            log.error("Error in scraping content", e);
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private JsonNode extractSlotsDataFromPage(Page page, String url) {
+    private JsonNode extractSlotsDataFromPage(Page page, String url) {
 
-		try {
+        try {
 
-			page.onConsoleMessage(consoleMessage -> {
-				jsExtraction.add("\n" + consoleMessage.text() + "\n");
-			});
+            page.onConsoleMessage(consoleMessage -> {
+                jsExtraction.add("\n" + consoleMessage.text() + "\n");
+            });
 
-			page.navigate(url);
-			page.waitForTimeout(500);
+            page.navigate(url);
+            page.waitForTimeout(500);
 
-			try {
-				JsonNode slotsData;
-				Object adUnitDataEval = page.evaluate(adUnitDataCheckV2());
-				
-				log.info("Extracted json data from the page: " + adUnitDataEval.toString());
-				slotsData = jsonReader.readTree(adUnitDataEval.toString());
-				// log.info("JSON Node as pretty print: " +
-				// jsonReader.writerWithDefaultPrettyPrinter().writeValueAsString(slotsData));
-				return slotsData;
+            try {
+                JsonNode slotsData;
+                Object adUnitDataEval = page.evaluate(adUnitDataCheckV2());
 
-			} catch (JsonProcessingException e) {
-				log.error("Json Parsing error", e);
-			}
+                log.info("Extracted json data from the page: " + adUnitDataEval.toString());
+                slotsData = jsonReader.readTree(adUnitDataEval.toString());
+                // log.info("JSON Node as pretty print: " +
+                // jsonReader.writerWithDefaultPrettyPrinter().writeValueAsString(slotsData));
+                return slotsData;
 
-		} catch (PlaywrightException e) {
-			log.error("Error in scraping content", e);
-		}
+            } catch (JsonProcessingException e) {
+                log.error("Json Parsing error", e);
+            }
 
-		return null;
-	}
+        } catch (PlaywrightException e) {
+            log.error("Error in scraping content", e);
+        }
 
-	private String pbjsVarExtrationLogic() {
-		return """
-				if(window._pbjsGlobals){
-				var pbjsVar = window._pbjsGlobals[0];
-				console.log(JSON.stringify(window[pbjsVar], null , 4));
-				}
-				    """;
-	}
+        return null;
+    }
 
-	// Scraping ad unit detials
-	private String adUnitExtractionLogic() {
-		return """
-				    if(googletag.pubads()){
-				        console.log('List of Ad units and Targeting: ');
-				    googletag.pubads().getSlots().map(s => {
-				        console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
-				    });
-				}""";
-	}
+    private String pbjsVarExtrationLogic() {
+        return """
+                if(window._pbjsGlobals){
+                var pbjsVar = window._pbjsGlobals[0];
+                console.log(JSON.stringify(window[pbjsVar], null , 4));
+                }
+                    """;
+    }
 
-	private String adUnitDataCheck() {
-		return """
-				var jsonObj = [];
-				// function adUnitJs(){
-				//     return JSON.stringify(jsonObj);
-				// }
+    // Scraping ad unit detials
+    private String adUnitExtractionLogic() {
+        return """
+                    if(googletag.pubads()){
+                        console.log('List of Ad units and Targeting: ');
+                    googletag.pubads().getSlots().map(s => {
+                        console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
+                    });
+                }""";
+    }
 
-				       if(googletag.pubads()){
-				        googletag.pubads().getSlots().map(s => {
-				        jsonObj.push(
-				                new Map([
-				                        ["adunitPath", s.getAdUnitPath()], ["sizes", s.getSizes()], ["targetting", s.getTargetingMap()]
-				                        ])
-				            )
-				        });
-				        console.log(JSON.stringify(jsonObj));
-				        //console.dir(jsonObj)
-				    }
-				    //adUnitJs();
-				    // console.dir(jsonObj);
-				    """;
-	}
+    private String adUnitDataCheck() {
+        return """
+                var jsonObj = [];
+                // function adUnitJs(){
+                //     return JSON.stringify(jsonObj);
+                // }
 
-	private String adUnitDataCheckV2() {
-		return """
-				class AdUnitsData {
-				    constructor(path, sizes, targetting) {
-				        this.path = path;
-				        this.sizes = sizes;
-				      this.targetting = targetting;
-				    }
-				  }
+                       if(googletag.pubads()){
+                        googletag.pubads().getSlots().map(s => {
+                        jsonObj.push(
+                                new Map([
+                                        ["adunitPath", s.getAdUnitPath()], ["sizes", s.getSizes()], ["targetting", s.getTargetingMap()]
+                                        ])
+                            )
+                        });
+                        console.log(JSON.stringify(jsonObj));
+                        //console.dir(jsonObj)
+                    }
+                    //adUnitJs();
+                    // console.dir(jsonObj);
+                    """;
+    }
 
-				slotsData = [];
+    private String adUnitDataCheckV2() {
+        return """
+                class AdUnitsData {
+                    constructor(path, sizes, targetting) {
+                        this.path = path;
+                        this.sizes = sizes;
+                      this.targetting = targetting;
+                    }
+                  }
 
-				function adUnitJs(){
-				         return JSON.stringify(slotsData);
-				     }
+                slotsData = [];
 
-				if(googletag.pubads()){
-				    googletag.pubads().getSlots().map(s => {
+                function adUnitJs(){
+                         return JSON.stringify(slotsData);
+                     }
 
-				        // console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
-				        slotsData.push( new AdUnitsData(s.getAdUnitPath(), s.getSizes(), s.getTargetingMap()));
+                if(googletag.pubads()){
+                    googletag.pubads().getSlots().map(s => {
 
-				    });
+                        // console.log(s.getAdUnitPath(), JSON.stringify(s.getSizes(), null, 4), JSON.stringify(s.getTargetingMap(), null, 4));
+                        slotsData.push( new AdUnitsData(s.getAdUnitPath(), s.getSizes(), s.getTargetingMap()));
 
-				}
+                    });
 
-				//console.log(JSON.stringify(slotsData, null, 4));
+                }
 
-				adUnitJs();
-				""";
-	}
+                //console.log(JSON.stringify(slotsData, null, 4));
+
+                adUnitJs();
+                """;
+    }
 }

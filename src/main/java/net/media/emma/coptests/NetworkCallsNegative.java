@@ -17,12 +17,14 @@ import java.util.concurrent.CompletableFuture;
 @ContextConfiguration(classes = Loggers.class)
 public class NetworkCallsNegative extends AbstractTestNGSpringContextTests {
 
-    @Autowired private net.media.emma.service.BrowserRemote browserRemote;
-    @Autowired private net.media.emma.config.Loggers loggers;
-    @Autowired private net.media.emma.coptests.SoftAssertion softAssertion;
-
     @Autowired
     AssertNetworkCalls assertNetworkCalls;
+    @Autowired
+    private net.media.emma.service.BrowserRemote browserRemote;
+    @Autowired
+    private net.media.emma.config.Loggers loggers;
+    @Autowired
+    private net.media.emma.coptests.SoftAssertion softAssertion;
 
     @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml.class)
     public void networkCallsNeg(Object object) {
@@ -34,12 +36,12 @@ public class NetworkCallsNegative extends AbstractTestNGSpringContextTests {
             for (Map.Entry<String, String> networkCall : mnetNetworkCallsNegative.entrySet()) {
                 CompletableFuture<List<String>> future = CompletableFuture.supplyAsync(() -> this.browserRemote.getRequestUrls(networkCall.getValue()));
                 List<String> urls = future.join();
-                assertNetworkCalls.logsUrlsNotPresent.put(networkCall.getKey(), urls);
+                AssertNetworkCalls.logsUrlsNotPresent.put(networkCall.getKey(), urls);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             softAssertion.getSoftAssert().fail("Error in getting network calls negative");
             loggers.standardLogger().error("Error in getting network calls negative", e);
-        }finally {
+        } finally {
             softAssertion.getSoftAssert().assertAll();
         }
     }

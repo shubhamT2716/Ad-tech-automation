@@ -16,7 +16,7 @@ public class OpenUrl extends AbstractTestNGSpringContextTests {
     private net.media.emma.service.BrowserRemote browserRemote;
 
     @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml.class)
-    public void openUrl(Object object){
+    public void openUrl(Object object) {
         Map<String, Object> testData = (Map<String, Object>) object;
         browserRemote.openUrl(testData.get("url").toString());
     }

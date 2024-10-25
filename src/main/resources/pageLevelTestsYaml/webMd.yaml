@@ -2,19 +2,19 @@ environment: hbx.media.net
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.webmd.com/?mnet_test=1"
 
-#ypbjs: {
+  #ypbjs: {
   #"$.[0].path": "$.imp.[0].ext.dfp_ad_unit_code", # adUnitPath from JS vs adUnitPath from bidderPostData. Data needs to be normalized and verified.
   #"$.[0].sizes": "$.imp.[0].banner.format", #list of sizes from JS vs list of sizes from bidderPostData. Data needs to be normalized and then verified. 
 
- #}
+  #}
 
- # hits for normalizing data
- # sizes in the format:SET of Sizes--> [728x90 970x250]
+  # hits for normalizing data
+  # sizes in the format:SET of Sizes--> [728x90 970x250]
 
- # help for jsonPath in java: https://www.baeldung.com/guide-to-jayway-jsonpath
+  # help for jsonPath in java: https://www.baeldung.com/guide-to-jayway-jsonpath
 
-#rtbs: {
- #   "asdf": "asdf",
+  #rtbs: {
+  #   "asdf": "asdf",
   #"123213": "123123",
- #}
+  #}
  

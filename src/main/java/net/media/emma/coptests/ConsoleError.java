@@ -16,18 +16,21 @@ public class ConsoleError extends AbstractTestNGSpringContextTests {
 
     static List<String> hasError;
 
-    @Autowired private net.media.emma.service.BrowserRemote browserRemote;
-    @Autowired private net.media.emma.config.Loggers loggers;
-    @Autowired private net.media.emma.coptests.SoftAssertion softAssertion;
+    @Autowired
+    private net.media.emma.service.BrowserRemote browserRemote;
+    @Autowired
+    private net.media.emma.config.Loggers loggers;
+    @Autowired
+    private net.media.emma.coptests.SoftAssertion softAssertion;
 
     @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml.class)
     public void verifyConsoleError(Object object) {
         try {
             hasError = browserRemote.verifyConsoleError("bidexchange");
-        }catch (Exception e) {
+        } catch (Exception e) {
             softAssertion.softAssert().fail("Unable to read console error");
             loggers.standardLogger().error("Unable to read console error", e);
-        }finally {
+        } finally {
             softAssertion.softAssert().assertAll();
         }
     }

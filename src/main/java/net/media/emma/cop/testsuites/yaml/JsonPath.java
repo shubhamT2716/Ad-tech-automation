@@ -39,11 +39,7 @@ public class JsonPath {
 
 
     public Boolean verifyJsonNodeValue(JsonNode jsonNode, String value) {
-        if (jsonNode.isTextual() && value.equals(jsonNode.textValue())) {
-            return true;
-        } else {
-            return false;
-        }
+        return jsonNode.isTextual() && value.equals(jsonNode.textValue());
     }
 
     public String toJsonPointer(String dotNotation) {
@@ -56,7 +52,7 @@ public class JsonPath {
     }
 
     public Object readValueFromJson(String data, String jsonPath) throws PathNotFoundException {
-    	
+
         return com.jayway.jsonpath.JsonPath.read(data, jsonPath);
     }
 
@@ -66,54 +62,45 @@ public class JsonPath {
 
     public boolean compareValueInJson(String json, String jsonPath, Object expectedValue) {
         try {
-        	
 
-            	Object actualValue = readValueFromJson(json, jsonPath);
-                
+
+            Object actualValue = readValueFromJson(json, jsonPath);
+
 //              log.info("Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue);
-             
-              String pathValue="Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue;
-              
-              log.info(pathValue);
-              
-              ArrayList<String> al=new ArrayList<>();
-              al.add(pathValue);
-              
-              
-              if(expectedValue.toString().equals(actualValue.toString()))
-              {
-            	  return true;
-              }
-              else {
-            	  
-            	  return false;
-              }
-              
+
+            String pathValue = "Path = " + jsonPath + "   " + " expectedValue = " + expectedValue + "   " + "Actual Value = " + actualValue;
+
+            log.info(pathValue);
+
+            ArrayList<String> al = new ArrayList<>();
+            al.add(pathValue);
+
+
+            return expectedValue.toString().equals(actualValue.toString());
+
 //              return Objects.equals(actualValue.toString(), expectedValue.toString());
 //            }else {
 //            	throw new PathNotFoundException();
 //            }
-            
+
 //         	Object actualValue = readValueFromJson(json, jsonPath);
-        		
+
 // //            log.info("Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue);
-           
+
 //             String pathValue="Path = "+jsonPath+"   " +" expectedValue = "+  expectedValue +"   " +"Actual Value = "+actualValue;
-            
+
 //             ArrayList<String> al=new ArrayList<>();
 //             al.add(pathValue);
-            
+
 //            log.info(pathValue);
-            
-            
-            
-        } catch (PathNotFoundException | IllegalArgumentException | NullPointerException e) {
+
+
+        } catch (PathNotFoundException | IllegalArgumentException |
+                 NullPointerException e) {
             return false;
         }
-        
+
     }
-
-
 
 
 }

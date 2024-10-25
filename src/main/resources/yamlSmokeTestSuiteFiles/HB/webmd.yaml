@@ -1,5 +1,5 @@
 environment: hbx.media.net
-cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [ VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.webmd.com/?mnet_test=1"
 bidexAppendString: ""
@@ -49,15 +49,15 @@ keysToVerifyPositive: {
   },
 
   APLog: {
-   # svr: ["2023091809_218_100912_20_100912_42_ssp"],
+    # svr: ["2023091809_218_100912_20_100912_42_ssp"],
     #ugd: ["4"]
   },
 }
 
 keysToVerifyNegative: {
-  belog: { name: ["ADS_DISABLED"]},
-  prlog: { snm : ["removed","error",]},
-  aplog: { nbr: ["13"]},
+  belog: { name: [ "ADS_DISABLED" ] },
+  prlog: { snm: [ "removed","error", ] },
+  aplog: { nbr: [ "13" ] },
   #awlog: { ogbdp: ["0","-1","-2"]},
 }
 
@@ -87,10 +87,10 @@ bidderDataAssertions: {
         { jsonPath: "x.imp[0].bidfloors[0].floor", value: "0" },
         { jsonPath: "x.imp[0].bidfloors[0].mediaType", value: "banner" },
         { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
-        { jsonPath: "x.imp[0].ext.channel", value: ""},
-        { jsonPath: "x.imp[0].ext.display_count", value: "1"},
-        { jsonPath: "x.imp[0].ext.mniv", value: "0"},
-        { jsonPath: "x.imp[0].ext.section", value: ""}
+        { jsonPath: "x.imp[0].ext.channel", value: "" },
+        { jsonPath: "x.imp[0].ext.display_count", value: "1" },
+        { jsonPath: "x.imp[0].ext.mniv", value: "0" },
+        { jsonPath: "x.imp[0].ext.section", value: "" }
       ],
       responseData: [
         { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -117,10 +117,10 @@ bidderDataAssertions: {
         { jsonPath: "x.imp[1].bidfloors[1].floor", value: "0" },
         { jsonPath: "x.imp[1].bidfloors[1].mediaType", value: "banner" },
         { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
-        { jsonPath: "x.imp[1].ext.channel", value: ""},
-        { jsonPath: "x.imp[1].ext.display_count", value: "1"},
-        { jsonPath: "x.imp[1].ext.mniv", value: "0"},
-        { jsonPath: "x.imp[1].ext.section", value: ""}
+        { jsonPath: "x.imp[1].ext.channel", value: "" },
+        { jsonPath: "x.imp[1].ext.display_count", value: "1" },
+        { jsonPath: "x.imp[1].ext.mniv", value: "0" },
+        { jsonPath: "x.imp[1].ext.section", value: "" }
       ],
       responseData: [
         { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -322,5 +322,5 @@ responseSimulate: [
     urlPattern: "**//hb-pb.media.net/**",
     jsonPath: "$.ext.csUrl[1].url",
     overrideValue: "MYSESSINID"
-  }]
-domInject: []
+  } ]
+domInject: [ ]

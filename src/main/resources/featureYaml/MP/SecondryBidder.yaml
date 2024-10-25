@@ -1,9 +1,9 @@
 networkCallPositive: {
-   APPR: "https://navvy.media.net/log",
+  APPR: "https://navvy.media.net/log",
 }
 
 keysToVerifyPositive: {
-   APPR: {
-    issec: ["0"], 
+  APPR: {
+    issec: [ "0" ],
   },
 }

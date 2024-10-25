@@ -4,15 +4,15 @@
     <title>Input URL</title>
 </head>
 <body>
-    <form method="post">
-        <input type="text" name="url" placeholder="Enter URL"><br />
-        <input type="text" name="urlPatterns" placeholder="Enter URL Patterns"><br />
-        <input type="submit" value="Shorten">
-    </form>
+<form method="post">
+    <input name="url" placeholder="Enter URL" type="text"><br/>
+    <input name="urlPatterns" placeholder="Enter URL Patterns" type="text"><br/>
+    <input type="submit" value="Shorten">
+</form>
 
-    <div id="app">
-        <pre th:text="${message}" />
-    </div>
-    
+<div id="app">
+    <pre th:text="${message}"/>
+</div>
+
 </body>
 </html>

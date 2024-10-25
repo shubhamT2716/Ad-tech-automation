@@ -1,31 +1,21 @@
 package net.media.emma.cop.testsuites.compliance;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import lombok.extern.slf4j.Slf4j;
+import net.media.emma.utils.FileOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-
-import lombok.extern.slf4j.Slf4j;
-import net.media.emma.utils.FileOperations;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 @Controller("privacyComplianceController")
 @Slf4j
@@ -34,13 +24,13 @@ public class WebController {
 
     @Autowired
     ComplianceTestSuite complianceTestSuite;
-    
+
     @Autowired
     ObjectMapper yamlMapper;
-    
+
     @Autowired
     FileOperations fileOperations;
-    
+
     @Value("${complianceYamlFilesPath}")
     private String complianceYamlFilesPath;
 
@@ -64,11 +54,11 @@ public class WebController {
             ComplianceTestCriteria yamlTc = mapper.readValue(yaml, ComplianceTestCriteria.class);
             // mav.addObject("message", yamlTc.getEnvironment());
             //mav.addObject("message", yamlTestSuite.getTestResults(yamlTc));
-            
-            ComplianceTestReport complianceTestReport=complianceTestSuite.getTestResults(yamlTc);
-            
-            JsonNode jsonNode=yamlMapper.convertValue(complianceTestReport, JsonNode.class);
-            
+
+            ComplianceTestReport complianceTestReport = complianceTestSuite.getTestResults(yamlTc);
+
+            JsonNode jsonNode = yamlMapper.convertValue(complianceTestReport, JsonNode.class);
+
             mav.addObject("message", jsonNode);
 
         } catch (JsonProcessingException | InterruptedException e) {
@@ -99,21 +89,21 @@ public class WebController {
 //            }
 //        }
 //        return "Input File Name Empty";
-    	
-    	ClassPathResource classPathResource = new ClassPathResource(complianceYamlFilesPath+"/" + fileName);
 
-		try {
-			InputStream inputStream = classPathResource.getInputStream();
+        ClassPathResource classPathResource = new ClassPathResource(complianceYamlFilesPath + "/" + fileName);
 
-			String content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+        try {
+            InputStream inputStream = classPathResource.getInputStream();
 
-			inputStream.close();
+            String content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 
-			return content;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "Error while reading Yaml" + e.getMessage();
-		}
-    	
+            inputStream.close();
+
+            return content;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error while reading Yaml" + e.getMessage();
+        }
+
     }
 }

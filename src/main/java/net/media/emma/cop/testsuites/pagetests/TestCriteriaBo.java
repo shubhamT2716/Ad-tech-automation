@@ -1,17 +1,13 @@
 package net.media.emma.cop.testsuites.pagetests;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.BidderDataAssertions;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,28 +16,28 @@ import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
 @AllArgsConstructor
 public class TestCriteriaBo {
 
-	String environment;
+    String environment;
     String userAgent;
     String publisherUrl;
-    List<Map<String,String>> cookies;
-    
-    
+    List<Map<String, String>> cookies;
+
+
     Map<String, String> networkCallsPositive;
-	Map<String, String> networkCallsNegative;
+    Map<String, String> networkCallsNegative;
 
-	Map<String, Map<String, Set<String>>> keysToVerifyPositive;
-	Map<String, Map<String, Set<String>>> keysToVerifyNegative;
-	Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
+    Map<String, Map<String, Set<String>>> keysToVerifyPositive;
+    Map<String, Map<String, Set<String>>> keysToVerifyNegative;
+    Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
 
-	Map<String, String> featureCallsPositive;
-	Map<String, Map<String, Set<String>>> featureKeysPositive;
-	Map<String, Map<String, Set<String>>> featureKeysNegative;
+    Map<String, String> featureCallsPositive;
+    Map<String, Map<String, Set<String>>> featureKeysPositive;
+    Map<String, Map<String, Set<String>>> featureKeysNegative;
 
-	Map<String, String> bidderDataUrls;
-	Map<String, List<BidderDataAssertions>> bidderDataAssertions;
-	
-	
-	List<ResponseSimulateParams> responseSimulate;
+    Map<String, String> bidderDataUrls;
+    Map<String, List<BidderDataAssertions>> bidderDataAssertions;
+
+
+    List<ResponseSimulateParams> responseSimulate;
     List<DomInjectParams> domInject;
 
 

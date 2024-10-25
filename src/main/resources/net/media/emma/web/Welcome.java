@@ -1,8 +1,5 @@
 package net.media.emma.web;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,18 +7,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Controller
 public class Welcome {
 
-    @Autowired private net.media.emma.service.BrowserRemote browserRemote;
-
-    private static final Map<String,String> listOfTestSuites = new LinkedHashMap<>() {
+    private static final Map<String, String> listOfTestSuites = new LinkedHashMap<>() {
         {
             put("YAML Config Based Tests (Simple)", "/yamlTestSuite/");
             put("Page Level Checks - Test Suite", "/pageLevelTests/");
             put("Logging Pixel Data Validation Tests", "/loggingPixelsTestSuite/");
             put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "/privacyComplianceTestSuite/");
-        }};
+        }
+    };
+    @Autowired
+    private net.media.emma.service.BrowserRemote browserRemote;
 
     @GetMapping("/welcome")
     public String openUrl() {
@@ -44,5 +45,4 @@ public class Welcome {
     }
 
 
-    
 }

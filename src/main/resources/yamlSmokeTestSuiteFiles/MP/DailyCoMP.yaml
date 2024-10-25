@@ -1,5 +1,5 @@
 environment: warp.media.net
-cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [ VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.daily.co.jp/?medianet_test=1"
 bidexAppendString: ""
@@ -7,67 +7,67 @@ bidexReplaceString: { "": "" }
 pbjsEvents: "bidResponse"
 
 networkCallsPositive: {
- checksync: "https://hbx.media.net/checksync.php?",
- APPR-RA: "https://navvy.media.net/log",
- #RA: "https://navvy.media.net/log",
-  
+  checksync: "https://hbx.media.net/checksync.php?",
+  APPR-RA: "https://navvy.media.net/log",
+  #RA: "https://navvy.media.net/log",
+
 }
 
 networkCallsNegative: {
- nerrPing: "https://hblg.media.net/nerrping.php",
- flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  nerrPing: "https://hblg.media.net/nerrping.php",
+  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
 }
 
 keysToVerifyPositive: {
 
- checksync: {
-   #gdpr: ["0"],   
-   #usp_status: ["1"],
-   #axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
- },
+  checksync: {
+    #gdpr: ["0"],
+    #usp_status: ["1"],
+    #axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
+  },
 
- APPR-RA: {
-   lgtp: ["APPR","RA"],
-   #gdpr: ["0"],
-   #dn: ["www.fox13now.com"]
- },
+  APPR-RA: {
+    lgtp: [ "APPR","RA" ],
+    #gdpr: ["0"],
+    #dn: ["www.fox13now.com"]
+  },
 
 }
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  
+
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
   #APPR: {
-   # pvnm: ["trustx","ix","rubicon","appnexus","adagio"],
-    #size: ["300x250","728x90"],
-    #lgtp: ["APPR","RA"]
+  # pvnm: ["trustx","ix","rubicon","appnexus","adagio"],
+  #size: ["300x250","728x90"],
+  #lgtp: ["APPR","RA"]
   #}
-  
+
 }
 
 responseHeaders: {
-  
+
 
 }
 
 requestHeaders: {
-  
+
 
 }
 
 bidderDataUrls: {
- 
+
 }
 
 bidderDataAssertions: {
 }
-  
+
 
 # ------------------------------ignore the lines below--rats---------------------
-responseSimulate: []
-domInject: []
+responseSimulate: [ ]
+domInject: [ ]

@@ -5,35 +5,35 @@
     <title>Webhook Processing</title>
 </head>
 <body>
-    <h1>Webhook Status</h1>
-    
-    <p> this is demo page while after webhook </p>
-    
-    <script th:inline="javascript">
+<h1>Webhook Status</h1>
+
+<p> this is demo page while after webhook </p>
+
+<script th:inline="javascript">
     /*<![CDATA[*/
-       var reportData = /*[[${name}]]*/ 'name';
-     /*]]>*/
-</script> 
+    var reportData = /*[[${name}]]*/ 'name';
+    /*]]>*/
+</script>
 
 <p>reportData</p>
-    <!--<p id="status">Processing...</p>
+<!--<p id="status">Processing...</p>
 
-    <script>
-        // Function to poll the webhook status
-        function checkStatus() {
-            fetch('/webhook/status')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'completed') {
-                        document.getElementById('status').innerText = 'Process completed successfully!';
-                    } else {
-                        setTimeout(checkStatus, 1000); // Poll every 1 second
-                    }
-                });
-        }
+<script>
+    // Function to poll the webhook status
+    function checkStatus() {
+        fetch('/webhook/status')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'completed') {
+                    document.getElementById('status').innerText = 'Process completed successfully!';
+                } else {
+                    setTimeout(checkStatus, 1000); // Poll every 1 second
+                }
+            });
+    }
 
-        // Start checking status
-        checkStatus();
-    </script>-->
+    // Start checking status
+    checkStatus();
+</script>-->
 </body>
 </html>

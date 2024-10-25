@@ -1,5 +1,5 @@
 environment: hbx.media.net
-cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [ VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1&force_hbtest=all"
 location: paris
@@ -15,39 +15,39 @@ networkCallsPositive: {
 
 keysToVerifyPositive: {
   PRLog: {
-    tcf_cmp: ["28"],
-    tcf_status: ["loaded"],
-    tcf_prp: ["1111--1"],
-    tcf_api: ["1"],
+    tcf_cmp: [ "28" ],
+    tcf_status: [ "loaded" ],
+    tcf_prp: [ "1111--1" ],
+    tcf_api: [ "1" ],
   },
   APLog: {
-    tcf_cmp: ["28"],
-    tcf_status: ["loaded"],
-    tcf_prp: ["1111--1"],
-    tcf_api: ["1"],
+    tcf_cmp: [ "28" ],
+    tcf_status: [ "loaded" ],
+    tcf_prp: [ "1111--1" ],
+    tcf_api: [ "1" ],
   },
   RTBSCall: {
-    gdpr: ["1"],
-    gdprconsent: ["1"],
-    gdprstring: [""],
+    gdpr: [ "1" ],
+    gdprconsent: [ "1" ],
+    gdprstring: [ "" ],
   },
   Checksync: {
-    gdpr: ["1"],
-    gdprconsent: ["1"],
-    gdprstring: [""],
+    gdpr: [ "1" ],
+    gdprconsent: [ "1" ],
+    gdprstring: [ "" ],
   },
 }
 
 keysToVerifyAnyOneOf: {
   PRLog: {
-    cc: ["FR","DE"],
-    ct: ["PARIS","FRANKFURT"],
+    cc: [ "FR","DE" ],
+    ct: [ "PARIS","FRANKFURT" ],
   },
   APLog: {
-    cc: ["FR","DE"],
-    ct: ["PARIS","DENMARK"],
+    cc: [ "FR","DE" ],
+    ct: [ "PARIS","DENMARK" ],
   },
   RTBSCall: {
-    isRefresh: ["0","1"]
+    isRefresh: [ "0","1" ]
   }
 }

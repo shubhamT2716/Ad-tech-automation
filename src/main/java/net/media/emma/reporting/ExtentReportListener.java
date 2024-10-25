@@ -8,7 +8,7 @@ import org.testng.ITestListener;
 import org.testng.ITestResult;
 
 public class ExtentReportListener implements ITestListener {
-    private static ExtentReports extent = ExtentManager.getInstance();
+    private static final ExtentReports extent = ExtentManager.getInstance();
 
     @Override
     public void onStart(ITestContext context) {

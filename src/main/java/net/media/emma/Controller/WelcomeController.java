@@ -1,21 +1,16 @@
 package net.media.emma.Controller;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
-import lombok.extern.slf4j.Slf4j;
-
-@Controller 
+@Controller
 public class WelcomeController {
 
-    private static final Map<String,String> listOfTestSuites = new LinkedHashMap<>() {
+    private static final Map<String, String> listOfTestSuites = new LinkedHashMap<>() {
         {
             put("Yaml Rules for Publisher ", "/yamlTestSuite/");
             put("Smoke Test Suite", "/yamlTestSuite/smokeTestSuite");
@@ -24,8 +19,9 @@ public class WelcomeController {
             put("Compliance - GDPR/TCF, CCPA, USPA etc - Tests", "/privacyComplianceTestSuite/");
             put("Auto Tester", "/autoTester/");
             //put("Show Report", "/yamlTestSuite/show-report");
-            put("Yaml Rules for TestPage","/yamlTestSuite/testpage");
-        }};
+            put("Yaml Rules for TestPage", "/yamlTestSuite/testpage");
+        }
+    };
 
     @GetMapping("/")
     public ModelAndView openIndex() {
@@ -36,5 +32,4 @@ public class WelcomeController {
     }
 
 
-    
 }

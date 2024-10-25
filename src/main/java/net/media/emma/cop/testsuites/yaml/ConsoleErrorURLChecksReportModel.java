@@ -4,22 +4,24 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter @Builder
+@Getter
+@Setter
+@Builder
 public class ConsoleErrorURLChecksReportModel {
 
-	@Builder.Default
-	String consoleErrorMessage = "";
+    @Builder.Default
+    String consoleErrorMessage = "";
 
-	@Builder.Default
-	String bidExchangeUrl = "";
+    @Builder.Default
+    String bidExchangeUrl = "";
 
-	@Builder.Default
-	String responseSize = "";
+    @Builder.Default
+    String responseSize = "";
 
-	@Builder.Default
-	String responseTime = "";
+    @Builder.Default
+    String responseTime = "";
 
-	enum TestResult {
-		PASS, FAIL, NA
-	}
+    enum TestResult {
+        PASS, FAIL, NA
+    }
 }

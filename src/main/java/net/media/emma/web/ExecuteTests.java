@@ -18,14 +18,13 @@ import java.nio.file.Paths;
 public class ExecuteTests {
 
     private final FileOperations fileOperations;
+    @Autowired
+    private TestRunner testRunner;
 
     @Autowired
     public ExecuteTests(FileOperations fileOperations) {
         this.fileOperations = fileOperations;
     }
-
-    @Autowired
-    private TestRunner testRunner;
 
     @GetMapping("/testDataInput")
     public void executeTest() {
@@ -35,7 +34,7 @@ public class ExecuteTests {
     public ResponseEntity<String> executeTest(String yaml) throws IOException {
         fileOperations.saveYamlFile(yaml);
         testRunner.runTests();
-        String reportPath= System.getProperty("user.dir") +"/src/main/resources/Test-Automation-Report.html";
+        String reportPath = System.getProperty("user.dir") + "/src/main/resources/Test-Automation-Report.html";
         // Read the report file into a string
         String reportContent = Files.readString(Paths.get(reportPath));
 

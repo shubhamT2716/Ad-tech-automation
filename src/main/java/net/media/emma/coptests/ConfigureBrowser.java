@@ -1,17 +1,13 @@
 package net.media.emma.coptests;
 
 import com.microsoft.playwright.options.Cookie;
-import lombok.SneakyThrows;
 import net.media.emma.config.Loggers;
 import net.media.emma.utils.TestDataFromYaml;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +20,13 @@ public class ConfigureBrowser extends AbstractTestNGSpringContextTests {
     @Autowired
     private net.media.emma.service.BrowserRemote browserRemote;
 
-    @Autowired private net.media.emma.config.Loggers loggers;
+    @Autowired
+    private net.media.emma.config.Loggers loggers;
 
-    @Autowired private net.media.emma.coptests.SoftAssertion softAssertion;
+    @Autowired
+    private net.media.emma.coptests.SoftAssertion softAssertion;
 
-    @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml .class)
+    @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml.class)
     public void configureBrowser(Object object) {
         try {
             softAssertion.softAssert();
@@ -50,7 +48,7 @@ public class ConfigureBrowser extends AbstractTestNGSpringContextTests {
         } catch (Exception e) {
             softAssertion.getSoftAssert().fail("Unable to Configure Browser");
             loggers.standardLogger().error("Unable to Configure Browser", e);
-        }finally {
+        } finally {
             softAssertion.getSoftAssert().assertAll();
         }
     }

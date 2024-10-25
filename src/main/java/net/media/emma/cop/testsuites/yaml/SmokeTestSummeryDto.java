@@ -1,16 +1,11 @@
 package net.media.emma.cop.testsuites.yaml;
 
-import java.util.List;
-import java.util.Map;
-
+import lombok.*;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
 import org.springframework.stereotype.Component;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @Setter
@@ -20,41 +15,40 @@ import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
 @AllArgsConstructor
 public class SmokeTestSummeryDto {
 
-	private List<Testdata> testdatas;
-	
-	
+    private List<Testdata> testdatas;
 
-	@Setter
-	@Getter
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public class Testdata {
 
-		private String environment;
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class Testdata {
 
-		private String userAgent;
+        private String environment;
 
-		private String publisherUrl;
+        private String userAgent;
 
-		private String harFileDownloadLink;
-		
-		private String downloadReport;
+        private String publisherUrl;
 
-		private String dateTime;
+        private String harFileDownloadLink;
 
-		private String bidExFileSize;
+        private String downloadReport;
 
-		private String bidExTime;
+        private String dateTime;
 
-		private List<String> message;
+        private String bidExFileSize;
 
-		private List<String> matchingUrls;
-		
-		private BidexData bidexData;
-		
-		private Map<String, Map<String, String>> testResultSummery;
-		
-		
-	}
+        private String bidExTime;
+
+        private List<String> message;
+
+        private List<String> matchingUrls;
+
+        private BidexData bidexData;
+
+        private Map<String, Map<String, String>> testResultSummery;
+
+
+    }
 
 }

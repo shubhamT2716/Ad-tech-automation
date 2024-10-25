@@ -17,11 +17,10 @@ import java.util.List;
 @Component
 public class TestRunner {
 
-    @Autowired
-    private TestDataFromYaml testDataFromYaml;
-
     @Value("${yamlFilePath}")
     String yamlFilePath;
+    @Autowired
+    private TestDataFromYaml testDataFromYaml;
 
     public void runTests() {
         testDataFromYaml.setYamlFilePath(yamlFilePath);

@@ -1,17 +1,16 @@
 package net.media.emma.coptests;
 
-import org.testng.annotations.BeforeMethod;
+import lombok.Getter;
 import org.testng.asserts.SoftAssert;
 
+@Getter
 public class SoftAssertion {
 
     SoftAssert softAssert;
+
     public SoftAssert softAssert() {
         softAssert = new SoftAssert();
         return softAssert;
-    }
-    public SoftAssert getSoftAssert(){
-        return this.softAssert;
     }
 
 }

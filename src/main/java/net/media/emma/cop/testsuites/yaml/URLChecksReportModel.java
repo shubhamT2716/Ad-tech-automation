@@ -1,19 +1,13 @@
 package net.media.emma.cop.testsuites.yaml;
 
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -30,7 +24,7 @@ public class URLChecksReportModel {
     @Builder.Default
     Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
     @Builder.Default
-    Map<String, Map<String, Map<String, Object>>> bidderDataAssertionKeyVerification=new HashMap<>();
+    Map<String, Map<String, Map<String, Object>>> bidderDataAssertionKeyVerification = new HashMap<>();
     @Builder.Default
     Map<String, List<BidderDataAssertion>> bidderDataAssertions = new HashMap<>();
     @Builder.Default
@@ -38,6 +32,226 @@ public class URLChecksReportModel {
 //    @Builder.Default
 //    List<Map<String, String>> getpayloadDetails=new ArrayList();
 
+    public void updateMatchingUrlsCount() {
+        positiveUrlChecks.forEach((key, value) -> {
+            value.setCountOfMatchingUrls(value.getMatchingUrls().size());
+        });
+        negativeUrlChecks.forEach((key, value) -> {
+            value.setCountOfMatchingUrls(value.getMatchingUrls().size());
+        });
+    }
+
+    public void updateNetworkCallErrors(TestCriteriaBo testData) {
+
+        testData.getNetworkCallsPositive().forEach((key, value) -> {
+            if (!positiveUrlChecks.containsKey(key)) {
+                positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).urlPattern(value).testResult(TestResult.FAIL)
+                        .testMessages(List.of("Call not fired")).build());
+            }
+
+        });
+
+        testData.getNetworkCallsNegative().forEach((key, value) -> {
+            if (!negativeUrlChecks.containsKey(key)) {
+//                negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
+
+                negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).testResult(TestResult.NOTPASS).urlPattern(value).build());
+
+
+            } else {
+                negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
+                negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
+            }
+        });
+    }
+
+    public void verifyPositiveKeyValChecks() {
+
+        Set<String> ralog = new HashSet<>();
+
+        ralog.add("RA");
+
+        try {
+
+            positiveUrlChecks.forEach((callLabel, callData) -> {  // key, value --> label, PositiveURLChecks obj
+
+                if (callData.getPositiveKeyValChecks() != null) {
+                    callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
+                        Set<String> actualValues = new HashSet<>();
+
+                        callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
+                            if (qsMapFromNetworkCall.containsKey(qsParam)) {
+                                actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                            }
+                        });
+
+                        log.info(" Expected: " + listOfValues + " Actual: " + actualValues);
+
+
+                        if (listOfValues.equals(ralog) && !actualValues.equals(ralog) && callData.getLabel().equals("awlog")) {
+                            callData.getTestMessages().add("Call not fired");
+
+                        } else if (!actualValues.equals(listOfValues)) {
+//                        callData.getTestMessages().add("Positive key value check Pass for key: " + qsParam
+//                                + ". Expected: " + listOfValues + " Actual: " + actualValues);
+//                    } else {
+                            callData.getTestMessages().add("Positive key value check failed for key: " + qsParam
+                                    + ". Expected: " + listOfValues + " Actual: " + actualValues);
+                            callData.setTestResult(TestResult.FAIL);
+                        }
+                    });
+                }
+
+                // Negative Key Value Checks
+                if (callData.getNegativeKeyValChecks() != null) {
+                    callData.getNegativeKeyValChecks().forEach((qsParam, listOfValues) -> {
+                        Set<String> actualValues = new HashSet<>();
+
+                        callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
+                            if (qsMapFromNetworkCall.containsKey(qsParam)) {
+                                actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                            }
+                        });
+
+                        if (actualValues.equals(listOfValues)) {
+                            callData.getTestMessages().add("Negative key value check Pass for key: " + qsParam
+                                    + ". Found negative matches: " + actualValues);
+                        } else {
+                            callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
+                                    + ". Found negative matches: " + actualValues);
+                            callData.setTestResult(TestResult.FAIL);
+                        }
+                    });
+                }
+
+                // Any One Of Key Value Checks
+                if (callData.getAnyOneOfKeyValChecks() != null) {
+                    callData.getAnyOneOfKeyValChecks().forEach((qsParam, listOfValues) -> {
+                        Set<String> actualValues = new HashSet<>();
+
+                        callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
+                            if (qsMapFromNetworkCall.containsKey(qsParam)) {
+                                actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                            }
+                        });
+
+                        if (!Collections.disjoint(actualValues, listOfValues)) {
+                            callData.getTestMessages().add("Any one of key value check Pass for key: " + qsParam
+                                    + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
+                        } else {
+                            callData.getTestMessages().add("Any one of key value check failed for key: " + qsParam
+                                    + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
+                            callData.setTestResult(TestResult.FAIL);
+                        }
+                    });
+                }
+
+                // Request Headers Checks
+                if (callData.getRequestHeadersChecks() != null && !callData.getRequestHeadersChecks().isEmpty()) {
+                    boolean allMatched = false;
+
+                    for (Map<String, Object> headerMap : callData.getQueryStringMapRequestHeader()) {
+                        allMatched = compareHeaders(callData.getRequestHeadersChecks(), headerMap);
+                        if (allMatched)
+                            break; // Only break when all headers match
+                    }
+
+                    if (!allMatched) {
+                        callData.getTestMessages().add("Failed request headers verification");
+                        callData.setTestResult(TestResult.FAIL);
+                    }
+                }
+
+                // Response Headers Checks
+                if (callData.getResponseHeadersChecks() != null && !callData.getResponseHeadersChecks().isEmpty()) {
+                    boolean allMatched = false;
+
+                    for (Map<String, Object> headerMap : callData.getQueryStringMapResponseHeader()) {
+                        allMatched = compareHeaders(callData.getResponseHeadersChecks(), headerMap);
+                        if (allMatched)
+                            break; // Only break when all headers match
+                    }
+
+                    if (!allMatched) {
+                        callData.getTestMessages().add("Failed response headers verification");
+                        callData.setTestResult(TestResult.FAIL);
+                    }
+                }
+
+            });
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+    }
+
+    private boolean compareHeaders(Map<String, Object> expectedHeaders, Map<String, Object> actualHeaders) {
+        for (Map.Entry<String, Object> entry : expectedHeaders.entrySet()) {
+            String key = entry.getKey().toLowerCase();
+            Object expectedValue = entry.getValue();
+            Object actualValue = actualHeaders.get(key);
+
+            if (expectedValue instanceof ArrayList && actualValue instanceof String) {
+                Map<String, String> actualMap = Arrays.stream(((String) actualValue).split(";"))
+                        .map(String::trim)
+                        .map(str -> str.split("=", 2))
+                        .collect(Collectors.toMap(arr -> arr[0], arr -> arr.length > 1 ? arr[1] : ""));
+
+                for (Map<String, String> expectedMap : (ArrayList<Map<String, String>>) expectedValue) {
+                    for (Map.Entry<String, String> expectedEntry : expectedMap.entrySet()) {
+                        String expectedKey = expectedEntry.getKey().trim();
+                        String expectedVal = expectedEntry.getValue().trim();
+                        if (!actualMap.containsKey(expectedKey) || !actualMap.get(expectedKey).equals(expectedVal)) {
+                            return false;
+                        }
+                    }
+                }
+            } else if (expectedValue instanceof String && actualValue != null) {
+                if (!actualValue.toString().equals(expectedValue)) {
+                    return false;
+                }
+            } else if (actualValue == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void updateNetworkCallErrors(net.media.emma.cop.testsuites.pagetests.TestCriteriaBo testData) {
+//		testData.getNetworkCallsPositive().forEach((key, value) -> {
+//			if (!positiveUrlChecks.containsKey(key)) {
+//				positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL)
+//						.testMessages(Arrays.asList("Call not fired")).urlPattern(value).build());
+//			}
+//		});
+//
+//		testData.getNetworkCallsNegative().forEach((key, value) -> {
+//			if (!negativeUrlChecks.containsKey(key)) {
+//				negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
+//			} else {
+//				negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
+//			}
+//		});
+
+
+        testData.getNetworkCallsPositive().forEach((key, value) -> {
+            if (!positiveUrlChecks.containsKey(key)) {
+                positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).urlPattern(value).testResult(TestResult.FAIL)
+                        .testMessages(List.of("call not fired")).build());
+            }
+        });
+
+
+        testData.getNetworkCallsNegative().forEach((key, value) -> {
+            if (!negativeUrlChecks.containsKey(key)) {
+                negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
+            } else {
+                negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
+            }
+        });
+
+    }
 
     enum TestResult {
         PASS, FAIL, NOTPASS, NA
@@ -136,212 +350,7 @@ public class URLChecksReportModel {
         String Value;
     }
 
-    @Getter
-    @Setter
-    @Builder
-    @ToString
-    public static class HeadersAssertion {
-        String message;
-        TestResult testResult;
-        String url;
-        // ... any other fields required
-    }
 
-
-    public void updateMatchingUrlsCount() {
-        positiveUrlChecks.forEach((key, value) -> {
-            value.setCountOfMatchingUrls(value.getMatchingUrls().size());
-        });
-        negativeUrlChecks.forEach((key, value) -> {
-            value.setCountOfMatchingUrls(value.getMatchingUrls().size());
-        });
-    }
-
-    public void updateNetworkCallErrors(TestCriteriaBo testData) {
-
-        testData.getNetworkCallsPositive().forEach((key, value) -> {
-            if (!positiveUrlChecks.containsKey(key)) {
-                positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).urlPattern(value).testResult(TestResult.FAIL)
-                        .testMessages(Arrays.asList("Call not fired")).build());
-            }
-            
-        });
-
-        testData.getNetworkCallsNegative().forEach((key, value) -> {
-            if (!negativeUrlChecks.containsKey(key)) {
-//                negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
-                
-                negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).testResult(TestResult.NOTPASS).urlPattern(value).build());
-                
-            
-            } else {
-                negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
-                negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
-            }
-        });
-    }
-    
-    
-    
-    public void verifyPositiveKeyValChecks() {
-    	
-    	Set<String> ralog=new HashSet<>();
-    	
-    	ralog.add("RA");
-    	
-    	try {
-    	
-    		 positiveUrlChecks.forEach((callLabel, callData) -> {  // key, value --> label, PositiveURLChecks obj
-
-            if (callData.getPositiveKeyValChecks() != null) {
-                callData.getPositiveKeyValChecks().forEach((qsParam, listOfValues) -> {
-                    Set<String> actualValues = new HashSet<>();
-                    
-                    callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
-                        if (qsMapFromNetworkCall.containsKey(qsParam)) {
-                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
-                        }
-                    });
-                    
-                    log.info(" Expected: " + listOfValues + " Actual: " + actualValues);
-                    
-                    
-                    if(listOfValues.equals(ralog)&& !actualValues.equals(ralog)&& callData.getLabel().equals("awlog"))
-                    {
-                    	callData.getTestMessages().add("Call not fired");
-                    	
-                    }
-                    else  if (!actualValues.equals(listOfValues)) {
-//                        callData.getTestMessages().add("Positive key value check Pass for key: " + qsParam
-//                                + ". Expected: " + listOfValues + " Actual: " + actualValues);
-//                    } else {
-                        callData.getTestMessages().add("Positive key value check failed for key: " + qsParam
-                                + ". Expected: " + listOfValues + " Actual: " + actualValues);
-                        callData.setTestResult(TestResult.FAIL);
-                    }
-                });
-            }
-
-            // Negative Key Value Checks
-            if (callData.getNegativeKeyValChecks() != null) {
-                callData.getNegativeKeyValChecks().forEach((qsParam, listOfValues) -> {
-                    Set<String> actualValues = new HashSet<>();
-
-                    callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
-                        if (qsMapFromNetworkCall.containsKey(qsParam)) {
-                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
-                        }
-                    });
-
-                    if (actualValues.equals(listOfValues)) {
-                        callData.getTestMessages().add("Negative key value check Pass for key: " + qsParam
-                                + ". Found negative matches: " + actualValues);
-                    } else {
-                        callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
-                                + ". Found negative matches: " + actualValues);
-                        callData.setTestResult(TestResult.FAIL);
-                    }
-                });
-            }
-
-            // Any One Of Key Value Checks
-            if (callData.getAnyOneOfKeyValChecks() != null) {
-                callData.getAnyOneOfKeyValChecks().forEach((qsParam, listOfValues) -> {
-                    Set<String> actualValues = new HashSet<>();
-
-                    callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
-                        if (qsMapFromNetworkCall.containsKey(qsParam)) {
-                            actualValues.add(qsMapFromNetworkCall.get(qsParam));
-                        }
-                    });
-
-                    if (!Collections.disjoint(actualValues, listOfValues)) {
-                        callData.getTestMessages().add("Any one of key value check Pass for key: " + qsParam
-                                + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
-                    } else {
-                        callData.getTestMessages().add("Any one of key value check failed for key: " + qsParam
-                                + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
-                        callData.setTestResult(TestResult.FAIL);
-                    }
-                });
-            }
-
-            // Request Headers Checks
-            if (callData.getRequestHeadersChecks() != null && !callData.getRequestHeadersChecks().isEmpty()) {
-                boolean allMatched = false;
-
-                for (Map<String, Object> headerMap : callData.getQueryStringMapRequestHeader()) {
-                    allMatched = compareHeaders(callData.getRequestHeadersChecks(), headerMap);
-                    if (allMatched) break; // Only break when all headers match
-                }
-
-                if (!allMatched) {
-                    callData.getTestMessages().add("Failed request headers verification");
-                    callData.setTestResult(TestResult.FAIL);
-                }
-            }
-
-            // Response Headers Checks
-            if (callData.getResponseHeadersChecks() != null && !callData.getResponseHeadersChecks().isEmpty()) {
-                boolean allMatched = false;
-
-                for (Map<String, Object> headerMap : callData.getQueryStringMapResponseHeader()) {
-                    allMatched = compareHeaders(callData.getResponseHeadersChecks(), headerMap);
-                    if (allMatched) break; // Only break when all headers match
-                }
-
-                if (!allMatched) {
-                    callData.getTestMessages().add("Failed response headers verification");
-                    callData.setTestResult(TestResult.FAIL);
-                }
-            }
-
-        });
-        
-    	}
-    	catch (Exception e) {
-			
-    		e.printStackTrace();
-		}
-    }
-
-    private boolean compareHeaders(Map<String, Object> expectedHeaders, Map<String, Object> actualHeaders) {
-        for (Map.Entry<String, Object> entry : expectedHeaders.entrySet()) {
-            String key = entry.getKey().toLowerCase();
-            Object expectedValue = entry.getValue();
-            Object actualValue = actualHeaders.get(key);
-
-            if (expectedValue instanceof ArrayList && actualValue instanceof String) {
-                Map<String, String> actualMap = Arrays.stream(((String) actualValue).split(";"))
-                        .map(String::trim)
-                        .map(str -> str.split("=", 2))
-                        .collect(Collectors.toMap(arr -> arr[0], arr -> arr.length > 1 ? arr[1] : ""));
-
-                for (Map<String, String> expectedMap : (ArrayList<Map<String, String>>) expectedValue) {
-                    for (Map.Entry<String, String> expectedEntry : expectedMap.entrySet()) {
-                        String expectedKey = expectedEntry.getKey().trim();
-                        String expectedVal = expectedEntry.getValue().trim();
-                        if (!actualMap.containsKey(expectedKey) || !actualMap.get(expectedKey).equals(expectedVal)) {
-                            return false;
-                        }
-                    }
-                }
-            } else if (expectedValue instanceof String && actualValue != null) {
-                if (!actualValue.toString().equals(expectedValue)) {
-                    return false;
-                }
-            } else if (actualValue == null) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    
-
-    
-    
-    
 //    public void verifyPositiveKeyValChecks() {
 //
 //        positiveUrlChecks.forEach((callLabel, callData) -> { // key, value --> lable, PositiveURLChecks obj
@@ -576,44 +585,16 @@ public class URLChecksReportModel {
 //
 //    }
 
-	public void updateNetworkCallErrors(net.media.emma.cop.testsuites.pagetests.TestCriteriaBo testData) {
-//		testData.getNetworkCallsPositive().forEach((key, value) -> {
-//			if (!positiveUrlChecks.containsKey(key)) {
-//				positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).testResult(TestResult.FAIL)
-//						.testMessages(Arrays.asList("Call not fired")).urlPattern(value).build());
-//			}
-//		});
-//
-//		testData.getNetworkCallsNegative().forEach((key, value) -> {
-//			if (!negativeUrlChecks.containsKey(key)) {
-//				negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
-//			} else {
-//				negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);
-//			}
-//		});
-		
-		
-		testData.getNetworkCallsPositive().forEach((key,value)-> {
-			if(!positiveUrlChecks.containsKey(key)) {
-				positiveUrlChecks.put(key, PositiveURLChecks.builder().label(key).urlPattern(value).testResult(TestResult.FAIL)
-						.testMessages(Arrays.asList("call not fired")).build());
-			}
-		});
-		
-		
-		testData.getNetworkCallsNegative().forEach((key,value)->{
-			if(!negativeUrlChecks.containsKey(key))
-			{
-				negativeUrlChecks.put(key, NegativeURLChecks.builder().label(key).urlPattern(value).build());
-			}
-			else {
-				negativeUrlChecks.get(key).setTestResult(TestResult.FAIL);			
-				}
-		});
-		
-	}
-	
-	
-	
+    @Getter
+    @Setter
+    @Builder
+    @ToString
+    public static class HeadersAssertion {
+        String message;
+        TestResult testResult;
+        String url;
+        // ... any other fields required
+    }
+
 
 }

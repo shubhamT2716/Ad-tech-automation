@@ -1,5 +1,5 @@
 environment: warp.media.net
-cookies: [VisitorId : "3550383022710678000V10" ,  data-o : "37ac74ce-0ceb-0165-3c60-6197c767e100~~16"]
+cookies: [ VisitorId: "3550383022710678000V10" ,  data-o: "37ac74ce-0ceb-0165-3c60-6197c767e100~~16" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.fox13now.com/?medianet_test=1"
 
@@ -9,94 +9,94 @@ networkCallsPositive: {
   AWlog: "https://navvy.media.net/log",
   GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
   prtllog: "https://hbxlp.media.net/log"
- }
+}
 
 networkCallsNegative: {
   nerrPing: "https://hblg.media.net/nerrping.(php|js)?", #pattern: .*nerrping.(php|js).*
   Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog"
- }
+}
 
 keysToVerifyPositive: {
   BELog: {
-    evtid: ["belog"],
-    svr: ["284_21_0111_358_mp"],
-    dn: ["fox13now.com"],
-    cid: ["8CU2N1270"],
-    itype: ["MANAGED_PREBID"]},
+    evtid: [ "belog" ],
+    svr: [ "284_21_0111_358_mp" ],
+    dn: [ "fox13now.com" ],
+    cid: [ "8CU2N1270" ],
+    itype: [ "MANAGED_PREBID" ] },
 
   APPRLog: {
-    lgtp: ["APPR"],
-    evtid: ["prebid_analytics_events_client"]
+    lgtp: [ "APPR" ],
+    evtid: [ "prebid_analytics_events_client" ]
   },
 
   AWLog: {
-    lgtp: ["RA"],
-    dn: ["www.fox13now.com"],
-    gdpr: ["0"],
-    aucstatus: ["completed"],
-    iwb: ["1"]
+    lgtp: [ "RA" ],
+    dn: [ "www.fox13now.com" ],
+    gdpr: [ "0" ],
+    aucstatus: [ "completed" ],
+    iwb: [ "1" ]
   },
 
- PRTLLog: {
-    itype: ["MANAGED_PREBID"]
-  }}
+  PRTLLog: {
+    itype: [ "MANAGED_PREBID" ]
+  } }
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-    BELog: { name: ["GPT_Fetching_Warning"]}}
+  BELog: { name: [ "GPT_Fetching_Warning" ] } }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  BELog: { name: ["DFS_PERF","auctionEnd_1000","timeout_openx","timeout_sharethrough","timeout_appnexus","timeout_medianet", "timeout_pubmatic","timeout_rubicon","timeout_triplelift","timeout_ix" ]},
-  APPRLog: { iwb: ["0","1"],status: ["0","1","2"], aucstatus: ["completed"],req_mtype: ["banner", "video"], src: ["client","s2s"], pvnm: ["medianet", "sharethrough", "pubmatic", "ix", "openx", "sovrn", "yeildmo", "trustx", "appnexus", "kargo", "triplelift", "undertone", "rubicon", "yahooAds", "gumgum"] }}
+  BELog: { name: [ "DFS_PERF","auctionEnd_1000","timeout_openx","timeout_sharethrough","timeout_appnexus","timeout_medianet", "timeout_pubmatic","timeout_rubicon","timeout_triplelift","timeout_ix" ] },
+  APPRLog: { iwb: [ "0","1" ],status: [ "0","1","2" ], aucstatus: [ "completed" ],req_mtype: [ "banner", "video" ], src: [ "client","s2s" ], pvnm: [ "medianet", "sharethrough", "pubmatic", "ix", "openx", "sovrn", "yeildmo", "trustx", "appnexus", "kargo", "triplelift", "undertone", "rubicon", "yahooAds", "gumgum" ] } }
 
 
 bidderDataUrls: {
   prebid: "https://prebid.media.net/rtb/prebid?",
   auction: "https://prebid-s2s.media.net/openrtb2/auction"
-  }
+}
 bidderDataAssertions: {
   prebid: [
-  {
-    matchingJsonPath: {
-    jsonPath: "x.imp[0]ortb2Imp..ext.data.divId",
-    expectedValue: "MAD_HOMEPAGE_SHOWCASE"
-   },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0]ortb2Imp..ext.data.divId",
+        expectedValue: "MAD_HOMEPAGE_SHOWCASE"
+      },
 
-  requestData: [
-    { jsonPath: "x.imp[0].bidfloors[0].currency", value: "USD" },
-    { jsonPath: "x.imp[0].bidfloors[0].floor", value: "2" },
-    { jsonPath: "x.imp[0].bidfloors[0].mediaType", value: "banner" },
-    { jsonPath: "x.imp[0].ortb2Imp.ext.gpid", value: "/6088/ssp.kstu/inview-bottom" },
+      requestData: [
+        { jsonPath: "x.imp[0].bidfloors[0].currency", value: "USD" },
+        { jsonPath: "x.imp[0].bidfloors[0].floor", value: "2" },
+        { jsonPath: "x.imp[0].bidfloors[0].mediaType", value: "banner" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.gpid", value: "/6088/ssp.kstu/inview-bottom" },
 
 
-         ],
-  responseData: [
-    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" }
-      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
-       ]
-  },
- ],
- auction: [
-  {
-    matchingJsonPath: {
-    jsonPath: "x.imp[0].ext.data.divId",
-    expectedValue: "topx-2"
-   },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" }
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      ]
+    },
+  ],
+  auction: [
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ext.data.divId",
+        expectedValue: "topx-2"
+      },
 
-  requestData: [
-    { 
-        jsonPath: "x.imp[0].banner.bidfloorcur", value: "USD" }
-         ],
-  responseData: [
-    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" }
-      #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
-       ]
-  },
- ]
+      requestData: [
+        {
+          jsonPath: "x.imp[0].banner.bidfloorcur", value: "USD" }
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" }
+        #{ jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      ]
+    },
+  ]
 }
 
 
 # ------------------------------ignore the lines below--rats---------------------
-responseSimulate: []
-domInject: []
+responseSimulate: [ ]
+domInject: [ ]

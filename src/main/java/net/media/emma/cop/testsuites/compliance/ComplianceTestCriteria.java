@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Getter @Setter
+@Getter
+@Setter
 public class ComplianceTestCriteria {
 
     String location;
@@ -23,5 +24,5 @@ public class ComplianceTestCriteria {
     Map<String, Map<String, Set<String>>> keysToVerifyPositive;
     Map<String, Map<String, Set<String>>> keysToVerifyNegative;
     Map<String, Map<String, Set<String>>> keysToVerifyAnyOneOf;
-    
+
 }

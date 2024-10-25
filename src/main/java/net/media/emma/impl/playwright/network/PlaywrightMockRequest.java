@@ -2,7 +2,6 @@ package net.media.emma.impl.playwright.network;
 
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Route;
-import net.media.emma.service.BrowserRemote;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -10,7 +9,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PlaywrightMockRequest {
 
     Page page;
-    public PlaywrightMockRequest(Page page){
+
+    public PlaywrightMockRequest(Page page) {
         this.page = page;
     }
 

@@ -20,13 +20,13 @@ public class Slots {
     Set<Size> sizes;
     Map<String, List<String>> targetting;
 
-    public Set<String> getSizes(){
+    public Set<String> getSizes() {
         log.info("Set of sizes " + sizes);
         return sizes.stream().map(size -> size.getWidth() + "x" + size.getHeight()).collect(Collectors.toSet());
         // [ "300x250", "300x600"]
     }
 
-    public String getAdUnitPath(){
+    public String getAdUnitPath() {
         String adUnitPathTrimmed = "";
         adUnitPathTrimmed = path.substring(path.lastIndexOf("/") + 1).replace('"', ' ').trim();
         log.info("Trimmed path " + adUnitPathTrimmed);
@@ -34,8 +34,8 @@ public class Slots {
         return adUnitPathTrimmed;
     }
 
-    public String getSlothPath(){
-        this.path= path;
+    public String getSlothPath() {
+        this.path = path;
         return path;
     }
 
@@ -44,11 +44,10 @@ public class Slots {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Size{
+    public static class Size {
         int width;
         int height;
     }
-
 
 
 }

@@ -1,334 +1,308 @@
 package net.media.emma.cop.testsuites.pagetests;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.microsoft.playwright.Request;
-
 import lombok.extern.slf4j.Slf4j;
-
 import net.media.emma.cop.testsuites.pagetests.FeatureReport.FeatureChecks;
 import net.media.emma.cop.testsuites.pagetests.FeatureReport.TestStatus;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
-
 import net.media.emma.utils.URLDataProcessing;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Component
 @Slf4j
-public class FeatureTestCriteria implements FeatureTestServiceIn{
+public class FeatureTestCriteria implements FeatureTestServiceIn {
 
-	@Autowired
-	private URLDataProcessing dataProcessing;
+    boolean test = true;
+    boolean negativeKey = false;
+    @Autowired
+    private URLDataProcessing dataProcessing;
 
-	boolean test = true;
-	boolean negativeKey=false;
+    @Override
+    public FeatureReport featureTestCasePositvie(Map.Entry<String, String> urlData, List<Request> requests,
+                                                 TestCriteriaBo criteriaBo, URLChecksReportModel reportModel, String feature) {
 
-	@Override
-	public FeatureReport featureTestCasePositvie(Map.Entry<String, String> urlData, List<Request> requests,
-			TestCriteriaBo criteriaBo, URLChecksReportModel reportModel, String feature) {
+        log.info("urlData : " + urlData);
 
-		log.info("urlData : " + urlData);
-		
-		
-		
-		
-		Map<String, NegativeURLChecks> negativeCheck=reportModel.getNegativeUrlChecks();
-		
-		negativeCheck.entrySet().forEach(negativePoint->{
-			
-			
-			if(negativePoint.getValue().getCountOfMatchingUrls()>0)
-			{
-				
-				negativeKey=true;
-			}
-			
-		});
-		
-		
-		if( negativeKey==false)
-		{
-			
-		
 
-		Map<String, PositiveURLChecks> mapReport = reportModel.getPositiveUrlChecks();
+        Map<String, NegativeURLChecks> negativeCheck = reportModel.getNegativeUrlChecks();
 
-		FeatureReport report = FeatureReport.builder().build();
+        negativeCheck.entrySet().forEach(negativePoint -> {
 
-		Map<String, FeatureChecks> positiveReport = new HashMap<>();
 
-		Map<String, Map<String, FeatureChecks>> repo = new HashMap<>();
+            if (negativePoint.getValue().getCountOfMatchingUrls() > 0) {
 
-		Set<String> message = new HashSet<>();
+                negativeKey = true;
+            }
 
-		List<String> matchingUrl = new ArrayList<>();
+        });
+
+
+        if (!negativeKey) {
+
+
+            Map<String, PositiveURLChecks> mapReport = reportModel.getPositiveUrlChecks();
+
+            FeatureReport report = FeatureReport.builder().build();
+
+            Map<String, FeatureChecks> positiveReport = new HashMap<>();
+
+            Map<String, Map<String, FeatureChecks>> repo = new HashMap<>();
+
+            Set<String> message = new HashSet<>();
+
+            List<String> matchingUrl = new ArrayList<>();
 //		String s=urlData.getKey();
 
-		String v1 = urlData.getValue();
+            String v1 = urlData.getValue();
 
 //		Map<String, String> urlQuesryStringMap=dataProcessing.getQueryStringMapFromUrl(v1);
 
-		criteriaBo.getFeatureKeysNegative().entrySet().forEach(entry -> {
+            criteriaBo.getFeatureKeysNegative().entrySet().forEach(entry -> {
 
-			String key = entry.getKey();
+                String key = entry.getKey();
 
-			List<String> matchingUrls = mapReport.get(key).getMatchingUrls();
+                List<String> matchingUrls = mapReport.get(key).getMatchingUrls();
 
-			for (String urls : matchingUrls) {
-				Map<String, String> urlQuesryStringMap = dataProcessing.getQueryStringMap(urls, requests);
+                for (String urls : matchingUrls) {
+                    Map<String, String> urlQuesryStringMap = dataProcessing.getQueryStringMap(urls, requests);
 
-				Map<String, Set<String>> value = entry.getValue();
+                    Map<String, Set<String>> value = entry.getValue();
 
-				if (mapReport.containsKey(key)) {
-					FeatureChecks negativechecks = new FeatureReport.FeatureChecks();
+                    if (mapReport.containsKey(key)) {
+                        FeatureChecks negativechecks = new FeatureReport.FeatureChecks();
 
-					value.entrySet().forEach(valueEntry -> {
+                        value.entrySet().forEach(valueEntry -> {
 
-						String vKey = valueEntry.getKey();
+                            String vKey = valueEntry.getKey();
 
-						Set<String> vValue = valueEntry.getValue();
+                            Set<String> vValue = valueEntry.getValue();
 
-						for (String sValue : vValue) {
+                            for (String sValue : vValue) {
 
-							if (urlQuesryStringMap.containsKey(vKey) && urlQuesryStringMap.get(vKey).equals(sValue)) {
+                                if (urlQuesryStringMap.containsKey(vKey) && urlQuesryStringMap.get(vKey).equals(sValue)) {
 //				negativeFeatureChecks.setMatchingUrls(matchingUrl);
 
-								String msg = "Negative Value Foound: " + vKey + " = " + sValue;
+                                    String msg = "Negative Value Foound: " + vKey + " = " + sValue;
 
 //				 log.info("Message  : "+msg);
 //				 
 
-								if (vKey.equals("y_dnb")) {
-									message.add(msg);
-								} else {
-									negativechecks.setTestResult(TestStatus.FAIL);
+                                    if (vKey.equals("y_dnb")) {
+                                        message.add(msg);
+                                    } else {
+                                        negativechecks.setTestResult(TestStatus.FAIL);
 
-									negativechecks.setFeatureValuesChecks(value);
-									message.add(msg);
+                                        negativechecks.setFeatureValuesChecks(value);
+                                        message.add(msg);
 
-									test = false;
+                                        test = false;
 
-								}
+                                    }
 
-							} else if (key.equalsIgnoreCase("GAMAPADCall")) {
+                                } else if (key.equalsIgnoreCase("GAMAPADCall")) {
 
-								try {
-									String url = URLDecoder.decode(urls, "UTF-8");
+                                    String url = URLDecoder.decode(urls, StandardCharsets.UTF_8);
 
-									int as = url.indexOf("prev_scp");
+                                    int as = url.indexOf("prev_scp");
 
 
-									url = url.substring(as);
+                                    url = url.substring(as);
 
-									url = url.substring(9);
+                                    url = url.substring(9);
 
-									String slots[] = url.split("\\|");
+                                    String[] slots = url.split("\\|");
 
-									for (String slot : slots) {
-										System.out.println("slots: " + slot);
-										if (slot.contains(vKey)) {
+                                    for (String slot : slots) {
+                                        System.out.println("slots: " + slot);
+                                        if (slot.contains(vKey)) {
 
-											String getValue[] = slot.split("&");
+                                            String[] getValue = slot.split("&");
 
-											Map<String, String> mapOfSlotsData = new HashMap<>();
+                                            Map<String, String> mapOfSlotsData = new HashMap<>();
 
-											for (String slotsVal : getValue) {
+                                            for (String slotsVal : getValue) {
 
-												String keyVal[] = slotsVal.split("=");
-												if (keyVal.length == 2) {
-													mapOfSlotsData.put(keyVal[0], keyVal[1]);
-												}
-											}
+                                                String[] keyVal = slotsVal.split("=");
+                                                if (keyVal.length == 2) {
+                                                    mapOfSlotsData.put(keyVal[0], keyVal[1]);
+                                                }
+                                            }
 
-											if (mapOfSlotsData.get(vKey) != null) {
+                                            if (mapOfSlotsData.get(vKey) != null) {
 
-												if (mapOfSlotsData.get(vKey).equals(sValue)) {
-													String loc = mapOfSlotsData.get("loc");
-//					    		 report.getPositiveFeatureChecks().setTestResult(TestStatus.PASS); 
+                                                if (mapOfSlotsData.get(vKey).equals(sValue)) {
+                                                    String loc = mapOfSlotsData.get("loc");
+//					    		 report.getPositiveFeatureChecks().setTestResult(TestStatus.PASS);
 
-													String msg = "Negative Value Found: " + vKey + "=" + sValue
-															+ " at Location: " + loc;
+                                                    String msg = "Negative Value Found: " + vKey + "=" + sValue
+                                                            + " at Location: " + loc;
 
-													if (vKey.equals("y_dnb")) {
-														message.add(msg);
-													} else {
-														negativechecks.setTestResult(TestStatus.FAIL);
+                                                    if (vKey.equals("y_dnb")) {
+                                                        message.add(msg);
+                                                    } else {
+                                                        negativechecks.setTestResult(TestStatus.FAIL);
 
-														negativechecks.setFeatureValuesChecks(value);
-														message.add(msg);
-														test = false;
-													}
+                                                        negativechecks.setFeatureValuesChecks(value);
+                                                        message.add(msg);
+                                                        test = false;
+                                                    }
 
-												}
+                                                }
 
-											}
+                                            }
 
-										}
+                                        }
 
-									}
-								} catch (UnsupportedEncodingException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+                                    }
 
-							}
+                                }
 
-						}
+                            }
 
-						negativechecks.setTestMessages(message);
+                            negativechecks.setTestMessages(message);
 
-						positiveReport.put(key, negativechecks);
+                            positiveReport.put(key, negativechecks);
 
-					});
+                        });
 
-				}
+                    }
 
-			}
+                }
 
-		});
+            });
 
-		if (test == true) {
+            if (test) {
 
-			criteriaBo.getFeatureKeysPositive().entrySet().forEach(entry -> {
+                criteriaBo.getFeatureKeysPositive().entrySet().forEach(entry -> {
 
-				String key = entry.getKey();
+                    String key = entry.getKey();
 
 //				System.out.println("Report : " + mapReport);
 //
 //				System.err.println("key: " + key);
 
-				if (mapReport.containsKey(key)) {
+                    if (mapReport.containsKey(key)) {
 
-					List<String> matchingUrls = mapReport.get(key).getMatchingUrls();
+                        List<String> matchingUrls = mapReport.get(key).getMatchingUrls();
 
-					for (String urls : matchingUrls) {
-						Map<String, String> urlQuesryStringMap = dataProcessing.getQueryStringMap(urls,
-								requests);
+                        for (String urls : matchingUrls) {
+                            Map<String, String> urlQuesryStringMap = dataProcessing.getQueryStringMap(urls,
+                                    requests);
 
-						Map<String, Set<String>> value = entry.getValue();
+                            Map<String, Set<String>> value = entry.getValue();
 
-						FeatureChecks positiveFeatureChecks = new FeatureReport.FeatureChecks();
-						value.entrySet().forEach(valueEntry -> {
+                            FeatureChecks positiveFeatureChecks = new FeatureReport.FeatureChecks();
+                            value.entrySet().forEach(valueEntry -> {
 
-							String vKey = valueEntry.getKey();
+                                String vKey = valueEntry.getKey();
 
-							Set<String> vValue = valueEntry.getValue();
+                                Set<String> vValue = valueEntry.getValue();
 
-							for (String sValue : vValue) {
+                                for (String sValue : vValue) {
 
-								if (urlQuesryStringMap.containsKey(vKey)
-										&& urlQuesryStringMap.get(vKey).equals(sValue)) {
+                                    if (urlQuesryStringMap.containsKey(vKey)
+                                            && urlQuesryStringMap.get(vKey).equals(sValue)) {
 
 //				 positiveFeatureChecks.setMatchingUrls(matchingUrl);
-									positiveFeatureChecks.setTestResult(TestStatus.PASS);
+                                        positiveFeatureChecks.setTestResult(TestStatus.PASS);
 
-									positiveFeatureChecks.setFeatureValuesChecks(value);
+                                        positiveFeatureChecks.setFeatureValuesChecks(value);
 
-									String msg = "Positive Check Pass " + vKey + " " + sValue;
+                                        String msg = "Positive Check Pass " + vKey + " " + sValue;
 
-									message.add(msg);
+                                        message.add(msg);
 
-								} else if (key.equalsIgnoreCase("GAMAPADCall")) {
+                                    } else if (key.equalsIgnoreCase("GAMAPADCall")) {
 
-									try {
-										String url = URLDecoder.decode(urls, "UTF-8");
+                                        String url = URLDecoder.decode(urls, StandardCharsets.UTF_8);
 
-										int as = url.indexOf("prev_scp");
+                                        int as = url.indexOf("prev_scp");
 
-										url = url.substring(as);
+                                        url = url.substring(as);
 
-										url = url.substring(9);
+                                        url = url.substring(9);
 
-										System.out.println("prev URL: " + url);
+                                        System.out.println("prev URL: " + url);
 
-										String slots[] = url.split("\\|");
+                                        String[] slots = url.split("\\|");
 
-										for (String slot : slots) {
+                                        for (String slot : slots) {
 
-											if (slot.contains(vKey)) {
+                                            if (slot.contains(vKey)) {
 
-												String getValue[] = slot.split("&");
+                                                String[] getValue = slot.split("&");
 
-												Map<String, String> mapOfSlotsData = new HashMap<>();
+                                                Map<String, String> mapOfSlotsData = new HashMap<>();
 
-												for (String slotsVal : getValue) {
+                                                for (String slotsVal : getValue) {
 
-													String keyVal[] = slotsVal.split("=");
-													if (keyVal.length == 2) {
-														mapOfSlotsData.put(keyVal[0], keyVal[1]);
-													}
-												}
+                                                    String[] keyVal = slotsVal.split("=");
+                                                    if (keyVal.length == 2) {
+                                                        mapOfSlotsData.put(keyVal[0], keyVal[1]);
+                                                    }
+                                                }
 
-												if (mapOfSlotsData.get(vKey) != null) {
+                                                if (mapOfSlotsData.get(vKey) != null) {
 
-													if (mapOfSlotsData.get(vKey).equals(sValue)) {
+                                                    if (mapOfSlotsData.get(vKey).equals(sValue)) {
 
-														String location = mapOfSlotsData.get("loc");
-//					    		 report.getPositiveFeatureChecks().setTestResult(TestStatus.PASS); 
+                                                        String location = mapOfSlotsData.get("loc");
+//					    		 report.getPositiveFeatureChecks().setTestResult(TestStatus.PASS);
 
 //					    		 positiveFeatureChecks.setMatchingUrls(matchingUrl);
-														positiveFeatureChecks.setTestResult(TestStatus.PASS);
+                                                        positiveFeatureChecks.setTestResult(TestStatus.PASS);
 
-														positiveFeatureChecks.setFeatureValuesChecks(value);
+                                                        positiveFeatureChecks.setFeatureValuesChecks(value);
 
-														String msg = "Positive Check Pass :" + vKey + "=" + sValue
-																+ " at location :" + location;
+                                                        String msg = "Positive Check Pass :" + vKey + "=" + sValue
+                                                                + " at location :" + location;
 
-														message.add(msg);
+                                                        message.add(msg);
 
-													}
+                                                    }
 
-												}
+                                                }
 
-											}
-										}
-									} catch (UnsupportedEncodingException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+                                            }
+                                        }
 
-								}
-							}
+                                    }
+                                }
 
-							positiveFeatureChecks.setTestMessages(message);
+                                positiveFeatureChecks.setTestMessages(message);
 
-							positiveReport.put(key, positiveFeatureChecks);
+                                positiveReport.put(key, positiveFeatureChecks);
 
-						});
+                            });
 
-					}
-				}
-				
-				
-				
-			});
-		}
+                        }
+                    }
 
-		repo.put(feature, positiveReport);
+
+                });
+            }
+
+            repo.put(feature, positiveReport);
 
 //		report.setNegativeFeatureChecks(negativeReport);
-		report.setFeatureChecks(repo);
+            report.setFeatureChecks(repo);
 
-		return report;
-		
-		}
-		
-		negativeKey=false;
-		
-		
-		return null;
+            return report;
 
-	}
+        }
+
+        negativeKey = false;
+
+
+        return null;
+
+    }
 
 }

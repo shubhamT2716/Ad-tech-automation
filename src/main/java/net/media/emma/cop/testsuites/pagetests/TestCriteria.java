@@ -1,19 +1,18 @@
 package net.media.emma.cop.testsuites.pagetests;
 
-import java.util.List;
-import java.util.Map;
-
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+import java.util.List;
+import java.util.Map;
+
+@Getter
+@Setter
 public class TestCriteria {
     String environment;
     String userAgent;
     String publisherUrl;
-    List<Map<String,String>> coockies;
-   
-    
-    
+    List<Map<String, String>> coockies;
+
 
 }

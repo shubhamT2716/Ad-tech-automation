@@ -6,11 +6,11 @@ import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
 import java.io.File;
 
 public class ExtentManager {
+    private static final String reportFileName = "Test-Automation-Report" + ".html";
+    private static final String fileSeperator = System.getProperty("file.separator");
+    private static final String reportFilepath = System.getProperty("user.dir") + fileSeperator + "src/main/resources";
+    private static final String reportFileLocation = reportFilepath + fileSeperator + reportFileName;
     private static ExtentReports extent;
-    private static String reportFileName = "Test-Automation-Report" + ".html";
-    private static String fileSeperator = System.getProperty("file.separator");
-    private static String reportFilepath = System.getProperty("user.dir") + fileSeperator + "src/main/resources";
-    private static String reportFileLocation = reportFilepath + fileSeperator + reportFileName;
 
     public static synchronized ExtentReports getInstance() {
         if (extent == null) {

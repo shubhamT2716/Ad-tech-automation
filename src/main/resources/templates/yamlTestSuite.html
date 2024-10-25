@@ -2,56 +2,58 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>YAML Test Suites - Emma</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-		integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-	<style>
-		.errorUrl {
-			color: red;
-			display: none;
-			margin-top: 10px;
-		}
+    <title>YAML Test Suites - Emma</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link crossorigin="anonymous"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+          rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <style>
+        .errorUrl {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
 
-		.errorJson {
-			color: red;
-			display: none;
-			margin-top: 10px;
-		}
+        .errorJson {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
 
-		.errorYaml {
-			color: red;
-			display: none;
-			margin-top: 10px;
-		}
+        .errorYaml {
+            color: red;
+            display: none;
+            margin-top: 10px;
+        }
 
-		#submitButton {
-			display: block;
-			width: 150px;
-			padding: 10px;
-			margin-top: 20px;
-			background-color: #333;
-			color: #fff;
-			border: none;
-			cursor: pointer;
-		}
+        #submitButton {
+            display: block;
+            width: 150px;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
 
-		#or {
-			text-align: left;
-			align-content: normal;
-			display: block;
-			font-weight: bold;
-		}
+        #or {
+            text-align: left;
+            align-content: normal;
+            display: block;
+            font-weight: bold;
+        }
 
-		#submitButton:disabled {
-			background-color: #ccc;
-			cursor: not-allowed;
-		}
-	</style>
-	<!-- <script>
+        #submitButton:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+    <!-- <script>
         $(document).ready(function () {
             $('#yamlInput').on('input', function () {
                 var yamlValue = $(this).val();
@@ -172,293 +174,291 @@
     </script> -->
 
 
-	<script>
-		$(document).ready(function () {
-			$('#yamlInput').on('input', function () {
-				// Validate YAML input
-				var yamlValue = $(this).val();
-				var isValidYaml = true;
-				$('.errorYaml').hide();
+    <script>
+        $(document).ready(function () {
+            $('#yamlInput').on('input', function () {
+                // Validate YAML input
+                var yamlValue = $(this).val();
+                var isValidYaml = true;
+                $('.errorYaml').hide();
 
-				try {
-					jsyaml.load(yamlValue);
-				} catch (error) {
-					isValidYaml = false;
-					$('.errorYaml').show();
-				}
+                try {
+                    jsyaml.load(yamlValue);
+                } catch (error) {
+                    isValidYaml = false;
+                    $('.errorYaml').show();
+                }
 
-				updateSubmitButtonState();
-			});
+                updateSubmitButtonState();
+            });
 
-			$('#response').on('input', function () {
-				// Validate JSON response input when checkbox is checked
-				if ($('#toggle').is(':checked')) {
-					var responseValue = $(this).val();
-					var isValidJson = true;
-					$('.errorJson').hide();
+            $('#response').on('input', function () {
+                // Validate JSON response input when checkbox is checked
+                if ($('#toggle').is(':checked')) {
+                    var responseValue = $(this).val();
+                    var isValidJson = true;
+                    $('.errorJson').hide();
 
-					try {
-						JSON.parse(responseValue);
-					} catch (error) {
-						isValidJson = false;
-						$('.errorJson').show();
-					}
+                    try {
+                        JSON.parse(responseValue);
+                    } catch (error) {
+                        isValidJson = false;
+                        $('.errorJson').show();
+                    }
 
-					updateSubmitButtonState();
-				}
-			});
+                    updateSubmitButtonState();
+                }
+            });
 
-			$('#url').on('input', function () {
-				// Validate URL input
-				var urlValue = $(this).val();
-				var isValidUrl = true;
-				$('.errorUrl').hide();
+            $('#url').on('input', function () {
+                // Validate URL input
+                var urlValue = $(this).val();
+                var isValidUrl = true;
+                $('.errorUrl').hide();
 
-				try {
-					new URL(urlValue);
-				} catch (error) {
-					isValidUrl = false;
-					$('.errorUrl').show();
-				}
+                try {
+                    new URL(urlValue);
+                } catch (error) {
+                    isValidUrl = false;
+                    $('.errorUrl').show();
+                }
 
-				updateSubmitButtonState();
-			});
+                updateSubmitButtonState();
+            });
 
-			$('#file-dropdown').change(function () {
-				// Handle file dropdown change
-				var selectedFile = $(this).val();
-				if (selectedFile !== '') {
-					$.ajax({
-						url: './fileContent', // URL mapped by the Spring Boot controller
-						method: 'POST',
-						contentType: 'text/plain',
-						data: selectedFile,
-						success: function (response) {
-							$('#yamlInput').val(response);
-							updateSubmitButtonState();
-							$('.error').hide();
-						}
-					});
-				} else {
-					$('#yamlInput').val('');
-					updateSubmitButtonState();
-				}
-			});
+            $('#file-dropdown').change(function () {
+                // Handle file dropdown change
+                var selectedFile = $(this).val();
+                if (selectedFile !== '') {
+                    $.ajax({
+                        url: './fileContent', // URL mapped by the Spring Boot controller
+                        method: 'POST',
+                        contentType: 'text/plain',
+                        data: selectedFile,
+                        success: function (response) {
+                            $('#yamlInput').val(response);
+                            updateSubmitButtonState();
+                            $('.error').hide();
+                        }
+                    });
+                } else {
+                    $('#yamlInput').val('');
+                    updateSubmitButtonState();
+                }
+            });
 
-			const toggleSwitch = document.getElementById('toggle');
-			const responseInputContainer = document.getElementById('response-input-container');
+            const toggleSwitch = document.getElementById('toggle');
+            const responseInputContainer = document.getElementById('response-input-container');
 
-			toggleSwitch.addEventListener('change', function () {
-				// Toggle response input container visibility
-				if (this.checked) {
-					responseInputContainer.style.display = 'block';
-					updateSubmitButtonState();
-				} else {
-					responseInputContainer.style.display = 'none';
-					updateSubmitButtonState();
-				}
-			});
-
-
-
-			$('#toggle').on('change', function () {
-				if (this.checked) {
-					$('#response-input-container').show();
-				} else {
-					$('#response-input-container').hide();
-				}
-				updateSubmitButtonState();
-			});
+            toggleSwitch.addEventListener('change', function () {
+                // Toggle response input container visibility
+                if (this.checked) {
+                    responseInputContainer.style.display = 'block';
+                    updateSubmitButtonState();
+                } else {
+                    responseInputContainer.style.display = 'none';
+                    updateSubmitButtonState();
+                }
+            });
 
 
-			$('#testForm').submit(function (event) {
-				// Update validation before form submission
-				event.preventDefault(); // Prevent the default form submission behavior
-				updateSubmitButtonState();
-				// Optionally, you can add additional logic here before submitting the form
-				$(this).unbind('submit').submit(); // Submit the form after validation
-			});
-
-			$('#submitButton').click(function () {
-				// Validate response input if response mocking checkbox is checked
-				if ($('#toggle').is(':checked')) {
-					validateResponseInput();
-				} else {
-					// Execute the test without response mocking
-					$('#testForm').submit(); // Trigger form submission
-				}
-			});
+            $('#toggle').on('change', function () {
+                if (this.checked) {
+                    $('#response-input-container').show();
+                } else {
+                    $('#response-input-container').hide();
+                }
+                updateSubmitButtonState();
+            });
 
 
-			function updateSubmitButtonState() {
-				// Enable/disable submit button based on validation
-				// var isValidYaml = validateYaml();
-				// var isValidJson = validateJson();
-				// var isValidUrl = validateUrl();
+            $('#testForm').submit(function (event) {
+                // Update validation before form submission
+                event.preventDefault(); // Prevent the default form submission behavior
+                updateSubmitButtonState();
+                // Optionally, you can add additional logic here before submitting the form
+                $(this).unbind('submit').submit(); // Submit the form after validation
+            });
 
-				// if (isValidYaml && isValidJson && isValidUrl) {
-				//     $('#submitButton').prop('disabled', false);
-				// } else {
-				//     $('#submitButton').prop('disabled', true);
-				// }
-				if ($('#toggle').is(':checked')) {
-					validateResponseInput();
-				} else {
-					$('#submitButton').prop('disabled', false);
-					$('.errorResponse').hide();
-				}
-			}
-
-			function validateYaml() {
-				// Validate YAML input
-				var yamlValue = $('#yamlInput').val();
-				try {
-					jsyaml.load(yamlValue);
-					$('.errorYaml').hide();
-					return true;
-				} catch (error) {
-					$('.errorYaml').show();
-					return false;
-				}
-			}
+            $('#submitButton').click(function () {
+                // Validate response input if response mocking checkbox is checked
+                if ($('#toggle').is(':checked')) {
+                    validateResponseInput();
+                } else {
+                    // Execute the test without response mocking
+                    $('#testForm').submit(); // Trigger form submission
+                }
+            });
 
 
+            function updateSubmitButtonState() {
+                // Enable/disable submit button based on validation
+                // var isValidYaml = validateYaml();
+                // var isValidJson = validateJson();
+                // var isValidUrl = validateUrl();
 
-			// Validate response input if response mocking checkbox is checked
-			$('#response').on('input', function () {
-				if ($('#toggle').is(':checked')) {
-					validateResponseInput();
-				} else {
-					$('#submitButton').prop('disabled', false);
-				}
-			});
+                // if (isValidYaml && isValidJson && isValidUrl) {
+                //     $('#submitButton').prop('disabled', false);
+                // } else {
+                //     $('#submitButton').prop('disabled', true);
+                // }
+                if ($('#toggle').is(':checked')) {
+                    validateResponseInput();
+                } else {
+                    $('#submitButton').prop('disabled', false);
+                    $('.errorResponse').hide();
+                }
+            }
 
-			// Function to validate response input
-			function validateResponseInput() {
-				const responseValue = $('#response').val().trim();
-				if (responseValue === '') {
-					$('#submitButton').prop('disabled', true);
-					$('.errorJson').hide();
-					$('.errorResponse').show().text('Please provide a response.');
-				} else {
-					try {
-						JSON.parse(responseValue);
-						$('#submitButton').prop('disabled', false);
-						$('.errorJson').hide();
-						$('.errorResponse').hide();
-					} catch (error) {
-						$('#submitButton').prop('disabled', true);
-						$('.errorResponse').show().text('Invalid JSON format.');
-					}
-				}
-			}
-
-			function validateJson() {
-				// Validate JSON response input when checkbox is checked
-				if ($('#toggle').is(':checked')) {
-					var responseValue = $('#response').val();
-					try {
-						JSON.parse(responseValue);
-						$('.errorJson').hide();
-						return true;
-					} catch (error) {
-						$('.errorJson').show();
-						return false;
-					}
-				}
-				return true; // Return true if checkbox is not checked
-			}
-
-			function validateUrl() {
-				// Validate URL input
-				var urlValue = $('#url').val();
-				try {
-					new URL(urlValue);
-					$('.errorUrl').hide();
-					return true;
-				} catch (error) {
-					$('.errorUrl').show();
-					return false;
-				}
-			}
+            function validateYaml() {
+                // Validate YAML input
+                var yamlValue = $('#yamlInput').val();
+                try {
+                    jsyaml.load(yamlValue);
+                    $('.errorYaml').hide();
+                    return true;
+                } catch (error) {
+                    $('.errorYaml').show();
+                    return false;
+                }
+            }
 
 
+            // Validate response input if response mocking checkbox is checked
+            $('#response').on('input', function () {
+                if ($('#toggle').is(':checked')) {
+                    validateResponseInput();
+                } else {
+                    $('#submitButton').prop('disabled', false);
+                }
+            });
 
-			// Form submission validation
-			// $('#testForm').submit(function (event) {
-			//     // Update validation before form submission
-			//     updateSubmitButtonState();
-			// });
+            // Function to validate response input
+            function validateResponseInput() {
+                const responseValue = $('#response').val().trim();
+                if (responseValue === '') {
+                    $('#submitButton').prop('disabled', true);
+                    $('.errorJson').hide();
+                    $('.errorResponse').show().text('Please provide a response.');
+                } else {
+                    try {
+                        JSON.parse(responseValue);
+                        $('#submitButton').prop('disabled', false);
+                        $('.errorJson').hide();
+                        $('.errorResponse').hide();
+                    } catch (error) {
+                        $('#submitButton').prop('disabled', true);
+                        $('.errorResponse').show().text('Invalid JSON format.');
+                    }
+                }
+            }
+
+            function validateJson() {
+                // Validate JSON response input when checkbox is checked
+                if ($('#toggle').is(':checked')) {
+                    var responseValue = $('#response').val();
+                    try {
+                        JSON.parse(responseValue);
+                        $('.errorJson').hide();
+                        return true;
+                    } catch (error) {
+                        $('.errorJson').show();
+                        return false;
+                    }
+                }
+                return true; // Return true if checkbox is not checked
+            }
+
+            function validateUrl() {
+                // Validate URL input
+                var urlValue = $('#url').val();
+                try {
+                    new URL(urlValue);
+                    $('.errorUrl').hide();
+                    return true;
+                } catch (error) {
+                    $('.errorUrl').show();
+                    return false;
+                }
+            }
 
 
-
-			// Enable submit button by default
-			$('#submitButton').prop('disabled', false);
-
-		});
-	</script>
-
+            // Form submission validation
+            // $('#testForm').submit(function (event) {
+            //     // Update validation before form submission
+            //     updateSubmitButtonState();
+            // });
 
 
+            // Enable submit button by default
+            $('#submitButton').prop('disabled', false);
 
-
+        });
+    </script>
 
 
 </head>
 
 <body>
-	<div class="container my-5">
-		<h1>YAML Test Suites</h1>
+<div class="container my-5">
+    <h1>YAML Test Suites</h1>
 
-		<form id="testForm" method="POST" target="_blank" style="width: 100%;">
-			<label for="file-dropdown">Select Yaml File: </label>
-			<select class="form-control" id="file-dropdown">
-				<!-- Options -->
-				<option value="">-- Select --</option>
-				<!-- <option value="forbes.yaml">forbes.yaml</option>
-            <option value="nutritionix.yaml">nutritionix.yaml</option>
-            <option value="webmd.yaml">webmd.yaml</option> -->
-				<option th:each="fileName : ${files}" th:value="${fileName}" th:text="${fileName}"></option>
+    <form id="testForm" method="POST" style="width: 100%;" target="_blank">
+        <label for="file-dropdown">Select Yaml File: </label>
+        <select class="form-control" id="file-dropdown">
+            <!-- Options -->
+            <option value="">-- Select --</option>
+            <!-- <option value="forbes.yaml">forbes.yaml</option>
+        <option value="nutritionix.yaml">nutritionix.yaml</option>
+        <option value="webmd.yaml">webmd.yaml</option> -->
+            <option th:each="fileName : ${files}" th:text="${fileName}"
+                    th:value="${fileName}"></option>
 
-			</select>
+        </select>
 
-			<br>
-			<div id="or"> OR</div>
-			<br>
-			<label for="yamlInput">Enter YAML:</label>
-			<br>
-			<small id="emailHelp" class="form-text text-muted"> click <a href="/yamlTestSuite/userAgent">here</a> to
-				show user agents</small>
-			<br>
-			<textarea class="form-control" rows="20" id="yamlInput" name="yaml"></textarea>
-			<br>
+        <br>
+        <div id="or"> OR</div>
+        <br>
+        <label for="yamlInput">Enter YAML:</label>
+        <br>
+        <small class="form-text text-muted" id="emailHelp"> click <a
+                href="/yamlTestSuite/userAgent">here</a> to
+            show user agents</small>
+        <br>
+        <textarea class="form-control" id="yamlInput" name="yaml"
+                  rows="20"></textarea>
+        <br>
 
-			<div class="toggle-container">
-				<label for="toggle" class="toggle-label">Select for Response Mocking</label>
-				<input type="checkbox" id="toggle">
-			</div>
+        <div class="toggle-container">
+            <label class="toggle-label" for="toggle">Select for Response
+                Mocking</label>
+            <input id="toggle" type="checkbox">
+        </div>
 
-			<div id="response-input-container" style="display: none;">
-				<div class="input-box">
-					<label for="url">Url:</label>
-					<input type="text" class="form-control" id="url" name="url" aria-describedby="emailHelp"
-						placeholder="please add URL" required>
-					<p class="errorUrl">Invalid URL or Empty</p>
+        <div id="response-input-container" style="display: none;">
+            <div class="input-box">
+                <label for="url">Url:</label>
+                <input aria-describedby="emailHelp" class="form-control" id="url" name="url"
+                       placeholder="please add URL"
+                       required type="text">
+                <p class="errorUrl">Invalid URL or Empty</p>
 
-					<label for="response">Response:</label>
-					<textarea class="form-control" rows="20" id="response" name="response" required></textarea>
-					<p class="errorJson">Invalid JSON format</p>
-				</div>
-			</div>
+                <label for="response">Response:</label>
+                <textarea class="form-control" id="response" name="response"
+                          required rows="20"></textarea>
+                <p class="errorJson">Invalid JSON format</p>
+            </div>
+        </div>
 
-			<br>
+        <br>
 
 
-			<p class="errorYaml">Invalid YAML format</p>
-			<input class="form-control" id="submitButton" type="submit" value="Execute Tests" disabled>
-		</form>
-		<pre th:text="${message}"></pre>
-	</div>
+        <p class="errorYaml">Invalid YAML format</p>
+        <input class="form-control" disabled id="submitButton"
+               type="submit" value="Execute Tests">
+    </form>
+    <pre th:text="${message}"></pre>
+</div>
 </body>
 
 </html>

@@ -17,12 +17,14 @@ import java.util.concurrent.CompletableFuture;
 @ContextConfiguration(classes = Loggers.class)
 public class NetworkCallsPositive extends AbstractTestNGSpringContextTests {
 
-    @Autowired private net.media.emma.service.BrowserRemote browserRemote;
-    @Autowired private net.media.emma.config.Loggers loggers;
-    @Autowired private net.media.emma.coptests.SoftAssertion softAssertion;
-
     @Autowired
     AssertNetworkCalls assertNetworkCalls;
+    @Autowired
+    private net.media.emma.service.BrowserRemote browserRemote;
+    @Autowired
+    private net.media.emma.config.Loggers loggers;
+    @Autowired
+    private net.media.emma.coptests.SoftAssertion softAssertion;
 
     @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml.class)
     public void networkCallsPos(Object object) {
@@ -34,12 +36,12 @@ public class NetworkCallsPositive extends AbstractTestNGSpringContextTests {
             for (Map.Entry<String, String> networkCall : mnetNetworkCalls.entrySet()) {
                 CompletableFuture<List<String>> future = CompletableFuture.supplyAsync(() -> this.browserRemote.getRequestUrls(networkCall.getValue()));
                 List<String> urls = future.join();
-                assertNetworkCalls.logsUrls.put(networkCall.getKey(), urls);
+                AssertNetworkCalls.logsUrls.put(networkCall.getKey(), urls);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             softAssertion.getSoftAssert().fail("Error in getting network calls positive");
             loggers.standardLogger().error("Error in getting network calls positive", e);
-        }finally {
+        } finally {
             softAssertion.getSoftAssert().assertAll();
         }
     }

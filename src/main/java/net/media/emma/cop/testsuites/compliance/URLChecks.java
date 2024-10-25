@@ -8,7 +8,9 @@ import lombok.Setter;
 
 import java.util.*;
 
-@Getter @Setter @Builder
+@Getter
+@Setter
+@Builder
 public class URLChecks {
 
     @Builder.Default
@@ -16,58 +18,7 @@ public class URLChecks {
     @Builder.Default
     Map<String, NegativeURLChecks> negativeUrlChecks = new HashMap<String, NegativeURLChecks>();
 
-    enum TestResult{
-        PASS,
-        FAIL,
-        NA
-    }
-
-    @Getter @Setter @Builder
-    public static class PositiveURLChecks{
-        String label;
-        String urlPattern;
-        
-        @Builder.Default
-        TestResult testResult = TestResult.PASS;
-
-        @Builder.Default
-        List<String>  testMessages = new ArrayList<>();
-
-        @Builder.Default
-        List<String> matchingUrls = new ArrayList<>();
-
-        @Builder.Default @JsonIgnore
-        List<HashMap<String, String>> queryStringMap = new ArrayList<>();
-
-        @Builder.Default
-        Integer countOfMatchingUrls = 0;
-        
-        @Builder.Default
-        Map<String, Set<String>> positiveKeyValChecks = new HashMap<String, Set<String>>();
-        
-        @Builder.Default
-        Map<String, Set<String>> negativeKeyValChecks = new HashMap<String, Set<String>>();
-        
-        @Builder.Default
-        Map<String, Set<String>> anyOneOfKeyValChecks = new HashMap<String, Set<String>>();
-    }
-
-    @Getter @Setter @Builder
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public static class NegativeURLChecks{
-        String label;
-        String urlPattern;
-        @Builder.Default
-        TestResult testResult = TestResult.PASS;
-
-        @Builder.Default
-        List<String>  matchingUrls = new ArrayList<>();
-
-        @Builder.Default
-        Integer countOfMatchingUrls = 0;
-    }
-
-    public void updateMatchingUrlsCount(){
+    public void updateMatchingUrlsCount() {
         positiveUrlChecks.forEach((key, value) -> {
             value.setCountOfMatchingUrls(value.getMatchingUrls().size());
         });
@@ -76,16 +27,16 @@ public class URLChecks {
         });
     }
 
-    public void updateNetworkCallErrors(ComplianceTestCriteria testData ){
+    public void updateNetworkCallErrors(ComplianceTestCriteria testData) {
 
         testData.getNetworkCallsPositive().forEach((key, value) -> {
-            if(!positiveUrlChecks.containsKey(key)){
-                positiveUrlChecks.put(key,  PositiveURLChecks.builder()
-                    .label(key)
-                    .testResult(TestResult.FAIL)
-                    .testMessages(Arrays.asList("Call not fired"))
-                    .urlPattern(value)
-                    .build());
+            if (!positiveUrlChecks.containsKey(key)) {
+                positiveUrlChecks.put(key, PositiveURLChecks.builder()
+                        .label(key)
+                        .testResult(TestResult.FAIL)
+                        .testMessages(List.of("Call not fired"))
+                        .urlPattern(value)
+                        .build());
             }
         });
 
@@ -98,7 +49,7 @@ public class URLChecks {
         });*/
     }
 
-    public void verifyPositiveKeyValChecks(){
+    public void verifyPositiveKeyValChecks() {
 
         positiveUrlChecks.forEach((callLabel, callData) -> { //key, value --> lable, PositiveURLChecks obj
 
@@ -109,31 +60,31 @@ public class URLChecks {
                     Set<String> actualValues = new HashSet<>();
 
                     callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
-                        if(qsMapFromNetworkCall.containsKey(qsParam)){
+                        if (qsMapFromNetworkCall.containsKey(qsParam)) {
                             actualValues.add(qsMapFromNetworkCall.get(qsParam));
                         }
                     });
 
-                    if(!actualValues.equals(listOfValues)){
+                    if (!actualValues.equals(listOfValues)) {
                         callData.getTestMessages().add("Positive key value check failed for key: " + qsParam + ". Expected: " + listOfValues + " Actual: " + actualValues);
                         callData.setTestResult(TestResult.FAIL);
                     }
 
                 });
 
-            if (callData.getNegativeKeyValChecks() != null) 
+            if (callData.getNegativeKeyValChecks() != null)
 
                 callData.getNegativeKeyValChecks().forEach((qsParam, listOfValues) -> {
 
                     Set<String> actualValues = new HashSet<>();
 
                     callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
-                        if(qsMapFromNetworkCall.containsKey(qsParam)){
+                        if (qsMapFromNetworkCall.containsKey(qsParam)) {
                             actualValues.add(qsMapFromNetworkCall.get(qsParam));
                         }
                     });
 
-                    if(actualValues.retainAll(listOfValues)){
+                    if (actualValues.retainAll(listOfValues)) {
                         callData.getTestMessages().add("Negative key value check failed for key: " + qsParam + ". Found negative matches: " + actualValues);
                         callData.setTestResult(TestResult.FAIL);
                     }
@@ -147,18 +98,74 @@ public class URLChecks {
                     Set<String> actualValues = new HashSet<>();
 
                     callData.getQueryStringMap().forEach((qsMapFromNetworkCall) -> {
-                        if(qsMapFromNetworkCall.containsKey(qsParam)){
+                        if (qsMapFromNetworkCall.containsKey(qsParam)) {
                             actualValues.add(qsMapFromNetworkCall.get(qsParam));
                         }
                     });
 
-                    if(actualValues.retainAll(listOfValues) && actualValues.isEmpty()  ){
+                    if (actualValues.retainAll(listOfValues) && actualValues.isEmpty()) {
                         callData.getTestMessages().add("Any one of key value check failed for key: " + qsParam + ". Expected one of: " + listOfValues + " Actual: " + actualValues);
                         callData.setTestResult(TestResult.FAIL);
                     }
 
                 });
         });
-       
+
+    }
+
+    enum TestResult {
+        PASS,
+        FAIL,
+        NA
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    public static class PositiveURLChecks {
+        String label;
+        String urlPattern;
+
+        @Builder.Default
+        TestResult testResult = TestResult.PASS;
+
+        @Builder.Default
+        List<String> testMessages = new ArrayList<>();
+
+        @Builder.Default
+        List<String> matchingUrls = new ArrayList<>();
+
+        @Builder.Default
+        @JsonIgnore
+        List<HashMap<String, String>> queryStringMap = new ArrayList<>();
+
+        @Builder.Default
+        Integer countOfMatchingUrls = 0;
+
+        @Builder.Default
+        Map<String, Set<String>> positiveKeyValChecks = new HashMap<String, Set<String>>();
+
+        @Builder.Default
+        Map<String, Set<String>> negativeKeyValChecks = new HashMap<String, Set<String>>();
+
+        @Builder.Default
+        Map<String, Set<String>> anyOneOfKeyValChecks = new HashMap<String, Set<String>>();
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public static class NegativeURLChecks {
+        String label;
+        String urlPattern;
+        @Builder.Default
+        TestResult testResult = TestResult.PASS;
+
+        @Builder.Default
+        List<String> matchingUrls = new ArrayList<>();
+
+        @Builder.Default
+        Integer countOfMatchingUrls = 0;
     }
 }

@@ -1,5 +1,5 @@
 environment: warp.media.net
-cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [ VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.daily.co.jp/?medianet_test=1"
 bidexAppendString: ""
@@ -7,75 +7,75 @@ bidexReplaceString: { "": "" }
 pbjsEvents: "bidResponse"
 
 networkCallsPositive: {
- checksync: "https://hbx.media.net/checksync.php?",
- APPR: "https://navvy.media.net/log",
- RA: "https://navvy.media.net/log",
-  
+  checksync: "https://hbx.media.net/checksync.php?",
+  APPR: "https://navvy.media.net/log",
+  RA: "https://navvy.media.net/log",
+
 }
 
 networkCallsNegative: {
- nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
- Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
- mnetcall: ".*media.net.*"
+  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  mnetcall: ".*media.net.*"
 }
 
 keysToVerifyPositive: {
 
- checksync: {
-   #gdpr: ["0"],
-   gpp: ["DBAA"],
-   gpp_sid: ["-1"],
-   usp_status: ["1"],
-   usp_consent: ["1"],
-   uspstring: ["1YNN"],
-   axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
- },
+  checksync: {
+    #gdpr: ["0"],
+    gpp: [ "DBAA" ],
+    gpp_sid: [ "-1" ],
+    usp_status: [ "1" ],
+    usp_consent: [ "1" ],
+    uspstring: [ "1YNN" ],
+    axid_e: [ "eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B" ],
+  },
 
- APPR: {
-   lgtp: ["APPR"],
-   gdpr: ["0"],
-   dn: ["www.fox13now.com"]
- },
- RA: {
-   lgtp: ["RA"],
- },
+  APPR: {
+    lgtp: [ "APPR" ],
+    gdpr: [ "0" ],
+    dn: [ "www.fox13now.com" ]
+  },
+  RA: {
+    lgtp: [ "RA" ],
+  },
 
 }
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  
+
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
   APPR: {
-    pvnm: ["trustx","ix","rubicon","appnexus","adagio"],
-    size: ["300x250","728x90"],
-    lgtp: ["APPR","RA"]
+    pvnm: [ "trustx","ix","rubicon","appnexus","adagio" ],
+    size: [ "300x250","728x90" ],
+    lgtp: [ "APPR","RA" ]
   }
-  
+
 }
 
 responseHeaders: {
-  
+
 
 }
 
 requestHeaders: {
-  
+
 
 }
 
 bidderDataUrls: {
- 
+
 }
 
 bidderDataAssertions: {
 }
-  
+
 
 # ------------------------------ignore the lines below--rats---------------------
-responseSimulate: []
-domInject: []
+responseSimulate: [ ]
+domInject: [ ]

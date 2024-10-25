@@ -1,143 +1,125 @@
 package net.media.emma.utils;
 
-import java.io.UnsupportedEncodingException;
+import com.microsoft.playwright.Request;
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.playwright.Request;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.*;
 
 @Slf4j
 public class URLDataProcessing {
 
-	public String getRequestFor2(String url, List<String> networkCalls) {
+    public static boolean isValidUrl(String url) {
 
-		for (String currentCall : networkCalls) {
+        try {
 
-			if (currentCall.startsWith(url)) {
+            URL url1 = new URL(url);
 
-				return currentCall;
-			}
-		}
+            if (url1 == null) {
+                throw new Exception();
+            }
 
-		return null;
-	}
+            String u = url1.getQuery();
 
-	public Request getRequestFor(String url, List<Request> requestList) {
 
-		for (Request request : requestList) {
-			if (request.postData() != null) {
-				log.info(request.url());
-				log.info(url);
-			}
-			if (request.url().startsWith(url)) {
-				log.info(request.toString());
-				return request;
-			}
-		}
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
 
-		return null;
-	}
+    }
 
-	public String printURLDetails(List<String> urlPatterns) {
+    public String getRequestFor2(String url, List<String> networkCalls) {
 
-		StringBuilder sb = new StringBuilder("URL Data: \n");
+        for (String currentCall : networkCalls) {
 
-		int sizeOfURLs = 0;
-		Set<String> uniqueKeys = new HashSet<String>();
+            if (currentCall.startsWith(url)) {
 
-		for (String urlPattern : urlPatterns) {
+                return currentCall;
+            }
+        }
 
-			sizeOfURLs += urlPattern.length();
+        return null;
+    }
 
-			try {
-				URL url = new URL(urlPattern);
+    public Request getRequestFor(String url, List<Request> requestList) {
 
-				Map<String, String> queryStringMap = queryStringToMap(url.getQuery());
+        for (Request request : requestList) {
+            if (request.postData() != null) {
+                log.info(request.url());
+                log.info(url);
+            }
+            if (request.url().startsWith(url)) {
+                log.info(request.toString());
+                return request;
+            }
+        }
 
-				uniqueKeys.addAll(queryStringMap.keySet());
+        return null;
+    }
 
-				sb.append(queryStringMap.get("evtid") + "-" + queryStringMap.get("logid") + ".\nCount of key-val pairs:"
-						+ queryStringMap.size() + ".\nSize of the URL: " + urlPattern.length() + ".\n"
-						+ queryStringMap.toString() + "\n\n");
-			} catch (MalformedURLException e) {
-				log.error("URL malformed exception");
-				continue;
-			}
-		}
+    public String printURLDetails(List<String> urlPatterns) {
 
-		sb.insert(0, "Total Size of URLs: " + sizeOfURLs + "\n" + "Total Unique Keys: " + uniqueKeys.toString() + "\n");
+        StringBuilder sb = new StringBuilder("URL Data: \n");
 
-		return sb.toString();
-	}
-	
-	public static  boolean isValidUrl(String url) {
+        int sizeOfURLs = 0;
+        Set<String> uniqueKeys = new HashSet<String>();
 
-		try {
-			
-			URL url1 = new URL(url);
+        for (String urlPattern : urlPatterns) {
 
-				if(url1==null)
-				{
-					throw new Exception();
-				}
-			
-			String u = url1.getQuery();
-			
-			
+            sizeOfURLs += urlPattern.length();
 
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+            try {
+                URL url = new URL(urlPattern);
 
-	}
-	
+                Map<String, String> queryStringMap = queryStringToMap(url.getQuery());
 
-	public Map<String, String> queryStringToMap(String queryString) {
-		
-		Map<String, String> queryStringMap = new LinkedHashMap<String, String>();
+                uniqueKeys.addAll(queryStringMap.keySet());
 
-		
-		if(queryString==null)
-		{
-			return queryStringMap;
-		}
-		
-			String[] queryStringParts = queryString.split("\\&");
-			
-			
+                sb.append(queryStringMap.get("evtid") + "-" + queryStringMap.get("logid") + ".\nCount of key-val pairs:"
+                        + queryStringMap.size() + ".\nSize of the URL: " + urlPattern.length() + ".\n"
+                        + queryStringMap + "\n\n");
+            } catch (MalformedURLException e) {
+                log.error("URL malformed exception");
+                continue;
+            }
+        }
 
-		for (String queryStringPart : queryStringParts) {
+        sb.insert(0, "Total Size of URLs: " + sizeOfURLs + "\n" + "Total Unique Keys: " + uniqueKeys + "\n");
 
-			String[] queryStringPartParts = queryStringPart.split("\\="); // "auctionId="
+        return sb.toString();
+    }
 
-			if (queryStringPartParts.length == 2) {
-				queryStringMap.put(queryStringPartParts[0], queryStringPartParts[1]);
-				// queryStringMap.put(queryStringPartParts[0], ""); --rats
-				// queryStringMap.put(queryStringPartParts[0], null); --rats
-			}
+    public Map<String, String> queryStringToMap(String queryString) {
 
-		}
-		
-		
+        Map<String, String> queryStringMap = new LinkedHashMap<String, String>();
 
-		
-		
-		return queryStringMap;
-	}
 
-	public Map<String, String> getQueryStringMapFromUrl(Request urlRequest, List<Request> requests) {
+        if (queryString == null) {
+            return queryStringMap;
+        }
+
+        String[] queryStringParts = queryString.split("\\&");
+
+
+        for (String queryStringPart : queryStringParts) {
+
+            String[] queryStringPartParts = queryStringPart.split("\\="); // "auctionId="
+
+            if (queryStringPartParts.length == 2) {
+                queryStringMap.put(queryStringPartParts[0], queryStringPartParts[1]);
+                // queryStringMap.put(queryStringPartParts[0], ""); --rats
+                // queryStringMap.put(queryStringPartParts[0], null); --rats
+            }
+
+        }
+
+
+        return queryStringMap;
+    }
+
+    public Map<String, String> getQueryStringMapFromUrl(Request urlRequest, List<Request> requests) {
 
 //		List<Map<String, String>> listOfParam=new ArrayList<>();
 //		
@@ -174,75 +156,62 @@ public class URLDataProcessing {
 //		}
 //		
 //		return listOfParam;
-		
-		
-		try {
-			
-			URL urlObj = new URL(urlRequest.url());
-			
-			
-			
-			if(urlObj.getQuery()==null)
-			{	
-						Map<String, String> queryM=queryStringToMap(urlRequest.postData());
-
-						return queryM;
-				
-			}
-			
-			return queryStringToMap(urlObj.getQuery());
-
-		} catch (MalformedURLException e) {
-			log.error("URL malformed exception");
-		}
-
-		return new HashMap<>();
-		
-		
-		
-			
-	}
-	
-	public Map<String, String> getQueryStringMap(String urlRequest, List<Request> requests) {
 
 
-		
-		
-		try {
-			
-			URL urlObj = new URL(urlRequest);
-			
-			if(urlObj.getQuery()==null)
-			{
-				for(Request req:requests)
-				{
-					if(req.url().startsWith(urlRequest))
-					{
-							
+        try {
+
+            URL urlObj = new URL(urlRequest.url());
+
+
+            if (urlObj.getQuery() == null) {
+                Map<String, String> queryM = queryStringToMap(urlRequest.postData());
+
+                return queryM;
+
+            }
+
+            return queryStringToMap(urlObj.getQuery());
+
+        } catch (MalformedURLException e) {
+            log.error("URL malformed exception");
+        }
+
+        return new HashMap<>();
+
+
+    }
+
+    public Map<String, String> getQueryStringMap(String urlRequest, List<Request> requests) {
+
+
+        try {
+
+            URL urlObj = new URL(urlRequest);
+
+            if (urlObj.getQuery() == null) {
+                for (Request req : requests) {
+                    if (req.url().startsWith(urlRequest)) {
+
 //					log.info("url: "+url +"  PostData:  "+req.postData());
-						
-						Map<String, String> queryM=queryStringToMap(req.postData());
 
-						
-						return queryM;
-					}
-				}
-			}
-			
-			
-			
-			
-			return queryStringToMap(urlObj.getQuery());
+                        Map<String, String> queryM = queryStringToMap(req.postData());
 
-		} catch (MalformedURLException e) {
-			log.error("URL malformed exception");
-		}
 
-		return new HashMap<>();
-		
-		
-		
-			
-	}
-	
+                        return queryM;
+                    }
+                }
+            }
+
+
+            return queryStringToMap(urlObj.getQuery());
+
+        } catch (MalformedURLException e) {
+            log.error("URL malformed exception");
+        }
+
+        return new HashMap<>();
+
+
+    }
+
 }

@@ -7,7 +7,7 @@ featureCallsPositive: {
 featureKeysPositive: {
   GAMAPADCall: {
     y_asbkt: "v2",
-   
+
   },
   AWLog: {
     asbkt: "v2"
@@ -19,6 +19,6 @@ featureKeysNegative: {
     y_dnb: "1",
     gdpr: "0"
 
-    
+
   },
 }

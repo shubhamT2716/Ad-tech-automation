@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 
-@Getter @Setter
+@Getter
+@Setter
 public class TestCriteriaConsoleError {
 
     String browserType;

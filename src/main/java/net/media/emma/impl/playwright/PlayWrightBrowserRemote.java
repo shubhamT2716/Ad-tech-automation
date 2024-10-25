@@ -1,17 +1,6 @@
 package net.media.emma.impl.playwright;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import com.microsoft.playwright.*;
-
 import com.microsoft.playwright.options.Cookie;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -19,22 +8,30 @@ import net.media.emma.impl.playwright.network.PlaywrightMockRequest;
 import net.media.emma.impl.playwright.network.PlaywrightMockResponse;
 import net.media.emma.impl.playwright.network.RequestUrls;
 import net.media.emma.service.BrowserRemote;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 
 @Slf4j
 public class PlayWrightBrowserRemote implements BrowserRemote {
 
     // Browser browser = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
-  
-    // @Autowired Logger logger;
-    String jsExtraction = "";
 
-    private HashMap<String, Browser> browserPool = new HashMap<String, Browser>();
     static Playwright playwright;
     static BrowserType browserType;
     static Browser browser;
     static BrowserContext browserContext;
     static Page page;
+    private final HashMap<String, Browser> browserPool = new HashMap<String, Browser>();
+    // @Autowired Logger logger;
+    String jsExtraction = "";
 
     public void openMultiBrowser(String url1, String url2) {
 
@@ -77,12 +74,11 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
     }
 
 
-
     // My code
 
 // ---------------------------------------------------------------------------------------------
-                        // To append or override a creatin xpath with our html
-                        // v1.1-latest
+    // To append or override a creatin xpath with our html
+    // v1.1-latest
 
 
     @Override
@@ -92,14 +88,14 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
         Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
         // log.info(" FInished Launching Browser");
 
-        page.route(url,  route -> {
+        page.route(url, route -> {
             String fileContent = null;
 
             // log.info("Starting route");
 
             APIResponse apiResponse = route.fetch();
 
-            String pageContent = new String (apiResponse.body());
+            String pageContent = new String(apiResponse.body());
 
             // log.info("old response body is "+ pageContent);
             // log.info("Ended old response body");
@@ -107,19 +103,18 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
             try {
                 fileContent = new String(Files.readAllBytes(Paths.get(forceHtmlElement)));
 
-                log.info("filecontent to append/overirde is "+ fileContent);
+                log.info("filecontent to append/overirde is " + fileContent);
             } catch (Exception e) {
                 // throw new RuntimeException(e);
                 log.error("Dom inject error", e);
             }
-            
+
 
             Document document = Jsoup.parse(pageContent);
-            if (append==false){
+            if (!append) {
                 // log.info("Inside If case");
                 document.select(xPath).html(fileContent);
-            }
-            else{
+            } else {
                 document.select(xPath).append(fileContent);
 
             }
@@ -130,8 +125,6 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
             route.fulfill(new Route.FulfillOptions().setBody(modifiedPageContent));
 
             // log.info("Finished Dom Injection");
-
-
 
 
             // To override the entire html page via our html code.
@@ -147,12 +140,12 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
             // Path path = Paths.get(filePath);
 
             // route.fulfill(new Route.FulfillOptions().setPath(path));
-            
+
         });
 
         page.navigate(url);
         //page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("example.png")));
-     
+
     }
 
 
@@ -160,11 +153,11 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
 
 
     @Override
-    public String scrapeContent(String url){
+    public String scrapeContent(String url) {
 
         // log.info("inside func");
         try {
-            
+
 
             Page page = Playwright.create().chromium().launch(new BrowserType.LaunchOptions().setHeadless(false)).newPage();
 
@@ -177,23 +170,22 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
             });
             page.navigate(url);
 
-            
 
             String scrapeJsContent = """
-                console.log(JSON.stringify(_apPbJs, null, 4));
-                    """;
+                    console.log(JSON.stringify(_apPbJs, null, 4));
+                        """;
             page.waitForTimeout(2000);
-            JSHandle content= page.evaluateHandle(scrapeJsContent);
-           log.info(content.toString());
+            JSHandle content = page.evaluateHandle(scrapeJsContent);
+            log.info(content.toString());
 
             return jsExtraction;
 
-        } catch (PlaywrightException  e) {
-                e.printStackTrace();
+        } catch (PlaywrightException e) {
+            e.printStackTrace();
         }
 
         return "Error";
-        
+
     }
 
     @Override
@@ -255,7 +247,7 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
     }
 
     @Override
-    public Page getPage(){
+    public Page getPage() {
         return page;
     }
 
@@ -264,7 +256,7 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
         return new RequestUrls(page).getRequestUrls(reqUrl);
     }
 
-    public BrowserContext getBrowserContext(){
+    public BrowserContext getBrowserContext() {
         return browserContext;
     }
 
@@ -280,7 +272,7 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
                 }
             });
             return consoleErrorUrl;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -290,12 +282,12 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
     public List<String> getURLAnalyticsFor(String url, String[] urlPatterns) {
 
         Browser browser = Playwright.create().chromium().launch(
-                    new BrowserType.LaunchOptions()
-                    .setHeadless(false)
-                    );
+                new BrowserType.LaunchOptions()
+                        .setHeadless(false)
+        );
 
         //Hash Map of useragent to useragent-string
-        HashMap<String, String> ua = new HashMap<>(){{
+        HashMap<String, String> ua = new HashMap<>() {{
             put("catchpoint", "Mozilla/5.0 (X11; Linux x86_64; Catchpoint) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36");
             put("google-bot", "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)");
             put("iPhone", "Mozilla/5.0 (iPhone; CPU iPhone OS 12_5_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 EdgiOS/46.3.30 Mobile/15E148 Safari/605.1.15");
@@ -312,7 +304,7 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
 
         page.onRequest(request -> {
 
-            if (isUrlPatternMatched( request.url(), urlPatterns)){
+            if (isUrlPatternMatched(request.url(), urlPatterns)) {
                 urlFromNetworkTab.add(request.url());
             }
         });
@@ -322,11 +314,11 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
         return urlFromNetworkTab;
     }
 
-    private Boolean isUrlPatternMatched(String url, String[] urlPatterns){
+    private Boolean isUrlPatternMatched(String url, String[] urlPatterns) {
 
-        for(String urlPattern : urlPatterns){
+        for (String urlPattern : urlPatterns) {
 
-            if(url.startsWith(urlPattern))
+            if (url.startsWith(urlPattern))
                 return true;
         }
 
@@ -334,7 +326,7 @@ public class PlayWrightBrowserRemote implements BrowserRemote {
     }
 
 }
-    
 
-    // ------------------------------------------------My code end ------------------------------------------------------------------------
+
+// ------------------------------------------------My code end ------------------------------------------------------------------------
 

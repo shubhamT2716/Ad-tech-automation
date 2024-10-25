@@ -11,13 +11,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResponseMocking {
 
-	private String feature;
-	
-	private String url;
-	
-	private String response;
-	
-	
-	
-	
+    private String feature;
+
+    private String url;
+
+    private String response;
+
+
 }

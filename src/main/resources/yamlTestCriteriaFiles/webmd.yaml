@@ -1,5 +1,5 @@
 environment: hbx.media.net
-cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [ VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.webmd.com/?mnet_test=1"
 bidexAppendString: ""
@@ -24,43 +24,43 @@ networkCallsNegative: {
 keysToVerifyPositive: {
 
   checksync: {
-    gdpr: ["0"],
-    gdprconsent: ["0"],
+    gdpr: [ "0" ],
+    gdprconsent: [ "0" ],
     #cid: ["8CU66J63J"],
-    cs: ["1"],
-    cv: ["37"],
-    hb: ["1"],
-    vsSync: ["1"]
+    cs: [ "1" ],
+    cv: [ "37" ],
+    hb: [ "1" ],
+    vsSync: [ "1" ]
   },
 
   RTBSCall: {
-    gdpr: ["0"],
-    gdprconsent: ["0"],
+    gdpr: [ "0" ],
+    gdprconsent: [ "0" ],
     #cid: ["8CU66J63J", "8CULM0U5B"]
   },
 
   PRLog: {
-    pvid: ["99", "23", "79", "29", "3012", "3054", "441", "3007", "3", "345", "126", "326", "3003", "327", "107", "208", "54"],
+    pvid: [ "99", "23", "79", "29", "3012", "3054", "441", "3007", "3", "345", "126", "326", "3003", "327", "107", "208", "54" ],
     #svr: ["2023091809_218_100912_20_100912_42_ssp"],
-    ugd: ["4"],
+    ugd: [ "4" ],
   },
 
   APLog: {
-   # svr: ["2023091809_218_100912_20_100912_42_ssp"],
-    ugd: ["4"]
+    # svr: ["2023091809_218_100912_20_100912_42_ssp"],
+    ugd: [ "4" ]
   },
 }
 
 keysToVerifyNegative: {
-  belog: { name: ["ADS_DISABLED"]},
-  prlog: { snm : ["removed","error",], nbr : ["13"], usp_ldf : []},
-  aplog: { nbr: ["13"]},
-  awlog: { ogbdp: ["0","-1","-2"]},
+  belog: { name: [ "ADS_DISABLED" ] },
+  prlog: { snm: [ "removed","error", ], nbr: [ "13" ], usp_ldf: [ ] },
+  aplog: { nbr: [ "13" ] },
+  awlog: { ogbdp: [ "0","-1","-2" ] },
 }
 
 keysToVerifyAnyOneOf: {
-  prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { cid: ["8CULM0U5B", "8CU66J6"], snm: ["success", "nobid"], nbr : [ "45","3","69","0","1","99" ]},
+  prlog: { nbr: [ "45","3","69","0","1","99" ] },
+  aplog: { cid: [ "8CULM0U5B", "8CU66J6" ], snm: [ "success", "nobid" ], nbr: [ "45","3","69","0","1","99" ] },
 }
 
 bidderDataUrls: {
@@ -84,10 +84,10 @@ bidderDataAssertions: {
         { jsonPath: "x.imp[0].bidfloors[0].floor", value: "0" },
         { jsonPath: "x.imp[0].bidfloors[0].mediaType", value: "banner" },
         { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
-        { jsonPath: "x.imp[0].ext.channel", value: ""},
-        { jsonPath: "x.imp[0].ext.display_count", value: "1"},
-        { jsonPath: "x.imp[0].ext.mniv", value: "0"},
-        { jsonPath: "x.imp[0].ext.section", value: ""}
+        { jsonPath: "x.imp[0].ext.channel", value: "" },
+        { jsonPath: "x.imp[0].ext.display_count", value: "1" },
+        { jsonPath: "x.imp[0].ext.mniv", value: "0" },
+        { jsonPath: "x.imp[0].ext.section", value: "" }
       ],
       responseData: [
         { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -114,10 +114,10 @@ bidderDataAssertions: {
         { jsonPath: "x.imp[1].bidfloors[1].floor", value: "0" },
         { jsonPath: "x.imp[1].bidfloors[1].mediaType", value: "banner" },
         { jsonPath: "x.ext.bxLogs.svr", value: "2023091809_218_100608_745_100608_715_ssp" },
-        { jsonPath: "x.imp[1].ext.channel", value: ""},
-        { jsonPath: "x.imp[1].ext.display_count", value: "1"},
-        { jsonPath: "x.imp[1].ext.mniv", value: "0"},
-        { jsonPath: "x.imp[1].ext.section", value: ""}
+        { jsonPath: "x.imp[1].ext.channel", value: "" },
+        { jsonPath: "x.imp[1].ext.display_count", value: "1" },
+        { jsonPath: "x.imp[1].ext.mniv", value: "0" },
+        { jsonPath: "x.imp[1].ext.section", value: "" }
       ],
       responseData: [
         { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
@@ -319,5 +319,5 @@ responseSimulate: [
     urlPattern: "**//hb-pb.media.net/**",
     jsonPath: "$.ext.csUrl[1].url",
     overrideValue: "MYSESSINID"
-  }]
-domInject: []
+  } ]
+domInject: [ ]

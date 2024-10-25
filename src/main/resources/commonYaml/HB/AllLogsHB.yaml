@@ -29,14 +29,14 @@ keysToVerifyPositive: {
 
   aplogs: {
     #svr: ["2023072110_140_072412_696_072412_658_ssp"],
-    ugd: ["4"],
+    ugd: [ "4" ],
   },
 }
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  prlog: { snm : ["removed","error",], nbr : ["13"]},
-  aplog: { nbr: ["13","",null], mpvid: [], abs: []},
+  prlog: { snm: [ "removed","error", ], nbr: [ "13" ] },
+  aplog: { nbr: [ "13","",null ], mpvid: [ ], abs: [ ] },
   #awlog: { ogbdp : ["0","-1","-2"]},
 }
 

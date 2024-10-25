@@ -1,23 +1,23 @@
 environment: hbx.media.net
-cookies: [VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [ VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://time.com/?mnet_test=1"
 
 
 networkCallsPositive: {
- prlog: "https://hbxlp.media.net/log",
- aplog: "https://hbxlp.media.net/log",
- awlog: "https://hblg.media.net/log?logid=awlog",
- checksync: "https://hbx.media.net/checksync.php?cid=8CUDF88I8",
- hb: "https://hb2.media.net/rtb/hb2?cid=8CUDF88I8",
- ucreative: "https://hbx.media.net/ucreative.php?cv=1",
- tcb: "https://contextual.media.net/tcb.js?",
- belog: "https://hblg.media.net/log?logid=kfk&evtid=belog",
- gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
- Pubmatic: "https://hbopenbid.pubmatic.com/translator?source=prebid-client",
- triplelift: "https://tlx.3lift.com/header/auction?lib=prebid&v=8.26.0&referrer=https%3A%2F%2Ftime.com%2F6960789%2Fcovid-19-cautious-americans%2F&tmax=2000&gdpr=false",
+  prlog: "https://hbxlp.media.net/log",
+  aplog: "https://hbxlp.media.net/log",
+  awlog: "https://hblg.media.net/log?logid=awlog",
+  checksync: "https://hbx.media.net/checksync.php?cid=8CUDF88I8",
+  hb: "https://hb2.media.net/rtb/hb2?cid=8CUDF88I8",
+  ucreative: "https://hbx.media.net/ucreative.php?cv=1",
+  tcb: "https://contextual.media.net/tcb.js?",
+  belog: "https://hblg.media.net/log?logid=kfk&evtid=belog",
+  gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  Pubmatic: "https://hbopenbid.pubmatic.com/translator?source=prebid-client",
+  triplelift: "https://tlx.3lift.com/header/auction?lib=prebid&v=8.26.0&referrer=https%3A%2F%2Ftime.com%2F6960789%2Fcovid-19-cautious-americans%2F&tmax=2000&gdpr=false",
 
- }
+}
 
 networkCallsNegative: {
   nerrPing: "https://hblg.media.net/nerrping.php?",
@@ -27,39 +27,39 @@ networkCallsNegative: {
 keysToVerifyPositive: {
 
   checksync: {
-    gdpr: ["0"],
-    gdprconsent: ["0"],
+    gdpr: [ "0" ],
+    gdprconsent: [ "0" ],
   },
 
   prlog: {
-    pvid: ["99", "23", "79", "29", "3012", "251", "450", "441", "178", "3", "345", "203", "126", "237", "326", "117", "107", "327", "208", "109", "96", "97", "54"],
-    svr: ["2023072110_141_080214_705_080214_668_ssp"],
-    ugd: ["4"],
-    logid: ["prlog"],
+    pvid: [ "99", "23", "79", "29", "3012", "251", "450", "441", "178", "3", "345", "203", "126", "237", "326", "117", "107", "327", "208", "109", "96", "97", "54" ],
+    svr: [ "2023072110_141_080214_705_080214_668_ssp" ],
+    ugd: [ "4" ],
+    logid: [ "prlog" ],
     #usp_ldf: ["0","1"],
   },
 
   aplog: {
-    svr: ["290_27_27_ssp"],
-    ugd: ["4"],
-    logid: ["aplog"],
-  #usp_ldf: ["0","1"],
-   },
- }
+    svr: [ "290_27_27_ssp" ],
+    ugd: [ "4" ],
+    logid: [ "aplog" ],
+    #usp_ldf: ["0","1"],
+  },
+}
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  belog: { name: ["ADS_DISABLED"]},
-  prlog: { snm : ["removed","error",], nbr : ["13"], usp_ldf : []},
-  aplog: { nbr: ["13"]},
-  awlog: { ogbdp: ["0","-1","-2"]},
+  belog: { name: [ "ADS_DISABLED" ] },
+  prlog: { snm: [ "removed","error", ], nbr: [ "13" ], usp_ldf: [ ] },
+  aplog: { nbr: [ "13" ] },
+  awlog: { ogbdp: [ "0","-1","-2" ] },
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  prlog: { nbr : [ "45","3","69","0","1","99" ]},
-  aplog: { cid: ["8CULM0U5B", "8CU66J6"], snm: ["success", "nobid"], nbr : [ "45","3","69","0","1","99" ]},
- }
+  prlog: { nbr: [ "45","3","69","0","1","99" ] },
+  aplog: { cid: [ "8CULM0U5B", "8CU66J6" ], snm: [ "success", "nobid" ], nbr: [ "45","3","69","0","1","99" ] },
+}
 
 bidderDataUrls: {
   HB2: "https://hb2.media.net/rtb/hb2?cid=8CUDF88I8"
@@ -67,108 +67,108 @@ bidderDataUrls: {
 
 bidderDataAssertions: {
   HB2: [
-  {
-    matchingJsonPath: {
-      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
-      expectedValue: "leaderboard-ad-1"
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "leaderboard-ad-1"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "745673024" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "90" },
+        { jsonPath: "x.imp[0].banner[1].w", value: "970" },
+        { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+        { jsonPath: "x.imp[0].tagid", value: "745673024" },
+        { jsonPath: "x.ext.bxLogs.svr", value: "" }
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      ]
     },
-    requestData: [
-    { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
-    { jsonPath: "x.imp[0].all.crid", value: "745673024" },
-    { jsonPath: "x.imp[0].banner[0].w", value: "728" },
-    { jsonPath: "x.imp[0].banner[0].h", value: "90" },
-    { jsonPath: "x.imp[0].banner[1].w", value: "970" },
-    { jsonPath: "x.imp[0].banner[1].h", value: "250" },
-    { jsonPath: "x.imp[0].tagid", value: "745673024" },
-    { jsonPath: "x.ext.bxLogs.svr", value: "" }
-    ],
-    responseData: [
-    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-    { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
-    ]
-  },
-  
 
-  {
-    matchingJsonPath: {
-      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
-      expectedValue: "rightrail-ad-1"
-    },
-    requestData: [
-    { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
-    { jsonPath: "x.imp[0].all.crid", value: "464355535" },
-    { jsonPath: "x.imp[0].banner[0].w", value: "160" },
-    { jsonPath: "x.imp[0].banner[0].h", value: "600" },
-    { jsonPath: "x.imp[0].banner[1].w", value: "300" },
-    { jsonPath: "x.imp[0].banner[1].h", value: "250" },
-    { jsonPath: "x.imp[0].banner[0].w", value: "300" },
-    { jsonPath: "x.imp[0].banner[0].h", value: "600" },
-    { jsonPath: "x.imp[0].banner[1].w", value: "336" },
-    { jsonPath: "x.imp[0].banner[1].h", value: "280" },
-    { jsonPath: "x.imp[0].tagid", value: "464355535" },
-    { jsonPath: "x.ext.bxLogs.svr", value: "" }
-    ],
-    responseData: [
-    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-    { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
-    ]
-  },
-
-    
-      {
-    matchingJsonPath: {
-      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
-      expectedValue: "rightrail-ad-2"
-    },
-    requestData: [
-    { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
-    { jsonPath: "x.imp[0].all.crid", value: "244521791" },
-    { jsonPath: "x.imp[0].banner[0].w", value: "160" },
-    { jsonPath: "x.imp[0].banner[0].h", value: "600" },
-    { jsonPath: "x.imp[0].banner[1].w", value: "300" },
-    { jsonPath: "x.imp[0].banner[1].h", value: "250" },
-    { jsonPath: "x.imp[0].banner[0].w", value: "300" },
-    { jsonPath: "x.imp[0].banner[0].h", value: "600" },
-    { jsonPath: "x.imp[0].banner[1].w", value: "336" },
-    { jsonPath: "x.imp[0].banner[1].h", value: "280" },
-    { jsonPath: "x.imp[0].tagid", value: "244521791" },
-    { jsonPath: "x.ext.bxLogs.svr", value: "" }
-    ],
-    responseData: [
-    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-    { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
-    ]
-  },
 
     {
-    matchingJsonPath: {
-      jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
-      expectedValue: "rightrail-ad-3"
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "rightrail-ad-1"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "464355535" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "160" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "600" },
+        { jsonPath: "x.imp[0].banner[1].w", value: "300" },
+        { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "300" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "600" },
+        { jsonPath: "x.imp[0].banner[1].w", value: "336" },
+        { jsonPath: "x.imp[0].banner[1].h", value: "280" },
+        { jsonPath: "x.imp[0].tagid", value: "464355535" },
+        { jsonPath: "x.ext.bxLogs.svr", value: "" }
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      ]
     },
-    requestData: [
-    { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
-    { jsonPath: "x.imp[0].all.crid", value: "127276269" },
-    { jsonPath: "x.imp[0].banner[0].w", value: "160" },
-    { jsonPath: "x.imp[0].banner[0].h", value: "600" },
-    { jsonPath: "x.imp[0].banner[1].w", value: "300" },
-    { jsonPath: "x.imp[0].banner[1].h", value: "250" },
-    { jsonPath: "x.imp[0].banner[0].w", value: "300" },
-    { jsonPath: "x.imp[0].banner[0].h", value: "600" },
-    { jsonPath: "x.imp[0].banner[1].w", value: "336" },
-    { jsonPath: "x.imp[0].banner[1].h", value: "280" },
-    { jsonPath: "x.imp[0].tagid", value: "745673024" },
-    { jsonPath: "x.ext.bxLogs.svr", value: "" }
-    ],
-    responseData: [
-    { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
-    { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
-    ]
-  },
+
+
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "rightrail-ad-2"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "244521791" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "160" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "600" },
+        { jsonPath: "x.imp[0].banner[1].w", value: "300" },
+        { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "300" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "600" },
+        { jsonPath: "x.imp[0].banner[1].w", value: "336" },
+        { jsonPath: "x.imp[0].banner[1].h", value: "280" },
+        { jsonPath: "x.imp[0].tagid", value: "244521791" },
+        { jsonPath: "x.ext.bxLogs.svr", value: "" }
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      ]
+    },
+
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].ortb2Imp.ext.data.divId",
+        expectedValue: "rightrail-ad-3"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CUDF88I8" },
+        { jsonPath: "x.imp[0].all.crid", value: "127276269" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "160" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "600" },
+        { jsonPath: "x.imp[0].banner[1].w", value: "300" },
+        { jsonPath: "x.imp[0].banner[1].h", value: "250" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "300" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "600" },
+        { jsonPath: "x.imp[0].banner[1].w", value: "336" },
+        { jsonPath: "x.imp[0].banner[1].h", value: "280" },
+        { jsonPath: "x.imp[0].tagid", value: "745673024" },
+        { jsonPath: "x.ext.bxLogs.svr", value: "" }
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        { jsonPath: "x.ext.csUrl[0].url", value: "https://hb.yahoo.net/checksync.php?vsSync=1&cs=8&cv=31" }
+      ]
+    },
   ],
 
 }
 
 
 # ------------------------------ignore the lines below--rats---------------------
-responseSimulate: []
-domInject: []
+responseSimulate: [ ]
+domInject: [ ]

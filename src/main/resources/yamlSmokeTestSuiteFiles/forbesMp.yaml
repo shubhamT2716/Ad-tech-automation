@@ -1,86 +1,86 @@
 environment: hbx.media.net
-cookies: [VisitorId : "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o : "295a8052-83a4-4bc7-06bd-b840f17d88f7"]
+cookies: [ VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.forbes.com/?medianet_test=1"
 bidexAppendString: ""
 bidexReplaceString: { "": "" }
 
 networkCallsPositive: {
- checksync: "https://hbx.media.net/checksync.php?",
- APPR: "https://navvy.media.net/log",
- RA: "https://navvy.media.net/log",
- BElog: "https://hbxlp.media.net/log",
- cxtlog: "https://hblg.media.net/log?logid=kfk&evtid=cxtlog",
- cslog: "https://c21lg-d.media.net/log",
- auction: "https://prebid-s2s.media.net/openrtb2/auction",
- sync: "https://prebid-s2s.media.net/cookie_sync",
- dfs: "https://warp.media.net/ss/nes/dfs?cid=8CU4ZAPFY", 
- mcx: "https://warp.media.net/mcx.js",
- litype: "https://contextual.media.net/litype.php",
+  checksync: "https://hbx.media.net/checksync.php?",
+  APPR: "https://navvy.media.net/log",
+  RA: "https://navvy.media.net/log",
+  BElog: "https://hbxlp.media.net/log",
+  cxtlog: "https://hblg.media.net/log?logid=kfk&evtid=cxtlog",
+  cslog: "https://c21lg-d.media.net/log",
+  auction: "https://prebid-s2s.media.net/openrtb2/auction",
+  sync: "https://prebid-s2s.media.net/cookie_sync",
+  dfs: "https://warp.media.net/ss/nes/dfs?cid=8CU4ZAPFY",
+  mcx: "https://warp.media.net/mcx.js",
+  litype: "https://contextual.media.net/litype.php",
 }
 
 networkCallsNegative: {
- nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
- Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
- mnetcall: ".*media.net.*"
+  nerrPing: "https://lg1.hb.yahoo.net/nerrping.php?",
+  Flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+  mnetcall: ".*media.net.*"
 }
 
 keysToVerifyPositive: {
 
- checksync: {
-   #gdpr: ["0"],
-   usp_status: ["1"],
-   usp_consent: ["1"],
-   uspstring: ["1YNN"],
- },
+  checksync: {
+    #gdpr: ["0"],
+    usp_status: [ "1" ],
+    usp_consent: [ "1" ],
+    uspstring: [ "1YNN" ],
+  },
 
- APPR: {
-   lgtp: ["APPR"],
-   dn: ["www.forbes.com"],
-   req_mtype: ["banner"],
-   aucstatus: ["completed"]
- },
- 
+  APPR: {
+    lgtp: [ "APPR" ],
+    dn: [ "www.forbes.com" ],
+    req_mtype: [ "banner" ],
+    aucstatus: [ "completed" ]
+  },
+
 
 }
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  
+
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
   APPR: {
-    pvnm: ["trustx","ix","rubicon","appnexus","adagio","sharethrough","openx","kargo","medianet","pubmatic","-2"],
-    size: ["300x250","728x90","970x250"],
-    status: ["1","2","3","7"],
-    iwb: ["0","1"],
+    pvnm: [ "trustx","ix","rubicon","appnexus","adagio","sharethrough","openx","kargo","medianet","pubmatic","-2" ],
+    size: [ "300x250","728x90","970x250" ],
+    status: [ "1","2","3","7" ],
+    iwb: [ "0","1" ],
 
   }
-  
+
 }
 
 responseHeaders: {
-  
+
 
 }
 
 requestHeaders: {
-  
+
 
 }
 
 bidderDataUrls: {
- auction: "https://prebid-s2s.media.net/openrtb2/auction",
- 
+  auction: "https://prebid-s2s.media.net/openrtb2/auction",
+
 }
 
-bidderDataAssertions: { 
-  auction: [ 
+bidderDataAssertions: {
+  auction: [
     {
-  matchingJsonPath: {
+      matchingJsonPath: {
         jsonPath: "x.imp[0].id",
         expectedValue: "topx-1"
       },
@@ -105,8 +105,8 @@ bidderDataAssertions: {
         # { jsonPath: "", value: "" },
       ]
     },
-     {
-  matchingJsonPath: {
+    {
+      matchingJsonPath: {
         jsonPath: "x.imp[0].id",
         expectedValue: "top"
       },
@@ -132,7 +132,7 @@ bidderDataAssertions: {
       ]
     },
     {
-  matchingJsonPath: {
+      matchingJsonPath: {
         jsonPath: "x.imp[2].id",
         expectedValue: "top-3"
       },
@@ -157,11 +157,11 @@ bidderDataAssertions: {
         # { jsonPath: "", value: "" },
       ]
     },
-    
+
   ]
 }
-  
+
 
 # ------------------------------ignore the lines below--rats---------------------
-responseSimulate: []
-domInject: []
+responseSimulate: [ ]
+domInject: [ ]

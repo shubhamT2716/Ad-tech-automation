@@ -8,7 +8,8 @@ import java.util.List;
 public class RequestUrls {
 
     Page page;
-    public RequestUrls(Page page){
+
+    public RequestUrls(Page page) {
         this.page = page;
     }
 

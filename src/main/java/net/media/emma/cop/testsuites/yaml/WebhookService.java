@@ -1,17 +1,10 @@
 package net.media.emma.cop.testsuites.yaml;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import net.media.emma.utils.FileOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -21,86 +14,203 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
-import net.media.emma.utils.FileOperations;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
 public class WebhookService implements WebhookServiceIn {
 
-	@Autowired
-	private FileOperations fileOperations;
+    @Autowired
+    private FileOperations fileOperations;
 
-	@Value("${commonYamlFilePath}")
-	private String commonYamlFile;
+    @Value("${commonYamlFilePath}")
+    private String commonYamlFile;
 
-	@Value("${autoTestFilePath}")
-	private String autoTesterYamlFile;
+    @Value("${autoTestFilePath}")
+    private String autoTesterYamlFile;
 
-	@Autowired
-	private YamlTestSuiteScheduling yamlTestSuiteScheduling;
+    @Autowired
+    private YamlTestSuiteScheduling yamlTestSuiteScheduling;
 
-	@Value("${yamlTestCriteriaFilesPath}")
-	private String yamlTestCriteriaFilesPath;
-	
-	@Value("${emmaV}")
-	private String emmaToken;
-	
-	@Value("${sspV}")
-	private String sspToken;
-	
-	@Value("${prebidV}")
-	private String prebidToken;
+    @Value("${yamlTestCriteriaFilesPath}")
+    private String yamlTestCriteriaFilesPath;
 
-	@Override
-	public void executeWebhook(String payload) {
-		try {
-			
-			triggerEmma(payload);
+    @Value("${emmaV}")
+    private String emmaToken;
+
+    @Value("${sspV}")
+    private String sspToken;
+
+    @Value("${prebidV}")
+    private String prebidToken;
+
+    public static String generateMarkdownReport(SmokeTestRawDataDto data) {
+        StringBuilder markdownBuilder = new StringBuilder();
+        data.getRawData().entrySet().forEach(entry -> {
+
+            markdownBuilder.append("**Test URL:** ").append(entry.getValue().getTestMetaData().getPublisherUrl())
+                    .append("\n\n");
+
+            markdownBuilder.append("\n## Test Result\n");
+            markdownBuilder.append("- **Overall Result:** ").append(data.getTestResult().get("testResult")).append("\n")
+                    .append("\n");
+
+            markdownBuilder.append("- **Reason:** ").append("\n");
+
+            data.getErrorMessage().get(entry.getKey()).entrySet().forEach(errorMessage -> {
+                markdownBuilder.append("- " + errorMessage.getKey()).append(" : ").append(errorMessage.getValue())
+                        .append("\n");
+
+            });
+
+            markdownBuilder.append("<details><summary>Click to expand</summary>");
+            markdownBuilder.append("\n\n");
+            markdownBuilder.append("\n");
+
+            markdownBuilder.append("# Test Summary\n");
+            markdownBuilder.append("\n");
+            markdownBuilder.append("\n");
+            markdownBuilder.append("**Test URL:** ").append(entry.getValue().getTestMetaData().getPublisherUrl())
+                    .append("\n\n");
+            markdownBuilder.append("**Scripts Used:**\n");
+
+            markdownBuilder.append("-").append(entry.getValue().getBidExController().getMatchingUrls());
+
+            // Test Details
+            markdownBuilder.append("\n### Test Details\n");
+            markdownBuilder.append("- **Size:** ")
+                    .append(entry.getValue().getBidExController().getTotalSizeDownloaded()).append("\n");
+            markdownBuilder.append("- **Svr:** ").append(entry.getValue().getBidExController().getBidexData().getSvr())
+                    .append("\n");
+            markdownBuilder.append("- **Ugd:** ").append(entry.getValue().getBidExController().getBidexData().getSugd())
+                    .append("\n");
+            markdownBuilder.append("- **Cid:** ").append(entry.getValue().getBidExController().getBidexData().getCid())
+                    .append("\n");
+            markdownBuilder.append("- **servname:** ")
+                    .append(entry.getValue().getBidExController().getBidexData().getServname()).append("\n");
+            markdownBuilder.append("- **Location:** ")
+                    .append(entry.getValue().getBidExController().getBidexData().getCt()).append("\n");
+            markdownBuilder.append("- **Console Message:** ")
+                    .append(entry.getValue().getBidExController().getConsoleMessages()).append("\n");
+
+            // network calls negative
+            markdownBuilder.append("\n### Negative URL Checks\n");
+
+            entry.getValue().getTestSummery().get("NegativeURLChecks").entrySet().forEach(nagativeCalls -> {
+
+//				markdownBuilder.append("- **" + nagativeCalls.getKey() + ":** ").append(nagativeCalls.getValue())
+//						.append("\n");
+                if (nagativeCalls.getValue().equalsIgnoreCase("NOT PRESENT")) {
+                    markdownBuilder.append("- NO " + nagativeCalls.getKey()).append("\n\n");
+                } else {
+                    markdownBuilder.append("- **" + nagativeCalls.getKey() + ":** ").append(nagativeCalls.getValue())
+                            .append("\n");
+                }
+
+            });
+
+            // network calls Positive
+            markdownBuilder.append("\n### Positive URL Checks\n");
+
+            entry.getValue().getTestSummery().get("PositiveURLChecks").entrySet().forEach(positiveCalls -> {
+
+                markdownBuilder.append("- " + positiveCalls.getKey()).append("\n").append("\n");
+
+            });
+
+            markdownBuilder.append("\n### Cookie \n");
+
+            System.err.println("Cookies: " + entry.getValue().getCookie());
+
+            entry.getValue().getCookie().entrySet().forEach(cookieDomain -> {
+
+                if (cookieDomain.getKey().equals("https://hbx.media.net")) {
+
+                    markdownBuilder.append("- **" + "Domain" + ":** ").append(cookieDomain.getKey()).append("\n");
+                    cookieDomain.getValue().entrySet().forEach(cookie -> {
+
+                        markdownBuilder.append(cookie.getKey()).append(",");
+
+                    });
+
+                }
+
+            });
+
+            // Test Result
+            markdownBuilder.append("\n## Test Result\n");
+            markdownBuilder.append("- **Overall Result:** ").append(data.getTestResult().get("testResult")).append("\n")
+                    .append("\n");
+
+            markdownBuilder.append("- **Reason:** ").append("\n");
+
+            data.getErrorMessage().get(entry.getKey()).entrySet().forEach(errorMessage -> {
+                markdownBuilder.append("- " + errorMessage.getKey()).append(" : ").append(errorMessage.getValue())
+                        .append("\n");
+
+            });
+
+            markdownBuilder.append("\n");
+
+            markdownBuilder.append("**Full Report:** [View Full Report](" + data.getFullReport() + ")\n");
+
+            markdownBuilder.append("</details>");
+            markdownBuilder.append("\n");
+            markdownBuilder.append("\n");
+
+        });
+
+        return markdownBuilder.toString();
+    }
+
+    @Override
+    public void executeWebhook(String payload) {
+        try {
+
+            triggerEmma(payload);
 //			Thread.sleep(5500);
 
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) {
 
-	private void triggerEmma(String payload) {
-		ObjectMapper mapper = new ObjectMapper();
+            e.printStackTrace();
+        }
+    }
 
-		Map<String, Object> map = new HashMap<>();
+    private void triggerEmma(String payload) {
+        ObjectMapper mapper = new ObjectMapper();
 
-		try {
-			JsonNode jsonNode = mapper.readValue(payload, JsonNode.class);
+        Map<String, Object> map = new HashMap<>();
 
-			String projectId = jsonNode.get("project_id").toPrettyString();
+        try {
+            JsonNode jsonNode = mapper.readValue(payload, JsonNode.class);
 
-			map.put("projectId", projectId);
+            String projectId = jsonNode.get("project_id").toPrettyString();
 
-			String brachName = jsonNode.get("merge_request").get("iid").toPrettyString();
+            map.put("projectId", projectId);
 
-			map.put("mr", brachName);
+            String brachName = jsonNode.get("merge_request").get("iid").toPrettyString();
 
-			String comment = jsonNode.get("object_attributes").get("description").toPrettyString();
+            map.put("mr", brachName);
 
-			if (comment.contains("@emma")) {
+            String comment = jsonNode.get("object_attributes").get("description").toPrettyString();
 
-				String sanity="(?i)basic-sanity";
-				
-				Pattern patternSanity=Pattern.compile(sanity);
-				
-				Matcher matcherSanity=patternSanity.matcher(comment);
-				
-				if(matcherSanity.find())
-				{					
+            if (comment.contains("@emma")) {
 
-					String url = null;
-					
-					String hostRegex = "(host|env|environment)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
+                String sanity = "(?i)basic-sanity";
+
+                Pattern patternSanity = Pattern.compile(sanity);
+
+                Matcher matcherSanity = patternSanity.matcher(comment);
+
+                if (matcherSanity.find()) {
+
+                    String url = null;
+
+                    String hostRegex = "(host|env|environment)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
 
 //					if (comment.contains("url")) {
 //						String urlRegex = "(url|publisher|urls|pubs)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
@@ -115,148 +225,120 @@ public class WebhookService implements WebhookServiceIn {
 //
 //					}
 
-					String hb="(?i)HB";
-					
-					Pattern patternHb=Pattern.compile(hb);
-					
-					Matcher matcherHb=patternHb.matcher(comment);
-					
-					if(matcherHb.find())
-					{
-						url = getUrlFromItype("hb");
-					}
-					String mp="(?i)MP";
-					
-					Pattern patternMp=Pattern.compile(mp);
-					
-					Matcher matcherMp=patternMp.matcher(comment);
-					
-					if(matcherMp.find()) {
+                    String hb = "(?i)HB";
 
-						url = getUrlFromItype("mp");
-					}
-					
-					String hb2="(?i)HB2";
-					
-					Pattern patternhb2=Pattern.compile(hb2);
-					
-					Matcher matcherHb2 =patternhb2.matcher(comment);
-					
+                    Pattern patternHb = Pattern.compile(hb);
+
+                    Matcher matcherHb = patternHb.matcher(comment);
+
+                    if (matcherHb.find()) {
+                        url = getUrlFromItype("hb");
+                    }
+                    String mp = "(?i)MP";
+
+                    Pattern patternMp = Pattern.compile(mp);
+
+                    Matcher matcherMp = patternMp.matcher(comment);
+
+                    if (matcherMp.find()) {
+
+                        url = getUrlFromItype("mp");
+                    }
+
+                    String hb2 = "(?i)HB2";
+
+                    Pattern patternhb2 = Pattern.compile(hb2);
+
+                    Matcher matcherHb2 = patternhb2.matcher(comment);
+
 //					if(comment.matches(hb2)) {
 
-					if(matcherHb2.find()) {
-						url = getUrlFromItype("hb2");
-					}
+                    if (matcherHb2.find()) {
+                        url = getUrlFromItype("hb2");
+                    }
 
-					String host = extractValue(comment, hostRegex);
-					
-
-					String domain = getHostFromUrl(url);
-
-					String itype = getItypeFromUrl(domain);
+                    String host = extractValue(comment, hostRegex);
 
 
-					String ua = "Chrome.Desktop.Mac";
+                    String domain = getHostFromUrl(url);
 
-					map.put("processStart", "Bot has started processing for " + url + "  with host: " + host
-							+ " please wait for some time");
-
-					addResponseToGit(map);
-
-					List<String> autoTester = new ArrayList<>(getAutoTesterFilesTest());
-
-					List<String> commonFile = new ArrayList<>(getCommonFilesForApi(itype));
-
-					SmokeTestRawDataDto dataDto = this.yamlTestSuiteScheduling.getAutoTest(host, ua, autoTester,
-							commonFile, url, itype, "", false);
-
-					map.put("response", dataDto);
-
-				}
-
-				else {
-
-					String hostRegex = "(host|env|environment)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
-					String uaRegex = "(userAgent|ua)\\s*:\\s*([\\S]+)\\s*(?=[\\s,\"])";
-					String publisher = "(url|publisher|urls|pubs)\\s*:\\s*([\\S]+)\\s*(?=[\\s,\"])";
-					String itype = "itype\\s*:\\s*([\\S]+)\\s*(?=[\\s,\"])";
-
-					String pub = extractValue(comment, publisher);
-					String host = extractValue(comment, hostRegex);
-					String ua = extractValue(comment, uaRegex);
-					String it = extractValue(comment, itype);
-					
-					
-					if(it==null)
-					{
-						String domain = getHostFromUrl(pub);
-
-						 it = getItypeFromUrl(domain);
-					}
-
-					map.put("processStart",
-							"Bot has started processing with host:" + host + " please wait for some time");
-
-					addResponseToGit(map);
-
-					List<String> commonFile = new ArrayList<>(getCommonFilesForApi(it));
-
-					List<String> autoTest = new ArrayList<>(getAutoTesterFilesTest());
-
-					SmokeTestRawDataDto dataDto = this.yamlTestSuiteScheduling.getAutoTest(host, ua, autoTest,
-							commonFile, pub, it, "", false);
+                    String itype = getItypeFromUrl(domain);
 
 
-					map.put("response", dataDto);
-				}
+                    String ua = "Chrome.Desktop.Mac";
 
-				addResponseToGit(map);
+                    map.put("processStart", "Bot has started processing for " + url + "  with host: " + host
+                            + " please wait for some time");
 
-			}
+                    addResponseToGit(map);
 
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+                    List<String> autoTester = new ArrayList<>(getAutoTesterFilesTest());
 
-	}
+                    List<String> commonFile = new ArrayList<>(getCommonFilesForApi(itype));
 
-	private String getUrlFromItype(String itype) {
+                    SmokeTestRawDataDto dataDto = this.yamlTestSuiteScheduling.getAutoTest(host, ua, autoTester,
+                            commonFile, url, itype, "", false);
 
-		Map<String, String> list = new HashMap<>();
+                    map.put("response", dataDto);
 
-		list.put("hb2", "https://time.com/?mnet_test=1");
+                } else {
 
-		list.put("mp", "https://www.forbes.com/?medianet_test=1,https://www.fox13now.com/?medianet_test=1,https://www.daily.co.jp/?medianet_test=1");
+                    String hostRegex = "(host|env|environment)\\s*:\\s*([\\S]+?)\\s*(?=[\\s,\"])";
+                    String uaRegex = "(userAgent|ua)\\s*:\\s*([\\S]+)\\s*(?=[\\s,\"])";
+                    String publisher = "(url|publisher|urls|pubs)\\s*:\\s*([\\S]+)\\s*(?=[\\s,\"])";
+                    String itype = "itype\\s*:\\s*([\\S]+)\\s*(?=[\\s,\"])";
 
-		list.put("hb", "https://www.nutritionix.com/brands/restaurant?mnet_test=1,https://www.webmd.com/?mnet_test=1");
+                    String pub = extractValue(comment, publisher);
+                    String host = extractValue(comment, hostRegex);
+                    String ua = extractValue(comment, uaRegex);
+                    String it = extractValue(comment, itype);
 
-		return list.get(itype);
-	}
 
-	private String getItypeFromUrl(String url) {
+                    if (it == null) {
+                        String domain = getHostFromUrl(pub);
 
-		String pub[] = url.split(",");
+                        it = getItypeFromUrl(domain);
+                    }
 
-		Map<String, String> listOfurls = new HashMap<>();
+                    map.put("processStart",
+                            "Bot has started processing with host:" + host + " please wait for some time");
 
-		listOfurls.put("daily.co.jp", "MP");
-		listOfurls.put("fox13now.com", "MP");
-		listOfurls.put("forbes.com", "MP");
-		listOfurls.put("time.com", "HB2");
-		listOfurls.put("webmd.com", "HB");
-		listOfurls.put("nutritionix.com", "HB");
-		listOfurls.put("shubhammedia.github.io", "MP");
+                    addResponseToGit(map);
 
-		String itype = null;
+                    List<String> commonFile = new ArrayList<>(getCommonFilesForApi(it));
 
-		for (String a : pub) {
-			itype = listOfurls.get(a);
-		}
+                    List<String> autoTest = new ArrayList<>(getAutoTesterFilesTest());
 
-		return itype;
+                    SmokeTestRawDataDto dataDto = this.yamlTestSuiteScheduling.getAutoTest(host, ua, autoTest,
+                            commonFile, pub, it, "", false);
 
-	}
+
+                    map.put("response", dataDto);
+                }
+
+                addResponseToGit(map);
+
+            }
+
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+    private String getUrlFromItype(String itype) {
+
+        Map<String, String> list = new HashMap<>();
+
+        list.put("hb2", "https://time.com/?mnet_test=1");
+
+        list.put("mp", "https://www.forbes.com/?medianet_test=1,https://www.fox13now.com/?medianet_test=1,https://www.daily.co.jp/?medianet_test=1");
+
+        list.put("hb", "https://www.nutritionix.com/brands/restaurant?mnet_test=1,https://www.webmd.com/?mnet_test=1");
+
+        return list.get(itype);
+    }
 
 //	private String getFileNameFromUrl(String url) {
 //		Map<String, String> listOfurls = new HashMap<>();
@@ -284,38 +366,29 @@ public class WebhookService implements WebhookServiceIn {
 //
 //	}
 
-	private String getHostFromUrl(String urls) {
+    private String getItypeFromUrl(String url) {
 
-		String url[] = urls.split(",");
+        String[] pub = url.split(",");
 
-		List<String> li = new ArrayList<>();
+        Map<String, String> listOfurls = new HashMap<>();
 
-		try {
+        listOfurls.put("daily.co.jp", "MP");
+        listOfurls.put("fox13now.com", "MP");
+        listOfurls.put("forbes.com", "MP");
+        listOfurls.put("time.com", "HB2");
+        listOfurls.put("webmd.com", "HB");
+        listOfurls.put("nutritionix.com", "HB");
+        listOfurls.put("shubhammedia.github.io", "MP");
 
-			for (String pub : url) {
-				URL ur = new URL(pub);
+        String itype = null;
 
-				String host = ur.getHost();
+        for (String a : pub) {
+            itype = listOfurls.get(a);
+        }
 
-				if (host.contains("www.")) {
-					host = host.substring(4);
+        return itype;
 
-				}
-
-				li.add(host);
-
-			}
-
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		String updateUrl = String.join(",", li);
-
-		return updateUrl;
-
-	}
+    }
 
 //	private List<String> getYamlFromUrl(String url) {
 //		List<String> listOfFiles = new ArrayList<>();
@@ -343,220 +416,131 @@ public class WebhookService implements WebhookServiceIn {
 //
 //	}
 
-	public static String generateMarkdownReport(SmokeTestRawDataDto data) {
-		StringBuilder markdownBuilder = new StringBuilder();
-		data.getRawData().entrySet().forEach(entry -> {
+    private String getHostFromUrl(String urls) {
 
-			markdownBuilder.append("**Test URL:** ").append(entry.getValue().getTestMetaData().getPublisherUrl())
-			.append("\n\n");
-			
-			markdownBuilder.append("\n## Test Result\n");
-			markdownBuilder.append("- **Overall Result:** ").append(data.getTestResult().get("testResult")).append("\n")
-					.append("\n");
+        String[] url = urls.split(",");
 
-			markdownBuilder.append("- **Reason:** ").append("\n");
+        List<String> li = new ArrayList<>();
 
-			data.getErrorMessage().get(entry.getKey()).entrySet().forEach(errorMessage -> {
-				markdownBuilder.append("- " + errorMessage.getKey()).append(" : ").append(errorMessage.getValue())
-						.append("\n");
+        try {
 
-			});
-			
-			markdownBuilder.append("<details><summary>Click to expand</summary>");
-			markdownBuilder.append("\n\n");
-			markdownBuilder.append("\n");
+            for (String pub : url) {
+                URL ur = new URL(pub);
 
-			markdownBuilder.append("# Test Summary\n");
-			markdownBuilder.append("\n");
-			markdownBuilder.append("\n");
-			markdownBuilder.append("**Test URL:** ").append(entry.getValue().getTestMetaData().getPublisherUrl())
-					.append("\n\n");
-			markdownBuilder.append("**Scripts Used:**\n");
+                String host = ur.getHost();
 
-			markdownBuilder.append("-").append(entry.getValue().getBidExController().getMatchingUrls());
+                if (host.contains("www.")) {
+                    host = host.substring(4);
 
-			// Test Details
-			markdownBuilder.append("\n### Test Details\n");
-			markdownBuilder.append("- **Size:** ")
-					.append(entry.getValue().getBidExController().getTotalSizeDownloaded()).append("\n");
-			markdownBuilder.append("- **Svr:** ").append(entry.getValue().getBidExController().getBidexData().getSvr())
-					.append("\n");
-			markdownBuilder.append("- **Ugd:** ").append(entry.getValue().getBidExController().getBidexData().getSugd())
-					.append("\n");
-			markdownBuilder.append("- **Cid:** ").append(entry.getValue().getBidExController().getBidexData().getCid())
-					.append("\n");
-			markdownBuilder.append("- **servname:** ")
-					.append(entry.getValue().getBidExController().getBidexData().getServname()).append("\n");
-			markdownBuilder.append("- **Location:** ")
-					.append(entry.getValue().getBidExController().getBidexData().getCt()).append("\n");
-			markdownBuilder.append("- **Console Message:** ")
-					.append(entry.getValue().getBidExController().getConsoleMessages()).append("\n");
+                }
 
-			// network calls negative
-			markdownBuilder.append("\n### Negative URL Checks\n");
+                li.add(host);
 
-			entry.getValue().getTestSummery().get("NegativeURLChecks").entrySet().forEach(nagativeCalls -> {
+            }
 
-//				markdownBuilder.append("- **" + nagativeCalls.getKey() + ":** ").append(nagativeCalls.getValue())
-//						.append("\n");
-				if (nagativeCalls.getValue().equalsIgnoreCase("NOT PRESENT")) {
-					markdownBuilder.append("- NO " + nagativeCalls.getKey()).append("\n\n");
-				} else {
-					markdownBuilder.append("- **" + nagativeCalls.getKey() + ":** ").append(nagativeCalls.getValue())
-							.append("\n");
-				}
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-			});
+        String updateUrl = String.join(",", li);
 
-			// network calls Positive
-			markdownBuilder.append("\n### Positive URL Checks\n");
+        return updateUrl;
 
-			entry.getValue().getTestSummery().get("PositiveURLChecks").entrySet().forEach(positiveCalls -> {
+    }
 
-				markdownBuilder.append("- " + positiveCalls.getKey()).append("\n").append("\n");
+    private String extractValue(String comment, String pattern) {
+        Pattern pattern2 = Pattern.compile(pattern);
 
-			});
+        Matcher matcher = pattern2.matcher(comment);
 
-			markdownBuilder.append("\n### Cookie \n");
-			
-			System.err.println("Cookies: "+entry.getValue().getCookie());
+        if (matcher.find()) {
 
-			entry.getValue().getCookie().entrySet().forEach(cookieDomain -> {
-
-				if (cookieDomain.getKey().equals("https://hbx.media.net")) {
-
-					markdownBuilder.append("- **" + "Domain" + ":** ").append(cookieDomain.getKey()).append("\n");
-					cookieDomain.getValue().entrySet().forEach(cookie -> {
-
-						markdownBuilder.append(cookie.getKey()).append(",");
-
-					});
-
-				}
-
-			});
-
-			// Test Result
-			markdownBuilder.append("\n## Test Result\n");
-			markdownBuilder.append("- **Overall Result:** ").append(data.getTestResult().get("testResult")).append("\n")
-					.append("\n");
-
-			markdownBuilder.append("- **Reason:** ").append("\n");
-
-			data.getErrorMessage().get(entry.getKey()).entrySet().forEach(errorMessage -> {
-				markdownBuilder.append("- " + errorMessage.getKey()).append(" : ").append(errorMessage.getValue())
-						.append("\n");
-
-			});
-
-			markdownBuilder.append("\n");
-
-			markdownBuilder.append("**Full Report:** [View Full Report](" + data.getFullReport() + ")\n");
-
-			markdownBuilder.append("</details>");
-			markdownBuilder.append("\n");
-			markdownBuilder.append("\n");
-			
-		});
-
-		return markdownBuilder.toString();
-	}
-
-	private String extractValue(String comment, String pattern) {
-		Pattern pattern2 = Pattern.compile(pattern);
-
-		Matcher matcher = pattern2.matcher(comment);
-
-		if (matcher.find()) {
-			
-			try {
-				return matcher.group(2).trim();
-			}
-			catch (Exception e) {
-				return matcher.group(1).trim();
-			}
-
-			
-		}
-
-		return null;
-	}
-	
-	private String getAccessToken(Object projectId)
-	{
-		Map<String, String> mapOfProjectIdKy=new HashMap<>();
-		
-		mapOfProjectIdKy.put("15491", emmaToken);
-		mapOfProjectIdKy.put("8300", prebidToken);
-		mapOfProjectIdKy.put("6340", sspToken);
-		
-		String key=mapOfProjectIdKy.get(projectId);
-		
-		return key;
-		
-	}
-
-	private void addResponseToGit(Map<String, Object> response) {
-
-		String girUrl = "http://tree.mn/api/v4/projects/" + response.get("projectId") + "/merge_requests/"
-				+ response.get("mr") + "/notes";
-
-		log.info("git process start");
-		RestTemplate restTemplate = new RestTemplate();
-
-		HttpHeaders headers = new HttpHeaders();
-
-		//glpat-zzNwY6CKgyLaBYg_7PuL
-		//glpat-spsyh2z6QMEQs5sQnKD7
-		
-		// emma key : glpat-fyX_Nidzz5EE6Vazr-Go
-		// prebidKey: glpat-eiZcFRxrY4n_vwhzqpfF
-		
-		
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("PRIVATE-TOKEN", getAccessToken(response.get("projectId")));
-
-		Map<String, String> map = new HashMap<>();
+            try {
+                return matcher.group(2).trim();
+            } catch (Exception e) {
+                return matcher.group(1).trim();
+            }
 
 
+        }
 
-		if (response.get("response") == null) {
-			map.put("body", response.get("processStart").toString());
-		} else {
-			SmokeTestRawDataDto rawReport = (SmokeTestRawDataDto) response.get("response");
-			String html = null;
+        return null;
+    }
 
-			try {
+    private String getAccessToken(Object projectId) {
+        Map<String, String> mapOfProjectIdKy = new HashMap<>();
 
-				log.info(rawReport.getBidExReport().toString());
-				html = generateMarkdownReport(rawReport);
+        mapOfProjectIdKy.put("15491", emmaToken);
+        mapOfProjectIdKy.put("8300", prebidToken);
+        mapOfProjectIdKy.put("6340", sspToken);
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+        String key = mapOfProjectIdKy.get(projectId);
 
-			map.put("body", html);
-		}
+        return key;
 
-		HttpEntity<Map<String, String>> entity = new HttpEntity<Map<String, String>>(map, headers);
+    }
 
-		ResponseEntity<String> data = restTemplate.postForEntity(girUrl, entity, String.class);
+    private void addResponseToGit(Map<String, Object> response) {
 
-		log.info("process completed: " + data.getBody() + " : " + data.getStatusCode());
-	}
+        String girUrl = "http://tree.mn/api/v4/projects/" + response.get("projectId") + "/merge_requests/"
+                + response.get("mr") + "/notes";
 
-	private Set<String> getCommonFilesForApi(String itype) {
-		Set<String> fileName = fileOperations.listYamlFiles(commonYamlFile + "/" + itype);
+        log.info("git process start");
+        RestTemplate restTemplate = new RestTemplate();
 
-		return fileName;
-	}
-	
+        HttpHeaders headers = new HttpHeaders();
 
-	private Set<String> getAutoTesterFilesTest() {
-		Set<String> fileName = fileOperations.listYamlFiles(autoTesterYamlFile);
+        //glpat-zzNwY6CKgyLaBYg_7PuL
+        //glpat-spsyh2z6QMEQs5sQnKD7
 
-		return fileName;
-	}
+        // emma key : glpat-fyX_Nidzz5EE6Vazr-Go
+        // prebidKey: glpat-eiZcFRxrY4n_vwhzqpfF
+
+
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("PRIVATE-TOKEN", getAccessToken(response.get("projectId")));
+
+        Map<String, String> map = new HashMap<>();
+
+
+        if (response.get("response") == null) {
+            map.put("body", response.get("processStart").toString());
+        } else {
+            SmokeTestRawDataDto rawReport = (SmokeTestRawDataDto) response.get("response");
+            String html = null;
+
+            try {
+
+                log.info(rawReport.getBidExReport().toString());
+                html = generateMarkdownReport(rawReport);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            map.put("body", html);
+        }
+
+        HttpEntity<Map<String, String>> entity = new HttpEntity<Map<String, String>>(map, headers);
+
+        ResponseEntity<String> data = restTemplate.postForEntity(girUrl, entity, String.class);
+
+        log.info("process completed: " + data.getBody() + " : " + data.getStatusCode());
+    }
+
+    private Set<String> getCommonFilesForApi(String itype) {
+        Set<String> fileName = fileOperations.listYamlFiles(commonYamlFile + "/" + itype);
+
+        return fileName;
+    }
+
+
+    private Set<String> getAutoTesterFilesTest() {
+        Set<String> fileName = fileOperations.listYamlFiles(autoTesterYamlFile);
+
+        return fileName;
+    }
 
 //	private Set<String> getYamlFiles() {
 //		Set<String> filename = fileOperations.listYamlFiles(yamlTestCriteriaFilesPath);

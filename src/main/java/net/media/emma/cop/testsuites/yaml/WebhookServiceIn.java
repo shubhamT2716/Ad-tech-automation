@@ -5,5 +5,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface WebhookServiceIn {
 
-	public void executeWebhook(String payload);
+    void executeWebhook(String payload);
 }

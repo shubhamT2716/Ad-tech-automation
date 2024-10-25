@@ -2,11 +2,10 @@ package net.media.emma.config;
 
 import net.media.emma.coptests.AssertNetworkCalls;
 import net.media.emma.coptests.SoftAssertion;
+import net.media.emma.service.BrowserRemote;
 import org.slf4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import net.media.emma.service.BrowserRemote;
 
 @Configuration
 public class Loggers {
@@ -31,7 +30,10 @@ public class Loggers {
         return new ConsoleError();
     }*/
 
-    @Bean public SoftAssertion softAssertion(){return new SoftAssertion();}
+    @Bean
+    public SoftAssertion softAssertion() {
+        return new SoftAssertion();
+    }
 
 
 }

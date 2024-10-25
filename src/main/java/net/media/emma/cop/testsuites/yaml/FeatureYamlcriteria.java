@@ -1,11 +1,11 @@
 package net.media.emma.cop.testsuites.yaml;
 
-import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Map;
 
 @Getter
 @Setter
@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FeatureYamlcriteria {
 
-	
-	Map<String, Object> featureYaml;
-	
+
+    Map<String, Object> featureYaml;
+
 }

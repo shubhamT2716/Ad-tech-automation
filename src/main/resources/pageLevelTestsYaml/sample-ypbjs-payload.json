@@ -1,67 +1,79 @@
-{ 
-    "id": "2df4f4a7-7d43-49ee-b9a8-63973bfd4a1c",
-    "cur": ["USD"],
-    "imp": [{
-        "id": "38732236536868151687255324351",
-        "secure": 1,
-        "banner": {
-            "mimes": ["text/html", "text/javascript", "application/javascript", "image/jpg"],
-            "format": [{
-                "w": 728,
-                "h": 90
-            }, {
-                "w": 970,
-                "h": 250
-            }]
+{
+  "id": "2df4f4a7-7d43-49ee-b9a8-63973bfd4a1c",
+  "cur": [
+    "USD"
+  ],
+  "imp": [
+    {
+      "id": "38732236536868151687255324351",
+      "secure": 1,
+      "banner": {
+        "mimes": [
+          "text/html",
+          "text/javascript",
+          "application/javascript",
+          "image/jpg"
+        ],
+        "format": [
+          {
+            "w": 728,
+            "h": 90
+          },
+          {
+            "w": 970,
+            "h": 250
+          }
+        ]
+      },
+      "ext": {
+        "dfp_ad_unit_code": "us_eng_main_dt_top_center",
+        "kvs": {
+          "cobrand": "none",
+          "lang": "en-US"
         },
-        "ext": {
-            "dfp_ad_unit_code": "us_eng_main_dt_top_center",
-            "kvs": {
-                "cobrand": "none",
-                "lang": "en-US"
-            },
-            "pos": "us_eng_main_dt_top_center"
-        },
-        "tagid": "us_eng_main_dt_top_center"
-    }],
-    "site": {
-        "page": "https://www.engadget.com/",
-        "id": "8a9694a10187874cb8228063a3770094",
-        "publisher": {
-            "ext": {
-                "publisherblob": "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6sorf21i92u9p",
-                "bucket": "eng-nl-hp-dis,ed-gam-migration1-1"
-            }
-        }
-    },
-    "device": {
-        "dnt": 0,
-        "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-        "w": 2048,
-        "h": 1152
-    },
-    "regs": {
-        "ext": {
-            "us_privacy": "1---",
-            "gdpr": 0
-        }
-    },
-    "source": {
-        "ext": {
-            "hb": 1,
-            "adapterver": "1.0.2",
-            "prebidver": "7.2.0",
-            "integration": {
-                "name": "prebid.js",
-                "ver": "7.2.0"
-            }
-        },
-        "fd": 1
-    },
-    "user": {
-        "ext": {
-            "consent": "",
-            "eids": []
-        }
+        "pos": "us_eng_main_dt_top_center"
+      },
+      "tagid": "us_eng_main_dt_top_center"
     }
+  ],
+  "site": {
+    "page": "https://www.engadget.com/",
+    "id": "8a9694a10187874cb8228063a3770094",
+    "publisher": {
+      "ext": {
+        "publisherblob": "lu:0;pt:home;site:engadget;ver:carbon||1197802876||6sorf21i92u9p",
+        "bucket": "eng-nl-hp-dis,ed-gam-migration1-1"
+      }
+    }
+  },
+  "device": {
+    "dnt": 0,
+    "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+    "w": 2048,
+    "h": 1152
+  },
+  "regs": {
+    "ext": {
+      "us_privacy": "1---",
+      "gdpr": 0
+    }
+  },
+  "source": {
+    "ext": {
+      "hb": 1,
+      "adapterver": "1.0.2",
+      "prebidver": "7.2.0",
+      "integration": {
+        "name": "prebid.js",
+        "ver": "7.2.0"
+      }
+    },
+    "fd": 1
+  },
+  "user": {
+    "ext": {
+      "consent": "",
+      "eids": []
+    }
+  }
 }

@@ -15,12 +15,15 @@ import java.util.Map;
 @ContextConfiguration(classes = Loggers.class)
 public class MockResponse extends AbstractTestNGSpringContextTests {
 
-    @Autowired private net.media.emma.service.BrowserRemote browserRemote;
-    @Autowired private net.media.emma.config.Loggers loggers;
-    @Autowired private net.media.emma.coptests.SoftAssertion softAssertion;
+    @Autowired
+    private net.media.emma.service.BrowserRemote browserRemote;
+    @Autowired
+    private net.media.emma.config.Loggers loggers;
+    @Autowired
+    private net.media.emma.coptests.SoftAssertion softAssertion;
 
     @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml.class)
-    public void mockResponse(Object object){
+    public void mockResponse(Object object) {
         try {
             softAssertion.softAssert();
             Map<String, Object> testData = (Map<String, Object>) object;
@@ -31,10 +34,10 @@ public class MockResponse extends AbstractTestNGSpringContextTests {
             if (!("responseSimulate").isEmpty()) {
                 this.browserRemote.mockResponse(responseSimulate.get("urlPattern"), responseSimulate.get("jsonPath"), responseSimulate.get("updatedValue"));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             softAssertion.getSoftAssert().fail("Unable to Mock Response");
             loggers.standardLogger().error("Unable to Mock Response", e);
-        }finally {
+        } finally {
             softAssertion.getSoftAssert().assertAll();
         }
     }

@@ -1,8 +1,6 @@
 package net.media.emma.config;
 
-import java.util.HashMap;
-import java.util.Properties;
-
+import net.media.emma.utils.MailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,53 +9,53 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import net.media.emma.utils.MailServiceImpl;
+import java.util.Properties;
 
 @Configuration
 public class EmailConfig {
 
-	@Autowired
-	SpringTemplateEngine thymeleaf;
+    @Autowired
+    SpringTemplateEngine thymeleaf;
 
-	@Value("${spring.mail.host}")
-	private String host;
+    @Value("${spring.mail.host}")
+    private String host;
 
-	@Value("${spring.mail.port}")
-	private int port;
+    @Value("${spring.mail.port}")
+    private int port;
 
-	@Value("${spring.mail.username}")
-	private String userName;
+    @Value("${spring.mail.username}")
+    private String userName;
 
-	@Value("${spring.mail.password}")
-	private String password;
+    @Value("${spring.mail.password}")
+    private String password;
 
-	// "smtp.gmail.com",587,
+    // "smtp.gmail.com",587,
 
-	@Bean
-	public JavaMailSender javaMailSender() {
-		JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-		javaMailSender.setHost(host);
-		javaMailSender.setPort(port);
-		javaMailSender.setUsername(userName);
-		javaMailSender.setPassword(password);
+    @Bean
+    public JavaMailSender javaMailSender() {
+        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
+        javaMailSender.setHost(host);
+        javaMailSender.setPort(port);
+        javaMailSender.setUsername(userName);
+        javaMailSender.setPassword(password);
 
-		Properties properties = javaMailSender.getJavaMailProperties();
-		properties.put("mail.smtp.host", host);
-		properties.put("mail.smtp.port", port);
-		properties.put("mail.smtp.ssl.enable", "true");
-		properties.put("mail.smtp.auth", "true");
-		properties.put("mail.transport.protocol", "smtp");
-		properties.put("mail.smtp.auth", "true");
-		properties.put("mail.smtp.starttls.enable", "true");
+        Properties properties = javaMailSender.getJavaMailProperties();
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.port", port);
+        properties.put("mail.smtp.ssl.enable", "true");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.transport.protocol", "smtp");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
 //		properties.put("mail.debug", "true");
-		
 
-		return javaMailSender;
-	}
 
-	@Bean(name = "mnetSender")
-	public MailServiceImpl mailServiceImpl() {
-		return new MailServiceImpl(javaMailSender(), thymeleaf);
-	}
+        return javaMailSender;
+    }
+
+    @Bean(name = "mnetSender")
+    public MailServiceImpl mailServiceImpl() {
+        return new MailServiceImpl(javaMailSender(), thymeleaf);
+    }
 
 }

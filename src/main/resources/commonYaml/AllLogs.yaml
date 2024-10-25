@@ -17,33 +17,33 @@ keysToVerifyPositive: {
 
   checksync: {
     #gdpr: ["0"],
-    gpp: ["DBAA"],
-    gpp_sid: ["-1"]
+    gpp: [ "DBAA" ],
+    gpp_sid: [ "-1" ]
   },
 
   PRLog: {
-    cid: ["8YHBL12EX"],
-    svr: ["2023072110_140_072412_696_072412_658_ssp"],
-    ugd: ["4"],
+    cid: [ "8YHBL12EX" ],
+    svr: [ "2023072110_140_072412_696_072412_658_ssp" ],
+    ugd: [ "4" ],
   },
 
   APLog: {
-    svr: ["2023072110_140_072412_696_072412_658_ssp"],
-    ugd: ["4"],
+    svr: [ "2023072110_140_072412_696_072412_658_ssp" ],
+    ugd: [ "4" ],
   },
 }
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  PRLog: { snm : ["removed","error",], nbr : ["13"]},
-  APLog: { nbr: ["13","",null], mpvid: [], abs: []},
-  AWLog: { ogbdp : ["0","-1","-2"]},
+  PRLog: { snm: [ "removed","error", ], nbr: [ "13" ] },
+  APLog: { nbr: [ "13","",null ], mpvid: [ ], abs: [ ] },
+  AWLog: { ogbdp: [ "0","-1","-2" ] },
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
-  PRLog: { nbr : [ "45","3","69","0","1","99" ]},
-  APLog: { nbr : [ "45","3","69","0","1","99" ], pvid : ["-3","25014","25015","25016"]}
+  PRLog: { nbr: [ "45","3","69","0","1","99" ] },
+  APLog: { nbr: [ "45","3","69","0","1","99" ], pvid: [ "-3","25014","25015","25016" ] }
 
 }
 

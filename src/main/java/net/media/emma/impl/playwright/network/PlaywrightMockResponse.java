@@ -15,14 +15,14 @@ import java.nio.charset.StandardCharsets;
 
 public class PlaywrightMockResponse {
 
-    static String responseBody;
     private static final Configuration configuration = Configuration.builder()
             .jsonProvider(new JacksonJsonNodeJsonProvider())
             .mappingProvider(new JacksonMappingProvider())
             .build();
-
+    static String responseBody;
     Page page;
-    public PlaywrightMockResponse(Page page){
+
+    public PlaywrightMockResponse(Page page) {
         this.page = page;
     }
 

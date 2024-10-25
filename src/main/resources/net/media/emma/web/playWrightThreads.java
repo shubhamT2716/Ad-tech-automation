@@ -1,5 +1,8 @@
 package net.media.emma.web;
 
+import lombok.extern.slf4j.Slf4j;
+import net.media.emma.service.BrowserRemote;
+import net.media.emma.utils.URLDataProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,20 +10,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import lombok.extern.slf4j.Slf4j;
-import net.media.emma.service.BrowserRemote;
-import net.media.emma.utils.URLDataProcessing;
-
 @Slf4j
 @Controller
 public class playWrightThreads {
 
-    @Autowired BrowserRemote browserRemote;
-    @Autowired URLDataProcessing urlUtil;
+    @Autowired
+    BrowserRemote browserRemote;
+    @Autowired
+    URLDataProcessing urlUtil;
 
     @GetMapping("/playWrightThreads")
     public String openPlayWrightThreads() {
-    
+
         return "playWrightThreads";
     }
 
@@ -35,7 +36,7 @@ public class playWrightThreads {
 
     @GetMapping("/urlAnalytics")
     public String inputUrl() {
-    
+
         return "inputUrl";
     }
 
@@ -46,9 +47,9 @@ public class playWrightThreads {
 
         modelAndView.setViewName("inputUrl");
 
-        String urlData = urlUtil.printURLDetails(browserRemote.getURLAnalyticsFor(url, new String[] {urlPatterns}));
+        String urlData = urlUtil.printURLDetails(browserRemote.getURLAnalyticsFor(url, new String[]{urlPatterns}));
 
         modelAndView.addObject("message", urlData);
-        return modelAndView;  
+        return modelAndView;
     }
 }

@@ -1,56 +1,56 @@
 networkCallsPositive: {
- checksync: "https://hbx.media.net/checksync.php?",
- APPR-RA: "https://navvy.media.net/log",
- l1log: "https://hblg.media.net/log?logid=kfk&evtid=l1log", 
- gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
- openx: "https://rtb.openx.net/openrtbb/prebidjs",
- prebid: "https://prebid.media.net/rtb/prebid?cid"
- #RA: "https://navvy.media.net/log",
+  checksync: "https://hbx.media.net/checksync.php?",
+  APPR-RA: "https://navvy.media.net/log",
+  l1log: "https://hblg.media.net/log?logid=kfk&evtid=l1log",
+  gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  openx: "https://rtb.openx.net/openrtbb/prebidjs",
+  prebid: "https://prebid.media.net/rtb/prebid?cid"
+  #RA: "https://navvy.media.net/log",
 }
 
 networkCallsNegative: {
- nerrPing: "https://hblg.media.net/nerrping.php",
- flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
- 
+  nerrPing: "https://hblg.media.net/nerrping.php",
+  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+
 }
 
 keysToVerifyPositive: {
 
- checksync: {
-   #gdpr: ["0"],
-   #gpp: ["DBAA"],
-   #gpp_sid: ["-1"],
-   #usp_status: ["1"],
-   #usp_consent: ["1"],
-   #uspstring: ["1YNN"],
-   #axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
- },
+  checksync: {
+    #gdpr: ["0"],
+    #gpp: ["DBAA"],
+    #gpp_sid: ["-1"],
+    #usp_status: ["1"],
+    #usp_consent: ["1"],
+    #uspstring: ["1YNN"],
+    #axid_e: ["eS1hbDVOS1VkRTJ1R3FnUjRVWnZsUmIyZTRfWmZJMlpqM35B"],
+  },
 
- APPR-RA: {
-   lgtp: ["APPR","RA"],
-   #gdpr: ["0"],
-   
- },
- #RA: {
-   #lgtp: ["RA"],
- #},
+  APPR-RA: {
+    lgtp: [ "APPR","RA" ],
+    #gdpr: ["0"],
+
+  },
+  #RA: {
+  #lgtp: ["RA"],
+  #},
 
 }
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  
+
 }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
   #APPR: {
-   # pvnm: ["trustx","ix","rubicon","appnexus","adagio"],
-    #size: ["300x250","728x90"],
-   # lgtp: ["APPR","RA"]
- # }
-  
+  # pvnm: ["trustx","ix","rubicon","appnexus","adagio"],
+  #size: ["300x250","728x90"],
+  # lgtp: ["APPR","RA"]
+  # }
+
 }
 
 

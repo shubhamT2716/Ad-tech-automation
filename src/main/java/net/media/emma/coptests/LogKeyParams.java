@@ -18,19 +18,21 @@ import java.util.Map;
 @ContextConfiguration(classes = Loggers.class)
 public class LogKeyParams extends AbstractTestNGSpringContextTests {
 
-    @Autowired private net.media.emma.service.BrowserRemote browserRemote;
-    @Autowired private net.media.emma.config.Loggers loggers;
-    @Autowired private net.media.emma.coptests.SoftAssertion softAssertion;
-
     @Autowired
     AssertNetworkCalls assertNetworkCalls;
+    @Autowired
+    private net.media.emma.service.BrowserRemote browserRemote;
+    @Autowired
+    private net.media.emma.config.Loggers loggers;
+    @Autowired
+    private net.media.emma.coptests.SoftAssertion softAssertion;
 
     @Test(dataProvider = "datapo", dataProviderClass = TestDataFromYaml.class)
     public void verifyKeyParams(Object object) throws UnsupportedEncodingException {
         try {
             Map<String, Object> testData = (Map<String, Object>) object;
             HashMap<String, Map<String, List<String>>> logKeysToVerify = (HashMap<String, Map<String, List<String>>>) testData.get("keysToVerify");
-            for (Map.Entry<String, List<String>> reqUrlsData : assertNetworkCalls.logsUrls.entrySet()) {
+            for (Map.Entry<String, List<String>> reqUrlsData : AssertNetworkCalls.logsUrls.entrySet()) {
                 if (logKeysToVerify.containsKey(reqUrlsData.getKey())) {
                     HashMap<String, List<String>> keyValPair = (HashMap<String, List<String>>) logKeysToVerify.get(reqUrlsData.getKey());
                     for (Map.Entry<String, List<String>> keyVal : keyValPair.entrySet()) {
@@ -41,9 +43,9 @@ public class LogKeyParams extends AbstractTestNGSpringContextTests {
                     }
                 }
             }
-        }catch (Exception e){
-            loggers.standardLogger().error("Error in assertion of key  params -- ",e);
-        }finally {
+        } catch (Exception e) {
+            loggers.standardLogger().error("Error in assertion of key  params -- ", e);
+        } finally {
             softAssertion.softAssert().assertAll();
         }
 

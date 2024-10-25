@@ -1,5 +1,5 @@
 environment: hbx.media.net
-cookies: [visitor - id: 3249269632710602062 V1, data - o: f88043f8 - 7631 - 0195 - 18 cf - d9b1ff3a7344~~1]
+cookies: [ visitor - id: 3249269632710602062 V1, data - o: f88043f8 - 7631 - 0195 - 18 cf - d9b1ff3a7344~~1 ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.nutritionix.com/brands/restaurant?mnet_test=1"
 bidexAppendString: ""
@@ -35,34 +35,34 @@ keysToVerifyPositive:
   {
     checksync:
       {
-        cid: ["8CUB9W7X6"],
-        cs: ["1"],
-        cv: ["37"],
-        hb: ["1"],
-        vsSync: ["1"],
-        gdpr: ["0"],
-        gdprconsent: ["0"],
-        coppa: ["0"]
+        cid: [ "8CUB9W7X6" ],
+        cs: [ "1" ],
+        cv: [ "37" ],
+        hb: [ "1" ],
+        vsSync: [ "1" ],
+        gdpr: [ "0" ],
+        gdprconsent: [ "0" ],
+        coppa: [ "0" ]
       },
     prlogs:
       {
         #pvid: ["55", "26", "3012", "251", "141", "175", "222", "3007", "3", "246", "3017", "214", "236", "203", "237", "229", "108", "97"],
-        cid: ["8CUB9W7X6"],
+        cid: [ "8CUB9W7X6" ],
         #svr: ["2023102609_232_102510_38_102510_58_ssp"],
       },
     aplogs:
       {
         #pvid: ["55", "26", "3012", "251", "141", "175", "222", "3007", "3", "246", "3017", "214", "236", "203", "237", "229", "108", "97"],
         #svr: ["2023102609_232_102510_38_102510_58_ssp"],
-        ugd: ["4"]
+        ugd: [ "4" ]
       },
 
     rtbscall:
       {
-        gdpr: ["0"],
-        gdprconsent: ["0"],
+        gdpr: [ "0" ],
+        gdprconsent: [ "0" ],
         #cid: ["8CUB9W7X6"],
-        coppa: ["0"],
+        coppa: [ "0" ],
         #prid: ["8PRVCXX19"]
       }
   }
@@ -71,20 +71,20 @@ keysToVerifyNegative:
   {
     belog:
       {
-        name: ["ADS_DISABLED"]
+        name: [ "ADS_DISABLED" ]
       },
     prlog:
       {
-        snm: ["removed", "error", ],
-        nbr: ["13"]
+        snm: [ "removed", "error", ],
+        nbr: [ "13" ]
       },
     aplog:
       {
-        nbr: ["13"]
+        nbr: [ "13" ]
       },
     awlog:
       {
-        ogbdp: ["-1", "-2"]
+        ogbdp: [ "-1", "-2" ]
       }
   }
 
@@ -92,27 +92,27 @@ keysToVerifyAnyOneOf:
   {
     prlog:
       {
-        nbr: ["45", "3", "69", "0", "1", "99"]
+        nbr: [ "45", "3", "69", "0", "1", "99" ]
       },
     aplog:
       {
-        snm: ["success", "nobid"],
-        nbr: ["45", "3", "69", "0", "1", "99"],
+        snm: [ "success", "nobid" ],
+        nbr: [ "45", "3", "69", "0", "1", "99" ],
       }
   }
 
 bidderDataUrls:
-  {}
+  { }
 
 bidderDataAssertions:
-  {}
+  { }
 
 responseSimulate: [
   {
     urlPattern: "**//hb-pb.media.net/**",
     jsonPath: "$.ext.csUrl[1].url",
     overrideValue: "MYSESSINID"
-  }]
+  } ]
 
 domInject: [
   {
@@ -124,4 +124,4 @@ domInject: [
     domSelector: "#ContentPane29",
     content: "TestReport/NewContent/file2.txt",
     append: "false"
-  }]
+  } ]
