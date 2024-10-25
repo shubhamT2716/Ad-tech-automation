@@ -80,8 +80,6 @@ public class TestSuite implements GenericTestSuite {
     List<String> getConsoleMessageOfUrl = Arrays.asList("checksync.php?", "bidexchange.js", "clientag.js", "js/tags/clientag.js",
             "ss/nes/bidexl2.js", "cksync?", "clientag.js?cid");
     List<String> urlController = List.of("checksync");
-    Object id;
-    JSONArray jsonArray;
     StringBuilder size = new StringBuilder();
     @Autowired
     private TestPageResponseMapping pageResponseMapping;
@@ -138,6 +136,7 @@ public class TestSuite implements GenericTestSuite {
 
         return bc;
     }
+
 
     @Async("yamlTestSuitePool")
     public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData) {
@@ -202,19 +201,10 @@ public class TestSuite implements GenericTestSuite {
                     urlFromNetworkTab.add(request.url());
                     requestList.add(request);
 
-                    if (request.url().equals(url)) {
-                        String postData = request.postData();
-
-                        JSONObject jsonObject = new JSONObject(postData);
-
-                        id = jsonObject.get("id");
-
-                        jsonArray = jsonObject.getJSONArray("imp");
-                    }
-
                 });
 
             }
+				
 
             List<String> consoleMessage = new ArrayList<>();
 
@@ -229,25 +219,23 @@ public class TestSuite implements GenericTestSuite {
                 log.info("location:  " + geolocation);
                 browserContext.setGeolocation(geolocation);
 
-                page = browserContext.newPage();
-
-
-                if (testData.getPublisherUrl().equalsIgnoreCase("https://shubhammedia.github.io/EmmaTestPage/page.html?medianet_test=1")) {
-                    String mockUrl = "https://prebid.media.net/rtb/prebid?cid=8CU56755C";
-
-                    String banner = "MpBanner.json";
-
-                    String res = this.pageResponseMapping.gettestPageResponse(banner);
-
-                    page = mocking.addResponseMocking(page, mockUrl, res);
-
-                } else {
-
-                    if (url != null && response != null) {
-                        page = mocking.addResponseMocking(page, url, response);
-                    }
-
-                }
+                page = browserContext.newPage();		 
+				
+				if(isTestPageUrl(testData.getPublisherUrl()))
+				{
+					String mockUrl="https://prebid.media.net/rtb/prebid?cid=8CU56755C";
+					
+					String banner="MpBanner.json";
+		
+					String res=this.pageResponseMapping.gettestPageResponse(banner);
+					
+					page =mocking.addResponseMocking(page, mockUrl, res);
+					
+				}else if(url!=null&& response!=null){
+					
+						page=mocking.addResponseMocking(page, url, response);
+					
+				}
 
                 try {
 
@@ -1293,13 +1281,9 @@ public class TestSuite implements GenericTestSuite {
         return new HashMap<String, Object>(request.response().allHeaders());
     }
 
-//	@Override
-//	public List<String> getReportFiles() {
-//
-//		List<String> listOfFiles=this.fileOperations.listOfDownloadFiles(reportFilePath);		
-//		
-//		return listOfFiles;
-//		
-//	}
+	private boolean isTestPageUrl(String url)
+	{
+		return "https://shubhammedia.github.io/EmmaTestPage/page.html?medianet_test=1".equalsIgnoreCase(url);
+	}
 
 }

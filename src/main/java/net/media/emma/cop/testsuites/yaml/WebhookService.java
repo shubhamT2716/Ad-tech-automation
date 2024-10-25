@@ -36,17 +36,27 @@ public class WebhookService implements WebhookServiceIn {
     @Autowired
     private YamlTestSuiteScheduling yamlTestSuiteScheduling;
 
-    @Value("${yamlTestCriteriaFilesPath}")
-    private String yamlTestCriteriaFilesPath;
+	@Value("${yamlTestCriteriaFilesPath}")
+	private String yamlTestCriteriaFilesPath;
+	
+	@Value("${emma.token}")
+	private String emmaToken;
+	
+	@Value("${ssp.token}")
+	private String sspToken;
+	
+	@Value("${prebid.token}")
+	private String prebidToken;
+	
+	@Value("${emma}")
+	private String emma;
+	
+	@Value("${ssp}")
+	private String ssp;
+	
+	@Value("${prebid}")
+	private String prebid;
 
-    @Value("${emmaV}")
-    private String emmaToken;
-
-    @Value("${sspV}")
-    private String sspToken;
-
-    @Value("${prebidV}")
-    private String prebidToken;
 
     public static String generateMarkdownReport(SmokeTestRawDataDto data) {
         StringBuilder markdownBuilder = new StringBuilder();
