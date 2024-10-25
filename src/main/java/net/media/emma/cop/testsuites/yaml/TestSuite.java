@@ -97,8 +97,8 @@ public class TestSuite implements GenericTestSuite {
 	private static String windscribeLogin = "xpath=//button[text()='Login']";
 	private static String windscribeUsername = "xpath=//input[@name='username']";
 	private static String windscribepassword = "xpath=//input[@name='password']";
-	private static String username = "mohib1233";
-	private static String password = "mohib123";
+	private static String username = "shubhamT27";
+	private static String password = "shubhamT2711$";
 	private static String windscribeLocations = "xpath=//button[@aria-label='Locations']";
 	private static String windscribeSearchLocation = "xpath=//div//i";
 	private static String windscribeSearchbox = "xpath=//input[contains(@class,'css-1c1txoj')]";
@@ -122,9 +122,7 @@ public class TestSuite implements GenericTestSuite {
 	
 	List<String> urlController=Arrays.asList("checksync");
 
-	Object id;
 
-	JSONArray jsonArray;
 
 	private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
 
@@ -211,16 +209,6 @@ public class TestSuite implements GenericTestSuite {
 					urlFromNetworkTab.add(request.url());
 					requestList.add(request);
 
-					if (request.url().equals(url)) {
-						String postData = request.postData();
-
-						JSONObject jsonObject = new JSONObject(postData);
-
-						id = jsonObject.get("id");
-
-						jsonArray = jsonObject.getJSONArray("imp");
-					}
-
 				});
 
 			}
@@ -241,7 +229,7 @@ public class TestSuite implements GenericTestSuite {
 				 page = browserContext.newPage();
 				 
 				
-				if(testData.getPublisherUrl().equalsIgnoreCase("https://shubhammedia.github.io/EmmaTestPage/page.html?medianet_test=1"))
+				if(isTestPageUrl(testData.getPublisherUrl()))
 				{
 					String mockUrl="https://prebid.media.net/rtb/prebid?cid=8CU56755C";
 					
@@ -251,13 +239,10 @@ public class TestSuite implements GenericTestSuite {
 					
 					page =mocking.addResponseMocking(page, mockUrl, res);
 					
-				}else {
+				}else if(url!=null&& response!=null){
 					
-					if(url!=null&& response!=null)
-					{
 						page=mocking.addResponseMocking(page, url, response);
-					}
-			
+					
 				}
 				
 				try {
@@ -1370,13 +1355,9 @@ public class TestSuite implements GenericTestSuite {
 		return new HashMap<String, Object>(request.response().allHeaders());
 	}
 
-//	@Override
-//	public List<String> getReportFiles() {
-//
-//		List<String> listOfFiles=this.fileOperations.listOfDownloadFiles(reportFilePath);		
-//		
-//		return listOfFiles;
-//		
-//	}
+	private boolean isTestPageUrl(String url)
+	{
+		return "https://shubhammedia.github.io/EmmaTestPage/page.html?medianet_test=1".equalsIgnoreCase(url);
+	}
 
 }

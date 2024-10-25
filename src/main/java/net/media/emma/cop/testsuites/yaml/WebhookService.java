@@ -47,14 +47,23 @@ public class WebhookService implements WebhookServiceIn {
 	@Value("${yamlTestCriteriaFilesPath}")
 	private String yamlTestCriteriaFilesPath;
 	
-	@Value("${emmaV}")
+	@Value("${emma.token}")
 	private String emmaToken;
 	
-	@Value("${sspV}")
+	@Value("${ssp.token}")
 	private String sspToken;
 	
-	@Value("${prebidV}")
+	@Value("${prebid.token}")
 	private String prebidToken;
+	
+	@Value("${emma}")
+	private String emma;
+	
+	@Value("${ssp}")
+	private String ssp;
+	
+	@Value("${prebid}")
+	private String prebid;
 
 	@Override
 	public void executeWebhook(String payload) {
@@ -486,9 +495,9 @@ public class WebhookService implements WebhookServiceIn {
 	{
 		Map<String, String> mapOfProjectIdKy=new HashMap<>();
 		
-		mapOfProjectIdKy.put("15491", emmaToken);
-		mapOfProjectIdKy.put("8300", prebidToken);
-		mapOfProjectIdKy.put("6340", sspToken);
+		mapOfProjectIdKy.put(emma, emmaToken);
+		mapOfProjectIdKy.put(prebid, prebidToken);
+		mapOfProjectIdKy.put(ssp, sspToken);
 		
 		String key=mapOfProjectIdKy.get(projectId);
 		
