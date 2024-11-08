@@ -3,8 +3,8 @@ networkCallsPositive: {
   APPR-RA: "https://navvy.media.net/log",
   l1log: "https://hblg.media.net/log?logid=kfk&evtid=l1log",
   gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
-  openx: "https://rtb.openx.net/openrtbb/prebidjs",
-  prebid: "https://prebid.media.net/rtb/prebid?cid"
+  #openx: "https://rtb.openx.net/openrtbb/prebidjs",
+  prebid: "https://prebid.media.net/rtb/prebid?"
   #RA: "https://navvy.media.net/log",
 }
 

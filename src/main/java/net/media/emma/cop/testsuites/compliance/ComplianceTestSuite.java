@@ -27,12 +27,9 @@ public class ComplianceTestSuite {
     private static final String windscribeLogin = "xpath=//button[text()='Login']";
     private static final String windscribeUsername = "xpath=//input[@name='username']";
     private static final String windscribepassword = "xpath=//input[@name='password']";
-
-    // @Autowired
-    // private CommonBrowserUtil browserUtil;
     private static final String windscribeSkip = "xpath=//div[text()='Skip']";
     private static final String username = "shubhamT27";
-    private static final String password = "shubhamT2711$";
+    private static final String password = "";
     //    private static String locationParis = "Paris";
     private static final String windscribeLocations = "xpath=//button[@aria-label='Locations']";
     private static final String windscribeSearchLocation = "xpath=//div//i";
@@ -116,10 +113,10 @@ public class ComplianceTestSuite {
         String proxy = "http://10.2.128.194:3128";
         BrowserContext browserContext = null;
         if (testData.getLocation() == null) {
-            browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(), harFileName, browserPath, proxy);
+            browserContext = BrowserFactory.getSystemBc(testData.getUserAgent() ,getExtensionList(), harFileName, browserPath, proxy);
 
         } else {
-            browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(), getExtensionList(), harFileName, browserPath, null);
+            browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(),  getExtensionList(), harFileName, browserPath, null);
 
         }
 

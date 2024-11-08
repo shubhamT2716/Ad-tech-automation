@@ -15,7 +15,7 @@ public class TestCriteriaBo {
     String userName;
     String password;
 
-    List<Map<String, String>> cookies;
+    //List<Map<String, String>> cookies;
     String userAgent;
     String publisherUrl;
     String environment;

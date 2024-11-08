@@ -1,5 +1,5 @@
 environment: warp.media.net
-cookies: [ VisitorId: "3550383022710678000V10" ,  data-o: "37ac74ce-0ceb-0165-3c60-6197c767e100~~16" ]
+#cookies: [ VisitorId: "3550383022710678000V10" ,  data-o: "37ac74ce-0ceb-0165-3c60-6197c767e100~~16" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.fox13now.com/?medianet_test=1"
 

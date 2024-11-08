@@ -23,13 +23,11 @@ import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.DomJsonUtils;
 import net.media.emma.utils.ResponseMocking;
 import net.media.emma.utils.URLDataProcessing;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -42,7 +40,7 @@ import java.util.regex.Pattern;
 
 @Service
 @Slf4j
-public class TestSuite implements GenericTestSuite {
+public class TestSuite implements GenericTestSuite , ControllerDataConvey{
 
     private static final String windscribeLogin = "xpath=//button[text()='Login']";
     private static final String windscribeUsername = "xpath=//input[@name='username']";
@@ -169,11 +167,11 @@ public class TestSuite implements GenericTestSuite {
 
 
         if (location != null) {
-            browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(), testData.getCookies(),
+            browserContext = BrowserFactory.getSystemBc(testData.getUserAgent(),
                     getExtensionList(), harFileBasePath + harFilePath, browserPath, null);
             browserContext.clearCookies();
         } else {
-            browserContext = BrowserFactory.getBc(testData.getUserAgent(), testData.getCookies(),
+            browserContext = BrowserFactory.getBc(testData.getUserAgent(),//, testData.getCookies(),
                     harFileBasePath + harFilePath);
         }
 
@@ -276,7 +274,7 @@ public class TestSuite implements GenericTestSuite {
             }
 
 
-            BidExController bidExController = getBidExData(requestList, testData);
+            BidExController bidExController = getBidExData(requestList, testData.getEnvironment());
 
             bidExController.setConsoleMessages(consoleMessage);
 
@@ -520,7 +518,7 @@ public class TestSuite implements GenericTestSuite {
         return bidExRequestObjects;
     }
 
-    private List<String> getConsoleErrors(Page page) {
+    public List<String> getConsoleErrors(Page page) {
         List<String> consoleErrors = new ArrayList<>();
 
         // String controllerRegex = "**/" + bidExControlers + "/**";
@@ -540,7 +538,7 @@ public class TestSuite implements GenericTestSuite {
         return consoleErrors;
     }
 
-    private BidExController getBidExData(List<Request> listOfPwRequestObjects, TestCriteriaBo testData) {
+    public BidExController getBidExData(List<Request> listOfPwRequestObjects,  String enviroment) {
 
         // get bidex url's Request object from listOfPwRequestObjects
         // assumer the pattern like this
@@ -549,7 +547,7 @@ public class TestSuite implements GenericTestSuite {
         // js errors arising from this controller
 
         BidExController bidexReport = BidExController.builder().build();
-        List<Request> bidExRequestObjects = getBidExRequestObjects(listOfPwRequestObjects, testData.getEnvironment());
+        List<Request> bidExRequestObjects = getBidExRequestObjects(listOfPwRequestObjects, enviroment);
 
         // get matching urls
         for (Request request : bidExRequestObjects) {

@@ -217,7 +217,7 @@ public class LoggingPixelTestSuite {
     public JsonNode getLoggingPixelTestResults(LoggingPixelTestDataModel testCriteria) {
         String harFilePath = CommonBrowserUtil.getFileNameForHar();
 
-        BrowserContext bc = BrowserFactory.getBc(testCriteria.getUserAgent(), null, harFileBasePath + harFilePath);
+        BrowserContext bc = BrowserFactory.getBc(testCriteria.getUserAgent(), harFileBasePath + harFilePath);
 
         bc = replaceBidExUrl(bc, testCriteria);
 

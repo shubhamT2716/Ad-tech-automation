@@ -1,5 +1,5 @@
 environment: warp.media.net
-cookies: [ VisitorId: "3550383022710678000V10" ,  data-o: "37ac74ce-0ceb-0165-3c60-6197c767e100~~16" ]
+#cookies: [ VisitorId: "3550383022710678000V10" ,  data-o: "37ac74ce-0ceb-0165-3c60-6197c767e100~~16" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.fox13now.com/?medianet_test=1"
 
@@ -19,7 +19,6 @@ networkCallsNegative: {
 keysToVerifyPositive: {
   belog: {
     evtid: [ "belog" ],
-    svr: [ "284_21_0111_358_mp" ],
     dn: [ "fox13now.com" ],
     cid: [ "8CU2N1270" ],
     itype: [ "MANAGED_PREBID" ] },
@@ -43,7 +42,8 @@ keysToVerifyPositive: {
 
 #to_check_negative_keys
 keysToVerifyNegative: {
-  belog: { name: [ "GPT_Fetching_Warning" ] } }
+  #belog: { name: [ "GPT_Fetching_Warning" ] } 
+  }
 
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {

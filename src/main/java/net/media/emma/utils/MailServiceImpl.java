@@ -1,6 +1,6 @@
 package net.media.emma.utils;
 
-import lombok.extern.slf4j.Slf4j;
+
 import net.media.emma.cop.testsuites.yaml.TestReportModel;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-@Slf4j
+
 public class MailServiceImpl {
 
     private final JavaMailSender javaMailSender;
@@ -30,13 +30,13 @@ public class MailServiceImpl {
     @Async
     public void sendMail(String to, String templateName, List<TestReportModel> templateModel, String zipFile,
                          String testResult) {
-        Thread t = Thread.currentThread();
-
+       
         String templateText = templateLoder(templateName, templateModel, zipFile, testResult);
         MimeMessagePreparator message = prepareMessage(to, templateText);
         javaMailSender.send(message);
 
     }
+
 
     public String templateLoder(String user, List<TestReportModel> result, String zipFile, String testResult) {
 

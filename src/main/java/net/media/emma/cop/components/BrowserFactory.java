@@ -157,7 +157,7 @@ public class BrowserFactory {
         return getPlaywrightObj().webkit().launch();
     }
 
-    private static BrowserContext getSystemBrowserByType(String browserType, List<Map<String, String>> cookies,
+    private static BrowserContext getSystemBrowserByType(String browserType,
                                                          List<String> extension, String fileName, String browserPath, String proxy) {
         if (browserType.contains("Chrome")) {
             return getPlaywrightObj().chromium().launchPersistentContext(Paths.get(browserPath),
@@ -193,13 +193,13 @@ public class BrowserFactory {
         return newBc.newPage();
     }
 
-    public static BrowserContext getBc(String browserType, List<Map<String, String>> cookies) {
+    public static BrowserContext getBc(String browserType) {
 
-        return getBc(browserType, cookies, null);
+        return getBc(browserType, null);
 
     }
 
-    public static BrowserContext getBc(String browserType, List<Map<String, String>> cookies, String harFileName) {
+    public static BrowserContext getBc(String browserType, String harFileName) {
 
 //		getPlaywrightObj().chromium().launchPersistentContext(
 //				getSystemBrowserContextOptions(browserType, browserType.contains("Mobile")));
@@ -225,9 +225,9 @@ public class BrowserFactory {
         return newBc;
     }
 
-    public static BrowserContext getSystemBc(String browserType, List<Map<String, String>> cookies,
+    public static BrowserContext getSystemBc(String browserType,
                                              List<String> extension, String fileName, String browserPath, String proxy) {
-        BrowserContext newBc = getSystemBrowserByType(browserType, cookies, extension, fileName, browserPath, proxy);
+        BrowserContext newBc = getSystemBrowserByType(browserType, extension, fileName, browserPath, proxy);
         return newBc;
     }
 
