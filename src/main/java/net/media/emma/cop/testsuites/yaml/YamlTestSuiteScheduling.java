@@ -140,7 +140,8 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
     	
 //    	getAutoTest(envMp, userAgent, mpFiles, commonFilesForMp, null, "MP", "qayahoohbtasksqainternals@flockgroups.com", flagForMail);
 
-       	List<String> urls=Arrays.asList("https://www.forbes.com/?medianet_test=1","https://www.fox13now.com/?medianet_test=1","https://www.daily.co.jp/?medianet_test=1");
+     List<String> urls=Arrays.asList("https://www.forbes.com/?medianet_test=1","https://www.fox13now.com/?medianet_test=1","https://www.daily.co.jp/?medianet_test=1");
+    	
     	
     	Map<String, CompletableFuture<TestReportModel>> result=new LinkedHashMap<>();
     	
@@ -158,7 +159,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
     	
     	for(String publisher: urls) {
     		
-    		String pub=scheduler.getHostFromUrl(publisher);
+    		String pub=Scheduler.getHostFromUrl(publisher);
     		
     		result.put(pub, scheduler.getSchedulerThread(envMp, userAgent, publisher));
     		
@@ -194,10 +195,10 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
         	 listOfTestReportModel.add(reportModel);
         	 
          }
-   	  
+         
    	  	String testResult=scheduler.testResultForScheduler(finalResult);
    	  
-   	  this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", listOfTestReportModel, zipFile, testResult);
+   	  this.mailServiceImpl.sendMail("qayahoohbtasksqainternals@flockgroups.com", "qayahoohbtasksqainternals@flockgroups.com", listOfTestReportModel, zipFile, testResult);
          
     	}
     	catch (Exception e) {
@@ -683,7 +684,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
             });
 
             Object testData = map.get("testMetaData");
-            Object bidexData = map.get("bidExController");
+            Object bidexData = map.get("controller");
             Object summery = map.get("testSummery");
             
             Map<String, Object> metaData = mapper.convertValue(testData, new TypeReference<Map<String, Object>>() {

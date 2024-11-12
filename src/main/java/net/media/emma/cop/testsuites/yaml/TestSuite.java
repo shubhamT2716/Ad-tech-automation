@@ -530,7 +530,7 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
                     || consoleMessage.type().equals("clear") || consoleMessage.type().equals("assert") || consoleMessage.type().equals("log")) && consoleMessage.location().matches(controllerRegex)) {
 
 
-                consoleErrors.add(consoleMessage.type() + " : " + consoleMessage.location().trim() + " : " + consoleMessage.text());
+                consoleErrors.add("Message type: "+consoleMessage.type() + " :  Location: " + consoleMessage.location().trim() + " : " + consoleMessage.text());
             }
         });
 

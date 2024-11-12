@@ -1,6 +1,7 @@
 package net.media.emma.utils;
 
 
+import net.media.emma.cop.testsuites.yaml.Scheduler;
 import net.media.emma.cop.testsuites.yaml.TestReportModel;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -12,7 +13,9 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 
@@ -41,6 +44,9 @@ public class MailServiceImpl {
 
         Context context = new Context();
         List<Context> contextList = new ArrayList<>();
+        
+        Map<String, String> consoleError=new HashMap<>();
+        
 
         for (TestReportModel model : result) {
 
@@ -54,12 +60,18 @@ public class MailServiceImpl {
             modelContext.setVariable("Env", model.getTestMetaData().getEnvironment());
             modelContext.setVariable("UserAgent", model.getTestMetaData().getUserAgent());
             contextList.add(modelContext);
+            if(!model.getController().getConsoleMessages().isEmpty())
+            {
+            	consoleError.put(Scheduler.getHostFromUrl(model.getTestMetaData().getPublisherUrl()), model.getController().getConsoleMessages().toString());
+            }
+            
 
         }
-
+        
         context.setVariable("contextList", contextList);
         context.setVariable("ZipFile", zipFile);
         context.setVariable("testResult", testResult);
+        context.setVariable("consoleError", consoleError);
 
 //		return thymeleaf.process("smokeTest", context);
 //		return thymeleaf.process("smokeTestEmail", context);

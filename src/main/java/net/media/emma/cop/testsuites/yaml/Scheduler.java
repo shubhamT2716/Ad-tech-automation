@@ -108,38 +108,34 @@ public class Scheduler {
 				e.printStackTrace();
 			}
 			page.close();
-			
-		}
-		catch (Exception e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		try {
-		
-					
-		
 
-		Controller bidExController = this.controllerDataConvey.getBidExData(requestUrls, environment);
+			Controller controller = this.controllerDataConvey.getBidExData(requestUrls, environment);
 
-		bidExController.setConsoleMessages(consoleError);
+			controller.setConsoleMessages(consoleError);
 
-		TestReportModel testReport = TestReportModel.builder()
-				.testMetaData(
-						TestMetaData.builder().dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
-								.testName("YAML Test Suite").publisherUrl(publisher).environment(environment)
-								.harFileDownloadLink("/yamlTestSuite/harDownload/" + harFilePath).build())
-				.build();
+			TestReportModel testReport = TestReportModel.builder()
+					.testMetaData(TestMetaData.builder()
+							.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+							.testName("YAML Test Suite").publisherUrl(publisher).environment(environment)
+							.harFileDownloadLink("/yamlTestSuite/harDownload/" + harFilePath).build())
+					.build();
 
-		testReport.setController(bidExController);
-		testReport.setTestSummery(getSummeryForScheduler(requestUrls));
+			testReport.setController(controller);
 
-		return testReport;
-		
-		}
-		catch (Exception e) {
+			testReport.setTestSummery(getSummeryForScheduler(requestUrls));
+
+			return testReport;
+
+		} catch (Exception e) {
+			e.printStackTrace();
 			return null;
-		}finally {
+		} finally {
 			browserContext.close();
 		}
 
@@ -208,6 +204,11 @@ public class Scheduler {
 
 		for (Map.Entry<String, TestReportModel> testResult : result.entrySet()) {
 
+			if (!testResult.getValue().getController().getConsoleMessages().isEmpty()) {
+				hasError = true;
+				break;
+			}
+
 			for (Map.Entry<String, Map<String, String>> summery : testResult.getValue().getTestSummery().entrySet()) {
 
 				for (Map.Entry<String, String> error : summery.getValue().entrySet()) {
@@ -239,7 +240,7 @@ public class Scheduler {
 
 	}
 
-	public String getHostFromUrl(String url) {
+	public static String getHostFromUrl(String url) {
 
 		String host = null;
 
