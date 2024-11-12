@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.playwright.Request;
 import lombok.extern.slf4j.Slf4j;
-import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.ControllerData;
 import org.springframework.stereotype.Component;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -24,12 +23,12 @@ public class BidexOrClientagData {
     // "topics.js");
 
 
-    BidexData bd = new BidexData();
+    ControllerData bd = new ControllerData();
 
 
-    public BidexData getBidExData(Request request) {
+    public ControllerData getBidExData(Request request) {
 
-        BidexData bidexData = BidexData.builder().build();
+    	ControllerData bidexData = ControllerData.builder().build();
 
         ObjectMapper mapper = new ObjectMapper();
 

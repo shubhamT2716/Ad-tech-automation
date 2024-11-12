@@ -2,10 +2,9 @@ package net.media.emma.cop.testsuites.pagetests;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
-import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.ControllerData;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.TestStatus;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class BidexFeatureReport {
         String environment;
         String userAgent;
         String harFileDownloadLink;
-        BidexController bidexController;
+        Controller bidexController;
 
     }
 
@@ -67,7 +66,7 @@ public class BidexFeatureReport {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class BidexController {
+    public static class Controller {
 //		@Builder.Default
 //		List<String> listOfMatchingUrls=new ArrayList<>();
 //		String totalSize;
@@ -81,7 +80,7 @@ public class BidexFeatureReport {
         String totalResponseTime;
         @Builder.Default
         List<String> consoleMessages = new ArrayList<>();
-        BidexData bidexData;
+        ControllerData bidexData;
     }
 
 //	

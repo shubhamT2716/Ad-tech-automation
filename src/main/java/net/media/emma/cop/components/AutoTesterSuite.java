@@ -8,9 +8,10 @@ import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.Timing;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.pagetests.*;
-import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.BidexController;
+import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.Controller;
 import net.media.emma.cop.testsuites.pagetests.BidexFeatureReport.TestMetaDataBidex;
-import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.ControllerData;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.ControllerData;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel;
 import net.media.emma.utils.CommonBrowserUtil;
 import net.media.emma.utils.URLDataProcessing;
@@ -46,7 +47,7 @@ public class AutoTesterSuite implements AutoTesterSreviceIn {
 //    public List < SlotsData > slotsData = new ArrayList < SlotsData > ();
     @Autowired
     CommonBrowserUtil browserUtil;
-    BidexData bd = new BidexData();
+    ControllerData bd = new ControllerData();
 
 
 //    @Autowired
@@ -163,7 +164,7 @@ public class AutoTesterSuite implements AutoTesterSreviceIn {
 //	        }
 
 
-        BidexController bidexController = getBidExData(requests, yaml);
+        Controller bidexController = getBidExData(requests, yaml);
         bidexController.setConsoleMessages(consoleError);
 
         BidexFeatureReport bidexFeatureReport = BidexFeatureReport.builder().testMetaDataBidex(TestMetaDataBidex.builder().dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
@@ -188,7 +189,7 @@ public class AutoTesterSuite implements AutoTesterSreviceIn {
     }
 
 
-    private BidexController getBidExData(List<Request> listOfPwRequestObjects, TestCriteriaBo testData) {
+    private Controller getBidExData(List<Request> listOfPwRequestObjects, TestCriteriaBo testData) {
 
         // get bidex url's Request object from listOfPwRequestObjects
         // assumer the pattern like this
@@ -196,7 +197,7 @@ public class AutoTesterSuite implements AutoTesterSreviceIn {
         // from pw req object will have actual url filed, size, time taken to load
         // js errors arising from this controller
 
-        BidexController bidexReport = BidexController.builder().build();
+        Controller bidexReport = Controller.builder().build();
         List<Request> bidExRequestObjects = getBidExRequestObjects(listOfPwRequestObjects, testData.getEnvironment());
 
         // get matching urls
@@ -283,9 +284,9 @@ public class AutoTesterSuite implements AutoTesterSreviceIn {
 //	}
 
 
-    private BidexData getBidExData(Request request) {
+    private ControllerData getBidExData(Request request) {
 
-        BidexData bidexData = BidexData.builder().build();
+    	ControllerData bidexData = ControllerData.builder().build();
 
         ObjectMapper mapper = new ObjectMapper();
 

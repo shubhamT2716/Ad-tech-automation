@@ -64,20 +64,20 @@ public class FileHandling {
 
         XSSFRow bidexDataRow = sheet.createRow(dataIndexRow++);
         bidexDataRow.createCell(0).setCellValue("Controller And Size: ");
-        bidexDataRow.createCell(1).setCellValue(testModel.getBidExController().getMatchingUrls().get(0));
-        bidexDataRow.createCell(2).setCellValue(testModel.getBidExController().getTotalSizeDownloaded());
+        bidexDataRow.createCell(1).setCellValue(testModel.getController().getMatchingUrls().get(0));
+        bidexDataRow.createCell(2).setCellValue(testModel.getController().getTotalSizeDownloaded());
 
         XSSFRow bidexSvrRow = sheet.createRow(dataIndexRow++);
         bidexSvrRow.createCell(0).setCellValue("SVR");
-        bidexSvrRow.createCell(1).setCellValue(testModel.getBidExController().getBidexData().getSvr());
+        bidexSvrRow.createCell(1).setCellValue(testModel.getController().getControllerData().getSvr());
 
         XSSFRow bidexCidRow = sheet.createRow(dataIndexRow++);
         bidexCidRow.createCell(0).setCellValue("Cid");
-        bidexCidRow.createCell(1).setCellValue(testModel.getBidExController().getBidexData().getCid());
+        bidexCidRow.createCell(1).setCellValue(testModel.getController().getControllerData().getCid());
 
         XSSFRow consoleMessageRow = sheet.createRow(dataIndexRow++);
         consoleMessageRow.createCell(0).setCellValue("ConsoleMessage");
-        consoleMessageRow.createCell(1).setCellValue(testModel.getBidExController().getConsoleMessages().toString());
+        consoleMessageRow.createCell(1).setCellValue(testModel.getController().getConsoleMessages().toString());
 
 
         XSSFRow negativeHeaderRow = sheet.createRow(dataIndexRow++);
@@ -165,7 +165,7 @@ public class FileHandling {
             TestReportModel model = testReportList.get(i);
 
             sheetRow.createCell(0).setCellValue(model.getTestMetaData().getPublisherUrl());
-            sheetRow.createCell(1).setCellValue(model.getBidExController().getBidexData().getSvr());
+            sheetRow.createCell(1).setCellValue(model.getController().getControllerData().getSvr());
 
         }
 

@@ -4,8 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
-
+import net.media.emma.cop.testsuites.yaml.TestReportModel.ControllerData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +74,7 @@ public class ComplianceTestReport {
         String totalResponseTime;
         @Builder.Default
         List<String> consoleMessages = new ArrayList<>();
-        BidexData bidexData;
+        ControllerData bidexData;
 
     }
 

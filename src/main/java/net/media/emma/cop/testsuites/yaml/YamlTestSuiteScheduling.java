@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.testsuites.yaml.SmokeTestSummeryDto.Testdata;
-import net.media.emma.cop.testsuites.yaml.TestReportModel.BidExController;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.Controller;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
 import net.media.emma.service.GenericTestSuite;
@@ -131,7 +131,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
 
     }
 
-//    @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+    @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
     public void smokeTestScheduling() {
     	
     	String envMp="warp.media.net";
@@ -197,7 +197,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
    	  
    	  	String testResult=scheduler.testResultForScheduler(finalResult);
    	  
-   	  this.mailServiceImpl.sendMail("qayahoohbtasksqainternals@flockgroups.com", "qayahoohbtasksqainternals@flockgroups.com", listOfTestReportModel, zipFile, testResult);
+   	  this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", listOfTestReportModel, zipFile, testResult);
          
     	}
     	catch (Exception e) {
@@ -436,7 +436,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
 
         TestReportModel reportModel = new TestReportModel();
 
-        Map<String, BidExController> bidExReport = new HashMap<>();
+        Map<String, Controller> bidExReport = new HashMap<>();
 
         Map<String, List<String>> errorMessagePositive = new HashMap<>();
 
@@ -460,7 +460,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
 
             testReportModelList.add(reportModel);
 
-            bidExReport.put(yaml, reportModel.getBidExController());
+            bidExReport.put(yaml, reportModel.getController());
 
             Map<String, PositiveURLChecks> model = reportModel.getUrlChecks().getPositiveUrlChecks();
 
@@ -492,16 +492,16 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
 
             testdata.setEnvironment(reportModel.getTestMetaData().getEnvironment());
             testdata.setUserAgent(reportModel.getTestMetaData().getUserAgent());
-            testdata.setBidExFileSize(reportModel.getBidExController().getTotalSizeDownloaded());
-            testdata.setBidExTime(reportModel.getBidExController().getTotalResponseTime());
+            testdata.setBidExFileSize(reportModel.getController().getTotalSizeDownloaded());
+            testdata.setBidExTime(reportModel.getController().getTotalResponseTime());
             testdata.setDateTime(reportModel.getTestMetaData().getDateTime());
             testdata.setHarFileDownloadLink(reportModel.getTestMetaData().getHarFileDownloadLink());
             testdata.setPublisherUrl(reportModel.getTestMetaData().getPublisherUrl());
-            testdata.setMatchingUrls(reportModel.getBidExController().getMatchingUrls());
-            testdata.setBidexData(reportModel.getBidExController().getBidexData());
+            testdata.setMatchingUrls(reportModel.getController().getMatchingUrls());
+            testdata.setBidexData(reportModel.getController().getControllerData());
             testdata.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
 
-            consoleError.addAll(reportModel.getBidExController().getConsoleMessages());
+            consoleError.addAll(reportModel.getController().getConsoleMessages());
 
             testdataResult.add(testdata);
 
@@ -541,7 +541,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
         rawDataDto.setTestResult(testReport);
         rawDataDto.setRawData(finalResult);
         rawDataDto.setSmokeReport(dto);
-        rawDataDto.setBidExReport(bidExReport);
+        rawDataDto.setControllerReport(bidExReport);
         rawDataDto.setErrorMessage(getErrorMessage(error, reportModel));
         rawDataDto.setFullReport(reportLink);
 

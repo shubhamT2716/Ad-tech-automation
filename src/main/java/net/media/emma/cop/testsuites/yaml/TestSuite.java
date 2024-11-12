@@ -7,14 +7,13 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.jayway.jsonpath.Configuration;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.Cookie;
-import com.microsoft.playwright.options.Geolocation;
 import com.microsoft.playwright.options.Timing;
 import lombok.extern.slf4j.Slf4j;
 import net.media.emma.cop.components.BrowserFactory;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.DomInjectParams;
 import net.media.emma.cop.testsuites.yaml.TestCriteriaBo.ResponseSimulateParams;
-import net.media.emma.cop.testsuites.yaml.TestReportModel.BidExController;
-import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.Controller;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.ControllerData;
 import net.media.emma.cop.testsuites.yaml.TestReportModel.TestMetaData;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.NegativeURLChecks;
 import net.media.emma.cop.testsuites.yaml.URLChecksReportModel.PositiveURLChecks;
@@ -65,7 +64,7 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
     PlAssestion payloadAsserstions;
     @Autowired
     HeadersAssertion headersAssertion;
-    BidexData bd = new BidexData();
+    ControllerData bd = new ControllerData();
     String url = "chrome-extension://hnmpcagpplmpfojmgmnngilcnanddlhb/popup.html";
     String windScribeExtensionPath = System.getProperty("user.dir")
             + "/extensions/hnmpcagpplmpfojmgmnngilcnanddlhb/3.4.6_0";
@@ -213,9 +212,9 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
             try {
 
                 browserContext.setDefaultTimeout(35000); // 35 seconds
-                Geolocation geolocation = new Geolocation(48.8575, 2.3514);
-                log.info("location:  " + geolocation);
-                browserContext.setGeolocation(geolocation);
+//                Geolocation geolocation = new Geolocation(48.8575, 2.3514);
+//                log.info("location:  " + geolocation);
+//                browserContext.setGeolocation(geolocation);
 
                 page = browserContext.newPage();		 
 				
@@ -274,7 +273,7 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
             }
 
 
-            BidExController bidExController = getBidExData(requestList, testData.getEnvironment());
+            Controller bidExController = getBidExData(requestList, testData.getEnvironment());
 
             bidExController.setConsoleMessages(consoleMessage);
 
@@ -301,7 +300,7 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
 
             testReport.setGamSlots(addGamAssertion(requestList));
             testReport.setCookie(cookies);
-            testReport.setBidExController(bidExController);
+            testReport.setController(bidExController);
             testReport.setPbjsEvents(pbjsEventsData);
             try {
 
@@ -538,7 +537,7 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
         return consoleErrors;
     }
 
-    public BidExController getBidExData(List<Request> listOfPwRequestObjects,  String enviroment) {
+    public Controller getBidExData(List<Request> listOfPwRequestObjects,  String enviroment) {
 
         // get bidex url's Request object from listOfPwRequestObjects
         // assumer the pattern like this
@@ -546,7 +545,7 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
         // from pw req object will have actual url filed, size, time taken to load
         // js errors arising from this controller
 
-        BidExController bidexReport = BidExController.builder().build();
+        Controller bidexReport = Controller.builder().build();
         List<Request> bidExRequestObjects = getBidExRequestObjects(listOfPwRequestObjects, enviroment);
 
         // get matching urls
@@ -570,7 +569,7 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
 //			bidexReport.setTotalSizeDownloaded(request.sizes().responseBodySize + "b");
             bidexReport.setTotalSizeDownloaded(getBidexSize(request));
 
-            bidexReport.setBidexData(getBidExData(request));
+            bidexReport.setControllerData(getBidExData(request));
 
         }
         size.setLength(0);
@@ -620,9 +619,9 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
 
     }
 
-    public BidexData getBidExData(Request request) {
+    public ControllerData getBidExData(Request request) {
 
-        BidexData bidexData = BidexData.builder().build();
+    	ControllerData bidexData = ControllerData.builder().build();
 
         // get data from request
         // convert into request into json

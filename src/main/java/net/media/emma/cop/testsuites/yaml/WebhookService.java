@@ -88,24 +88,24 @@ public class WebhookService implements WebhookServiceIn {
                     .append("\n\n");
             markdownBuilder.append("**Scripts Used:**\n");
 
-            markdownBuilder.append("-").append(entry.getValue().getBidExController().getMatchingUrls());
+            markdownBuilder.append("-").append(entry.getValue().getController().getMatchingUrls());
 
             // Test Details
             markdownBuilder.append("\n### Test Details\n");
             markdownBuilder.append("- **Size:** ")
-                    .append(entry.getValue().getBidExController().getTotalSizeDownloaded()).append("\n");
-            markdownBuilder.append("- **Svr:** ").append(entry.getValue().getBidExController().getBidexData().getSvr())
+                    .append(entry.getValue().getController().getTotalSizeDownloaded()).append("\n");
+            markdownBuilder.append("- **Svr:** ").append(entry.getValue().getController().getControllerData().getSvr())
                     .append("\n");
-            markdownBuilder.append("- **Ugd:** ").append(entry.getValue().getBidExController().getBidexData().getSugd())
+            markdownBuilder.append("- **Ugd:** ").append(entry.getValue().getController().getControllerData().getSugd())
                     .append("\n");
-            markdownBuilder.append("- **Cid:** ").append(entry.getValue().getBidExController().getBidexData().getCid())
+            markdownBuilder.append("- **Cid:** ").append(entry.getValue().getController().getControllerData().getCid())
                     .append("\n");
             markdownBuilder.append("- **servname:** ")
-                    .append(entry.getValue().getBidExController().getBidexData().getServname()).append("\n");
+                    .append(entry.getValue().getController().getControllerData().getServname()).append("\n");
             markdownBuilder.append("- **Location:** ")
-                    .append(entry.getValue().getBidExController().getBidexData().getCt()).append("\n");
+                    .append(entry.getValue().getController().getControllerData().getCt()).append("\n");
             markdownBuilder.append("- **Console Message:** ")
-                    .append(entry.getValue().getBidExController().getConsoleMessages()).append("\n");
+                    .append(entry.getValue().getController().getConsoleMessages()).append("\n");
 
             // network calls negative
             markdownBuilder.append("\n### Negative URL Checks\n");
@@ -509,7 +509,7 @@ public class WebhookService implements WebhookServiceIn {
 
             try {
 
-                log.info(rawReport.getBidExReport().toString());
+                log.info(rawReport.getControllerReport().toString());
                 html = generateMarkdownReport(rawReport);
 
             } catch (Exception e) {

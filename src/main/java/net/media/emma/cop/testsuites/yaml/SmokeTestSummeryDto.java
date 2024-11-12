@@ -1,9 +1,8 @@
 package net.media.emma.cop.testsuites.yaml;
 
 import lombok.*;
-import net.media.emma.cop.testsuites.yaml.TestReportModel.BidexData;
+import net.media.emma.cop.testsuites.yaml.TestReportModel.ControllerData;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +43,7 @@ public class SmokeTestSummeryDto {
 
         private List<String> matchingUrls;
 
-        private BidexData bidexData;
+        private ControllerData bidexData;
 
         private Map<String, Map<String, String>> testResultSummery;
 

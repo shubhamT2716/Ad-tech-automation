@@ -3,7 +3,6 @@ package net.media.emma.cop.components;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.Browser.NewContextOptions;
 import com.microsoft.playwright.BrowserType.LaunchOptions;
-import com.microsoft.playwright.options.Geolocation;
 import com.microsoft.playwright.options.HarMode;
 import com.microsoft.playwright.options.Proxy;
 
@@ -201,20 +200,18 @@ public class BrowserFactory {
 
     public static BrowserContext getBc(String browserType, String harFileName) {
 
-//		getPlaywrightObj().chromium().launchPersistentContext(
-//				getSystemBrowserContextOptions(browserType, browserType.contains("Mobile")));
-
         BrowserContext newBc = getBrowserByType(browserType).newContext(
                 getCommonBrowserContext(browserContexts.get(browserType), browserType.contains("Mobile"), harFileName));
 
+        
+        // return storage state for browser context contain current cookies and local storage snapshot
+        
         BrowserContext.StorageStateOptions storageStateOptions = new BrowserContext.StorageStateOptions();
         newBc.storageState(
                 storageStateOptions.setPath(Paths.get("emma-working-directory/browser-context-storage/state.json")));
 
         newBc.setDefaultNavigationTimeout(120000);
-        Geolocation geolocation = new Geolocation(48.8575, 2.3514);
-        newBc.setGeolocation(geolocation);
-        newBc.grantPermissions(List.of("geolocation"));
+
         return newBc;
     }
 

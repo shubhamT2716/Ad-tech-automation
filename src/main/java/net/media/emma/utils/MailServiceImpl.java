@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,9 +48,9 @@ public class MailServiceImpl {
             modelContext.setVariable("PublisherUrl", model.getTestMetaData().getPublisherUrl());
             modelContext.setVariable("harDownloadLink", model.getTestMetaData().getHarFileDownloadLink());
             modelContext.setVariable("dateTime", model.getTestMetaData().getDateTime());
-            modelContext.setVariable("bidexSize", model.getBidExController().getTotalSizeDownloaded());
-            modelContext.setVariable("bidexTime", model.getBidExController().getTotalResponseTime());
-            modelContext.setVariable("ConsoleMessage", model.getBidExController().getConsoleMessages());
+            modelContext.setVariable("bidexSize", model.getController().getTotalSizeDownloaded());
+            modelContext.setVariable("bidexTime", model.getController().getTotalResponseTime());
+            modelContext.setVariable("ConsoleMessage", model.getController().getConsoleMessages());
             modelContext.setVariable("Env", model.getTestMetaData().getEnvironment());
             modelContext.setVariable("UserAgent", model.getTestMetaData().getUserAgent());
             contextList.add(modelContext);

@@ -16,7 +16,7 @@ import java.util.Map;
 public class TestReportModel {
 
     TestMetaData testMetaData;
-    BidExController bidExController;
+    Controller controller;
     Map<String, Map<String, String>> testSummery;
     Map<String, String> gamSlots;
     URLChecksReportModel urlChecks;
@@ -52,14 +52,14 @@ public class TestReportModel {
     @Setter
     @Builder
     @ToString
-    public static class BidExController {
+    public static class Controller {
         @Builder.Default
         List<String> matchingUrls = new ArrayList<>();
         String totalSizeDownloaded;
         String totalResponseTime;
         @Builder.Default
         List<String> consoleMessages = new ArrayList<>();
-        BidexData bidexData;
+        ControllerData controllerData;
 
 
         // List of checks neededd
@@ -74,7 +74,7 @@ public class TestReportModel {
     @ToString
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BidexData {
+    public static class ControllerData {
 
         String svr;
         String sugd;
