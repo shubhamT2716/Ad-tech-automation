@@ -136,13 +136,13 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
     	
     	String envMp="warp.media.net";
     	
-    	String userAgent="Chrome.Desktop.Mac";
+    	String userAgents="Chrome.Desktop.Mac,Chrome.Mobile.iPhone";
     	
 //    	getAutoTest(envMp, userAgent, mpFiles, commonFilesForMp, null, "MP", "qayahoohbtasksqainternals@flockgroups.com", flagForMail);
 
-     List<String> urls=Arrays.asList("https://www.forbes.com/?medianet_test=1","https://www.fox13now.com/?medianet_test=1","https://www.daily.co.jp/?medianet_test=1");
-    	
-    	
+        List<String> urls=Arrays.asList("https://www.forbes.com/?medianet_test=1","https://www.fox13now.com/?medianet_test=1","https://www.daily.co.jp/?medianet_test=1");
+    
+     
     	Map<String, CompletableFuture<TestReportModel>> result=new LinkedHashMap<>();
     	
     	 Map<String, TestReportModel> finalResult = new HashMap<>();
@@ -155,18 +155,20 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
     	
     	try {
     		
-    	
-    	
+    	String userAgent[]=userAgents.trim().split(",");
+    		
+    	for(String ua:userAgent)
+    	{	
     	for(String publisher: urls) {
     		
     		String pub=Scheduler.getHostFromUrl(publisher);
     		
-    		result.put(pub, scheduler.getSchedulerThread(envMp, userAgent, publisher));
+    		result.put(pub+"_"+ua, scheduler.getSchedulerThread(envMp, ua, publisher));
     		
-    		listOfPublisher.add(pub);
+    		listOfPublisher.add(pub+"_"+ua);
     		
     	}
-    	
+    	}
     	
     	
     	 CompletableFuture<Void> allFutures = CompletableFuture
@@ -188,6 +190,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
          }
          
          String  zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
+                 
          
          for(String pubs:listOfPublisher)
          {
@@ -690,7 +693,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
             Map<String, Object> metaData = mapper.convertValue(testData, new TypeReference<Map<String, Object>>() {
             });
 
-            data.computeIfAbsent(metaData.get("publisherUrl") + ":" + metaData.get("environment"), k -> {
+            data.computeIfAbsent(metaData.get("publisherUrl") + ":" + metaData.get("environment")+":"+metaData.get("userAgent") ,k -> {
                 List<Object> list = new ArrayList<>();
 
                 list.addAll(Arrays.asList(testData, bidexData, summery));

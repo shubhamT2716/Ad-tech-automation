@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +48,7 @@ public class Scheduler {
 			"js/tags/clientag.js", "ss/nes/bidexl2.js", "cksync?", "clientag.js?cid");
 	List<String> urlController = List.of("checksync");
 
-	@Async("yamlTestSuitePool")
+	@Async("schedulerThreadPool")
 	public CompletableFuture<TestReportModel> getSchedulerThread(String env, String userAgent, String publisher) {
 
 		CompletableFuture<TestReportModel> future = new CompletableFuture<>();
@@ -75,7 +76,7 @@ public class Scheduler {
 		String harFilePath = CommonBrowserUtil.getFileNameForHar();
 
 		BrowserContext browserContext = BrowserFactory.getBc(userAgent, harFileBasePath + harFilePath);
-
+		
 		browserContext = replaceBidExUrl(browserContext, environment);
 
 		List<String> urlFromNatworktab = new ArrayList<>();
@@ -122,7 +123,7 @@ public class Scheduler {
 			TestReportModel testReport = TestReportModel.builder()
 					.testMetaData(TestMetaData.builder()
 							.dateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
-							.testName("YAML Test Suite").publisherUrl(publisher).environment(environment)
+							.testName("YAML Test Suite").publisherUrl(publisher).environment(environment).userAgent(userAgent)
 							.harFileDownloadLink("/yamlTestSuite/harDownload/" + harFilePath).build())
 					.build();
 
@@ -161,6 +162,19 @@ public class Scheduler {
 							break;
 						}
 					}
+					
+					
+					
+//					if (testData != null) {
+//                        for (Entry<String, String> entry : testData.entrySet()) {
+//
+//                            if (entry == null) {
+//                                continue;
+//                            } else if (originalURl.contains(entry.getKey())) {
+//                                replacedURL = replacedURL.replace(entry.getKey(), entry.getValue());
+//                            }
+//                        }
+//                    }
 
 					log.info("replace Url  =  " + replacedURL);
 					route.resume(new Route.ResumeOptions().setUrl(replacedURL));
@@ -172,71 +186,176 @@ public class Scheduler {
 	}
 
 	private Map<String, Map<String, String>> getSummeryForScheduler(List<Request> requestUrls) {
+	
+		
 		String flog = "https://hblg.media.net/log?logid=kfk&evtid=flog";
 
 		String nerrping = "https://hblg.media.net/nerrping.php";
-
+		
+		String gpt="https://securepubads.g.doubleclick.net/tag/js/gpt.js";
+		
+		String gampad="https://securepubads.g.doubleclick.net/gampad/ads";
+		
 		Map<String, Map<String, String>> mapOfnegativeUrl = new LinkedHashMap<>();
 
-		Map<String, String> negativeUrlscheck = new HashMap<>();
+//		List<Map<String, String> positveUrlscheck=new ArrayList<>();
+		
+		Map<String, String> positivUrls=new HashMap<>();
+
+		Map<String, String> error=new HashMap<>();
 
 		for (Request request : requestUrls) {
-			if (request.url().startsWith(nerrping)) {
-				negativeUrlscheck.put(request.url(), "PASS");
+			
+			if(isNegativeUrl(request.url()))
+			{		
+//				error=getNegativecall(request.url());
+
+				if(request.url().startsWith(nerrping))
+				{
+					error.put("nerrping", request.url());
+				}
+				if(request.url().startsWith(flog))
+				{
+					error.put("flog", request.url());
+				}
+				
 			}
-			if (request.url().startsWith(flog)) {
-				negativeUrlscheck.put(request.url(), "PASS");
+			
+			if(isPositiveUrl(request.url()))
+			{
+//				positveUrlscheck.add(getPositivecall(request.url()));
+				
+				if(request.url().startsWith(gampad))
+				{
+					positivUrls.put("gampad", "PASS");
+				}
+				
+				if(request.url().startsWith(gpt)) {
+					positivUrls.put("gpt.js", "PASS");
+				}
+		
 			}
+			
 		}
 
-		if (negativeUrlscheck.isEmpty()) {
-			negativeUrlscheck.put("No Flog", "No nerrping");
+		if (error.isEmpty()) {
+			error.put("flog", "No flog");
+			error.put("nerrping", "No nerrping");
+			
+		}
+		
+		if(positivUrls.isEmpty())
+		{
+			positivUrls.put("gpt.js","FAIL");
+			positivUrls.put("gampade", "FAIL");
 		}
 
-		mapOfnegativeUrl.put("negativeUrlChecks", negativeUrlscheck);
+		mapOfnegativeUrl.put("negativeUrlChecks", error);
+		mapOfnegativeUrl.put("positveUrlscheck", positivUrls);
 
 		return mapOfnegativeUrl;
 
 	}
+	
+	private boolean isNegativeUrl(String url)
+	{
+		String flog = "https://hblg.media.net/log?logid=kfk&evtid=flog";
+
+		String nerrping = "https://hblg.media.net/nerrping.php";
+	
+		
+		return  url.startsWith(nerrping)|| url.startsWith(flog);
+	}
+	
+	private Map<String, String> getNegativecall(String url)
+	{
+		String flog = "https://hblg.media.net/log?logid=kfk&evtid=flog";
+
+		String nerrping = "https://hblg.media.net/nerrping.php";
+		
+		Map<String, String> error=new HashMap<>();
+		
+		
+		if(url.startsWith(nerrping))
+		{
+			error.put("nerrping", url);
+		}
+		
+		if(url.startsWith(flog))
+		{
+			error.put("flog", url);
+		}
+		
+		return error;
+	}
+	
+	private Map<String, String> getPositivecall(String url)
+	{
+		String gpt="https://securepubads.g.doubleclick.net/tag/js/gpt.js";
+		
+		String gampad="https://securepubads.g.doubleclick.net/gampad/ads";
+		
+		Map<String, String> positiveUrl=new HashMap<>();
+		
+		System.out.println("Url Match: "+url.startsWith(gpt));
+		
+		if(url.startsWith(gpt))
+		{
+	    	positiveUrl.put("gpt.js", "PASS");
+		}
+		
+		if(url.startsWith(gampad))
+		{
+			positiveUrl.put("gampad", "PASS");
+		}
+		
+		System.out.println(positiveUrl);
+		
+		return positiveUrl;
+	}
+	
+	
+	private boolean isPositiveUrl(String url)
+	{
+		String gpt="https://securepubads.g.doubleclick.net/tag/js/gpt.js";
+		
+		String gampad="https://securepubads.g.doubleclick.net/gampad/ads";
+		
+		return  url.startsWith(gampad)|| url.startsWith(gpt);
+	}
 
 	public String testResultForScheduler(Map<String, TestReportModel> result) {
-		boolean hasError = false;
+	
+		for (TestReportModel testResult : result.values()) {
 
-		for (Map.Entry<String, TestReportModel> testResult : result.entrySet()) {
-
-			if (!testResult.getValue().getController().getConsoleMessages().isEmpty()) {
-				hasError = true;
-				break;
-			}
-
-			for (Map.Entry<String, Map<String, String>> summery : testResult.getValue().getTestSummery().entrySet()) {
-
-				for (Map.Entry<String, String> error : summery.getValue().entrySet()) {
-					if (error.getValue().equalsIgnoreCase("PASS")) {
-						hasError = true;
-
-						break;
-
-					}
+			if (!testResult.getController().getConsoleMessages().isEmpty()) {
+				return "fail";
+			}			
+			
+			for(Entry<String, String> negativeChecks:testResult.getTestSummery().get("negativeUrlChecks").entrySet())
+			{
+				
+				if(negativeChecks.getValue().startsWith("https://hblg.media.net"))
+				{
+					return "fail";	
 				}
-
-				if (hasError == true) {
-					break;
+				
+			}
+			
+			
+			for(Entry<String, String> positiveChecks:testResult.getTestSummery().get("positveUrlscheck").entrySet())
+			{
+				
+				if(positiveChecks.getValue().equalsIgnoreCase("FAIL"))
+				{
+					return "fail";
 				}
-
 			}
 
-			if (hasError == true) {
-				break;
-			}
 
 		}
 
-		if (hasError == false) {
-			return "pass";
-		} else {
-			return "fail";
-		}
+		return "pass";
 
 	}
 

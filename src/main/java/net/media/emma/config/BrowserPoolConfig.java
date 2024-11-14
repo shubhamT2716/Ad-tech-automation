@@ -35,7 +35,7 @@ public class BrowserPoolConfig {
         return executor;
     }
 
-    @Bean(name = "yamlTestSuitePool")
+    @Bean(name = "taskExecutor")
     public Executor yamlTestSuitePool() {
 
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -43,6 +43,18 @@ public class BrowserPoolConfig {
         executor.setMaxPoolSize(maxPoolSize);
         executor.setQueueCapacity(queueCapacity);
         executor.setThreadNamePrefix("YamlTestSuite-AsynchThread-");
+        executor.initialize();
+        return executor;
+    }
+    
+    @Bean(name = "schedulerThreadPool")
+    public Executor schedulerThreadPool() {
+
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(10);
+        executor.setQueueCapacity(100);
+        executor.setThreadNamePrefix("schedulerThreadPool");
         executor.initialize();
         return executor;
     }

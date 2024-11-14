@@ -135,7 +135,7 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
     }
 
 
-    @Async("yamlTestSuitePool")
+    @Async("taskExecutor")
     public CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData) {
 
         CompletableFuture<TestReportModel> future = new CompletableFuture<>();
