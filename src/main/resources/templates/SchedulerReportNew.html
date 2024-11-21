@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Data Summary</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			line-height: 1.6;
+			margin: 0;
+			padding: 20px;
+			background-color: #f4f4f9;
+		}
+
+		.container {
+			max-width: 900px;
+			margin: 0 auto;
+			background: #fff;
+			padding: 20px;
+			border-radius: 10px;
+			box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		h1 {
+			text-align: center;
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		.section {
+			margin-bottom: 30px;
+		}
+
+		.section h3 {
+			color: #0056b3;
+			font-size: 1.4rem;
+			margin-bottom: 15px;
+			border-bottom: 1px solid #ddd;
+			padding-bottom: 5px;
+		}
+
+		.data-item {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			margin-bottom: 15px;
+			padding: 10px;
+			border-radius: 6px;
+			background-color: #fafafa;
+			border: 1px solid #ddd;
+		}
+
+		.data-item strong {
+			width: 200px;
+			/* Fixed width for labels */
+			font-weight: bold;
+			color: #333;
+			flex-shrink: 0;
+			/* Prevent shrinking of the label */
+		}
+
+		.data-item span {
+			color: #555;
+			flex-grow: 1;
+			/* Allow text to grow and take available space */
+			padding-left: 10px;
+			/* Add space between label and value */
+			word-wrap: break-word;
+			/* Prevent long URLs or texts from overflowing */
+		}
+
+		/* Add spacing between multi-line key-value data */
+		.data-s {
+			padding-left: 10px;
+			line-height: 1.5;
+			/* Add spacing between lines */
+		}
+
+		/* Styling for errors */
+		.error {
+			color: red;
+			font-weight: bold;
+			background-color: #f8d7da;
+			padding: 10px;
+			border-radius: 5px;
+			margin-bottom: 10px;
+			border: 1px solid #f5c2c7;
+		}
+
+		/* Styling for no errors */
+		.no-nerrping {
+			color: green;
+			font-weight: bold;
+		}
+
+		/* Style section separators */
+		.section hr {
+			border: none;
+			border-top: 1px solid #ddd;
+			margin: 10px 0;
+		}
+
+		/* Styling for links */
+		a {
+			color: #0066cc;
+			text-decoration: none;
+			word-wrap: break-word;
+			/* Prevent long URLs from overflowing */
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1>Data Summary</h1>
+
+		<!-- Section 1: General Details -->
+		<div class="section" th:each="entry : ${report}">
+
+			<h3 th:text="${entry.key}"></h3> <!-- Dynamically Display Entry Key -->
+			<hr>
+
+			<!-- Display Date & Time -->
+			<div class="data-item">
+				<strong>Date & Time:</strong>
+				<span th:text="${entry.value[0].dateTime}"></span>
+			</div>
+
+			<!-- Display Publisher URL -->
+			<div class="data-item">
+				<strong>Publisher URL:</strong>
+				<span>
+					<a th:href="${entry.value[0].publisherUrl}" th:text="${entry.value[0].publisherUrl}"></a>
+				</span>
+			</div>
+
+			<!-- Display Environment -->
+			<div class="data-item">
+				<strong>Environment:</strong>
+				<span th:text="${entry.value[0].environment}"></span>
+			</div>
+
+			<!-- Display User Agent -->
+			<div class="data-item">
+				<strong>User Agent:</strong>
+				<span th:text="${entry.value[0].userAgent}">
+				</span>
+			</div>
+
+
+			<!-- Display Scripts Section -->
+			<div class="data-item">
+				<strong>Matching URLs:</strong>
+				<span th:text="${entry.value[1].matchingUrls}"></span>
+			</div>
+
+			<div class="data-item">
+				<strong>Total Size Downloaded:</strong>
+				<span th:text="${entry.value[1].totalSizeDownloaded}"></span>
+			</div>
+
+			<div class="data-item">
+				<strong>Total Response Time:</strong>
+				<span th:text="${entry.value[1].totalResponseTime}"></span>
+			</div>
+
+			<!-- Display Console Messages as Error if Not Empty  -->
+			<div class="data-item">
+				<strong>consoleMessages:</strong>
+				<div th:if="${entry.value[1].consoleMessages != null and not #lists.isEmpty(entry.value[1].consoleMessages)}"
+					class="error">
+					<span th:text="${entry.value[1].consoleMessages}"></span>
+				</div>
+				<div
+					th:if="${entry.value[1].consoleMessages == null or #lists.isEmpty(entry.value[1].consoleMessages)}">
+					<span>No errors found</span>
+				</div>
+			</div>
+
+			<!-- Display Controller Data -->
+			<div class="data-item">
+				<strong>Controller Data:</strong>
+				<div class="data-s">
+					<strong>svr: </strong><span th:text="${entry.value[1].controllerData.svr}"></span><br>
+					<strong>sugd: </strong><span th:text="${entry.value[1].controllerData.sugd}"></span><br>
+					<strong>cid: </strong><span th:text="${entry.value[1].controllerData.cid}"></span><br>
+					<strong>ct: </strong><span th:text="${entry.value[1].controllerData.ct}"></span><br>
+					<strong>servname: </strong><span th:text="${entry.value[1].controllerData.servname}"></span><br>
+					<strong>browser: </strong><span th:text="${entry.value[1].controllerData.browser}"></span><br>
+					<strong>lw: </strong><span th:text="${entry.value[1].controllerData.lw}"></span>
+				</div>
+			</div>
+
+			<div class="data-item">
+				<strong>Negative URL Checks:</strong>
+				<span>
+					<strong>nerrping:</strong> <span th:text="${entry.value[2].negativeUrlChecks.nerrping}"></span><br>
+					<strong>flog:</strong> <span th:text="${entry.value[2].negativeUrlChecks.flog}"></span>
+
+					<!-- Check if nerrping is equal to noNerrping (case-insensitive) -->
+					<!-- <div th:if="${#strings.equalsIgnoreCase(#strings.trim(entry.value[2].negativeUrlChecks.nerrping), #strings.trim(noNerrping))}" class="no-nerrping">
+    <strong>nerrping:</strong> <span>no nerrping</span>
+</div>
+
+
+<div th:if="${#strings.equalsIgnoreCase(#strings.trim(entry.value[2].negativeUrlChecks.nerrping), #strings.trim(noNerrping)) == false}" class="error">
+    <strong>nerrping:</strong> <span th:text="${entry.value[2].negativeUrlChecks.nerrping}"></span> - Error: Nerrping mismatch.
+</div> -->
+
+
+
+
+					<!-- <div th:if="${entry.value[2].negativeUrlChecks.flog != noFlog}" class="error">
+                        <strong>Error:</strong> <span th:text="${entry.value[2].negativeUrlChecks.flog}"></span>
+                    </div>
+
+                    <div th:if="${entry.value[2].negativeUrlChecks.flog == noFlog}" >
+                        <strong>flog:</strong> <span>no flog</span>
+                    </div> -->
+
+				</span>
+			</div>
+
+			<!-- Display Positive URL Checks -->
+			<div class="data-item">
+				<strong>Positive URL Checks:</strong>
+				<span>
+					<strong>gampad:</strong> <span th:text="${entry.value[2].positveUrlscheck.gampad}"></span><br>
+					<strong>gpt:</strong> <span th:text="${entry.value[2].positveUrlscheck.gpt}"></span><br>
+				</span>
+			</div>
+
+		</div>
+	</div>
+</body>
+
+</html>

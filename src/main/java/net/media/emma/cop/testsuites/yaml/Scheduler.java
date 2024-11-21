@@ -231,7 +231,7 @@ public class Scheduler {
 				}
 				
 				if(request.url().startsWith(gpt)) {
-					positivUrls.put("gpt.js", "PASS");
+					positivUrls.put("gpt", "PASS");
 				}
 		
 			}
@@ -239,14 +239,14 @@ public class Scheduler {
 		}
 
 		if (error.isEmpty()) {
-			error.put("flog", "No flog");
-			error.put("nerrping", "No nerrping");
+			error.put("flog", "noFlog");
+			error.put("nerrping", "noNerrping");
 			
 		}
 		
 		if(positivUrls.isEmpty())
 		{
-			positivUrls.put("gpt.js","FAIL");
+			positivUrls.put("gpt","FAIL");
 			positivUrls.put("gampade", "FAIL");
 		}
 

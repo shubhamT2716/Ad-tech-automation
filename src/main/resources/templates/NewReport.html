@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Data Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f5f7;
+            margin: 0;
+            padding: 20px;
+            color: #444;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #505153;
+        }
+        .card {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f9fafc;
+            border: 1px solid #e0e4eb;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+        }
+        .card h2 {
+            margin: 0 0 15px;
+            font-size: 20px;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        .card table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .card table th,
+        .card table td {
+            text-align: left;
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+        .card table th {
+            background-color: #3d3e3f;
+            color: #fff;
+        }
+        .card table td {
+            background-color: #fdfdfd;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d9534f;
+        }
+        a {
+            color: #0056b3;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: #004085;
+        }
+        .icon {
+            margin-right: 8px;
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .card table th,
+            .card table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Data Report</h1>
+        
+        <!-- Test Metadata -->
+        <div class="card">
+            <h2>Test Metadata</h2>
+            <table>
+                <tr><th>Test Name</th><td>YAML Test Suite</td></tr>
+                <tr><th>Status</th><td>Not Available</td></tr>
+                <tr><th>Date and Time</th><td>2024-11-15 17:04:09</td></tr>
+                <tr><th>Publisher URL</th><td>https://www.fox13now.com/?medianet_test=1</td></tr>
+                <tr><th>Environment</th><td>warp.media.net</td></tr>
+                <tr><th>User Agent</th><td>Chrome.Desktop.Mac</td></tr>
+                <tr><th>HAR File</th><td><a href="/yamlTestSuite/harDownload/generated-har-file-2024.11.15.17.01.26.251-6819.har">Download</a></td></tr>
+                <tr><th>Report</th><td><a href="/downloadFile?fileName=fox13now.com_YAML_TEST_SUITE_REPORT_2024.11.15.17.04.09.985-9242.xls">Download</a></td></tr>
+            </table>
+        </div>
+
+        <!-- Controller Data -->
+        <div class="card">
+            <h2>Controller Data</h2>
+            <table>
+                <tr><th>Total Size Downloaded</th><td>221 KB</td></tr>
+                <tr><th>Total Response Time</th><td>397 ms</td></tr>
+                <tr><th>Matching URLs</th><td><a href="https://warp.media.net/js/tags/clientag.js?cid=8CU2N1270&dn=www.fox13now.com&version=1" target="_blank">View URL</a></td></tr>
+                <tr><th>Controller Metadata</th>
+                    <td>
+                        <b>Server:</b> 199_531_mp<br>
+                        <b>Browser:</b> Chrome<br>
+                        <b>City:</b> MUMBAI<br>
+                        <b>LW:</b> 1<br>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Test Summary -->
+        <div class="card">
+            <h2>Test Summary</h2>
+            <table>
+                <tr><th>Negative URL Checks</th><td>nerrPing: NOT PRESENT, flog: NOT PRESENT</td></tr>
+                <tr><th>Positive URL Checks</th>
+                    <td>
+                        <b>Gampadcall:</b> PASS<br>
+                        <b>Belog:</b> <span class="highlight">FAIL</span> (Key value check failed)<br>
+                        <b>APPR-RA:</b> <span class="highlight">FAIL</span> (Key value mismatch)<br>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- GAM Slots -->
+        <div class="card">
+            <h2>GAM Slots</h2>
+            <table>
+                <tr><th>Field</th><th>Value</th></tr>
+                <tr><td>Form</td><td>20</td></tr>
+                <tr><td>Ad Keys</td><td>173361388</td></tr>
+                <tr><td>Weather</td><td>Cloudy</td></tr>
+            </table>
+        </div>
+
+        <!-- URL Checks -->
+        <div class="card">
+            <h2>URL Checks</h2>
+            <table>
+                <tr><th>Check</th><th>Result</th></tr>
+                <tr><td>Gampadcall</td><td>PASS</td></tr>
+                <tr><td>Matching URL</td><td><a href="https://securepubads.g.doubleclick.net/gampad/ads?pvsid=1676807472509815&correlator=1782293886128031" target="_blank">View URL</a></td></tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

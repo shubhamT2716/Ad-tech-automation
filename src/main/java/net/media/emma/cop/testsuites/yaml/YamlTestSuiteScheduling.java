@@ -131,7 +131,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
 
     }
 
-    @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
+   @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
     public void smokeTestScheduling() {
     	
     	String envMp="warp.media.net";
@@ -141,8 +141,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
 //    	getAutoTest(envMp, userAgent, mpFiles, commonFilesForMp, null, "MP", "qayahoohbtasksqainternals@flockgroups.com", flagForMail);
 
         List<String> urls=Arrays.asList("https://www.forbes.com/?medianet_test=1","https://www.fox13now.com/?medianet_test=1","https://www.daily.co.jp/?medianet_test=1");
-    
-     
+
     	Map<String, CompletableFuture<TestReportModel>> result=new LinkedHashMap<>();
     	
     	 Map<String, TestReportModel> finalResult = new HashMap<>();
@@ -200,8 +199,11 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
          }
          
    	  	String testResult=scheduler.testResultForScheduler(finalResult);
-   	  
-   	  this.mailServiceImpl.sendMail("qayahoohbtasksqainternals@flockgroups.com", "qayahoohbtasksqainternals@flockgroups.com", listOfTestReportModel, zipFile, testResult);
+   	  	
+   	  	if(testResult.equalsIgnoreCase("fail"))
+   	  	{
+   	  	this.mailServiceImpl.sendMail("qayahoohbtasksqainternals@flockgroups.com", "qayahoohbtasksqainternals@flockgroups.com", listOfTestReportModel, zipFile, testResult);
+   	  	}
          
     	}
     	catch (Exception e) {
@@ -687,8 +689,16 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
             });
 
             Object testData = map.get("testMetaData");
+            
+//           SchedulerReport.TestMetaData testmetaData=mapper.convertValue(testData, SchedulerReport.TestMetaData.class);
+            
             Object bidexData = map.get("controller");
+            
+//            SchedulerReport.Controller controller=mapper.convertValue(bidexData, SchedulerReport.Controller.class);
+            
             Object summery = map.get("testSummery");
+            
+//            SchedulerReport. controller=mapper.convertValue(bidexData, SchedulerReport.Controller.class);
             
             Map<String, Object> metaData = mapper.convertValue(testData, new TypeReference<Map<String, Object>>() {
             });

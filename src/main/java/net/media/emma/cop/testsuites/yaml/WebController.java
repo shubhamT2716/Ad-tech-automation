@@ -180,13 +180,13 @@ public class WebController {
     public ModelAndView getSchedulerFileReport(@PathVariable("fileName")String fileName)
     {
     	
-    	ModelAndView mav=new ModelAndView("SchedulerReport");
+    	ModelAndView mav=new ModelAndView("SchedulerReportNew");
     	
     	Map<String, Map<String, Object>> resultData=yamlTestSuiteScheduling.readDataFromSchedulerFile(fileName);
     	
     	try {
     		
-    		mav.addObject("message1", resultData.get("basicReport"));
+    		mav.addObject("report", resultData.get("basicReport"));
     		
     	}catch (Exception e) {
 			log.info("error in reading scheduler file: "+e); 
