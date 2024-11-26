@@ -1,120 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <title>Smoke Test Suite - Emma</title>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <meta content="width=device-width, initial-scale=1" name="viewport">
-    <link crossorigin="anonymous"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
-          rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
-          rel="stylesheet"/>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
+	<title>Smoke Test Suite - Emma</title>
+	<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+	<meta content="width=device-width, initial-scale=1" name="viewport">
+	<link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+		integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-MXWFVKRF32"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() {dataLayer.push(arguments);}
+		gtag('js', new Date());
 
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+		gtag('config', 'G-MXWFVKRF32');
+	</script>
+	<style>
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+		}
 
-        .content {
-            flex: 1;
-        }
+		body {
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            padding: 20px;
-        }
+		.content {
+			flex: 1;
+		}
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+		.container {
+			max-width: 600px;
+			margin: auto;
+			padding: 20px;
+		}
 
-        .form-check {
-            margin-bottom: 10px;
-        }
+		.form-group {
+			margin-bottom: 15px;
+		}
 
-        .input-box {
-            display: none;
-        }
+		.form-check {
+			margin-bottom: 10px;
+		}
 
-        .card {
-            padding: 20px;
-        }
+		.input-box {
+			display: none;
+		}
 
-        .btn-primary {
-            background-color: #04AA6D;
-            border-color: #04AA6D;
-        }
+		.card {
+			padding: 20px;
+		}
 
-        .btn-primary:hover {
-            background-color: #3e8e41;
-        }
+		.btn-primary {
+			background-color: #04AA6D;
+			border-color: #04AA6D;
+		}
 
-        .btn-primary:active {
-            background-color: #3e8e41 !important;
-        }
+		.btn-primary:hover {
+			background-color: #3e8e41;
+		}
 
-        .footer {
-            flex-shrink: 0;
-            background-color: #f8f9fa;
-            padding: 0px 0;
-        }
-    </style>
+		.btn-primary:active {
+			background-color: #3e8e41 !important;
+		}
+
+		.footer {
+			flex-shrink: 0;
+			background-color: #f8f9fa;
+			padding: 0px 0;
+		}
+	</style>
 </head>
-<body>
-<div class="container my-5 content">
-    <div class="card">
-        <h1 class="card-title text-center">SMOKE TEST SUITE</h1><br>
-        <form action="/yamlTestSuite/smokeTestSuite" method="post"
-              onsubmit="return validateForm()">
-            <div class="form-group">
-                <label for="env"><strong>SERVER ENVIRONMENT:</strong></label>
-                <select class="form-control" id="env" multiple="multiple"
-                        name="env">
-                    <option value="hbx.media.net">hbx.media.net</option>
-                    <option value="warp.media.net">warp.media.net</option>
-                    <option value="hbx-stage.media.net">hbx-stage.media.net
-                    </option>
-                    <option value="hbx-stage-1.media.net">
-                        hbx-stage-1.media.net
-                    </option>
-                    <option value="hbx-stage-2.media.net">
-                        hbx-stage-2.media.net
-                    </option>
-                    <option value="hbx-stage-3.media.net">
-                        hbx-stage-3.media.net
-                    </option>
-                    <option value="hbx-stage-4.media.net">
-                        hbx-stage-4.media.net
-                    </option>
-                    <option value="ssp-stage-hb.media.net">
-                        ssp-stage-hb.media.net
-                    </option>
-                    <option value="ssp-stage-hb-1.media.net">
-                        ssp-stage-hb-1.media.net
-                    </option>
-                    <option value="ssp-stage-hb-2.media.net">
-                        ssp-stage-hb-2.media.net
-                    </option>
-                    <option value="ssp-stage-hb-3.media.net">
-                        ssp-stage-hb-3.media.net
-                    </option>
-                    <option value="ssp-stage-hb-4.media.net">
-                        ssp-stage-hb-4.media.net
-                    </option>
-                </select>
-                <small class="form-text text-muted">Please enter the Host Name
-                    of the stage, or live.</small>
-            </div>
 
-            <!-- <div class="form-group">
+<body>
+	<div class="container my-5 content">
+		<div class="card">
+			<h1 class="card-title text-center">SMOKE TEST SUITE</h1><br>
+			<form action="/yamlTestSuite/smokeTestSuite" method="post" onsubmit="return validateForm()">
+				<div class="form-group">
+					<label for="env"><strong>SERVER ENVIRONMENT:</strong></label>
+					<select class="form-control" id="env" multiple="multiple" name="env">
+						<option value="hbx.media.net">hbx.media.net</option>
+						<option value="warp.media.net">warp.media.net</option>
+						<option value="hbx-stage.media.net">hbx-stage.media.net
+						</option>
+						<option value="hbx-stage-1.media.net">
+							hbx-stage-1.media.net
+						</option>
+						<option value="hbx-stage-2.media.net">
+							hbx-stage-2.media.net
+						</option>
+						<option value="hbx-stage-3.media.net">
+							hbx-stage-3.media.net
+						</option>
+						<option value="hbx-stage-4.media.net">
+							hbx-stage-4.media.net
+						</option>
+						<option value="ssp-stage-hb.media.net">
+							ssp-stage-hb.media.net
+						</option>
+						<option value="ssp-stage-hb-1.media.net">
+							ssp-stage-hb-1.media.net
+						</option>
+						<option value="ssp-stage-hb-2.media.net">
+							ssp-stage-hb-2.media.net
+						</option>
+						<option value="ssp-stage-hb-3.media.net">
+							ssp-stage-hb-3.media.net
+						</option>
+						<option value="ssp-stage-hb-4.media.net">
+							ssp-stage-hb-4.media.net
+						</option>
+					</select>
+					<small class="form-text text-muted">Please enter the Host Name
+						of the stage, or live.</small>
+				</div>
+
+				<!-- <div class="form-group">
                 <label for="dropdown"><strong>USER AGENT:</strong></label>
                 <select class="form-control" id="dropdown" name="ua">
                     <option value="">Select an option</option>
@@ -122,245 +129,238 @@
                 <input class="form-control mt-2" type="text" id="userAgentInput" name="uaInput"/>
             </div> -->
 
-            <div class="form-group">
-                <label for="dropdown"><strong>USER AGENT:</strong></label>
-                <select class="form-control" id="dropdown" multiple="multiple"
-                        name="ua">
-                    <option value="">Select an option</option>
-                </select>
-            </div>
+				<div class="form-group">
+					<label for="dropdown"><strong>USER AGENT:</strong></label>
+					<select class="form-control" id="dropdown" multiple="multiple" name="ua">
+						<option value="">Select an option</option>
+					</select>
+				</div>
 
-            <div class="form-check">
-                <input class="form-check-input" id="toggle" type="checkbox">
-                <label class="form-check-label" for="toggle">Select checkbox if
-                    you want report in mail</label>
-            </div>
+				<div class="form-check">
+					<input class="form-check-input" id="toggle" type="checkbox">
+					<label class="form-check-label" for="toggle">Select checkbox if
+						you want report in mail</label>
+				</div>
 
-            <div class="form-group input-box">
-                <label for="email"><strong>EMAIL:</strong></label>
-                <input class="form-control" id="email" name="email" placeholder="Please enter your email"
-                       type="text">
-                <div id="emailError" style="color: red; display: none;">Please
-                    enter a valid email address.
-                </div>
-            </div>
+				<div class="form-group input-box">
+					<label for="email"><strong>EMAIL:</strong></label>
+					<input class="form-control" id="email" name="email" placeholder="Please enter your email"
+						type="text">
+					<div id="emailError" style="color: red; display: none;">Please
+						enter a valid email address.
+					</div>
+				</div>
 
-            <div class="form-group">
-                <label for="itype"><strong>ITYPE:</strong></label>
-                <select class="form-select" id="itype" name="itype"
-                        onchange="handleClick()">
-                    <option value="HB">HB</option>
-                    <option value="HB2">HB2</option>
-                    <option value="MP">MP</option>
-                </select>
-            </div>
+				<div class="form-group">
+					<label for="itype"><strong>ITYPE:</strong></label>
+					<select class="form-select" id="itype" name="itype" onchange="handleClick()">
+						<option value="HB">HB</option>
+						<option value="HB2">HB2</option>
+						<option value="MP">MP</option>
+					</select>
+				</div>
 
-            <div class="form-group">
-                <label><strong>Select YAML files to execute:</strong></label>
-                <div class="form-check">
-                    <input class="form-check-input" id="selectAllSelectedFiles"
-                           onchange="toggleCheckboxes('selectedFilesContainer', this)"
-                           type="checkbox">
-                    <label class="form-check-label"
-                           for="selectAllSelectedFiles">All Files</label>
-                </div>
-                <div class="form-check" id="selectedFilesContainer"></div>
-            </div>
+				<div class="form-group">
+					<label><strong>Select YAML files to execute:</strong></label>
+					<div class="form-check">
+						<input class="form-check-input" id="selectAllSelectedFiles"
+							onchange="toggleCheckboxes('selectedFilesContainer', this)" type="checkbox">
+						<label class="form-check-label" for="selectAllSelectedFiles">All Files</label>
+					</div>
+					<div class="form-check" id="selectedFilesContainer"></div>
+				</div>
 
-            <div class="form-group">
-                <label><strong>Select common rules to execute:</strong></label>
-                <div class="form-check">
-                    <input class="form-check-input" id="selectAllCommonFiles"
-                           onchange="toggleCheckboxes('commonFilesContainer', this)"
-                           type="checkbox">
-                    <label class="form-check-label" for="selectAllCommonFiles">All
-                        Files</label>
-                </div>
-                <div class="form-check" id="commonFilesContainer"></div>
-            </div>
+				<div class="form-group">
+					<label><strong>Select common rules to execute:</strong></label>
+					<div class="form-check">
+						<input class="form-check-input" id="selectAllCommonFiles"
+							onchange="toggleCheckboxes('commonFilesContainer', this)" type="checkbox">
+						<label class="form-check-label" for="selectAllCommonFiles">All
+							Files</label>
+					</div>
+					<div class="form-check" id="commonFilesContainer"></div>
+				</div>
 
-            <div class="alert alert-danger mt-3" id="error-message"
-                 style="display: none;"></div>
+				<div class="alert alert-danger mt-3" id="error-message" style="display: none;"></div>
 
-            <button class="btn btn-primary w-100 mt-3" type="submit">Submit
-            </button>
-        </form>
-    </div>
-</div>
+				<button class="btn btn-primary w-100 mt-3" type="submit">Submit
+				</button>
+			</form>
+		</div>
+	</div>
 
-<footer class="footer bg-light text-center text-lg-start mt-5">
-    <div class="text-center p-3 bg-dark text-light">
-        © 2024 Emma - All Rights Reserved.
-    </div>
-</footer>
+	<footer class="footer bg-light text-center text-lg-start mt-5">
+		<div class="text-center p-3 bg-dark text-light">
+			© 2024 Emma - All Rights Reserved.
+		</div>
+	</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script>
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     handleClick(); // Call handleClick on page load, this is to ensure that on page refresh the contents of HB is preloaded @shubham
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script>
+		// document.addEventListener('DOMContentLoaded', function() {
+		//     handleClick(); // Call handleClick on page load, this is to ensure that on page refresh the contents of HB is preloaded @shubham
 
-    //     $('#env').select2({
-    //         placeholder: "Select server environments"
-    //     });
+		//     $('#env').select2({
+		//         placeholder: "Select server environments"
+		//     });
 
-    //     const dropdown = document.getElementById("dropdown");
-    //     const userAgentInput = document.getElementById("userAgentInput");
+		//     const dropdown = document.getElementById("dropdown");
+		//     const userAgentInput = document.getElementById("userAgentInput");
 
-    //     fetch("/yamlTestSuite/userAgent")
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             for (const [key, value] of Object.entries(data)) {
-    //                 const option = document.createElement("option");
-    //                 option.text = key;
-    //                 option.value = value;
-    //                 dropdown.appendChild(option);
-    //             }
+		//     fetch("/yamlTestSuite/userAgent")
+		//         .then(response => response.json())
+		//         .then(data => {
+		//             for (const [key, value] of Object.entries(data)) {
+		//                 const option = document.createElement("option");
+		//                 option.text = key;
+		//                 option.value = value;
+		//                 dropdown.appendChild(option);
+		//             }
 
-    //             dropdown.addEventListener("change", function() {
-    //                 userAgentInput.value = this.value;
-    //             });
-    //         })
-    //         .catch(error => console.log('Error in fetching data', error));
-    // });
+		//             dropdown.addEventListener("change", function() {
+		//                 userAgentInput.value = this.value;
+		//             });
+		//         })
+		//         .catch(error => console.log('Error in fetching data', error));
+		// });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        handleClick(); // Call handleClick on page load, this is to ensure that on page refresh the contents of HB is preloaded @shubham
+		document.addEventListener('DOMContentLoaded', function () {
+			handleClick(); // Call handleClick on page load, this is to ensure that on page refresh the contents of HB is preloaded @shubham
 
-        $('#env').select2({
-            placeholder: "Select server environments"
-        });
+			$('#env').select2({
+				placeholder: "Select server environments"
+			});
 
-        $('#dropdown').select2({
-            placeholder: "Select user agents"
-        });
+			$('#dropdown').select2({
+				placeholder: "Select user agents"
+			});
 
-        fetch("/yamlTestSuite/userAgent")
-            .then(response => response.json())
-            .then(data => {
-                for (const [key, value] of Object.entries(data)) {
-                    const option = document.createElement("option");
-                    option.text = key;
-                    // option.value = value;
-                    dropdown.appendChild(option);
-                }
+			fetch("/yamlTestSuite/userAgent")
+				.then(response => response.json())
+				.then(data => {
+					for (const [key, value] of Object.entries(data)) {
+						const option = document.createElement("option");
+						option.text = key;
+						// option.value = value;
+						dropdown.appendChild(option);
+					}
 
-                $('#dropdown').on("change", function () {
-                    const selectedValues = $(this).val();
-                    console.log("Selected user agents: ", selectedValues);
-                });
-            })
-            .catch(error => console.log('Error in fetching data', error));
-    });
+					$('#dropdown').on("change", function () {
+						const selectedValues = $(this).val();
+						console.log("Selected user agents: ", selectedValues);
+					});
+				})
+				.catch(error => console.log('Error in fetching data', error));
+		});
 
-    document.getElementById('email').addEventListener('input', function () {
-        const email = this.value;
-        const emailError = document.getElementById('emailError');
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+		document.getElementById('email').addEventListener('input', function () {
+			const email = this.value;
+			const emailError = document.getElementById('emailError');
+			const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-        if (emailPattern.test(email)) {
-            emailError.style.display = 'none';
-        } else {
-            emailError.style.display = 'block';
-        }
-    });
+			if (emailPattern.test(email)) {
+				emailError.style.display = 'none';
+			} else {
+				emailError.style.display = 'block';
+			}
+		});
 
-    const toggleSwitch = document.getElementById('toggle');
-    const inputBox = document.querySelector('.input-box');
+		const toggleSwitch = document.getElementById('toggle');
+		const inputBox = document.querySelector('.input-box');
 
-    toggleSwitch.addEventListener('change', function () {
-        if (this.checked) {
-            inputBox.style.display = 'block';
-        } else {
-            inputBox.style.display = 'none';
-        }
-    });
+		toggleSwitch.addEventListener('change', function () {
+			if (this.checked) {
+				inputBox.style.display = 'block';
+			} else {
+				inputBox.style.display = 'none';
+			}
+		});
 
-    function validateForm() {
-        const selectedFiles = document.querySelectorAll('input[name="selectedFiles"]:checked');
-        const commonFiles = document.querySelectorAll('input[name="commonFiles"]:checked');
-        const errorMessage = document.getElementById('error-message');
-        if (selectedFiles.length === 0 || commonFiles.length === 0) {
-            errorMessage.textContent = 'Please select at least one YAML or common YAML file to execute.';
-            errorMessage.style.display = 'block';
-            return false;
-        }
-        errorMessage.style.display = 'none';
-        return true;
-    }
+		function validateForm() {
+			const selectedFiles = document.querySelectorAll('input[name="selectedFiles"]:checked');
+			const commonFiles = document.querySelectorAll('input[name="commonFiles"]:checked');
+			const errorMessage = document.getElementById('error-message');
+			if (selectedFiles.length === 0 || commonFiles.length === 0) {
+				errorMessage.textContent = 'Please select at least one YAML or common YAML file to execute.';
+				errorMessage.style.display = 'block';
+				return false;
+			}
+			errorMessage.style.display = 'none';
+			return true;
+		}
 
-    function handleClick() {
-        const itypeValue = document.getElementById('itype').value;
+		function handleClick() {
+			const itypeValue = document.getElementById('itype').value;
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/yamlTestSuite/smokeTestSuiteItype?itype=' + itypeValue, true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                const responseData = JSON.parse(xhr.responseText);
-                const yamlFilesList = responseData.fileNames;
-                const commonYamlFilesList = responseData.commonFile;
+			const xhr = new XMLHttpRequest();
+			xhr.open('GET', '/yamlTestSuite/smokeTestSuiteItype?itype=' + itypeValue, true);
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+					const responseData = JSON.parse(xhr.responseText);
+					const yamlFilesList = responseData.fileNames;
+					const commonYamlFilesList = responseData.commonFile;
 
-                const selectedFilesContainer = document.getElementById('selectedFilesContainer');
-                selectedFilesContainer.innerHTML = "";
+					const selectedFilesContainer = document.getElementById('selectedFilesContainer');
+					selectedFilesContainer.innerHTML = "";
 
-                yamlFilesList.forEach(function (file) {
-                    const label = document.createElement('label');
-                    label.className = 'form-check-label';
-                    label.textContent = file;
+					yamlFilesList.forEach(function (file) {
+						const label = document.createElement('label');
+						label.className = 'form-check-label';
+						label.textContent = file;
 
-                    const checkbox = document.createElement('input');
-                    checkbox.className = 'form-check-input';
-                    checkbox.type = 'checkbox';
-                    checkbox.name = 'selectedFiles';
-                    checkbox.value = file;
+						const checkbox = document.createElement('input');
+						checkbox.className = 'form-check-input';
+						checkbox.type = 'checkbox';
+						checkbox.name = 'selectedFiles';
+						checkbox.value = file;
 
-                    const div = document.createElement('div');
-                    div.className = 'form-check';
-                    div.appendChild(checkbox);
-                    div.appendChild(label);
+						const div = document.createElement('div');
+						div.className = 'form-check';
+						div.appendChild(checkbox);
+						div.appendChild(label);
 
-                    selectedFilesContainer.appendChild(div);
-                });
+						selectedFilesContainer.appendChild(div);
+					});
 
-                const commonFilesContainer = document.getElementById('commonFilesContainer');
-                commonFilesContainer.innerHTML = "";
+					const commonFilesContainer = document.getElementById('commonFilesContainer');
+					commonFilesContainer.innerHTML = "";
 
-                commonYamlFilesList.forEach(function (file) {
-                    const label = document.createElement('label');
-                    label.className = 'form-check-label';
-                    label.textContent = file;
+					commonYamlFilesList.forEach(function (file) {
+						const label = document.createElement('label');
+						label.className = 'form-check-label';
+						label.textContent = file;
 
-                    const checkbox = document.createElement('input');
-                    checkbox.className = 'form-check-input';
-                    checkbox.type = 'checkbox';
-                    checkbox.name = 'commonFiles';
-                    checkbox.value = file;
+						const checkbox = document.createElement('input');
+						checkbox.className = 'form-check-input';
+						checkbox.type = 'checkbox';
+						checkbox.name = 'commonFiles';
+						checkbox.value = file;
 
-                    const div = document.createElement('div');
-                    div.className = 'form-check';
-                    div.appendChild(checkbox);
-                    div.appendChild(label);
+						const div = document.createElement('div');
+						div.className = 'form-check';
+						div.appendChild(checkbox);
+						div.appendChild(label);
 
-                    commonFilesContainer.appendChild(div);
-                });
-            }
-        };
-        xhr.send();
-    }
+						commonFilesContainer.appendChild(div);
+					});
+				}
+			};
+			xhr.send();
+		}
 
-    function toggleCheckboxes(containerId, selectAllCheckbox) {
-        const checkboxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]`);
-        checkboxes.forEach(function (checkbox) {
-            checkbox.checked = selectAllCheckbox.checked;
-        });
-    }
-</script>
+		function toggleCheckboxes(containerId, selectAllCheckbox) {
+			const checkboxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]`);
+			checkboxes.forEach(function (checkbox) {
+				checkbox.checked = selectAllCheckbox.checked;
+			});
+		}
+	</script>
 
-<script crossorigin="anonymous"
-        integrity="sha384-oBqDVmMz4fnFO9gybBogGzKp/y3fvh8TVM6A/r/VvVZZclIFT8SRWJm1kM0x4QAn"
-        src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
-<script crossorigin="anonymous"
-        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRkB7IO2q2wK6fVYJ5E5n3zJw1J6zJ6fY7Rc0FtAK"
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+	<script crossorigin="anonymous" integrity="sha384-oBqDVmMz4fnFO9gybBogGzKp/y3fvh8TVM6A/r/VvVZZclIFT8SRWJm1kM0x4QAn"
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+	<script crossorigin="anonymous" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRkB7IO2q2wK6fVYJ5E5n3zJw1J6zJ6fY7Rc0FtAK"
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
+
 </html>

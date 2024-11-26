@@ -1,18 +1,31 @@
 networkCallsPositive: {
   checksync: "https://hbx.media.net/checksync.php?",
   APPR-RA: "https://navvy.media.net/log",
-  l1log: "https://hblg.media.net/log?logid=kfk&evtid=l1log",
-  gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads?",
-  #openx: "https://rtb.openx.net/openrtbb/prebidjs",
-  prebid: "https://prebid.media.net/rtb/prebid?"
-  #RA: "https://navvy.media.net/log",
+  gampad: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  ARlog: "https://hblg.media.net/log?logid=kfk&evtid=arlog",
+  Adplog: "https://hblg.media.net/log?logid=kfk&evtid=adplog",
+  dfs: "https://warp.media.net/ss/nes/dfs?cid=8CUG85633",
+  creative: "https://warp.media.net/js/static/creative.js",
+  belog: "https://hbxlp.media.net/log",
+  prtl: "https://hbxlp.media.net/log",
+  pubmatic: "https://hbopenbid.pubmatic.com/translator",
+  medianet: "https://prebid.media.net/rtb/prebid",
+  index: "https://htlb.casalemedia.com/openrtb/pbjs",
+  Appnexus: "https://ib.adnxs.com/ut/v3/prebid",
+  rubicon: "https://fastlane.rubiconproject.com/a/api/fastlane.json",
+  kargo: "https://krk2.kargo.com/api/v1/prebid",
+  undertone: "https://hb.undertone.com/hb?pid",
+  openx: "https://rtb.openx.net",
+  triplelift: "https://tlx.3lift.com",
+  auction: "https://prebid-s2s.media.net/openrtb2/auction",
+  yeildmo: "https://ads.yieldmo.com/exchange/prebid"
 }
 
 networkCallsNegative: {
   nerrPing: "https://hblg.media.net/nerrping.php",
   flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
-
 }
+
 
 keysToVerifyPositive: {
 

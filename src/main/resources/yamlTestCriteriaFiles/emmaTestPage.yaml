@@ -72,11 +72,83 @@ requestHeaders: {
 }
 
 bidderDataUrls: {
+  auction: "https://prebid.media.net/rtb/prebid?cid=8CU56755C",
 
 }
 
 bidderDataAssertions: {
+  auction: [
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].id",
+        expectedValue: "3d2801ac41ebea"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].tagid", value: "112361414" },
+        { jsonPath: "x.imp[0].all.cid", value: "8CU56755C" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.data.adUnitCode", value: "Banner/Outstream" },
+        { jsonPath: "x.imp[0].ortb2Imp.ext.data.divId", value: "deiv" },
+      ],
+      responseData: [
+        # { jsonPath: "", value: "" },
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].id",
+        expectedValue: "top"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].bidfloorcur", value: "USD" },
+        { jsonPath: "x.imp[0].ext.data.adUnitCode", value: "top-s" },
+        { jsonPath: "x.imp[0].ext.data.adUnitPath", value: "/7175/fdc.forbes/home" },
+        { jsonPath: "x.imp[0].banner.format[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
+        { jsonPath: "x.imp[0].ext.adserver.adslot", value: "/7175/fdc.forbes/home" },
+        { jsonPath: "x.imp[0].ext.adserver.name", value: "gam" },
+        #{ jsonPath: "x.imp[0].ext.prebid.bidder", value: "appnexus" },
+        #{ jsonPath: "x.imp[0].ext.prebid.bidder", value: "kargo" },
+        #{ jsonPath: "x.imp[0].ext.prebid.bidder", value: "medianet" },
+        { jsonPath: "x.imp[0].ext.prebid.bidder", value: "openx" },
+        #{ jsonPath: "x.imp[0].ext.prebid.bidder", value: "pubmatic" },
+        #{ jsonPath: "x.imp[0].ext.prebid.bidder", value: "rubicon" },
+        { jsonPath: "x.imp[0].ext.prebid.bidder", value: "sharethrough" },
+        #{ jsonPath: "x.imp[0].ext.prebid.bidder", value: "triplelift" },
+      ],
+      responseData: [
+        # { jsonPath: "", value: "" },
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[2].id",
+        expectedValue: "top-3"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].bidfloorcur", value: "USD" },
+        { jsonPath: "x.imp[0].ext.data.adUnitCode", value: "top-s" },
+        { jsonPath: "x.imp[0].ext.data.adUnitPath", value: "/7175/fdc.forbes/home" },
+        { jsonPath: "x.imp[0].banner.format[0].w", value: "728" },
+        { jsonPath: "x.imp[0].banner.format[0].h", value: "90" },
+        { jsonPath: "x.imp[0].ext.adserver.adslot", value: "/7175/fdc.forbes/home" },
+        { jsonPath: "x.imp[0].ext.adserver.name", value: "gam" },
+        { jsonPath: "x.imp[0].ext.prebid.bidder", value: "appnexus" },
+        { jsonPath: "x.imp[0].ext.prebid.bidder", value: "kargo" },
+        { jsonPath: "x.imp[0].ext.prebid.bidder", value: "medianet" },
+        { jsonPath: "x.imp[0].ext.prebid.bidder", value: "openx" },
+        { jsonPath: "x.imp[0].ext.prebid.bidder", value: "pubmatic" },
+        { jsonPath: "x.imp[0].ext.prebid.bidder", value: "rubicon" },
+        { jsonPath: "x.imp[0].ext.prebid.bidder", value: "sharethrough" },
+        { jsonPath: "x.imp[0].ext.prebid.bidder", value: "triplelift" },
+      ],
+      responseData: [
+        # { jsonPath: "", value: "" },
+      ]
+    },
+
+  ]
 }
+
 
 
 # ------------------------------ignore the lines below--rats---------------------

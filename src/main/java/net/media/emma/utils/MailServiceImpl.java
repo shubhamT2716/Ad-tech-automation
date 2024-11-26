@@ -45,7 +45,7 @@ public class MailServiceImpl {
         Context context = new Context();
         List<Context> contextList = new ArrayList<>();
         
-        Map<String, String> consoleError=new HashMap<>();
+        Map<String, Map<String, String>> consoleError=new HashMap<>();
         
 
         for (TestReportModel model : result) {
@@ -62,7 +62,25 @@ public class MailServiceImpl {
             contextList.add(modelContext);
             if(!model.getController().getConsoleMessages().isEmpty())
             {
-            	consoleError.put(Scheduler.getHostFromUrl(model.getTestMetaData().getPublisherUrl()), model.getController().getConsoleMessages().toString());
+//            	consoleError.put(Scheduler.getHostFromUrl(model.getTestMetaData().getPublisherUrl()), model.getController().getConsoleMessages().toString());
+            	
+            	consoleError.computeIfAbsent("consoleError", k->new HashMap<>()).put(Scheduler.getHostFromUrl(model.getTestMetaData().getPublisherUrl()), model.getController().getConsoleMessages().toString());
+            	
+            
+            }
+            
+            if(model.getUrlChecks()!=null)
+            {
+            
+            if(model.getUrlChecks().getNegativeUrlChecks().get("flog").getCountOfMatchingUrls()!=0)
+            {
+            	consoleError.computeIfAbsent("flog", k->new HashMap<>()).put(Scheduler.getHostFromUrl(model.getTestMetaData().getPublisherUrl()), model.getUrlChecks().getNegativeUrlChecks().get("flog").getMatchingUrls().toString());
+            }
+            
+            if(model.getUrlChecks().getNegativeUrlChecks().get("nerrPing").getCountOfMatchingUrls()!=0)
+            {
+            	consoleError.computeIfAbsent("nerrPing", k->new HashMap<>()).put(Scheduler.getHostFromUrl(model.getTestMetaData().getPublisherUrl()), model.getUrlChecks().getNegativeUrlChecks().get("nerrPing").getMatchingUrls().toString());
+            }
             }
             
 

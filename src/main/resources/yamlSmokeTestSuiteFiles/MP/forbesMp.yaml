@@ -1,4 +1,4 @@
-environment: hbx.media.net
+environment: warp.media.net
 #cookies: [ VisitorId: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ,  data-o: "295a8052-83a4-4bc7-06bd-b840f17d88f7" ]
 userAgent: Chrome.Desktop.Mac
 publisherUrl: "https://www.forbes.com/?medianet_test=1"
@@ -8,15 +8,26 @@ bidexReplaceString: { "": "" }
 networkCallsPositive: {
   checksync: "https://hbx.media.net/checksync.php?",
   APPR-RA: "https://navvy.media.net/log",
-  #RA: "https://navvy.media.net/log",
+  gampad: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  ARlog: "https://hblg.media.net/log?logid=kfk&evtid=arlog",
+  Adplog: "https://hblg.media.net/log?logid=kfk&evtid=adplog",
   belog: "https://hbxlp.media.net/log",
-  cxtlog: "https://hblg.media.net/log?logid=kfk&evtid=cxtlog",
-  cslog: "https://c21lg-d.media.net/log",
-  auction: "https://prebid-s2s.media.net/openrtb2/auction",
+  prtllog: "https://hbxlp.media.net/log",
   sync: "https://prebid-s2s.media.net/cookie_sync",
   dfs: "https://warp.media.net/ss/nes/dfs?cid=8CU4ZAPFY",
   mcx: "https://warp.media.net/mcx.js",
   litype: "https://contextual.media.net/litype.php",
+  pubmatic: "https://hbopenbid.pubmatic.com/translator",
+  medianet: "https://prebid.media.net/rtb/prebid",
+  index: "https://htlb.casalemedia.com/openrtb/pbjs",
+  Appnexus: "https://ib.adnxs.com/ut/v3/prebid",
+  rubicon: "https://fastlane.rubiconproject.com/a/api/fastlane.json",
+  kargo: "https://krk2.kargo.com/api/v1/prebid",
+  undertone: "https://hb.undertone.com/hb?pid",
+  openx: "https://rtb.openx.net",
+  triplelift: "https://tlx.3lift.com",
+  auction: "https://prebid-s2s.media.net/openrtb2/auction",
+  yeildmo: "https://ads.yieldmo.com/exchange/prebid"
 }
 
 networkCallsNegative: {
@@ -26,23 +37,42 @@ networkCallsNegative: {
 
 keysToVerifyPositive: {
 
+  belog: {
+    evtid: [ "belog" ],
+    svr: [ "204_536_mp" ],
+    dn: [ "forbes.com" ],
+    cid: [ "8CU4ZAPFY" ],
+    itype: [ "MANAGED_PREBID" ] },
+
   checksync: {
-    #gdpr: ["0"],
-    usp_status: [ "1" ],
+    usp_status: ["1"],
     usp_consent: [ "1" ],
-    uspstring: [ "1YNN" ],
   },
 
   APPR-RA: {
     lgtp: [ "APPR","RA" ],
-    dn: [ "www.forbes.com" ],
+    uid_mod_avb: ["pubcid","criteoId"],
     req_mtype: [ "banner" ],
-    aucstatus: [ "completed" ]
+    aucstatus: [ "completed" ],
+    cc: ["US"],
+    sc: ["NJ"],
+    curr: ["USD"],
+    dbf: ["1"],
+    tmax: ["1000"],
+    status: ["1"],
   },
 
-  #RA: {
-  #lgtp: ["RA"],
-  #}
+  prtl: {
+    cTs: ["Nov 12 12:47:10"],
+    gTs: ["Nov 4 08:08:28"],
+    pTs: ["Nov 18 09:53:39"],
+    emsVersion: ["Ems-Entity=PROV"],
+    dapp: ["green"]
+  },
+
+  ARlog: {
+    rfc: [1]
+  }
 
 
 }
@@ -55,13 +85,23 @@ keysToVerifyNegative: {
 #to_check_any_keys_among_these
 keysToVerifyAnyOneOf: {
 
-  #APPR: {
-  #pvnm: ["trustx","ix","rubicon","appnexus","adagio","sharethrough","openx","kargo","medianet","pubmatic","-2"],
-  #size: ["300x250","728x90","970x250"],
-  #status: ["1","2","3","7"],
-  #iwb: ["0","1"],
+  APPR-RA: {
+    pvnm: [ "trustx","ix","rubicon","appnexus","adagio","sharethrough","openx","kargo","medianet","pubmatic","-2" ],
+    size: [ "300x250","728x90","970x250" ],
+    status: [ "1","2","3","7" ],
+    iwb: [ "0","1" ],
+    req_mtype: [ "banner", "video" ], 
+    src: [ "client","s2s" ]
+  },
 
-  #}
+  Adplog: {
+    ngfundl: ["1000","1200","1500","2000"],
+    tmo_al: ["exploitation, exploration"]
+  },
+
+  prtllog: {
+    bkt: ["b1","b2","b3","b4"]
+ }
 
 }
 

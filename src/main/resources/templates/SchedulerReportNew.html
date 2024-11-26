@@ -5,125 +5,203 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Data Summary</title>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-MXWFVKRF32"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() {dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-MXWFVKRF32');
+	</script>
 	<style>
-		body {
-			font-family: Arial, sans-serif;
-			line-height: 1.6;
-			margin: 0;
-			padding: 20px;
-			background-color: #f4f4f9;
-		}
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+    
+        .container {
+             max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1); 
+            
+        }
 
-		.container {
-			max-width: 900px;
-			margin: 0 auto;
-			background: #fff;
-			padding: 20px;
-			border-radius: 10px;
-			box-shadow: 0 6px 6px rgba(0, 0, 0, 0.1);
-		}
-
-		h1 {
-			text-align: center;
-			color: #333;
-			margin-bottom: 20px;
-		}
-
-		.section {
-			margin-bottom: 30px;
-		}
-
-		.section h3 {
-			color: #0056b3;
-			font-size: 1.4rem;
-			margin-bottom: 15px;
-			border-bottom: 1px solid #ddd;
-			padding-bottom: 5px;
-		}
-
-		.data-item {
-			display: flex;
-			align-items: flex-start;
-			justify-content: space-between;
-			margin-bottom: 15px;
-			padding: 10px;
-			border-radius: 6px;
-			background-color: #fafafa;
-			border: 1px solid #ddd;
-		}
-
-		.data-item strong {
-			width: 200px;
-			/* Fixed width for labels */
-			font-weight: bold;
-			color: #333;
-			flex-shrink: 0;
-			/* Prevent shrinking of the label */
-		}
-
-		.data-item span {
-			color: #555;
-			flex-grow: 1;
-			/* Allow text to grow and take available space */
-			padding-left: 10px;
-			/* Add space between label and value */
-			word-wrap: break-word;
-			/* Prevent long URLs or texts from overflowing */
-		}
-
-		/* Add spacing between multi-line key-value data */
-		.data-s {
-			padding-left: 10px;
-			line-height: 1.5;
-			/* Add spacing between lines */
-		}
-
-		/* Styling for errors */
-		.error {
-			color: red;
-			font-weight: bold;
-			background-color: #f8d7da;
-			padding: 10px;
-			border-radius: 5px;
-			margin-bottom: 10px;
-			border: 1px solid #f5c2c7;
-		}
-
-		/* Styling for no errors */
-		.no-nerrping {
-			color: green;
-			font-weight: bold;
-		}
-
-		/* Style section separators */
-		.section hr {
-			border: none;
-			border-top: 1px solid #ddd;
-			margin: 10px 0;
-		}
-
-		/* Styling for links */
-		a {
-			color: #0066cc;
-			text-decoration: none;
-			word-wrap: break-word;
-			/* Prevent long URLs from overflowing */
-		}
-
-		a:hover {
-			text-decoration: underline;
-		}
-	</style>
+        .key-header {
+            word-wrap: break-word; /* Break long words */
+    overflow-wrap: break-word; /* Compatible with most browsers */
+    white-space: normal; /* Allow the text to wrap */
+    max-width: 100%; /* Constrain the width within the container */
+    font-size: 14px; /* Adjust the font size as needed */
+    line-height: 1.5; /* Improve readability */
+	}
+    
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    
+        .section {
+            margin-bottom: 30px;
+        }
+    
+        .section h3 {
+            color: #0056b3;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+    
+        .data-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+        }
+    
+        .data-item strong {
+            width: 200px;
+            font-weight: bold;
+            color: #333;
+            flex-shrink: 0;
+        }
+    
+        .data-item span {
+            color: #555;
+            flex-grow: 1;
+            padding-left: 10px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+    
+        .data-s {
+            padding-left: 10px;
+            line-height: 1.5;
+        }
+    
+        /* Styling for errors */
+        .error {
+            background-color: #ffecec;
+            border: 1px solid #ff5c5c;
+            color: #d8000c;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin: 10px 0;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            font-weight: bold;
+        }
+    
+        .no-error {
+            color: green;
+            font-weight: bold;
+        }
+    
+        .section hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 10px 0;
+        }
+    
+        a {
+            color: #0066cc;
+            text-decoration: none;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+    
+        a:hover {
+            text-decoration: underline;
+        }
+    
+        /* Responsive Design for Mobile */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+    
+            .container {
+                padding: 15px;
+                margin: 0 10px;
+            }
+    
+            .data-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+    
+            .data-item strong {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+    
+            .data-item span {
+                padding-left: 0;
+            }
+    
+            h1 {
+                font-size: 1.8rem;
+            }
+    
+            .section h3 {
+                font-size: 1.2rem;
+            }
+    
+            .error {
+                font-size: 12px;
+                padding: 10px;
+            }
+        }
+    
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+    
+            .container {
+                padding: 15px;
+                margin: 0 5px;
+            }
+    
+            .data-item {
+                margin-bottom: 11px;
+                padding: 8px;
+            }
+    
+            .error {
+                font-size: 11px;
+                padding: 8px;
+            }
+        }
+    </style>
+    
 </head>
 
 <body>
 	<div class="container">
-		<h1>Data Summary</h1>
+		<h1>Test Summary</h1>
 
 		<!-- Section 1: General Details -->
 		<div class="section" th:each="entry : ${report}">
-
-			<h3 th:text="${entry.key}"></h3> <!-- Dynamically Display Entry Key -->
+			<strong>Test : </strong>
+			<h4 class="key-header" th:text="${entry.key}"></h4> <!-- Dynamically Display Entry Key -->
 			<hr>
 
 			<!-- Display Date & Time -->
@@ -156,7 +234,7 @@
 
 			<!-- Display Scripts Section -->
 			<div class="data-item">
-				<strong>Matching URLs:</strong>
+				<strong>Controller :</strong>
 				<span th:text="${entry.value[1].matchingUrls}"></span>
 			</div>
 
@@ -187,14 +265,17 @@
 			<div class="data-item">
 				<strong>Controller Data:</strong>
 				<div class="data-s">
-					<strong>svr: </strong><span th:text="${entry.value[1].controllerData.svr}"></span><br>
-					<strong>sugd: </strong><span th:text="${entry.value[1].controllerData.sugd}"></span><br>
-					<strong>cid: </strong><span th:text="${entry.value[1].controllerData.cid}"></span><br>
-					<strong>ct: </strong><span th:text="${entry.value[1].controllerData.ct}"></span><br>
-					<strong>servname: </strong><span th:text="${entry.value[1].controllerData.servname}"></span><br>
-					<strong>browser: </strong><span th:text="${entry.value[1].controllerData.browser}"></span><br>
-					<strong>lw: </strong><span th:text="${entry.value[1].controllerData.lw}"></span>
+					<strong>svr: </strong><span th:text="${entry.value[1].controllerData?.svr ?: 'N/A'}"></span><br>
+					<strong>sugd: </strong><span th:text="${entry.value[1].controllerData?.sugd ?: 'N/A'}"></span><br>
+					<strong>cid: </strong><span th:text="${entry.value[1].controllerData?.cid ?: 'N/A'}"></span><br>
+					<strong>ct: </strong><span th:text="${entry.value[1].controllerData?.ct ?: 'N/A'}"></span><br>
+					<strong>servname: </strong><span
+						th:text="${entry.value[1].controllerData?.servname ?: 'N/A'}"></span><br>
+					<strong>browser: </strong><span
+						th:text="${entry.value[1].controllerData?.browser ?: 'N/A'}"></span><br>
+					<strong>lw: </strong><span th:text="${entry.value[1].controllerData?.lw ?: 'N/A'}"></span>
 				</div>
+
 			</div>
 
 			<div class="data-item">
@@ -233,6 +314,7 @@
 				<span>
 					<strong>gampad:</strong> <span th:text="${entry.value[2].positveUrlscheck.gampad}"></span><br>
 					<strong>gpt:</strong> <span th:text="${entry.value[2].positveUrlscheck.gpt}"></span><br>
+                    <strong>cksync:</strong><span th:text="${entry.value[2].positveUrlscheck.cksync}"></span><br>
 				</span>
 			</div>
 

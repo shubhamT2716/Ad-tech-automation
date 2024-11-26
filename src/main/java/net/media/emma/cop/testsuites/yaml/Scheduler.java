@@ -46,7 +46,7 @@ public class Scheduler {
 			"ss/nes/bidexl2.js");
 	List<String> getConsoleMessageOfUrl = Arrays.asList("checksync.php?", "bidexchange.js", "clientag.js",
 			"js/tags/clientag.js", "ss/nes/bidexl2.js", "cksync?", "clientag.js?cid");
-	List<String> urlController = List.of("checksync");
+	List<String> urlController = List.of("cksync.php?");
 
 	@Async("schedulerThreadPool")
 	public CompletableFuture<TestReportModel> getSchedulerThread(String env, String userAgent, String publisher) {
@@ -92,7 +92,7 @@ public class Scheduler {
 
 		try {
 
-			browserContext.setDefaultTimeout(35000);
+			browserContext.setDefaultTimeout(15000);
 
 			Page page = browserContext.newPage();
 
@@ -233,6 +233,14 @@ public class Scheduler {
 				if(request.url().startsWith(gpt)) {
 					positivUrls.put("gpt", "PASS");
 				}
+				
+				
+				String regex=".*/(" + String.join("|", urlController) + ").*";
+				
+				if(request.url().matches(regex))
+				{
+					positivUrls.put("cksync", "PASS");
+				}
 		
 			}
 			
@@ -248,6 +256,7 @@ public class Scheduler {
 		{
 			positivUrls.put("gpt","FAIL");
 			positivUrls.put("gampade", "FAIL");
+			positivUrls.put("cksync", "FAIL");
 		}
 
 		mapOfnegativeUrl.put("negativeUrlChecks", error);
@@ -267,52 +276,7 @@ public class Scheduler {
 		return  url.startsWith(nerrping)|| url.startsWith(flog);
 	}
 	
-	private Map<String, String> getNegativecall(String url)
-	{
-		String flog = "https://hblg.media.net/log?logid=kfk&evtid=flog";
-
-		String nerrping = "https://hblg.media.net/nerrping.php";
-		
-		Map<String, String> error=new HashMap<>();
-		
-		
-		if(url.startsWith(nerrping))
-		{
-			error.put("nerrping", url);
-		}
-		
-		if(url.startsWith(flog))
-		{
-			error.put("flog", url);
-		}
-		
-		return error;
-	}
 	
-	private Map<String, String> getPositivecall(String url)
-	{
-		String gpt="https://securepubads.g.doubleclick.net/tag/js/gpt.js";
-		
-		String gampad="https://securepubads.g.doubleclick.net/gampad/ads";
-		
-		Map<String, String> positiveUrl=new HashMap<>();
-		
-		System.out.println("Url Match: "+url.startsWith(gpt));
-		
-		if(url.startsWith(gpt))
-		{
-	    	positiveUrl.put("gpt.js", "PASS");
-		}
-		
-		if(url.startsWith(gampad))
-		{
-			positiveUrl.put("gampad", "PASS");
-		}
-		
-		System.out.println(positiveUrl);
-		
-		return positiveUrl;
-	}
 	
 	
 	private boolean isPositiveUrl(String url)
@@ -321,7 +285,10 @@ public class Scheduler {
 		
 		String gampad="https://securepubads.g.doubleclick.net/gampad/ads";
 		
-		return  url.startsWith(gampad)|| url.startsWith(gpt);
+		
+		String regex=".*/(" + String.join("|", urlController) + ").*";
+		
+		return  url.startsWith(gampad)|| url.startsWith(gpt) || url.matches(regex);
 	}
 
 	public String testResultForScheduler(Map<String, TestReportModel> result) {

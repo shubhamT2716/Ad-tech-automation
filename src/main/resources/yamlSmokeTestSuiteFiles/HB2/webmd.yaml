@@ -1,0 +1,159 @@
+environment: hbx.media.net
+userAgent: Chrome.Desktop.Mac
+publisherUrl: "https://www.webmd.com/covid/coronavirus-incubation-period#1?mnet_test=1"
+bidexAppendString: ""
+bidexReplaceString: { "": "" }
+
+networkCallsPositive: {
+  prlogs: "https://hblg.media.net/log?logid=prlog",
+  aplogs: "https://hblg.media.net/log?logid=aplog",
+  awlogs: "https://hblg.media.net/log?logid=awlog",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  checksync: "https://hbx.media.net/checksync.php?cid=8CURKHUZE",
+  #hb: "https://hb-pb.media.net/rtb/hb?cid=8CU66J63J",
+  ucreative: "https://hbx.media.net/__media__/js/ucreative.js?cv=1",
+  tcb: "https://contextual.media.net/tcb.js?",
+  belogs: "https://hblg.media.net/log?logid=kfk&evtid=belog",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  prebid: "https://prebid.media.net/rtb/prebid?cid=8CUC34FR1",
+  hb2: "https://hb2.media.net/rtb/hb2?cid=8CURKHUZE",
+  arlog: "https://hblg.media.net/log?logid=kfk&evtid=arlog&itype=HB2",
+}
+
+networkCallsNegative: {
+  nerrPing: "https://hblg.media.net/nerrping.php?",
+  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+}
+
+keysToVerifyPositive: {
+
+
+  prlogs: {
+    ugd: [ "4" ],
+  },
+
+  aplogs: {
+    ugd: [ "4" ],
+    adType: ["BANNER"],
+    cid: ["8CURKHUZE"],
+    dn: ["webmd.com"],
+    logid: ["aplog"],
+    dapp: ["green"],
+
+  },
+ awlogs: {
+    ugd: [ "4" ],
+    snm: ["success"],
+    adType: ["BANNER"],
+    cid: ["8CURKHUZE"],
+    dn: ["webmd.com"],
+    nbr: ["0"],
+    res_mtype: ["0"],
+    logid: ["awlog"],
+    dapp: ["green"],
+
+ },
+  belogs: {
+     name: ["GPT_FETCHED_WARNING"]
+  }
+}
+
+keysToVerifyNegative: {
+  #belogs: { name: [ "ADS_DISABLED" ] },
+  aplogs: { nbr: [ "13" ] },
+  awlogs: { snm: ["nobid"] },
+}
+
+keysToVerifyAnyOneOf: {
+ 
+  aplogs: { cid: [ "8CURKHUZE","8CULM0U5B" ], snm: [ "success", "nobid","nobid_after_auction"], nbr: [ "0", "99", "45", "1", "2", "3", "69", "5", "40" ],pvid: ["55", "23", "79", "-2", "-3", "29", "251", "175", "450", "0", "550", "441", "178", "25000", "246", "214", "203", "126", "237", "229", "96", "97", "54"], id_details: ["source"],k37: ["optimera"],k2: ["pos"],k3: ["webmd"],}
+}
+
+bidderDataUrls: {
+  hb2: "https://hb2.media.net/rtb/hb2?cid=8CURKHUZE"
+}
+
+bidderDataAssertions: {
+  hb2: [
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].all.crid",
+        expectedValue: "318162779"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CURKHUZE" },
+        { jsonPath: "x.imp[0].all.crid", value: "318162779" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "90" },
+        { jsonPath: "x.imp[0].tagid", value: "318162779" },
+        { jsonPath: "x.imp[0].bidfloors[0].mediaType", value: "banner" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].all.crid",
+        expectedValue: "355481406"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CURKHUZE" },
+        { jsonPath: "x.imp[0].all.crid", value: "355481406" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "300" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "250" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "300" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "600" },
+        { jsonPath: "x.imp[0].tagid", value: "355481406" },
+        { jsonPath: "x.imp[0].bidfloors[0].mediaType", value: "banner" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].all.crid",
+        expectedValue: "355481406"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CURKHUZE" },
+        { jsonPath: "x.imp[0].all.crid", value: "302045309" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "300" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "250" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "300" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "600" },
+        { jsonPath: "x.imp[0].tagid", value: "302045309" },
+        { jsonPath: "x.imp[0].bidfloors[0].mediaType", value: "banner" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+    {
+      matchingJsonPath: {
+        jsonPath: "x.imp[0].all.crid",
+        expectedValue: "440184423"
+      },
+      requestData: [
+        { jsonPath: "x.imp[0].all.cid", value: "8CURKHUZE" },
+        { jsonPath: "x.imp[0].all.crid", value: "440184423" },
+        { jsonPath: "x.imp[0].banner[0].h", value: "728" },
+        { jsonPath: "x.imp[0].banner[0].w", value: "90" },
+        { jsonPath: "x.imp[0].tagid", value: "440184423" },
+        { jsonPath: "x.imp[0].bidfloors[0].mediaType", value: "banner" },
+      ],
+      responseData: [
+        { jsonPath: "x.ext.csUrl[0].type", value: "iframe" },
+        { jsonPath: "x.ext.csUrl[0].url", value: "https://contextual.media.net/checksync.php?vsSync=1&cs=8&cv=31&https=1&cid=8CU66J63J&prvid=55%2C77%2C251%2C175%2C178%2C201%2C246%2C147%2C203%2C214%2C237%2C337%2C229%2C208&itype=HB&purpose1=1&gdprconsent=1&gdpr=0&coppa=0&usp_status=0&usp_consent=1" }
+      ]
+    },
+  ]
+}
+
+# ------------------------------ignore the lines below--rats---------------------
+responseSimulate: [ ]
+domInject: [ ]

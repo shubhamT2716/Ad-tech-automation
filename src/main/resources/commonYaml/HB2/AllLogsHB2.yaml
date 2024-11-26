@@ -1,28 +1,23 @@
-networkCallsPositive:
-  {
-    aplogs: "https://hblg.media.net/log?logid=aplog",
-    prlogs: "https://hblg.media.net/log?logid=prlog",
-    awlogs: "https://hblg.media.net/log?logid=awlog",
-    checksync: "https://hbx.media.net/checksync.php?cid=8CUDF88I8",
-    #rtbscall: "https://xch.media.net/AdExchange/rtbsspub",
-    gampadcall: "https://securepubads.g.doubleclick.net/gampad/ads",
-    bidExchange: "https://hbx.media.net/bidexchange.js",
-    gpt: "https://securepubads.g.doubleclick.net/tag/js/gpt.js",
-    l1log: "https://hblg.media.net/log?logid=kfk&evtid=l1log",
-    adxLog: "https://hblg.media.net/log?logid=kfk&evtid=adx",
-    tcb: "https://contextual.media.net/tcb.js",
-    belog: "https://hblg.media.net/log?logid=kfk&evtid=belog",
-    hb2: "https://hb2.media.net/rtb/hb2?cid=8CUDF88I8",
-    prebid: "https://prebid.media.net/rtb/prebid?cid=8CU8QX590",
-    ucreative: "https://hbx.media.net/ucreative.php?cv=1",
-  }
+networkCallsPositive: {
+  prlogs: "https://hblg.media.net/log?logid=prlog",
+  aplogs: "https://hblg.media.net/log?logid=aplog",
+  awlogs: "https://hblg.media.net/log?logid=awlog",
+  #RTBSCall: "https://xch.media.net/AdExchange/rtbsspub?",
+  checksync: "https://hbx.media.net/checksync.php?cid=8CURKHUZE",
+  #hb: "https://hb-pb.media.net/rtb/hb?cid=8CU66J63J",
+  ucreative: "https://hbx.media.net/__media__/js/ucreative.js?cv=1",
+  tcb: "https://contextual.media.net/tcb.js?",
+  belogs: "https://hblg.media.net/log?logid=kfk&evtid=belog",
+  GAMAPADCall: "https://securepubads.g.doubleclick.net/gampad/ads?",
+  prebid: "https://prebid.media.net/rtb/prebid?cid=8CUC34FR1",
+  hb2: "https://hb2.media.net/rtb/hb2?cid=8CURKHUZE",
+  arlog: "https://hblg.media.net/log?logid=kfk&evtid=arlog&itype=HB2",
+}
 
-networkCallsNegative:
-  {
-    nerrPing: "https://hblg.media.net/nerrping.php",
-    flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
-    #elLog: "https://hblg.media.net/log?logid=kfk&evtid=ellog"
-  }
+networkCallsNegative: {
+  nerrPing: "https://hblg.media.net/nerrping.php?",
+  flog: "https://hblg.media.net/log?logid=kfk&evtid=flog",
+}
 
 keysToVerifyPositive:
   {
