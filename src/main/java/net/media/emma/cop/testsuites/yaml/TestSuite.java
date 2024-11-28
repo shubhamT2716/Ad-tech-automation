@@ -113,6 +113,16 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
     public static String getWindscribeLocation(String location) {
         return windscribeLoc.replace("Loc", location);
     }
+    
+    private static void doAcceptCookiesForTime(Page page, TestCriteriaBo  testData)
+    {
+    	
+    	if(testData.getPublisherUrl().startsWith("https://time.com"))
+    	{
+    		page.locator("//*[@id=\"close_icon\"]").click();
+    		page.locator("//*[@id=\"ketch-consent-banner\"]/div[2]/div/div/div[2]/button[1]").click();
+    	}
+    }
 
     private BrowserContext doLogin(BrowserContext bc, TestCriteriaBo testData) {
 
@@ -163,6 +173,9 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
         String location = testData.getLocation();
 
         BrowserContext browserContext = null;
+        
+        //   --> //*[@id="ketch-consent-banner"]/div[2]/div/div/div[2]/button[1] --> accept cookies
+        //   --> //*[@id="close_icon"]  close ad 
 
 
         if (location != null) {
@@ -216,8 +229,10 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
 //                log.info("location:  " + geolocation);
 //                browserContext.setGeolocation(geolocation);
 
-                page = browserContext.newPage();		 
-				
+                page = browserContext.newPage();
+                
+                
+                
 				if(isTestPageUrl(testData.getPublisherUrl()))
 				{
 					String mockUrl="https://prebid.media.net/rtb/prebid?cid=8CU56755C";
@@ -246,6 +261,8 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
 //				page.setDefaultTimeout(4500);
 
                 page.navigate(testData.getPublisherUrl());
+                
+//                doAcceptCookiesForTime(page, testData);
 
                 Thread.sleep(2000);
 
@@ -271,8 +288,7 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
                 page.close();
 
             }
-
-
+            
             Controller bidExController = getBidExData(requestList, testData.getEnvironment());
 
             bidExController.setConsoleMessages(consoleMessage);
@@ -291,18 +307,22 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
                             .harFileDownloadLink("/yamlTestSuite/harDownload/" + harFilePath).build())
                     .build();
 
+            try {
+            
             if (userAgent != null) {
                 testReport.getTestMetaData().setUserAgent(
                         testData.getUserAgent() + " - " + BrowserFactory.browserContexts.get(testData.getUserAgent()));
             } else {
                 testReport.getTestMetaData().setUserAgent(testData.getUserAgent());
             }
+            	
+            
 
             testReport.setGamSlots(addGamAssertion(requestList));
             testReport.setCookie(cookies);
             testReport.setController(bidExController);
             testReport.setPbjsEvents(pbjsEventsData);
-            try {
+//            try {
 
                 URLChecksReportModel model = getUrlAssertionsData(urlFromNetworkTab, requestList, testData);
                 testReport.setUrlChecks(model);

@@ -139,10 +139,7 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
     	String userAgents="Chrome.Desktop.Mac";//,Chrome.Mobile.iPhone";
     	
 //    	getAutoTest(envMp, userAgent, mpFiles, commonFilesForMp, null, "MP", "qayahoohbtasksqainternals@flockgroups.com", flagForMail);
-//       List<String> urls=Arrays.asList("https://www.forbes.com/?medianet_test=1","https://www.fox13now.com/?medianet_test=1","https://www.daily.co.jp/?medianet_test=1");
-
-    	 List<String> urls=Arrays.asList("https://www.forbes.com/?medianet_test=1");
-
+      List<String> urls=Arrays.asList("https://www.forbes.com/?medianet_test=1","https://www.fox13now.com/?medianet_test=1","https://www.daily.co.jp/?medianet_test=1");
         
     	Map<String, CompletableFuture<TestReportModel>> result=new LinkedHashMap<>();
     	
@@ -207,10 +204,10 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
 //   	  	this.mailServiceImpl.sendMail("yahoohbtasksqa@flockgroups.com", "yahoohbtasksqa@flockgroups.com", listOfTestReportModel, zipFile, testResult);
    	  	}
    	  	else {
-//   	  		this.mailServiceImpl.sendMail("qayahoohbtasksqainternals@flockgroups.com", "qayahoohbtasksqainternals@flockgroups.com", listOfTestReportModel, zipFile, testResult);
+ 	  		this.mailServiceImpl.sendMail("qayahoohbtasksqainternals@flockgroups.com", "qayahoohbtasksqainternals@flockgroups.com", listOfTestReportModel, zipFile, testResult);
    	  	
    	  		
-   	  	this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", listOfTestReportModel, zipFile, testResult);
+//   	  this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", listOfTestReportModel, zipFile, testResult);
    	  	
    	  	}
    	  	

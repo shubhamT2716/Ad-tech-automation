@@ -115,12 +115,12 @@ public class URLChecksReportModel {
 
                         if (actualValues.equals(listOfValues)) {
                             callData.getTestMessages().add("Negative key value check Pass for key: " + qsParam
-                                    + ". Expected: "+listOfValues+" Actual: " + actualValues);
-                        } else {
-                            callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
-                                    + ". Expected: "+listOfValues+" Actaul: " + actualValues);
+                                    + ". Expected: "+listOfValues+" Actual: " + actualValues );
                             callData.setTestResult(TestResult.FAIL);
-                        }
+                        } //else {
+//                            callData.getTestMessages().add("Negative key value check failed for key: " + qsParam
+//                                    + ". Expected: "+listOfValues+" Actaul: " + actualValues);
+//                        }
                     });
                 }
 
