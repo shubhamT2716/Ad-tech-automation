@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -81,9 +83,11 @@ public class URLChecksReportModel {
 
                         callData.getQueryStringMap().forEach(qsMapFromNetworkCall -> {
                             if (qsMapFromNetworkCall.containsKey(qsParam)) {
-                                actualValues.add(qsMapFromNetworkCall.get(qsParam));
+                            	String actual=URLDecoder.decode(qsMapFromNetworkCall.get(qsParam), StandardCharsets.UTF_8);
+                                actualValues.add(actual);
                             }
                         });
+                    
 
                         log.info(" Expected: " + listOfValues + " Actual: " + actualValues);
 

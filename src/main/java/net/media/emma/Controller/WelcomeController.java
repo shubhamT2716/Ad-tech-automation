@@ -20,6 +20,7 @@ public class WelcomeController {
             put("Auto Tester", "/autoTester/");
             //put("Show Report", "/yamlTestSuite/show-report");
             put("Yaml Rules for TestPage", "/yamlTestSuite/testpage");
+//            put("custom Yaml", "/yamlTestSuite/customYaml");
         }
     };
 

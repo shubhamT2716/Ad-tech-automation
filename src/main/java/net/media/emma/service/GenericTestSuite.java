@@ -12,6 +12,8 @@ public interface GenericTestSuite {
     TestReportModel getTestResults(TestCriteriaBo testData, String url, String response);
 
     CompletableFuture<TestReportModel> getTestResultsThreadPool(TestCriteriaBo testData);
+    
+    CompletableFuture<TestReportModel> executeTestForBot(TestCriteriaBo testData);
 
 
 }

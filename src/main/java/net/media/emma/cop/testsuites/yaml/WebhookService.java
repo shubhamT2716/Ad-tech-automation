@@ -180,7 +180,7 @@ public class WebhookService implements WebhookServiceIn {
     @Override
     public void executeWebhook(String payload) {
         try {
-
+        	
             triggerEmma(payload);
 //			Thread.sleep(5500);
 
@@ -201,10 +201,14 @@ public class WebhookService implements WebhookServiceIn {
             String projectId = jsonNode.get("project_id").toPrettyString();
 
             map.put("projectId", projectId);
+            
+            log.info("projectID: "+projectId);
 
-            String brachName = jsonNode.get("merge_request").get("iid").toPrettyString();
+            String branchName = jsonNode.get("merge_request").get("iid").toPrettyString();
 
-            map.put("mr", brachName);
+            map.put("mr", branchName);
+            
+            log.info("MR: "+branchName);
 
             String comment = jsonNode.get("object_attributes").get("description").toPrettyString();
 
@@ -273,8 +277,10 @@ public class WebhookService implements WebhookServiceIn {
 
                     List<String> commonFile = new ArrayList<>(getCommonFilesForApi(itype));
 
+                   
+                    
                     SmokeTestRawDataDto dataDto = this.yamlTestSuiteScheduling.getAutoTest(host, ua, autoTester,
-                            commonFile, url, itype, "", false);
+                            commonFile, url, itype, "", false,true);
 
                     map.put("response", dataDto);
 
@@ -307,7 +313,7 @@ public class WebhookService implements WebhookServiceIn {
                     List<String> autoTest = new ArrayList<>(getAutoTesterFilesTest());
 
                     SmokeTestRawDataDto dataDto = this.yamlTestSuiteScheduling.getAutoTest(host, ua, autoTest,
-                            commonFile, pub, it, "", false);
+                            commonFile, pub, it, "", false, true);
 
 
                     map.put("response", dataDto);
@@ -523,7 +529,7 @@ public class WebhookService implements WebhookServiceIn {
 
         ResponseEntity<String> data = restTemplate.postForEntity(girUrl, entity, String.class);
 
-        log.info("process completed: " + data.getBody() + " : " + data.getStatusCode());
+        log.info("process completed: "  + " : " + data.getStatusCode());
     }
 
     private Set<String> getCommonFilesForApi(String itype) {

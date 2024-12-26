@@ -65,7 +65,7 @@ public class WebController {
 
         ModelAndView mav = new ModelAndView("smokeTestSuite");
         mav.addObject("fileNames", new ArrayList<>(getFileNamesForSmokeTest()));
-        mav.addObject("commonFile", new ArrayList<>(getCommonFilesForSmokeTest()));
+//        mav.addObject("commonFile", new ArrayList<>(getCommonFilesForSmokeTest()));
         return mav;
 
     }
@@ -78,11 +78,11 @@ public class WebController {
         if (!itype.equalsIgnoreCase("all")) {
 
             mav.put("fileNames", getFileNamesForSmokeTestItype(itype));
-            mav.put("commonFile", getCommonFilesForApi(itype));
+//            mav.put("commonFile", getCommonFilesForApi(itype));
 
         } else {
             mav.put("fileNames", getFileNamesForSmokeTest());
-            mav.put("commonFile", getCommonFilesForSmokeTest());
+//            mav.put("commonFile", getCommonFilesForSmokeTest());
         }
 
 
@@ -94,15 +94,17 @@ public class WebController {
     @ResponseBody
     public ModelAndView runThreadPoolTest(@RequestParam("env") String environment, @RequestParam("ua") String userAgent,
                                           @RequestParam(value = "selectedFiles", required = false) List<String> selectedFiles,
-                                          @RequestParam(value = "commonFiles", required = false) List<String> commonFiles,
+//                                          @RequestParam(value = "commonFiles", required = false) List<String> commonFiles,
                                           @RequestParam(value = "email", required = false) String email,
                                           @RequestParam(value = "itype", required = false) String itype) {
 
 
         ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
+        
+        List<String> commonFiles=new ArrayList<>(getCommonFilesForApi(itype));
 
 
-        SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles, commonFiles, null, itype, email, true);
+        SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles, commonFiles, null, itype, email, true,false);
         // SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, selectedFiles,commonFiles,null,email, true);
 
         try {
@@ -137,7 +139,7 @@ public class WebController {
         ModelAndView mav = new ModelAndView("smokeTestSuiteReport");
 
         // SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest,commonFile,pubs,itype, false);
-        SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest, commonFile, pubs, itype, email, true);
+        SmokeTestRawDataDto result = yamlTestSuiteScheduling.getAutoTest(environment, userAgent, autoTest, commonFile, pubs, itype, email, true,false);
 
         try {
 
@@ -282,11 +284,14 @@ public class WebController {
 
     @PostMapping("/data")
     public String/*ModelAndView*/ demoWebhooks(@RequestBody(required = false) String payload) {
-        log.info("Webhooks called ");
-        log.info(payload);
+        log.info("webhooks called.... ");
 
         new Thread(() -> this.webhookService.executeWebhook(payload)).start();
 
+//        threadPool.setCorePoolSize(1);
+//        threadPool.execute(()->this.webhookService.executeWebhook(payload));
+        
+        
         return "complete";
 
 

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Input Details Form</title>
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			background: #f4f4f4;
+		}
+
+		.form-container {
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 100%;
+    max-width: 900px;
+    max-height: 80vh; /* Limit the height to 80% of the viewport */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+		h2 {
+			text-align: center;
+			margin-bottom: 20px;
+			color: #333;
+		}
+
+		.form-group {
+			margin-bottom: 15px;
+		}
+
+		label {
+			display: block;
+			font-weight: bold;
+			margin-bottom: 5px;
+			color: #555;
+		}
+
+		input[type="text"],
+		select,
+		textarea {
+			width: 100%;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			font-size: 14px;
+			box-sizing: border-box;
+		}
+
+		textarea {
+			resize: vertical;
+		}
+
+		.error {
+			color: red;
+			font-size: 12px;
+			display: none;
+		}
+
+		.btn {
+			width: 100%;
+			padding: 10px;
+			border: none;
+			border-radius: 5px;
+			background: #007BFF;
+			color: white;
+			font-size: 16px;
+			cursor: pointer;
+		}
+
+		.btn:hover {
+			background: #0056b3;
+		}
+
+		.key-value-pair {
+			margin-bottom: 10px;
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.key-value-pair input {
+			width: 300%;
+			padding: 10px;
+		}
+
+		.remove-btn {
+			background-color: red;
+			color: white;
+			cursor: pointer;
+			border: none;
+			padding: 5px;
+			font-size: 12px;
+			border-radius: 5px;
+		}
+
+		.remove-btn:hover {
+			background-color: darkred;
+		}
+
+		* Buttons */ .add-main-btn,
+		.add-inner-btn,
+		.remove-main-btn,
+		.remove-inner-btn {
+			background: #007BFF;
+			color: white;
+			border: none;
+			padding: 8px 12px;
+			font-size: 14px;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		.remove-main-btn,
+		.remove-inner-btn {
+			background: #ff4d4d;
+		}
+
+		.remove-main-btn:hover,
+		.remove-inner-btn:hover {
+			background: #cc0000;
+		}
+
+		.add-main-btn:hover {
+			background: #218838;
+		}
+
+		/* Inner Key Container */
+		.inner-key-container {
+			margin-top: 10px;
+			border-left: 3px solid #ddd;
+			padding-left: 15px;
+		}
+
+		.inner-key {
+			display: flex;
+			align-items: center;
+			margin-bottom: 10px;
+		}
+
+		.inner-key input {
+			padding: 8px;
+			margin-right: 10px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			flex: 1;
+		}
+
+		/* Main Key Container */
+		.main-key {
+			margin-bottom: 20px;
+			border: 1px solid #ddd;
+			padding: 15px;
+			border-radius: 8px;
+			background: #f4f4f4;
+		}
+
+		.main-key-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 10px;
+		}
+
+		.main-key-header select {
+			flex: 1;
+			margin-right: 10px;
+			padding: 8px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+		}
+
+		/* add responsive design */
+		@media screen and (max-width: 600px) {
+			.form-container {
+				padding: 10px;
+			}
+
+			.key-value-pair {
+				flex-direction: column;
+				gap: 10px;
+			}
+
+			.btn {
+				font-size: 14px;
+				padding: 8px;
+			}
+
+
+
+			h2 {
+				font-size: 1.5rem;
+			}
+
+			.key-value-pair input {
+				width: 100%;
+			}
+
+			.remove-btn {
+				font-size: 10px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="form-container">
+		<h2>Yaml Test Suite</h2>
+		<form id="detailsForm" th:action="@{/yamlTestSuite/customYaml/submitForm}" method="post">
+			<div class="form-group">
+				<label for="fileName">File Name <span style="color: red;">*</span></label>
+				<input type="text" id="fileName" name="fileName" th:value="${fileName}" placeholder="Enter file name">
+			</div>
+
+			<div class="form-group">
+				<label for="dropdown">Environment <span style="color: red;">*</span></label>
+				<select id="environment" name="environment" th:value="${env}">
+					<option value="">Select environment</option>
+					<option value="hbx.media.net">hbx.media.net</option>
+					<option value="warp.media.net">warp.media.net</option>
+					<option value="hbx-stage.media.net">hbx-stage.media.net</option>
+					<option value="hbx-stage-1.media.net">hbx-stage-1.media.net</option>
+					<option value="hbx-stage-2.media.net">hbx-stage-2.media.net</option>
+					<option value="hbx-stage-3.media.net">hbx-stage-3.media.net</option>
+					<option value="hbx-stage-4.media.net">hbx-stage-4.media.net</option>
+					<option value="ssp-stage-hb.media.net">ssp-stage-hb.media.net</option>
+					<option value="ssp-stage-hb-1.media.net">ssp-stage-hb-1.media.net</option>
+					<option value="ssp-stage-hb-2.media.net">ssp-stage-hb-2.media.net</option>
+					<option value="ssp-stage-hb-3.media.net">ssp-stage-hb-3.media.net</option>
+					<option value="ssp-stage-hb-4.media.net">ssp-stage-hb-4.media.net</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label for="dropdown"><strong>User Agent <span style="color: red;">*</span></strong></label>
+				<select id="dropdown" multiple="multiple" name="userAgent">
+					<!-- Options will be populated via AJAX -->
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label for="publishers">Publisher <span style="color: red;">*</span></label>
+				<input type="text" id="publisherUrl" name="publisherUrl" th:value="${publishers}"
+					placeholder="Enter publisher">
+			</div>
+
+			<div class="form-group">
+				<label for="bidexAppendString">Controller Append String</label>
+				<input type="text" id="bidexAppendString" name="bidexAppendString" th:value="${bidexAppendString}"
+					placeholder="Enter Stirng that add to controller">
+			</div>
+
+			<div class="form-group">
+				 <label><strong>Networkcalls Positive</strong></label> 
+                <label for="networkCallsPositive" >Networkcalls Positive</label>
+				<div id="keyValueContainer" >
+					<!-- Key-Value input pairs will be added here - -->
+				</div>
+				<button type="button" onclick="addKeyValuePair()" name="networkCallsPositive">Add Networkcalls Positive</button>
+			</div>
+
+            <!-- <div id="keyValueContainer">
+                Initial Key-Value Pair
+                <div class="key-value-pair">
+                    <select name="networkCallsPositive[0].key" class="key-select">
+                         Options dynamically populated 
+                    </select>
+                    <input type="text" name="networkCallsPositive[0].value" placeholder="Enter value" class="value-input">
+                    <button type="button" class="remove-btn">Remove</button>
+                </div>
+            </div> -->
+            <!-- <button type="button" id="addKeyValuePair">Add Key-Value Pair</button> -->
+           
+
+			<div class="form-group">
+				<label for="networkCallsNegative">Networkcalls Negative</label>
+				<div id="networkCallsNegative" name="networkCallsNegative">
+					<!-- Key-Value input pairs will be added here -->
+                    
+				</div>
+				
+                <button type="button" onclick="addNegativeCalls()" name="networkCallsNegative" id="networkCallsNegative"> Add Networkcalls Negative</buttons>
+                <!-- <div id="networkCallsNegative">
+                   
+                </div> -->
+			</div>
+
+
+			<div class="form-group">
+				<label for="keysToVerifyPositive">Keys To Verify Positive</label>
+				<div id="keysToVerifyPositive">
+					<!-- Key-Value input pairs will be added here -->
+				</div>
+				<button type="button" class="add-main-btn" onclick="addKeysToVerifyPositive()">Add Keys To Verify
+					Positive</button>
+			</div>
+
+
+            <div class="form-group">
+                <label for="keysToVerifyNegative">Keys To Verify Negative</label>
+                <div id="keysToVerifyNegative">
+                    <!-- Key-Value input pairs will be added here -->   
+                </div>
+                <button type="button" class="add-main-btn" onclick="addKeysToVerifyNegative()">Add Keys To Verify Negative</button>
+            </div>
+
+			
+
+			<button type="submit" class="btn">Submit</button>
+		</form>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			// Initialize Select2 for environments and user agents
+			$('#env').select2({
+				placeholder: "Select server environments"
+			});
+
+			$('#dropdown').select2({
+				placeholder: "Select user agents",
+				width: '100%'
+			});
+
+			// Fetch user agents via AJAX
+			fetch("/yamlTestSuite/userAgent")
+				.then(response => response.json())
+				.then(data => {
+					// Assuming 'data' is an object with user agent names as keys
+					for (const [key, value] of Object.entries(data)) {
+						const option = document.createElement("option");
+						option.text = key; // Set the display text
+						option.value = value; // Set the value of the option
+						document.getElementById("dropdown").appendChild(option);
+					}
+
+					// Initialize Select2 after dynamically adding options
+					$('#dropdown').select2();
+				})
+				.catch(error => console.log('Error in fetching data', error));
+		});
+
+		// Function to add a new Key-Value pair input
+
+		const predefinedKeys = new Set();
+		function addKeyValuePair() {
+			const keyValueContainer = document.getElementById('keyValueContainer');
+			const index = keyValueContainer.children.length; // Get the next index
+
+			const div = document.createElement('div');
+			div.classList.add('key-value-pair');
+
+
+			div.innerHTML = `
+        <select name="keyValuePairs[${index}].key" required>
+            <option value="">Select key</option>
+        </select>
+        <input type="text" name="keyValuePairs[${index}].value" placeholder="Value will be auto-filled" readonly>
+        <button type="button" class="remove-btn" onclick="removeKeyValuePair(this)">Remove</button>
+    `;
+			keyValueContainer.appendChild(div);
+
+			// Populate the newly created dropdown with keys
+			const selectElement = div.querySelector('select');
+			const valueInput = div.querySelector('input[name$=".value"]');
+
+			populateDropdown(selectElement, valueInput);
+
+			selectElement.addEventListener('change', function () {
+                // add key to predefinedKeys set
+                const key = this.options[this.selectedIndex].text;
+				predefinedKeys.add(key);
+				updateMainKeyDropdown();
+			});
+
+		}
+
+		// Function to remove a Key-Value pair input
+		function removeKeyValuePair(button) {
+			const selectElement = button.parentElement.querySelector('select');
+			predefinedKeys.delete(selectElement.value);
+			button.parentElement.remove();
+			updateMainKeyDropdown();
+		}
+
+		function populateDropdown(selectElements, valueInput) {
+
+			fetch('/yamlTestSuite/customYaml/positiveCalls')
+				.then(response => response.json())
+				.then(data => {
+					// Assuming response like Map of key value pairs
+					for (const key in data) {
+						const option = document.createElement('option');
+						option.text = key;
+						option.value = data[key];
+						selectElements.appendChild(option);
+					}
+
+					// Add OnChange event listener to update value input
+					selectElements.addEventListener('change', function () {
+						valueInput.value = this.value;
+					});
+
+
+				})
+
+				.catch(error => console.error('Error in fetching data', error));
+
+		}
+
+
+		document.addEventListener('DOMContentLoaded', function () {
+			const existingKeys = document.querySelectorAll('#keyValueContainer select');
+			existingKeys.forEach(select => predefinedKeys.add(select.value));
+			updateMainKeyDropdown(); // Reflect initial keys
+		});
+
+
+	</script>
+
+    <script>
+        function addKeysToVerifyNegative()
+        {
+            const container = document.getElementById("keysToVerifyNegative");
+
+            const mainKeyDiv = document.createElement("div");
+            mainKeyDiv.classList.add("main-key");
+
+            mainKeyDiv.innerHTML = `
+                <div class="main-key-header">
+                    <select class="main-key-dropdown">
+                        <!-- Options will be dynamically populated -->
+                    </select>
+                    <button type="button" class="add-inner-btn" onclick="addInnerKey(this)">Add negative Key</button>
+                    <button type="button" class="remove-main-btn" onclick="removeMainKey(this)">Remove Main Key</button>
+                </div>
+                <div class="inner-key-container"></div>
+            `;
+
+            container.appendChild(mainKeyDiv);
+            updateMainKeyDropdown(); // Populate the dropdown
+        }
+
+        function addInnerKey(button)
+        {
+            const container = button.parentElement.nextElementSibling;
+
+            const div = document.createElement("div");
+            div.classList.add("inner-key");
+
+            div.innerHTML = `
+                <input type="text" name="innerKeys[]" placeholder="Enter  Keys (e.g., snm, , lgtp )" required>
+                <input type="text" name="values[]" placeholder="Enter Value (e.g., test_value)" required>
+                <button type="button" class="remove-inner-btn" onclick="removeInnerKey(this)">Remove</button>
+            `;
+
+            container.appendChild(div);
+        }
+
+        function removeMainKey(button)
+        {
+            button.parentElement.parentElement.remove();
+        }
+
+        function removeInnerKey(button)
+        {
+            button.parentElement.remove();
+        }
+
+        document.getElementById("nestedForm").addEventListener("submit", function(event)
+        {
+            event.preventDefault(); // Prevent default form submission
+            alert("Form submitted successfully.");
+        });
+
+
+
+    </script>
+
+	<script>
+		function addKeysToVerifyPositive() {
+			const container = document.getElementById("keysToVerifyPositive");
+
+			const mainKeyDiv = document.createElement("div");
+			mainKeyDiv.classList.add("main-key");
+
+			mainKeyDiv.innerHTML = `
+                <div class="main-key-header">
+                    <select class="main-key-dropdown">
+                        <!-- Options will be dynamically populated -->
+                    </select>
+                    <button type="button" class="add-inner-btn" onclick="addInnerKey(this)">Add positive Key</button>
+                    <button type="button" class="remove-main-btn" onclick="removeMainKey(this)">Remove Main Key</button>
+                </div>
+                <div class="inner-key-container"></div>
+            `;
+
+			container.appendChild(mainKeyDiv);
+			updateMainKeyDropdown(); // Populate the dropdown
+		}
+
+		function updateMainKeyDropdown() {
+			const dropdowns = document.querySelectorAll("select.main-key-dropdown");
+			dropdowns.forEach(dropdown => {
+				dropdown.innerHTML = ""; // Clear old options
+
+				predefinedKeys.forEach(key => {
+					const option = document.createElement("option");
+					option.value = key;
+					option.textContent = key;
+					dropdown.appendChild(option);
+				});
+			});
+		}
+
+		function addInnerKey(button) {
+			const container = button.parentElement.nextElementSibling;
+
+			const div = document.createElement("div");
+			div.classList.add("inner-key");
+
+			div.innerHTML = `
+                <input type="text" name="innerKeys[]" placeholder="Enter  Keys (e.g., rfc, cid, lgtp )" required>
+                <input type="text" name="values[]" placeholder="Enter Value (e.g., test_value)" required>
+                <button type="button" class="remove-inner-btn" onclick="removeInnerKey(this)">Remove</button>
+            `;
+
+			container.appendChild(div);
+		}
+
+		function removeMainKey(button) {
+			button.parentElement.parentElement.remove();
+		}
+
+		function removeInnerKey(button) {
+			button.parentElement.remove();
+		}
+
+		document.getElementById("nestedForm").addEventListener("submit", function (event) {
+			event.preventDefault(); // Prevent default form submission
+			alert("Form submitted successfully.");
+		});
+
+	</script>
+
+	<script>
+		function addNegativeCalls() {
+			const keyValueContainer = document.getElementById('networkCallsNegative');
+			const index = keyValueContainer.children.length;
+
+			const div = document.createElement('div');
+			div.classList.add('key-value-pair');
+			div.innerHTML = `
+        <select name="networkCallsNegative[${index}].key" required>
+            <option value="">Select key</option>
+        </select>
+        <input type="text" name="networkCallsNegative[${index}].value" placeholder="Value will be auto-filled" readonly>
+        <button type="button" class="remove-btn" onclick="removeKeyValuePair(this)">Remove</button>
+    `;
+			keyValueContainer.appendChild(div);
+
+			const selectElement = div.querySelector('select');
+			const valueInput = div.querySelector('input[name$=".value"]');
+
+			populateNegativeDropdown(selectElement, valueInput);
+
+
+
+		}
+
+		function removeKeyValuePair(button) {
+
+			button.parentElement.remove();
+
+		}
+
+
+		function populateNegativeDropdown(selectElement, valueInput) {
+			fetch('/yamlTestSuite/customYaml/negativeCalls')
+				.then(response => response.json())
+				.then(data => {
+					for (const key in data) {
+						const option = document.createElement('option');
+						option.text = key;
+						option.value = data[key];
+						selectElement.appendChild(option);
+					}
+
+					selectElement.addEventListener('change', function () {
+						valueInput.value = this.value;
+					});
+				})
+				.catch(error => console.error('Error in fetching data', error));
+		}
+
+
+	</script>
+
+</body>
+
+</html>

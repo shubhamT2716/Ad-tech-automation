@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 //TODO: to be used in future
 
@@ -13,7 +14,7 @@ import java.util.Map;
 @Setter
 public final class TestSuitesList {
 
-    Map<TestSuiteNames, TestSuiteData> testSuites = new HashMap<>() {{
+    Map<TestSuiteNames, TestSuiteData> testSuites = new ConcurrentHashMap<>() {{
         put(TestSuiteNames.YAML_BASED_SANITY, TestSuiteData.builder()
                 .testSuiteName("YAML based Sanity - Test Suite")
                 .testSuiteDescription("Sanity Tests based on customizable YAML config")

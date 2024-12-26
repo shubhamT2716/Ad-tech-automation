@@ -170,7 +170,7 @@
 					<div class="form-check" id="selectedFilesContainer"></div>
 				</div>
 
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<label><strong>Select common rules to execute:</strong></label>
 					<div class="form-check">
 						<input class="form-check-input" id="selectAllCommonFiles"
@@ -179,7 +179,7 @@
 							Files</label>
 					</div>
 					<div class="form-check" id="commonFilesContainer"></div>
-				</div>
+				</div> -->
 
 				<div class="alert alert-danger mt-3" id="error-message" style="display: none;"></div>
 
@@ -279,9 +279,9 @@
 
 		function validateForm() {
 			const selectedFiles = document.querySelectorAll('input[name="selectedFiles"]:checked');
-			const commonFiles = document.querySelectorAll('input[name="commonFiles"]:checked');
+			// const commonFiles = document.querySelectorAll('input[name="commonFiles"]:checked');
 			const errorMessage = document.getElementById('error-message');
-			if (selectedFiles.length === 0 || commonFiles.length === 0) {
+			if (selectedFiles.length === 0 ){//|| commonFiles.length === 0) {
 				errorMessage.textContent = 'Please select at least one YAML or common YAML file to execute.';
 				errorMessage.style.display = 'block';
 				return false;

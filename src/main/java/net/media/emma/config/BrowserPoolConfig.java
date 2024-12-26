@@ -51,8 +51,8 @@ public class BrowserPoolConfig {
     public Executor schedulerThreadPool() {
 
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(10);
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(5);
         executor.setQueueCapacity(100);
         executor.setThreadNamePrefix("schedulerThreadPool");
         executor.initialize();

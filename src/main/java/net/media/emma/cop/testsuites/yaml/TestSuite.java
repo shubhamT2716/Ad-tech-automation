@@ -150,9 +150,31 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
 
         CompletableFuture<TestReportModel> future = new CompletableFuture<>();
         try {
-            TestReportModel testReport = getTestResults(testData, null, null); // Create a new browser context for each
-            // task
-            future.complete(testReport);
+        	
+        		TestReportModel testReport = getTestResults(testData, null, null); // Create a new browser context for each
+                // task
+                future.complete(testReport);
+			
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            log.error("Error executing test: {}", e.getMessage());
+            future.completeExceptionally(e);
+        }
+        return future;
+
+    }
+    
+    @Async("schedulerThreadPool")
+    public CompletableFuture<TestReportModel> executeTestForBot(TestCriteriaBo testData) {
+
+        CompletableFuture<TestReportModel> future = new CompletableFuture<>();
+        try {
+        	
+        		TestReportModel testReport = getTestResults(testData, null, null); // Create a new browser context for each
+                // task
+                future.complete(testReport);
+			
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -477,7 +499,7 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
         url.add("https://contextual.media.net");
         url.add(publisher);
 
-        Map<String, List<Cookie>> mapOfCookie = new HashMap<>();
+        Map<String, List<Cookie>> mapOfCookie = new LinkedHashMap<>();
 
         for (String li : url) {
             List<Cookie> cookie = page.cookies(li);
@@ -489,11 +511,11 @@ public class TestSuite implements GenericTestSuite , ControllerDataConvey{
     }
 
     public Map<String, Map<String, Map<String, String>>> displayCookies(Map<String, List<Cookie>> cookies) {
-        Map<String, Map<String, Map<String, String>>> listOfCookies = new HashMap<>();
+        Map<String, Map<String, Map<String, String>>> listOfCookies = new LinkedHashMap<>();
 
         cookies.entrySet().forEach(entry -> {
 
-            Map<String, Map<String, String>> allcookiesData = new HashMap<>();
+            Map<String, Map<String, String>> allcookiesData = new LinkedHashMap<>();
 
             for (Cookie cookie : entry.getValue()) {
 

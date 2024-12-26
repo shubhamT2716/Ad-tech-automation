@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -37,543 +38,509 @@ import java.util.stream.Collectors;
 @EnableScheduling
 public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
 
-    @Autowired
-    private FileOperations fileOperations;
+	@Autowired
+	private FileOperations fileOperations;
 
-    @Autowired
-    private YamlUtils yamlUtils;
+	@Autowired
+	private YamlUtils yamlUtils;
 
-    @Autowired
-    private FileHandling fileHandling;
+	@Autowired
+	private FileHandling fileHandling;
 
-    @Autowired
-    private GenericTestSuite yamlTestSuite;
+	@Autowired
+	private GenericTestSuite yamlTestSuite;
 
-    @Autowired
-    private TemplateEngine engine;
-    
-    @Autowired
-    private MailServiceImpl mailServiceImpl;
-    
-    @Autowired
-    private Scheduler scheduler;
-    
-    @Value("${yamlTestCriteriaFilesPath}")
-    private String yamlTestCriteriaFilesPath;
+	@Autowired
+	private TemplateEngine engine;
 
-    @Value("${yamlSmokeTestSuiteFilesPath}")
-    private String yamlSmokeTestSuiteFilesPath; 
-    
-    @Value("${harFileBasePath}")
-    private String harFileBasePath;
+	@Autowired
+	private MailServiceImpl mailServiceImpl;
 
-    @Value("${zipFileBasePath}")
-    private String zipFilePath;
+	@Autowired
+	private Scheduler scheduler;
 
-    @Value("${yamlSmokeTestSuiteFilesPath}")
-    private String smokeTestYamlPath;
+	@Value("${yamlTestCriteriaFilesPath}")
+	private String yamlTestCriteriaFilesPath;
 
-    @Value("${commonYamlFilePath}")
-    private String commonYaml;
+	@Value("${yamlSmokeTestSuiteFilesPath}")
+	private String yamlSmokeTestSuiteFilesPath;
 
-    @Value("${autoTestFilePath}")
-    private String autoTesterYamlFile;
-      
-    List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
-            "hbx-stage.media.net", "hbx-stage-2.media.net", "hbx-stage-3.media.net", "hbx-stage-4.media.net",
-            "hbx-stage-1.media.net", "ssp-stage-hb.media.net", "ssp-stage-hb-1.media.net", "ssp-stage-hb-2.media.net",
-            "ssp-stage-hb-3.media.net", "ssp-stage-hb-4.media.net");
-    List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js",
-            "ss/nes/bidexl2.js");
-    List<String> getConsoleMessageOfUrl = Arrays.asList("checksync.php?", "bidexchange.js", "clientag.js", "js/tags/clientag.js",
-            "ss/nes/bidexl2.js", "cksync?", "clientag.js?cid");
-    List<String> urlController = List.of("checksync");
-    StringBuilder size = new StringBuilder();
+	@Value("${harFileBasePath}")
+	private String harFileBasePath;
 
-    public static Map<String, Map<String, String>> testResultSummery(URLChecksReportModel result) {
-        Map<String, Map<String, String>> testResult = new HashMap<>();
+	@Value("${zipFileBasePath}")
+	private String zipFilePath;
 
-        Map<String, PositiveURLChecks> positiveReport = result.getPositiveUrlChecks();
+	@Value("${yamlSmokeTestSuiteFilesPath}")
+	private String smokeTestYamlPath;
 
-        Map<String, NegativeURLChecks> negativeReport = result.getNegativeUrlChecks();
+	@Value("${commonYamlFilePath}")
+	private String commonYaml;
 
-        positiveReport.entrySet().forEach(entry -> {
-            String key = entry.getKey();
-            PositiveURLChecks value = entry.getValue();
+	@Value("${autoTestFilePath}")
+	private String autoTesterYamlFile;
 
-            if (value.getTestResult().toString().equalsIgnoreCase("FAIL")) {
-                testResult.computeIfAbsent("PositiveURLChecks", k -> new HashMap<>()).put(key, value.getTestResult().toString() + " : " + value.getTestMessages());
-            } else {
-                testResult.computeIfAbsent("PositiveURLChecks", k -> new HashMap<>()).put(key, value.getTestResult().toString());
+	List<String> bidExHosts = Arrays.asList("hbx.media.net", "warp.media.net", "hb.yahoo.net", "contextual.media.net",
+			"hbx-stage.media.net", "hbx-stage-2.media.net", "hbx-stage-3.media.net", "hbx-stage-4.media.net",
+			"hbx-stage-1.media.net", "ssp-stage-hb.media.net", "ssp-stage-hb-1.media.net", "ssp-stage-hb-2.media.net",
+			"ssp-stage-hb-3.media.net", "ssp-stage-hb-4.media.net");
+	List<String> bidExControlers = Arrays.asList("bidexchange.js", "clientag.js", "js/tags/clientag.js",
+			"ss/nes/bidexl2.js");
+	List<String> getConsoleMessageOfUrl = Arrays.asList("checksync.php?", "bidexchange.js", "clientag.js",
+			"js/tags/clientag.js", "ss/nes/bidexl2.js", "cksync?", "clientag.js?cid");
+	List<String> urlController = List.of("checksync");
+	StringBuilder size = new StringBuilder();
 
-            }
+	public static Map<String, Map<String, String>> testResultSummery(URLChecksReportModel result) {
+		Map<String, Map<String, String>> testResult = new HashMap<>();
 
+		Map<String, PositiveURLChecks> positiveReport = result.getPositiveUrlChecks();
 
-        });
+		Map<String, NegativeURLChecks> negativeReport = result.getNegativeUrlChecks();
 
-        negativeReport.entrySet().forEach(entry -> {
-            String key = entry.getKey();
-            NegativeURLChecks value = entry.getValue();
+		positiveReport.entrySet().forEach(entry -> {
+			String key = entry.getKey();
+			PositiveURLChecks value = entry.getValue();
 
-            if (value.getTestResult().toString().equals("NOTPASS")) {
+			if (value.getTestResult().toString().equalsIgnoreCase("FAIL")) {
+				testResult.computeIfAbsent("PositiveURLChecks", k -> new HashMap<>()).put(key,
+						value.getTestResult().toString() + " : " + value.getTestMessages());
+			} else {
+				testResult.computeIfAbsent("PositiveURLChecks", k -> new HashMap<>()).put(key,
+						value.getTestResult().toString());
+
+			}
+
+		});
+
+		negativeReport.entrySet().forEach(entry -> {
+			String key = entry.getKey();
+			NegativeURLChecks value = entry.getValue();
+
+			if (value.getTestResult().toString().equals("NOTPASS")) {
 //				testResult.put(key, "NOT PASS");
 
-                testResult.computeIfAbsent("NegativeURLChecks", k -> new HashMap<>()).put(key, "NOT PRESENT");
-            } else {
-                testResult.computeIfAbsent("NegativeURLChecks", k -> new HashMap<>()).put(key, "PASS");
-            }
+				testResult.computeIfAbsent("NegativeURLChecks", k -> new HashMap<>()).put(key, "NOT PRESENT");
+			} else {
+				testResult.computeIfAbsent("NegativeURLChecks", k -> new HashMap<>()).put(key, "PASS");
+			}
 
+		});
 
-        });
+		return testResult;
 
-        return testResult;
-
-
-    }
+	}
 
 //   @Scheduled(fixedDelayString = "${smokeTestSchedulerFixedDelay}")
-    public void smokeTestScheduling() {
-    	
-    	String envMp="warp.media.net";
-    	
-    	String userAgents="Chrome.Desktop.Mac";//,Chrome.Mobile.iPhone";
-    	
+	public void smokeTestScheduling() {
+
+		String envMp = "warp.media.net";
+
+		String userAgents = "Chrome.Desktop.Mac";// ,Chrome.Mobile.iPhone";
+
 //    	getAutoTest(envMp, userAgent, mpFiles, commonFilesForMp, null, "MP", "qayahoohbtasksqainternals@flockgroups.com", flagForMail);
-      List<String> urls=Arrays.asList("https://www.forbes.com/?medianet_test=1","https://www.fox13now.com/?medianet_test=1","https://www.daily.co.jp/?medianet_test=1");
-        
-    	Map<String, CompletableFuture<TestReportModel>> result=new LinkedHashMap<>();
-    	
-    	 Map<String, TestReportModel> finalResult = new HashMap<>();
-    	
-    	List<TestReportModel> listOfTestReportModel=new ArrayList<>();
-    	
-    	List<String> listOfPublisher=new ArrayList<>();
-    	
-    	 
-    	
-    	try {
-    		
-    	String userAgent[]=userAgents.trim().split(",");
-    		
-    	for(String ua:userAgent)
-    	{	
-    	for(String publisher: urls) {
-    		
-    		String pub=Scheduler.getHostFromUrl(publisher);
-    		
-    		result.put(pub+"_"+ua, scheduler.getSchedulerThread(envMp, ua, publisher));
-    		
-    		listOfPublisher.add(pub+"_"+ua);
-    		
-    	}
-    	}
-    	
-    	
-    	 CompletableFuture<Void> allFutures = CompletableFuture
-                 .allOf(result.values().toArray(new CompletableFuture[result.size()]));
+		List<String> urls = Arrays.asList("https://www.forbes.com/?medianet_test=1",
+				"https://www.fox13now.com/?medianet_test=1", "https://www.daily.co.jp/?medianet_test=1");
 
-         allFutures.join();
+		Map<String, CompletableFuture<TestReportModel>> result = new LinkedHashMap<>();
 
-        
-         if (allFutures.isDone()) {
+		Map<String, TestReportModel> finalResult = new ConcurrentHashMap<>();
 
-             finalResult = result.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
-                 try {
-                     return e.getValue().get();
-                 } catch (InterruptedException | ExecutionException e1) {
-                     log.error("Error while getting result from CompletableFuture", e1);
-                 }
-                 return null;
-             }));
-         }
-         
-         String  zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
-                 
-         
-         for(String pubs:listOfPublisher)
-         {
-        	 TestReportModel reportModel=finalResult.get(pubs);
-        	 listOfTestReportModel.add(reportModel);
-        	 
-         }
-         
-   	  	String testResult=scheduler.testResultForScheduler(finalResult);
-   	  	
-   	  	if(testResult.equalsIgnoreCase("fail"))
-   	  	{
+		List<TestReportModel> listOfTestReportModel = new ArrayList<>();
+
+		List<String> listOfPublisher = new ArrayList<>();
+
+		try {
+
+			String userAgent[] = userAgents.trim().split(",");
+
+			for (String ua : userAgent) {
+				for (String publisher : urls) {
+
+					String pub = Scheduler.getHostFromUrl(publisher);
+
+					result.put(pub + "_" + ua, scheduler.getSchedulerThread(envMp, ua, publisher));
+
+					listOfPublisher.add(pub + "_" + ua);
+
+				}
+			}
+
+			CompletableFuture<Void> allFutures = CompletableFuture
+					.allOf(result.values().toArray(new CompletableFuture[result.size()]));
+
+			allFutures.join();
+
+			if (allFutures.isDone()) {
+
+				finalResult = result.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
+					try {
+						return e.getValue().get();
+					} catch (InterruptedException | ExecutionException e1) {
+						log.error("Error while getting result from CompletableFuture", e1);
+					}
+					return null;
+				}));
+			}
+
+			String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
+
+			for (String pubs : listOfPublisher) {
+				TestReportModel reportModel = finalResult.get(pubs);
+				listOfTestReportModel.add(reportModel);
+
+			}
+
+			String testResult = scheduler.testResultForScheduler(finalResult);
+
+			if (testResult.equalsIgnoreCase("fail")) {
 //   	  	this.mailServiceImpl.sendMail("yahoohbtasksqa@flockgroups.com", "yahoohbtasksqa@flockgroups.com", listOfTestReportModel, zipFile, testResult);
-   	  	}
-   	  	else {
- 	  		this.mailServiceImpl.sendMail("qayahoohbtasksqainternals@flockgroups.com", "qayahoohbtasksqainternals@flockgroups.com", listOfTestReportModel, zipFile, testResult);
-   	  	
-   	  		
+				this.mailServiceImpl.sendMail("qayahoohbtasksqainternals@flockgroups.com",
+						"qayahoohbtasksqainternals@flockgroups.com", listOfTestReportModel, zipFile, testResult);
+
+			} else {
+				this.mailServiceImpl.sendMail("qayahoohbtasksqainternals@flockgroups.com",
+						"qayahoohbtasksqainternals@flockgroups.com", listOfTestReportModel, zipFile, testResult);
+
 //   	  this.mailServiceImpl.sendMail("shubhammtrivedi@gmail.com", "shubhammtrivedi@gmail.com", listOfTestReportModel, zipFile, testResult);
-   	  	
-   	  	}
-   	  	
-         
-    	}
-    	catch (Exception e) {
+
+			}
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-    	
-    }
-    
+	}
 
+	public String getTestResult(Map<String, Map<String, List<String>>> errorMessage, List<String> consoleError) {
+		// here we have to add some condition based requirement to handle result
 
-    public String getTestResult(Map<String, Map<String, List<String>>> errorMessage, List<String> consoleError) {
-        // here we have to add some condition based requirement to handle result
+		boolean hasError = false;
 
-    	
-        boolean hasError = false;
-        
-        if(!consoleError.isEmpty())
-        {
-        	return "fail";
-        }
+		if (!consoleError.isEmpty()) {
+			return "fail";
+		}
 
-        for (Map.Entry<String, Map<String, List<String>>> entry : errorMessage.entrySet()) {
-            for (Map.Entry<String, List<String>> error : entry.getValue().entrySet()) {
-                if (error.getKey().equalsIgnoreCase("awlog") || error.getKey().equalsIgnoreCase("l1log")) {
-                    continue;
-                } else if (error.getKey().equalsIgnoreCase("flog") || error.getKey().equalsIgnoreCase("nerrPing")) {
+		for (Map.Entry<String, Map<String, List<String>>> entry : errorMessage.entrySet()) {
+			for (Map.Entry<String, List<String>> error : entry.getValue().entrySet()) {
+				if (error.getKey().equalsIgnoreCase("awlog") || error.getKey().equalsIgnoreCase("l1log")) {
+					continue;
+				} else if (error.getKey().equalsIgnoreCase("flog") || error.getKey().equalsIgnoreCase("nerrPing")) {
 
-                    return "fail";
-                } else {
+					return "fail";
+				} else {
 
-                    for (String message : error.getValue()) {
-                        if (message.startsWith("Negative key value check failed for key")) {
-                        	hasError = true;
+					for (String message : error.getValue()) {
+						if (message.startsWith("Negative key value check failed for key")) {
+							hasError = true;
 //							break;
-                            return "fail";
-                        }
-                        if(message.startsWith("Call not fired")&& error.getKey().equalsIgnoreCase("APPR-RA"))
-                        {
-                        	hasError=true;
-                        	return "fail";
-                        }
-                    }
-                }
-            }
-        }
+							return "fail";
+						}
+						if (message.startsWith("Call not fired") && error.getKey().equalsIgnoreCase("APPR-RA")) {
+							hasError = true;
+							return "fail";
+						}
+					}
+				}
+			}
+		}
 
-       if(hasError==false)
-       {
-    	   return "pass";
-       }
-       else {
-    	   return "fail";
-       }
-       
-        
+		if (hasError == false) {
+			return "pass";
+		} else {
+			return "fail";
+		}
 
-    }
+	}
 
-    @Override
-    public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
-                                           List<String> commonFiles, String pubs, String itype, String email, boolean flagForMail) {
+	@Override
+	public SmokeTestRawDataDto getAutoTest(String environment, String userAgent, List<String> selectedFiles,
+			List<String> commonFiles, String pubs, String itype, String email, boolean flagForMail,
+			boolean flagForBot) {
 
+		SmokeTestRawDataDto rawDataDto = new SmokeTestRawDataDto();
 
-        SmokeTestRawDataDto rawDataDto = new SmokeTestRawDataDto();
+		Map<String, CompletableFuture<TestReportModel>> map = new ConcurrentHashMap<>();
+		List<String> listOfYamlEnv = new ArrayList<>();
 
-        Map<String, CompletableFuture<TestReportModel>> map = new HashMap<>();
-        List<String> listOfYamlEnv = new ArrayList<>();
+		Set<String> listOfYaml = selectedFiles.stream().collect(Collectors.toSet());
 
-        Set<String> listOfYaml = selectedFiles.stream()
-                .collect(Collectors.toSet());
+		String[] environments = environment.trim().split(",");
+		String[] userAgents = userAgent.trim().split(",");
 
-        String[] environments = environment.trim().split(",");
-        String[] userAgents = userAgent.trim().split(",");
+		if (pubs != null) {
 
-        if (pubs != null) {
+			String[] publisher = pubs.trim().split(",");
+			TestCriteriaBo testCriteriaBo = null;
 
-            String[] publisher = pubs.trim().split(",");
-            TestCriteriaBo testCriteriaBo = null;
+			StringBuilder yamlBuilder = new StringBuilder();
 
+			for (String commonYamls : commonFiles) {
+				String commonContent = this.fileOperations.getCommonFile(itype + "/" + commonYamls);
 
-            StringBuilder yamlBuilder = new StringBuilder();
+				yamlBuilder.append(commonContent).append("\n");
 
+			}
 
-            for (String commonYamls : commonFiles) {
-                String commonContent = this.fileOperations.getCommonFile(itype + "/" + commonYamls);
+			for (String yaml : listOfYaml) {
+				for (String env : environments) {
+					for (String agent : userAgents) {
+						for (String pub : publisher) {
 
-                yamlBuilder.append(commonContent).append("\n");
-
-            }
-
-
-            for (String yaml : listOfYaml) {
-                for (String env : environments) {
-                    for (String agent : userAgents) {
-                        for (String pub : publisher) {
-
-
-                            ClassPathResource classPathResource = new ClassPathResource(autoTesterYamlFile + "/" + yaml);
+							ClassPathResource classPathResource = new ClassPathResource(
+									autoTesterYamlFile + "/" + yaml);
 
 //				ClassPathResource classPathResource = new ClassPathResource(yamlTestCriteriaFilesPath + "/" + yaml);
 
+							String content = null;
 
-                            String content = null;
+							try {
+								InputStream inputStream = classPathResource.getInputStream();
 
-                            try {
-                                InputStream inputStream = classPathResource.getInputStream();
+								content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 
-                                content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+							} catch (Exception e) {
+								// Handle exceptions here
+								log.error("Error while reading YAML file", e);
+								continue; // Continue to the next iteration
+							}
 
-                            } catch (Exception e) {
-                                // Handle exceptions here
-                                log.error("Error while reading YAML file", e);
-                                continue; // Continue to the next iteration
-                            }
+							List<String> list = new ArrayList<>();
+							list.add(content);
 
+							String[] a = { content, yamlBuilder.toString() };
 
-                            List<String> list = new ArrayList<>();
-                            list.add(content);
+							testCriteriaBo = yamlUtils.buildYaml(a);
 
+							testCriteriaBo.setUserAgent(agent);
+							testCriteriaBo.setEnvironment(env);
+							testCriteriaBo.setPublisherUrl(pub);
 
-                            String[] a = {content, yamlBuilder.toString()};
+							if (flagForBot) {
 
-                            testCriteriaBo = yamlUtils.buildYaml(a);
+								map.put(pub + "_" + env + "_" + agent, yamlTestSuite.executeTestForBot(testCriteriaBo));
+							} else {
+								map.put(pub + "_" + env + "_" + agent,
+										yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+							}
+							listOfYamlEnv.add(pub + "_" + env + "_" + agent);
+						}
 
+					}
 
-                            testCriteriaBo.setUserAgent(agent);
-                            testCriteriaBo.setEnvironment(env);
-                            testCriteriaBo.setPublisherUrl(pub);
+				}
 
-                            map.put(pub + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-                            listOfYamlEnv.add(pub + "_" + env + "_" + agent);
-                        }
+			}
 
-                    }
+		} else {
 
-                }
+			TestCriteriaBo testCriteriaBo = null;
 
+			StringBuilder yamlBuilder = new StringBuilder();
 
-            }
+			if (itype.equalsIgnoreCase("all")) {
 
-        } else {
+				for (String commonYamls : commonFiles) {
+					String commonContent = this.fileOperations.getCommonFile(commonYamls);
 
-            TestCriteriaBo testCriteriaBo = null;
+					yamlBuilder.append(commonContent).append("\n");
 
+				}
+			} else {
+				for (String commonYamls : commonFiles) {
+					String commonContent = this.fileOperations.getCommonFile(itype + "/" + commonYamls);
 
-            StringBuilder yamlBuilder = new StringBuilder();
+					yamlBuilder.append(commonContent).append("\n");
 
-            if (itype.equalsIgnoreCase("all")) {
+				}
+			}
 
-                for (String commonYamls : commonFiles) {
-                    String commonContent = this.fileOperations.getCommonFile(commonYamls);
+			for (String yaml : listOfYaml) {
+				for (String env : environments) {
+					for (String agent : userAgents) {
 
-                    yamlBuilder.append(commonContent).append("\n");
+						String filesPath;
 
-                }
-            } else {
-                for (String commonYamls : commonFiles) {
-                    String commonContent = this.fileOperations.getCommonFile(itype + "/" + commonYamls);
+						if (itype.equalsIgnoreCase("all")) {
+							filesPath = yamlSmokeTestSuiteFilesPath + "/" + yaml;
+						} else {
+							filesPath = yamlSmokeTestSuiteFilesPath + "/" + itype + "/" + yaml;
+						}
 
-                    yamlBuilder.append(commonContent).append("\n");
+						ClassPathResource classPathResource = new ClassPathResource(filesPath);
 
-                }
-            }
+						String content = null;
 
-            for (String yaml : listOfYaml) {
-                for (String env : environments) {
-                    for (String agent : userAgents) {
+						try {
+							InputStream inputStream = classPathResource.getInputStream();
 
-                        String filesPath;
+							content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 
-                        if (itype.equalsIgnoreCase("all")) {
-                            filesPath = yamlSmokeTestSuiteFilesPath + "/" + yaml;
-                        } else {
-                            filesPath = yamlSmokeTestSuiteFilesPath + "/" + itype + "/" + yaml;
-                        }
+						} catch (Exception e) {
+							// Handle exceptions here
+							log.error("Error while reading YAML file", e);
+							continue; // Continue to the next iteration
+						}
 
-                        ClassPathResource classPathResource = new ClassPathResource(filesPath);
+						String[] a = { content, yamlBuilder.toString() };
 
-                        String content = null;
+						testCriteriaBo = yamlUtils.buildYaml(a);
 
-                        try {
-                            InputStream inputStream = classPathResource.getInputStream();
+						testCriteriaBo.setUserAgent(agent);
+						testCriteriaBo.setEnvironment(env);
 
-                            content = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+						map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
+						listOfYamlEnv.add(yaml + "_" + env + "_" + agent);
+					}
 
-                        } catch (Exception e) {
-                            // Handle exceptions here
-                            log.error("Error while reading YAML file", e);
-                            continue; // Continue to the next iteration
-                        }
+				}
 
-                        String[] a = {content, yamlBuilder.toString()};
+			}
 
-                        testCriteriaBo = yamlUtils.buildYaml(a);
+		}
 
-                        testCriteriaBo.setUserAgent(agent);
-                        testCriteriaBo.setEnvironment(env);
+		// get values of Map into CompeletableFuture
+		CompletableFuture<Void> allFutures = CompletableFuture
+				.allOf(map.values().toArray(new CompletableFuture[map.size()]));
 
-                        map.put(yaml + "_" + env + "_" + agent, yamlTestSuite.getTestResultsThreadPool(testCriteriaBo));
-                        listOfYamlEnv.add(yaml + "_" + env + "_" + agent);
-                    }
+		allFutures.join();
 
-                }
+		Map<String, TestReportModel> finalResult = new ConcurrentHashMap<>();
+		if (allFutures.isDone()) {
 
-            }
+			finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
+				try {
+					return e.getValue().get();
+				} catch (InterruptedException | ExecutionException e1) {
+					log.error("Error while getting result from CompletableFuture", e1);
+				}
+				return null;
+			}));
+		}
 
-        }
+		List<TestReportModel> testReportModelList = new ArrayList<>();
 
-        // get values of Map into CompeletableFuture
-        CompletableFuture<Void> allFutures = CompletableFuture
-                .allOf(map.values().toArray(new CompletableFuture[map.size()]));
+		SmokeTestSummeryDto dto = new SmokeTestSummeryDto();
 
-        allFutures.join();
+		List<Testdata> testdataResult = new ArrayList<>();
 
+		TestReportModel reportModel = new TestReportModel();
 
-        Map<String, TestReportModel> finalResult = new HashMap<>();
-        if (allFutures.isDone()) {
+		Map<String, Controller> bidExReport = new ConcurrentHashMap<>();
 
-            finalResult = map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
-                try {
-                    return e.getValue().get();
-                } catch (InterruptedException | ExecutionException e1) {
-                    log.error("Error while getting result from CompletableFuture", e1);
-                }
-                return null;
-            }));
-        }
+		Map<String, List<String>> errorMessagePositive = new ConcurrentHashMap<>();
 
+		Map<String, List<String>> errorMessageNegative = new ConcurrentHashMap<>();
 
-        List<TestReportModel> testReportModelList = new ArrayList<>();
+		Map<String, Map<String, List<String>>> error = new ConcurrentHashMap<>();
 
-        SmokeTestSummeryDto dto = new SmokeTestSummeryDto();
+		String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
 
-        List<Testdata> testdataResult = new ArrayList<>();
+		List<String> consoleError = new ArrayList<>();
 
-        TestReportModel reportModel = new TestReportModel();
+		for (String yaml : listOfYamlEnv) {
 
-        Map<String, Controller> bidExReport = new HashMap<>();
+			Testdata testdata = new SmokeTestSummeryDto().new Testdata();
 
-        Map<String, List<String>> errorMessagePositive = new HashMap<>();
+			reportModel = finalResult.get(yaml);
 
-        Map<String, List<String>> errorMessageNegative = new HashMap<>();
+			testReportModelList.add(reportModel);
 
-        Map<String, Map<String, List<String>>> error = new HashMap<>();
+			bidExReport.put(yaml, reportModel.getController());
 
-        String zipFile = CommonBrowserUtil.createZipFile(zipFilePath, finalResult);
+			Map<String, PositiveURLChecks> model = reportModel.getUrlChecks().getPositiveUrlChecks();
 
+			Map<String, NegativeURLChecks> nagativeModel = reportModel.getUrlChecks().getNegativeUrlChecks();
 
-        List<String> consoleError=new ArrayList<>();
-        
-        for (String yaml : listOfYamlEnv) {
+			errorMessagePositive = model.entrySet().stream()
+					.filter(n -> n.getValue().getTestMessages() != null && !n.getValue().getTestMessages().isEmpty()
+							&& (!n.getKey().equalsIgnoreCase("awlog") || !n.getKey().equalsIgnoreCase("l1log")
+									|| !n.getKey().equalsIgnoreCase("RA")))
+					.collect(Collectors.toMap(Map.Entry::getKey, e -> {
+						try {
+							return e.getValue().getTestMessages();
+						} catch (Exception e2) {
+							log.info("Error While read error message from testReport Data" + e);
+						}
+						return null;
 
+					}));
 
-            Testdata testdata = new SmokeTestSummeryDto().new Testdata();
+			nagativeModel.entrySet().forEach(entry -> {
 
-
-            reportModel = finalResult.get(yaml);
-
-
-            testReportModelList.add(reportModel);
-
-            bidExReport.put(yaml, reportModel.getController());
-
-            Map<String, PositiveURLChecks> model = reportModel.getUrlChecks().getPositiveUrlChecks();
-
-            Map<String, NegativeURLChecks> nagativeModel = reportModel.getUrlChecks().getNegativeUrlChecks();
-
-            errorMessagePositive = model.entrySet().stream()
-                    .filter(n -> n.getValue().getTestMessages() != null && !n.getValue().getTestMessages().isEmpty() && (!n.getKey().equalsIgnoreCase("awlog") || !n.getKey().equalsIgnoreCase("l1log") || !n.getKey().equalsIgnoreCase("RA")))
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> {
-                        try {
-                            return e.getValue().getTestMessages();
-                        } catch (Exception e2) {
-                            log.info("Error While read error message from testReport Data" + e);
-                        }
-                        return null;
-
-                    }));
-
-            nagativeModel.entrySet().forEach(entry -> {
-
-                if (entry.getValue().getCountOfMatchingUrls() != 0) {
-                    errorMessageNegative.put(entry.getKey(), entry.getValue().getMatchingUrls());
-                }
-            });
+				if (entry.getValue().getCountOfMatchingUrls() != 0) {
+					errorMessageNegative.put(entry.getKey(), entry.getValue().getMatchingUrls());
+				}
+			});
 
 //			error.put(yaml, errorMessagePositive);
 
-            error.computeIfAbsent(yaml, k -> new HashMap<>(errorMessageNegative)).putAll(errorMessagePositive);
+			error.computeIfAbsent(yaml, k -> new ConcurrentHashMap<>(errorMessageNegative))
+					.putAll(errorMessagePositive);
 
+			testdata.setEnvironment(reportModel.getTestMetaData().getEnvironment());
+			testdata.setUserAgent(reportModel.getTestMetaData().getUserAgent());
+			testdata.setBidExFileSize(reportModel.getController().getTotalSizeDownloaded());
+			testdata.setBidExTime(reportModel.getController().getTotalResponseTime());
+			testdata.setDateTime(reportModel.getTestMetaData().getDateTime());
+			testdata.setHarFileDownloadLink(reportModel.getTestMetaData().getHarFileDownloadLink());
+			testdata.setPublisherUrl(reportModel.getTestMetaData().getPublisherUrl());
+			testdata.setMatchingUrls(reportModel.getController().getMatchingUrls());
+			testdata.setBidexData(reportModel.getController().getControllerData());
+			testdata.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
 
-            testdata.setEnvironment(reportModel.getTestMetaData().getEnvironment());
-            testdata.setUserAgent(reportModel.getTestMetaData().getUserAgent());
-            testdata.setBidExFileSize(reportModel.getController().getTotalSizeDownloaded());
-            testdata.setBidExTime(reportModel.getController().getTotalResponseTime());
-            testdata.setDateTime(reportModel.getTestMetaData().getDateTime());
-            testdata.setHarFileDownloadLink(reportModel.getTestMetaData().getHarFileDownloadLink());
-            testdata.setPublisherUrl(reportModel.getTestMetaData().getPublisherUrl());
-            testdata.setMatchingUrls(reportModel.getController().getMatchingUrls());
-            testdata.setBidexData(reportModel.getController().getControllerData());
-            testdata.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
+			consoleError.addAll(reportModel.getController().getConsoleMessages());
 
-            consoleError.addAll(reportModel.getController().getConsoleMessages());
-
-            testdataResult.add(testdata);
+			testdataResult.add(testdata);
 
 //			dto.setTestResultSummery(testResultSummery(reportModel.getUrlChecks()));
 
-        }
+		}
 
+		try {
+			this.fileHandling.addSmokeReportInFile(finalResult, testReportModelList);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        try {
-            this.fileHandling.addSmokeReportInFile(finalResult, testReportModelList);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		String testResult = getTestResult(error, consoleError);
 
+		if (flagForMail && email != null && !email.isBlank() && !email.isEmpty()) {
+			this.mailServiceImpl.sendMail(email, email, testReportModelList, zipFile, testResult);
 
-        String testResult = getTestResult(error, consoleError);
-        
+		}
 
+		Map<String, String> testReport = new ConcurrentHashMap<>();
 
-        if (flagForMail && email != null && !email.isBlank() && !email.isEmpty()) {
-            this.mailServiceImpl.sendMail(email, email, testReportModelList,
-                    zipFile, testResult);
+		dto.setTestdatas(testdataResult);
 
-        }
+		testReport.put("testResult", testResult);
+		String reportLink = "http://10.2.64.124:8080/yamlTestSuite/smokeTestSuite/" + zipFile;
+		testReport.put("fullReport:", reportLink);
 
+		rawDataDto.setTestResult(testReport);
+		rawDataDto.setRawData(finalResult);
+		rawDataDto.setSmokeReport(dto);
+		rawDataDto.setControllerReport(bidExReport);
+		rawDataDto.setErrorMessage(getErrorMessage(error, reportModel));
+		rawDataDto.setFullReport(reportLink);
 
-        Map<String, String> testReport = new HashMap<>();
+		return rawDataDto;
 
-        dto.setTestdatas(testdataResult);
+	}
 
+	public Map<String, Map<String, List<String>>> getErrorMessage(Map<String, Map<String, List<String>>> errorMessage,
+			TestReportModel report) {
+		Map<String, Map<String, List<String>>> getErrorMessage = new ConcurrentHashMap<>();
 
-        testReport.put("testResult", testResult);
-        String reportLink = "http://10.2.64.124:8080/yamlTestSuite/smokeTestSuite/" + zipFile;
-        testReport.put("fullReport:", reportLink);
+		errorMessage.entrySet().forEach(entry -> {
 
-        rawDataDto.setTestResult(testReport);
-        rawDataDto.setRawData(finalResult);
-        rawDataDto.setSmokeReport(dto);
-        rawDataDto.setControllerReport(bidExReport);
-        rawDataDto.setErrorMessage(getErrorMessage(error, reportModel));
-        rawDataDto.setFullReport(reportLink);
+			Map<String, List<String>> getMessage = new LinkedHashMap<>();
 
+			entry.getValue().entrySet().forEach(networkCall -> {
 
-        return rawDataDto;
-
-    }
-
-    public Map<String, Map<String, List<String>>> getErrorMessage(Map<String, Map<String, List<String>>> errorMessage, TestReportModel report) {
-        Map<String, Map<String, List<String>>> getErrorMessage = new HashMap<>();
-
-        errorMessage.entrySet().forEach(entry -> {
-
-
-            Map<String, List<String>> getMessage = new HashMap<>();
-
-            entry.getValue().entrySet().forEach(networkCall -> {
-
-                List<String> error = new ArrayList<>();
+				List<String> error = new ArrayList<>();
 
 //				report.getUrlChecks().getNegativeUrlChecks().entrySet().forEach(negativecall->{
 //
@@ -589,145 +556,137 @@ public class YamlTestSuiteScheduling implements YamlSuiteSmokeTestsService {
 //
 //				});
 
-                for (String message : networkCall.getValue()) {
-                    if (message.startsWith("Positive key value check failed for key") || message.startsWith("Negative key value check failed for key") ||
-                            message.startsWith("Call not fired") || message.startsWith("Any one of key value check failed for key") || message.startsWith("https://hblg.media.net/nerrping.php") || message.startsWith("https://hblg.media.net/log?logid=kfk&evtid=flog")) {
-                        error.add(message);
-                    }
+				for (String message : networkCall.getValue()) {
+					if (message.startsWith("Positive key value check failed for key")
+							|| message.startsWith("Negative key value check failed for key")
+							|| message.startsWith("Call not fired")
+							|| message.startsWith("Any one of key value check failed for key")
+							|| message.startsWith("https://hblg.media.net/nerrping.php")
+							|| message.startsWith("https://hblg.media.net/log?logid=kfk&evtid=flog")) {
+						error.add(message);
+					}
 
-                }
+				}
 
-                getMessage.put(networkCall.getKey(), error);
+				getMessage.put(networkCall.getKey(), error);
 
-            });
+			});
 
-            getErrorMessage.put(entry.getKey(), getMessage);
+			getErrorMessage.put(entry.getKey(), getMessage);
 
+		});
 
-        });
+		return getErrorMessage;
+	}
 
+	public String templateLoder(String user, Map<String, JsonNode> result) {
+		Context context = new Context();
+		context.setVariable("name", user);
+		context.setVariable("result", result);
+		return this.engine.process("SchedulerReport", context);
+	}
 
-        return getErrorMessage;
-    }
+	public Map<String, Map<String, Object>> readDataFromZip(String fileName) {
 
-    public String templateLoder(String user, Map<String, JsonNode> result) {
-        Context context = new Context();
-        context.setVariable("name", user);
-        context.setVariable("result", result);
-        return this.engine.process("SchedulerReport", context);
-    }
+		ObjectMapper mapper = new ObjectMapper();
 
-    public Map<String, Map<String, Object>> readDataFromZip(String fileName) {
+		String filePath = zipFilePath + fileName;
 
-        ObjectMapper mapper = new ObjectMapper();
+		JsonNode resultData = CommonBrowserUtil.readDataFromZip(filePath);
 
-        String filePath = zipFilePath + fileName;
+		Map<String, Object> result = mapper.convertValue(resultData, new TypeReference<Map<String, Object>>() {
+		});
 
-        JsonNode resultData = CommonBrowserUtil.readDataFromZip(filePath);
+		log.info("Result Data " + resultData);
 
-        Map<String, Object> result = mapper.convertValue(resultData, new TypeReference<Map<String, Object>>() {
-        });
+		Map<String, Map<String, Object>> report = new LinkedHashMap<>();
 
-        log.info("Result Data " + resultData);
+		result.entrySet().forEach(entry -> {
 
+			Map<String, Object> data = new HashMap<>();
 
-        Map<String, Map<String, Object>> report = new HashMap<>();
+			Map<String, Object> map = mapper.convertValue(entry.getValue(), new TypeReference<Map<String, Object>>() {
+			});
 
-
-        result.entrySet().forEach(entry -> {
-
-            Map<String, Object> data = new HashMap<>();
-
-            Map<String, Object> map = mapper.convertValue(entry.getValue(), new TypeReference<Map<String, Object>>() {
-            });
-
-            Object testData = map.get("testMetaData");
-            Object bidexData = map.get("bidExController");
-            Object summery = map.get("testSummery");
+			Object testData = map.get("testMetaData");
+			Object bidexData = map.get("bidExController");
+			Object summery = map.get("testSummery");
 
 //			Map<String, Object> urlReport=mapper.convertValue(map.get("urlChecks"), new TypeReference<Map<String, Object>>() {});
 
-            Map<String, Object> metaData = mapper.convertValue(testData, new TypeReference<Map<String, Object>>() {
-            });
+			Map<String, Object> metaData = mapper.convertValue(testData, new TypeReference<Map<String, Object>>() {
+			});
 
-            data.computeIfAbsent(metaData.get("publisherUrl") + ":" + metaData.get("environment"), k -> {
-                List<Object> list = new ArrayList<>();
+			data.computeIfAbsent(metaData.get("publisherUrl") + ":" + metaData.get("environment"), k -> {
+				List<Object> list = new ArrayList<>();
 
-                list.addAll(Arrays.asList(testData, bidexData, summery));
-                return list;
-            });
+				list.addAll(Arrays.asList(testData, bidexData, summery));
+				return list;
+			});
 
-
-            report.computeIfAbsent("basicReport", k -> new HashMap<String, Object>())
-                    .putAll(data);
+			report.computeIfAbsent("basicReport", k -> new HashMap<String, Object>()).putAll(data);
 
 //			 report.computeIfAbsent("fullReport", k -> new HashMap<String, Object>())
 //	          .putAll(map);
 
+		});
 
-        });
+		report.put("fullReport", result);
 
-        report.put("fullReport", result);
+		return report;
 
-        return report;
+	}
 
-    }
-    
-    public Map<String, Map<String, Object>> readDataFromSchedulerFile(String fileName) {
+	public Map<String, Map<String, Object>> readDataFromSchedulerFile(String fileName) {
 
-        ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper();
 
-        String filePath = zipFilePath + fileName;
+		String filePath = zipFilePath + fileName;
 
-        JsonNode resultData = CommonBrowserUtil.readDataFromZip(filePath);
+		JsonNode resultData = CommonBrowserUtil.readDataFromZip(filePath);
 
-        Map<String, Object> result = mapper.convertValue(resultData, new TypeReference<Map<String, Object>>() {
-        });
+		Map<String, Object> result = mapper.convertValue(resultData, new TypeReference<Map<String, Object>>() {
+		});
 
-       
-        Map<String, Map<String, Object>> report = new HashMap<>();
+		Map<String, Map<String, Object>> report = new HashMap<>();
 
+		result.entrySet().forEach(entry -> {
 
-        result.entrySet().forEach(entry -> {
+			Map<String, Object> data = new HashMap<>();
 
-            Map<String, Object> data = new HashMap<>();
+			Map<String, Object> map = mapper.convertValue(entry.getValue(), new TypeReference<Map<String, Object>>() {
+			});
 
-            Map<String, Object> map = mapper.convertValue(entry.getValue(), new TypeReference<Map<String, Object>>() {
-            });
+			Object testData = map.get("testMetaData");
 
-            Object testData = map.get("testMetaData");
-            
 //           SchedulerReport.TestMetaData testmetaData=mapper.convertValue(testData, SchedulerReport.TestMetaData.class);
-            
-            Object bidexData = map.get("controller");
-            
+
+			Object bidexData = map.get("controller");
+
 //            SchedulerReport.Controller controller=mapper.convertValue(bidexData, SchedulerReport.Controller.class);
-            
-            Object summery = map.get("testSummery");
-            
+
+			Object summery = map.get("testSummery");
+
 //            SchedulerReport. controller=mapper.convertValue(bidexData, SchedulerReport.Controller.class);
-            
-            Map<String, Object> metaData = mapper.convertValue(testData, new TypeReference<Map<String, Object>>() {
-            });
 
-            data.computeIfAbsent(metaData.get("publisherUrl") + ":" + metaData.get("environment")+":"+metaData.get("userAgent") ,k -> {
-                List<Object> list = new ArrayList<>();
+			Map<String, Object> metaData = mapper.convertValue(testData, new TypeReference<Map<String, Object>>() {
+			});
 
-                list.addAll(Arrays.asList(testData, bidexData, summery));
-                return list;
-            });
+			data.computeIfAbsent(
+					metaData.get("publisherUrl") + ":" + metaData.get("environment") + ":" + metaData.get("userAgent"),
+					k -> {
+						List<Object> list = new ArrayList<>();
 
+						list.addAll(Arrays.asList(testData, bidexData, summery));
+						return list;
+					});
 
-            report.computeIfAbsent("basicReport", k -> new HashMap<String, Object>())
-                    .putAll(data);
+			report.computeIfAbsent("basicReport", k -> new HashMap<String, Object>()).putAll(data);
 
+		});
 
+		return report;
 
-        });
-
-        return report;
-
-    }
-
+	}
 
 }
